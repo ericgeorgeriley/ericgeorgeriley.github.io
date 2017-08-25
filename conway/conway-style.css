@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100');
+
+body{
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  margin: .5em, 4em;
+  color: rgb(60,60,60);
+}
+
+.row {
+  margin: 1em;
+}
+#autoplay {
+  position: absolute;
+  clip: rect(0,0,0,0);
+}
+
+#grid {
+  margin: auto;
+  border: 2px solid rgb(60,60,60);
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+  #grid td {
+    border: 1px solid white;
+
+  }
+
+  @keyframes birth {
+      50%{
+        box-shadow: 0 0 0 99px white inset;
+      }
+  }
+  #grid input[type="checkbox"]{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: block;
+    width: 3em;
+    height: 3em;
+    border: 0 none;
+    background: rgb(60,60,60);
+    margin: 0;
+  }
+
+    #grid input[type="checkbox"]:checked {
+      box-shadow: 0 0 0 99px rgb(51,122,183) inset;
+      animation: birth 500ms;
+
+    }
+
+button, .button {
+    padding: .3em 3em;
+}
+
+button:active, .button:active,
+input[type="checkbox"]:checked + label.button {
+  background-image: none;
+  background: rgb(2,43,58);
+  box-shadow: 0 .05em .1em rgb(60,60,60); inset;
+}
