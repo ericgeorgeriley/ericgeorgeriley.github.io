@@ -21,6 +21,15 @@
               }
         });
 
+        $("a.external").click(function(event){
+             event.preventDefault();
+             linkLocation = this.href;
+             $("body").fadeOut(1000, redirectPage(linkLocation));
+         });
+
+         function redirectPage(link) {
+             document.location.href= link;
+         }
 
         // Parallax Js
         function initParallax() {
