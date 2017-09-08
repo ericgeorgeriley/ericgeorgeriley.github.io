@@ -286,6 +286,12 @@ footer {
     transition: all ease-in-out 0.4s;
 }
 
+.custom-navbar .nav li a.external {
+
+    -webkit-transition: none;
+    transition: none;
+}
+
 .custom-navbar .nav li a:hover {
     background: transparent;
     color: #000;
