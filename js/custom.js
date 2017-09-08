@@ -24,7 +24,8 @@
         $("a.external").click(function(event){
              event.preventDefault();
              var linkLocation = this.href;
-             $("body").fadeOut(1000, redirectPage(linkLocation));
+             $("body").fadeOut(1000);
+             redirectPage(linkLocation);
          });
 
          function redirectPage(link) {
