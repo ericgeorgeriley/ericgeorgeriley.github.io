@@ -1,0 +1,86 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Fastword Password Generator | An incredibly fast way to generate a password</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="apple-touch-icon" href="icon.png">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body class="text-center">
+        <!--[if lte IE 9]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+        <![endif]-->
+		<div class="container">
+			<div class="passwordOutput" data-clipboard-target="#password">
+				<h1 id="password" class="display-2 font-weight-light">FastWord</h1>	
+				<span id="prompt" class="small text-secondary">Click to Copy</span>
+			</div>
+
+			<form class="form-password">			
+
+				<div class="row passwordOptions badge-pill badge-dark">
+					<div class="col optionCol">
+					
+						<div class="custom-control custom-checkbox">							
+							<input type="checkbox" class="custom-control-input" checked="checked" value="upper" id="isUpperCase">
+							<label class="custom-control-label" for="isUpperCase">A/a</label>
+						</div>
+					</div>
+					<div class="col optionCol">				
+						<div class="custom-control custom-checkbox">							
+							<input type="checkbox" class="custom-control-input" checked="checked" value="numeric" id="isNumeric">
+							<label class="custom-control-label" for="isNumeric">123</label>
+						</div>
+					</div>
+					<div class="col optionCol">
+						<div class="custom-control custom-checkbox">							
+							<input type="checkbox" class="custom-control-input" checked="checked" value="symbol" id="isSymbol">
+							<label class="custom-control-label" for="isSymbol">!?*</label>
+						</div>
+					</div>
+
+				</div>
+				
+				<br/>
+				
+				<div class="row passwordOptions">
+					<div class="col optionCol">					 
+						<input type="range" min="6" max="24" value="8" class="slider" id="passLength"> 					
+					</div>
+					<div class="col">
+						<p class="text-secondary"><span id="rangeLabel">-</span> Char</p>
+					</div>
+				</div>
+				
+				<div id="newPassword" class="btn btn-sm btn-outline-secondary">Refresh</div>				
+			
+			</form>
+			
+			<p class="mt-5 mb-3 text-muted">Fastword - A password, fast.</p>
+
+		</div>
+			
+        <script src="js/vendor/modernizr-3.5.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+		<script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+        <script>
+            window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+            ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
+        </script>
+        <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+    </body>
+</html>
