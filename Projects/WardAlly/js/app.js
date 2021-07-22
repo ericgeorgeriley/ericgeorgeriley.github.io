@@ -190,8 +190,9 @@ function renderActiveList(){
 
 
     var history = document.getElementById("active_list_history");
-    listItems = "<h3>Complete</h3>";
     let completeTasks = activeList.tasks.filter(x=>x.complete!==false);
+    listItems = completeTasks.length > 0 ? "<h3>Complete</h3>" :"";
+
     completeTasks.forEach((t,i)=> {
         listItems+=`
             <div class="history-item">
@@ -205,6 +206,13 @@ function renderActiveList(){
     });
 
     history.innerHTML = listItems;
+
+    //toggle clear/remove bed
+    let anyTasks = activeList.tasks.length > 0;
+    document.getElementsByClassName("clear-bed")[0].style.display = anyTasks ? "block" : "none";
+    document.getElementsByClassName("remove-bed")[0].style.display = anyTasks ? "none" : "block";;
+
+
 
 
 }
@@ -330,6 +338,22 @@ function createBed(){
     bedInput.value = "";
     addingBed = false;
     setActiveList(bedId);
+    saveState();
+}
+
+function removeBed(){
+    let id = activeListId;
+
+    for (let i in taskLists) {
+        if (taskLists[i].id == id) {
+
+            taskLists.splice(i,1);
+        
+            break;
+        }    
+    }  
+
+    setActiveList();    
     saveState();
 }
 
@@ -493,6 +517,30 @@ function completeTask(taskId){
 
 }
 
+function removeTask(taskId){
+
+    let id = activeListId;
+
+    for (let i in taskLists) {
+        if (taskLists[i].id == id) {
+        
+            //found the task list
+            for(let j in taskLists[i].tasks){
+                if(taskLists[i].tasks[j].id == taskId){
+
+                    //remove the task
+                    taskLists[i].tasks.splice(j, 1);
+
+                    break;
+                }
+            }
+
+            break;
+        }    
+    }  
+    
+    saveState();
+}
 
 function saveState(){	
     
