@@ -10,8 +10,8 @@ let addingTask = false;
 let taskPreposition = "IN"; //default to IN
 let taskHours = 0; //default to 0 hours
 let taskMinutes = 15; //default to 15 mins
-
 let orderByProity = true;
+let showCredits = false;
 
 
 function drawView(){
@@ -43,6 +43,14 @@ function drawView(){
         bedModal.classList.remove("hidden");
     } else {
         var bedModal = document.getElementById("new_task_modal");
+        bedModal.classList.add("hidden");
+    }
+
+    if(showCredits){//show credits modal
+        var bedModal = document.getElementById("credits_modal");
+        bedModal.classList.remove("hidden");
+    } else {
+        var bedModal = document.getElementById("credits_modal");
         bedModal.classList.add("hidden");
     }
 }
@@ -165,10 +173,21 @@ function renderActiveList(){
     document.getElementById("dashboard_view").classList.add("hidden");
     document.getElementById("tasks_view").classList.remove("hidden");
 
+
     //get the active list
     var activeList = taskLists.find(e => e.id === activeListId);
 
     document.getElementById("active_list_name").innerText = activeList.name;
+
+    //update moment button
+    let momentButton = document.getElementById("update_moment");
+    momentButton.style.opacity = getMoment(activeList.moment).opacity;
+    momentButton.onclick=function(){
+        activeList.moment = moment()
+        saveState();
+    }
+
+    //show active tasks
     var active = document.getElementById("active_list_tasks");
 
     let listItems = "";
@@ -188,7 +207,7 @@ function renderActiveList(){
     active.innerHTML = listItems;
 
 
-
+    //show task history
     var history = document.getElementById("active_list_history");
     let completeTasks = activeList.tasks.filter(x=>x.complete!==false);
     listItems = completeTasks.length > 0 ? "<h3>Complete</h3>" :"";
@@ -280,10 +299,14 @@ function getWidget(el){
                 </li>`
         }
     });
+
+    let icon = el.isMe ? "./img/nurse.png" : "./img/bed.png"
+
+    let momentOpacity = getMoment(el.moment).opacity;
     
     widgetContent.innerHTML = `
         <div class="widget-header">
-            <div class="widget-icon"><img src="https://img.icons8.com/color/48/000000/hospital-wheel-bed.png"/></div>
+            <div class="widget-icon"><img src="${icon}"/></div>
             <div class="widget-title"><p>${el.name}</p></div>
         </div>
         <div class="widget-body">
@@ -294,8 +317,8 @@ function getWidget(el){
             </div>
         </div>
         <div class="widget-footer">
-            <div class="widget-icon"><img src="https://img.icons8.com/fluent/48/000000/like.png"/></div>
-            <div class="widget-totals"><p>${el.tasks.length}</p></div>
+            <div class="widget-icon" style="opacity:${momentOpacity}"><img src="./img/heart.png"/></div>
+            <div class="widget-totals"><p>${/*el.tasks.length*/' '}</p></div>
         </div>            
     `;  
     
@@ -304,6 +327,13 @@ function getWidget(el){
     widget.onclick = ()=>openActiveList(el.id);
 
     return widget;
+}
+
+function getMoment(datetime){
+    let hoursAgo = moment.duration(moment().diff(datetime)).asHours();
+    let momentOpacity = hoursAgo > 2 ? 1 : hoursAgo > 1 ? .6 : .2; 
+
+    return {hours:hoursAgo, opacity:momentOpacity};
 }
 
 function selectTaskList(id){
@@ -542,6 +572,16 @@ function removeTask(taskId){
     saveState();
 }
 
+function showCreditsPrompt(){
+    showCredits = true;
+    drawView();
+}
+
+function closeCreditsPrompt(){
+   showCredits = false;
+   drawView();
+}
+
 function saveState(){	
     
     
@@ -587,7 +627,7 @@ function loadState(){
     let savedLists = JSON.parse(localStorage.getItem("taskLists"));
 
     taskLists = savedLists ? savedLists : [
-        {id:uuidv4(), name: "Myself", isMe:true, tasks:[
+        {id:uuidv4(), name: "Myself", isMe:true, moment:moment().subtract({hours:3}), tasks:[
             {
                 id:uuidv4(), 
                 name: "Complete this task",

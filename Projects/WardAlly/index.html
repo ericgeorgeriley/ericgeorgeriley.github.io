@@ -22,7 +22,7 @@
                 <p><strong>WardAlly</strong><small>.com</small></p>
             </div>
             <div>
-                <a class="navbar-link" href="https://dbhc.org.uk/donate/">❤ NHS</a>
+                
                 <a class="navbar-link" href="https://www.google.com">HELP</a>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 <div class="widget-header">
                     <div class="widget-icon"><img src="https://img.icons8.com/color/48/000000/hospital-wheel-bed.png"/></div>
                     <div class="widget-title"><h2 id="active_list_name">Loading...</h2></div>
-                    <div class="widget-icon"><img class="moment-button" src="https://img.icons8.com/fluent/48/000000/like.png"/></div>
+                    <div id="update_moment" class="widget-icon"><img class="moment-button" src="./img/heart.png"/></div>
                 </div>
                 <div class="widget-body">
                     <div id="active_list_tasks">
@@ -108,6 +108,21 @@
             </div>
         </div>
 
+        <div id="credits_modal" class="view hidden">
+            <div class="modal">
+                <small>
+                    <div class="credits">
+                        Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+                        <br><a target="_blank" href="https://icons8.com/icon/DFU1kReSUccu/heart">Heart</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+                    </div>
+                </small>
+                               
+                <div class="modal-footer">
+                    <p onclick="closeCreditsPrompt()">CLOSE</p>
+                </div>
+            </div>
+        </div>
+
         <div id="handover_view" class="view hidden">
             <span>loading handover...</span>
             <!--shows the handover view-->
@@ -116,7 +131,11 @@
             <div>
                 <p>
                     <strong>WardAlly</strong><small>.com</small> | 
-                    <small> Built by <a href="https://ericgeorgeriley.com">Eric George Riley.</a> Icons by<a href="https://icons8.com/"> Icons8</a>  </small>
+                    <small> 
+                        Built by <a href="https://ericgeorgeriley.com" title="Eric George Riley">Eric George Riley.</a> 
+                         | <a href="#" onclick="showCreditsPrompt()" title="Icons">Icons</a>
+                         | <a href="https://dbhc.org.uk/donate/" title="DBHC">♥ NHS</a>
+                    </small>
                 </p>
             </div>
         </div>
