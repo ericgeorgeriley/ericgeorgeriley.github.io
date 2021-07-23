@@ -82,6 +82,8 @@ h3{
     padding: 1em;
 }
 
+
+
 .view {
     transition: display 0.2s linear;
     display: flex;
@@ -206,10 +208,11 @@ input[type=text]:focus, input[type=number]:focus {
 
 .moment-button {
     border-radius: 50%;
-    border: 3px solid var(--color-red);
+    border: 2px solid var(--color-red);
+    background: linear-gradient(145deg, #ffffff, #d9d9d9);
+    box-shadow:  5px 5px 9px #cdcdcd,
+                 -5px -5px 9px #ffffff;
 }
-
-
 
 .margin-footer p {
     padding: 1em;
@@ -222,7 +225,7 @@ input[type=text]:focus, input[type=number]:focus {
     padding-right: .5em;
     border-radius: 15px;
     color: #ffffff;
-    font-size: smaller;
+    font-size: xx-small;
     font-weight: 400;
     white-space: nowrap;
 }
@@ -308,8 +311,10 @@ input[type=text]:focus, input[type=number]:focus {
 
 .task-item, .history-item {
     margin: 1.5em;
+    padding-bottom: 1.5em;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     
 }
 
@@ -319,6 +324,7 @@ input[type=text]:focus, input[type=number]:focus {
 
 .task-item .item-name,.history-item .item-name{
     flex:1;
+    align-self: center;
 }
 .task-item .item-due {
     margin-right: 1em;
@@ -326,6 +332,10 @@ input[type=text]:focus, input[type=number]:focus {
 
 .task-item .item-complete img {
     width: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow:  3px 3px 6px #d9d9d9,
+                 -3px -3px 6px #ffffff;
 }
 
 .history-item .item-complete-date {
@@ -333,9 +343,10 @@ input[type=text]:focus, input[type=number]:focus {
     width: 80px;
 }
 
-.history-item .item-remove {
+.task-item .item-edit, .history-item .item-undo, .history-item .item-remove {
     font-size: .8em;
     font-weight: 700;
+    color: var(--color-blue);
 }
 
 .widget::before{
@@ -462,16 +473,20 @@ input[type=text]:focus, input[type=number]:focus {
     padding: 0;
     font-size: 1em;
     font-weight:400;
+    overflow:hidden;
 }
 
 .widget-body .task-summary ul li.widget-task {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-content: flex-start;
     margin-right: 1em;
-    margin-bottom: .2em;
+    margin-bottom: 1em;
 }
 
 .widget-body .task-summary ul li.widget-task .widget-task-name {
+    text-align: right;
+    margin-right: .2em;
     white-space: nowrap;
     overflow: hidden;
 }

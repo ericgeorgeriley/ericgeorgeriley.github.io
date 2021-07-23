@@ -2,6 +2,7 @@ let taskLists = [];
 
 //show specific list view
 let activeListId = null;
+let editingList = false;
 //show the handover view
 let handoverView = false;
 
@@ -88,18 +89,20 @@ function updateStatusBar(){
         }
     }
 
-    let total = s_overdue+s_alert+s_warn+s_normal+s_any;
+
 
     //hides the overdue border when nothing to show
     if(s_overdue<1)document.getElementsByClassName("status-overdue")[0].style.display = "none";
     else document.getElementsByClassName("status-overdue")[0].style.display = "block";
 
+    let total = s_overdue+s_alert+s_warn+s_normal+s_any;
+    let showBar = total > 0;
 
-    document.getElementsByClassName("status-overdue")[0].style.width = (s_overdue/total)*100 +"%";
-    document.getElementsByClassName("status-alert")[0].style.width = (s_alert/total)*100 +"%";
-    document.getElementsByClassName("status-warn")[0].style.width = (s_warn/total)*100 +"%";
-    document.getElementsByClassName("status-normal")[0].style.width = (s_normal/total)*100 +"%";
-    document.getElementsByClassName("status-any")[0].style.width = (s_any/total)*100 +"%";
+    document.getElementsByClassName("status-overdue")[0].style.width = (showBar? (s_overdue/total)*100 : 0) +"%";
+    document.getElementsByClassName("status-alert")[0].style.width = (showBar? (s_alert/total)*100 : 0) +"%";
+    document.getElementsByClassName("status-warn")[0].style.width = (showBar? (s_warn/total)*100 : 0) +"%";
+    document.getElementsByClassName("status-normal")[0].style.width = (showBar? (s_normal/total)*100 : 0) +"%";
+    document.getElementsByClassName("status-any")[0].style.width = (showBar? (s_any/total)*100 : 0) +"%";
 
 }
 
@@ -137,7 +140,7 @@ function renderDashboard(){
         buttonWidget.innerHTML = `   
             <div class="content">
                 <div class="new-bed-label">
-                    <img src="https://img.icons8.com/color/48/000000/hospital-wheel-bed.png"/>
+                    <img src="./img/bed.png"/>
                     <p>CREATE A NEW BED</p>         
                 </div>
             </div>`;
@@ -187,44 +190,16 @@ function renderActiveList(){
         saveState();
     }
 
-    //show active tasks
-    var active = document.getElementById("active_list_tasks");
+    if(activeList.tasks.length>0)
+        getTasksHtml(activeList);
+    else{
+        //this should show some help info with arrows
+        //about moments
+        //new task
+        //etc..
+        getTasksHtml(activeList);
 
-    let listItems = "";
-    let pendingTasks = activeList.tasks.filter(x=>x.complete===false);
-    pendingTasks.forEach((t,i)=> {
-        listItems+=`
-            <div class="task-item">
-                <div class="item-name">${t.name}</div>
-                <div class="item-due">${getDuePillHtml(t.due)}</div>
-                <div class="item-complete" onclick="completeTask('${t.id}')">
-                    <img src="https://img.icons8.com/material-outlined/48/26e07f/checked--v1.png"/>
-                </div>
-            </div>
-        `;
-    });
-
-    active.innerHTML = listItems;
-
-
-    //show task history
-    var history = document.getElementById("active_list_history");
-    let completeTasks = activeList.tasks.filter(x=>x.complete!==false);
-    listItems = completeTasks.length > 0 ? "<h3>Complete</h3>" :"";
-
-    completeTasks.forEach((t,i)=> {
-        listItems+=`
-            <div class="history-item">
-                <div class="item-name">${t.name}</div>
-                <div class="item-complete-date">${moment(t.complete).format('DD/MM HH:mm')}</div>
-                <div class="item-remove" onclick="removeTask('${t.id}')">
-                   <p class="text-alert">REMOVE</p>
-                </div>
-            </div>
-        `;
-    });
-
-    history.innerHTML = listItems;
+    }
 
     //toggle clear/remove bed
     let anyTasks = activeList.tasks.length > 0;
@@ -234,6 +209,84 @@ function renderActiveList(){
 
 
 
+}
+
+function getTasksHtml(activeList){
+
+    //show active tasks
+    var active = document.getElementById("active_list_tasks");
+
+    let listItems = `
+        <div class="task-item">
+            <div class="item-name"></div>
+            <div class="item-due"></div>
+            ${editingList ? 
+                `<div class="item-edit" onclick="editList(false)">
+                    DONE
+                </div>`
+                :
+                `<div class="item-edit" onclick="editList(true)">
+                    EDIT TASKS
+                </div>`
+            }
+        </div>
+    `;
+    
+
+    let pendingTasks = activeList.tasks.filter(x=>x.complete===false);
+    pendingTasks.forEach((t,i)=> {
+
+        let taskAction = editingList ? 
+        `<div class="item-edit" onclick="removeTask('${t.id}')">
+            <p class="text-alert">REMOVE</p>
+         </div>`
+        :
+        `<div class="item-complete" onclick="completeTask('${t.id}')">
+            <img src="./img/tick.png"/>
+        </div>`;
+
+        listItems+=`
+            <div class="task-item">
+                <div class="item-name">${t.name}</div>
+                <div class="item-due">${getDuePillHtml(t.due)}</div>
+                ${taskAction}
+            </div>
+        `;
+    });
+
+    listItems +=
+
+    active.innerHTML = listItems;
+
+
+    //show task history
+    var history = document.getElementById("active_list_history");
+    let completeTasks = activeList.tasks.filter(x=>x.complete!==false);
+    listItems = completeTasks.length > 0 ? "<h3>Complete</h3>" :"";
+
+
+
+    completeTasks.forEach((t,i)=> {
+
+        let taskAction = editingList ? 
+        `<div class="item-remove" onclick="removeTask('${t.id}')">
+            <p class="text-alert">REMOVE</p>
+         </div>`
+        :
+        `<div class="item-undo" onclick="undoComplete('${t.id}')">
+            <p>UNDO</p>
+         </div>`;
+
+        listItems+=`
+            <div class="history-item">
+                <div class="item-name">${t.name}</div>
+                <div class="item-complete-date">${moment(t.complete).format('DD/MM HH:mm')}</div>
+                ${taskAction}
+            </div>
+        `;
+    });
+
+    history.innerHTML = listItems;
 }
 
 function getDuePillHtml(taskDue){
@@ -289,13 +342,14 @@ function getWidget(el){
     
     pendingItems = "";
     let pendingTasks =el.tasks.filter(x=>x.complete===false);
-
+    let itemsVisible = window.innerWidth < 380 ? 1 : 2;
+    
     pendingTasks.forEach((t,i)=> {
-        if(i<3){ 
+        if(i<itemsVisible){ 
             pendingItems+=`
                 <li class="widget-task">
-                    <span class="widget-task-name">${t.name}</span>
                     <span class="widget-task-due">${getDuePillHtml(t.due)}</span>
+                    <span class="widget-task-name">${t.name}</span>
                 </li>`
         }
     });
@@ -456,7 +510,6 @@ function setTaskMinutes(el){
 
 }
 
-
 function cancelTask(){
 
     addingTask = false;
@@ -472,12 +525,13 @@ function cancelTask(){
 
 function createTask(){
 
+
     let id = activeListId;
     let name = document.getElementById("task_name_input").value;
 
     for (var i in taskLists) {
         if (taskLists[i].id == id) {
-        
+
             //TODO take the model and work out the due datetime of the task
             let due = "";
             let repeat = 0;
@@ -502,7 +556,6 @@ function createTask(){
                 due=datetime;  
             }
             
-        
             taskLists[i].tasks.push({
                 id:uuidv4(),
                 name: name,
@@ -547,6 +600,11 @@ function completeTask(taskId){
 
 }
 
+function editList(setting){
+    editingList = setting;
+    saveState();
+}
+
 function removeTask(taskId){
 
     let id = activeListId;
@@ -572,6 +630,30 @@ function removeTask(taskId){
     saveState();
 }
 
+function undoComplete(taskId){
+    let id = activeListId;
+
+    for (let i in taskLists) {
+        if (taskLists[i].id == id) {
+        
+            //found the task list
+            for(let j in taskLists[i].tasks){
+                if(taskLists[i].tasks[j].id == taskId){
+
+                    //uncomplete the task
+                    taskLists[i].tasks[j].complete = false;
+
+                    break;
+                }
+            }
+
+            break;
+        }    
+    }  
+    
+    saveState();
+}
+
 function showCreditsPrompt(){
     showCredits = true;
     drawView();
@@ -584,18 +666,22 @@ function closeCreditsPrompt(){
 
 function saveState(){	
     
-    
+
+   
     //sort the tasks in each tasklist by datetime
     taskLists.forEach(list =>{
         if(list.tasks && list.tasks.length > 0){
 
             let complete = list.tasks.filter(x=>x.complete!==false);
-            let pending = list.tasks.filter(x=>x.complete===false);
-
+            let pending = list.tasks.filter(x=>x.complete===false && x.due !== "");
+            let any = list.tasks.filter(x=>x.complete===false && x.due === "");
+            
             //sort pending
             pending.sort((left,right) => {
                 return moment.utc(left.due).diff(moment(right.due));
             });
+            
+            pending = pending.concat(any);
 
             //add complete to the end
             list.tasks = pending.concat(complete)
@@ -623,18 +709,20 @@ function saveState(){
     drawView();
 }
 
-function loadState(){
-    let savedLists = JSON.parse(localStorage.getItem("taskLists"));
+function loadState(reset){
 
-    taskLists = savedLists ? savedLists : [
-        {id:uuidv4(), name: "Myself", isMe:true, moment:moment().subtract({hours:3}), tasks:[
-            {
-                id:uuidv4(), 
-                name: "Complete this task",
-                due: moment().add(10,'minutes'),
-                complete: false
-            }
-        ]}
+    let savedLists = JSON.parse(localStorage.getItem("taskLists"));
+    if(!savedLists) reset = true;
+
+    taskLists = !reset ? savedLists : [
+        {
+            id:uuidv4(),
+            name: "", 
+            isMe:true, 
+            moment:moment().subtract({hours:3}), 
+            tasks:[
+                //{id:uuidv4(), name: "Complete this task", due: moment().add(10,'minutes'), complete: false}
+            ]}
     ];
 
 
@@ -647,10 +735,6 @@ function loadState(){
     saveState();
 }
 
-function timeSort(a,b){
-
-}
-
 function uuidv4() {
 //generates a guid
 return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -660,10 +744,7 @@ return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 
 
 
-//DO THIS SAFELY!!!
 loadState();
-
-
 
 window.addEventListener('resize', function() {
     drawView();
