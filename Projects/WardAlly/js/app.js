@@ -140,7 +140,7 @@ function renderDashboard(){
         buttonWidget.innerHTML = `   
             <div class="content">
                 <div class="new-bed-label">
-                    <img src="./img/bed.png"/>
+                    <img src="./img/bed-lg.png"/>
                     <p>CREATE A NEW BED</p>         
                 </div>
             </div>`;
