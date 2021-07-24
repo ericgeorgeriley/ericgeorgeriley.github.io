@@ -1,3 +1,14 @@
+
+//TODO
+/*
+    - Implement 'every' repeat logic on complete
+    - Help screens for empty/me/bed
+    --- Fix width and height of expanded widget (Safari)
+    --- Fix Me is on expanded widget
+    --- Fix clear bed to only say 'CLEAR' and show it on Me
+    - Handover View
+*/
+
 let taskLists = [];
 
 //show specific list view
@@ -210,9 +221,10 @@ function renderActiveList(){
     //toggle clear/remove bed
     let anyTasks = activeList.tasks.length > 0;
     let isMe = activeList.isMe;
-    document.getElementsByClassName("clear-bed")[0].style.display = isMe ? "none" : anyTasks ? "block" : "none";
+    document.getElementsByClassName("clear-bed")[0].style.display = anyTasks ? "block" : "none";
     document.getElementsByClassName("remove-bed")[0].style.display = isMe ? "none" : anyTasks ? "none" : "block";;
-
+    
+    document.getElementById("active_list_icon").src = isMe ? "./img/nurse.png" : src="./img/bed.png"
 
 }
 

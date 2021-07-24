@@ -45,7 +45,7 @@
         <div id="tasks_view" class="view hidden">
             <div class="widget-expanded">
                 <div class="widget-header">
-                    <div class="widget-icon"><img src="./img/bed.png"/></div>
+                    <div class="widget-icon"><img id="active_list_icon" src="./img/bed.png"/></div>
                     <div class="widget-title"><h2 id="active_list_name">Loading...</h2></div>
                     <div id="update_moment" class="widget-icon"><img class="moment-button" src="./img/heart.png"/></div>
                 </div>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="widget-footer">
-                    <p class="clear-bed text-alert" onclick="showClearBedPrompt()">CLEAR BED</p>
+                    <p class="clear-bed text-alert" onclick="showClearBedPrompt()">CLEAR</p>
                     <p class="remove-bed text-alert" onclick="removeBed()">REMOVE BED</p>
 
                     <p onclick="addTaskPrompt()">NEW TASK</p>
@@ -109,12 +109,12 @@
 
         <div id="clear_bed_modal" class="view hidden">
             <div class="modal">
-                <h4 class="text-alert">Are you sure you want to clear this bed?</h4>
-                <p >All tasks will be removed.</p>
+                <h4 class="text-alert">Are you sure you want to clear this list?</h4>
+                <p>All tasks will be removed.</p>
                                
                 <div class="modal-footer">
                     <p onclick="closeClearBedPrompt(false)">CANCEL</p>
-                    <p class="text-alert" onclick="closeClearBedPrompt(true)">CLEAR BED</p>
+                    <p class="text-alert" onclick="closeClearBedPrompt(true)">CLEAR</p>
                 </div>
             </div>
         </div>
