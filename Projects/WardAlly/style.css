@@ -107,17 +107,18 @@ h3{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    /*height: */
     max-height: calc(100vh - 30px);
     max-width: 400px;
     width: calc(100% - 2em);
     margin: 10px;
+    text-align: center;
     overflow: hidden;   
     box-sizing: border-box;
     border-radius: 15px;
     background: #ffffff;
     box-shadow:  10px 10px 20px #bebebe,
                  -10px -10px 20px #ffffff;
+    z-index: 9999;
 }
 
 input[type=text], input[type=number] {
@@ -481,7 +482,7 @@ input[type=text]:focus, input[type=number]:focus {
     flex-direction: column;
     align-content: flex-start;
     margin-right: 1em;
-    margin-bottom: 1em;
+    margin-bottom: .2em;
 }
 
 .widget-body .task-summary ul li.widget-task .widget-task-name {

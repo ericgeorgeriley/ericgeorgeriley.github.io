@@ -12,6 +12,7 @@ let taskPreposition = "IN"; //default to IN
 let taskHours = 0; //default to 0 hours
 let taskMinutes = 15; //default to 15 mins
 let orderByProity = true;
+let showClearBed = false;
 let showCredits = false;
 
 
@@ -31,28 +32,33 @@ function drawView(){
         renderDashboard();   
     }
 
+    var bedModal = document.getElementById("new_bed_modal");
     if(addingBed){//show new bed modal
-        var bedModal = document.getElementById("new_bed_modal");
         bedModal.classList.remove("hidden");
     } else {
-        var bedModal = document.getElementById("new_bed_modal");
         bedModal.classList.add("hidden");
     }
 
+    var taskModal = document.getElementById("new_task_modal");
     if(addingTask){//show new task modal
-        var bedModal = document.getElementById("new_task_modal");
-        bedModal.classList.remove("hidden");
+        taskModal.classList.remove("hidden");
     } else {
-        var bedModal = document.getElementById("new_task_modal");
-        bedModal.classList.add("hidden");
+        taskModal.classList.add("hidden");
     }
 
+
+    var clearBedModal = document.getElementById("clear_bed_modal");
+    if(showClearBed){//show clear bed modal
+        clearBedModal.classList.remove("hidden");
+    }else{
+        clearBedModal.classList.add("hidden");
+    }
+
+    var creditsModal = document.getElementById("credits_modal");
     if(showCredits){//show credits modal
-        var bedModal = document.getElementById("credits_modal");
-        bedModal.classList.remove("hidden");
+        creditsModal.classList.remove("hidden");
     } else {
-        var bedModal = document.getElementById("credits_modal");
-        bedModal.classList.add("hidden");
+        creditsModal.classList.add("hidden");
     }
 }
 
@@ -203,10 +209,9 @@ function renderActiveList(){
 
     //toggle clear/remove bed
     let anyTasks = activeList.tasks.length > 0;
-    document.getElementsByClassName("clear-bed")[0].style.display = anyTasks ? "block" : "none";
-    document.getElementsByClassName("remove-bed")[0].style.display = anyTasks ? "none" : "block";;
-
-
+    let isMe = activeList.isMe;
+    document.getElementsByClassName("clear-bed")[0].style.display = isMe ? "none" : anyTasks ? "block" : "none";
+    document.getElementsByClassName("remove-bed")[0].style.display = isMe ? "none" : anyTasks ? "none" : "block";;
 
 
 }
@@ -342,7 +347,7 @@ function getWidget(el){
     
     pendingItems = "";
     let pendingTasks =el.tasks.filter(x=>x.complete===false);
-    let itemsVisible = window.innerWidth < 380 ? 1 : 2;
+    let itemsVisible = window.innerWidth < 375 ? 1 : 2;
     
     pendingTasks.forEach((t,i)=> {
         if(i<itemsVisible){ 
@@ -654,6 +659,31 @@ function undoComplete(taskId){
     saveState();
 }
 
+function showClearBedPrompt(){
+    showClearBed = true;
+    drawView();
+}
+
+function closeClearBedPrompt(confirm){
+    showClearBed = false;
+
+    if(confirm){
+        let id = activeListId;
+
+        for (let i in taskLists) {
+            if (taskLists[i].id == id) {
+            
+                //found the task list
+                taskLists[i].tasks = [];
+                break;
+            }    
+        }  
+        saveState();
+    }else drawView();
+
+
+}
+
 function showCreditsPrompt(){
     showCredits = true;
     drawView();
@@ -717,7 +747,7 @@ function loadState(reset){
     taskLists = !reset ? savedLists : [
         {
             id:uuidv4(),
-            name: "", 
+            name: "Me", 
             isMe:true, 
             moment:moment().subtract({hours:3}), 
             tasks:[

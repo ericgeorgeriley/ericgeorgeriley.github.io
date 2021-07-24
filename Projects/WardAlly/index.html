@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="widget-footer">
-                    <p class="clear-bed text-alert">CLEAR BED</p>
+                    <p class="clear-bed text-alert" onclick="showClearBedPrompt()">CLEAR BED</p>
                     <p class="remove-bed text-alert" onclick="removeBed()">REMOVE BED</p>
 
                     <p onclick="addTaskPrompt()">NEW TASK</p>
@@ -103,6 +103,18 @@
                 <div class="modal-footer">
                     <p class="text-alert" onclick="cancelTask()">CANCEL</p>
                     <p onclick="createTask()">CREATE</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="clear_bed_modal" class="view hidden">
+            <div class="modal">
+                <h4 class="text-alert">Are you sure you want to clear this bed?</h4>
+                <p >All tasks will be removed.</p>
+                               
+                <div class="modal-footer">
+                    <p onclick="closeClearBedPrompt(false)">CANCEL</p>
+                    <p class="text-alert" onclick="closeClearBedPrompt(true)">CLEAR BED</p>
                 </div>
             </div>
         </div>
