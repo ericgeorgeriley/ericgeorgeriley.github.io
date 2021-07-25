@@ -244,7 +244,6 @@ input[type=text]:focus, input[type=number]:focus {
     background:transparent;
     color: var(--color-red);
     font-weight: 700;
-
 }
 
 .priority-button, .handover-button{
@@ -277,6 +276,36 @@ input[type=text]:focus, input[type=number]:focus {
     width: 2em;
 }
 
+.handover-item {
+    width: 100%;
+    margin:0 1em 0 1em;
+}
+.handover-item h4{
+    margin-bottom: 0;
+    color: var(--color-blue);
+
+}
+
+.handover-item ul {
+    list-style: none;
+    padding:0;
+    margin-top: 0;
+
+}
+
+.handover-item ul li {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom:1px solid var(--color-lightgrey);
+}
+
+.handover-item ul li span {
+    text-align: right;
+    min-width: 75px;
+    border-left: 1px solid var(--color-lightgrey);
+}
+
 .status-bar{
     flex:1;
     margin: 1em 1em 1em 1em;
@@ -290,6 +319,8 @@ input[type=text]:focus, input[type=number]:focus {
     background: #ffffff;
     box-shadow:  5px 5px 10px #d1d1d1,
                  -5px -5px 10px #ffffff;
+
+
 }
 
 .status-bar span {
@@ -301,6 +332,8 @@ input[type=text]:focus, input[type=number]:focus {
 }
 .status-bar span.status-overdue{
     background-color: white;
+    color: var(--color-red);
+    line-height: 1em;
     border: 2px dotted var(--color-red);
     border-top-left-radius: 2em;
     border-bottom-left-radius: 2em;

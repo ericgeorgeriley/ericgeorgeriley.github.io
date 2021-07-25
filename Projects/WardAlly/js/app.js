@@ -1,12 +1,9 @@
 
 //TODO
 /*
-    - Implement 'every' repeat logic on complete
     - Help screens for empty/me/bed
-    --- Fix width and height of expanded widget (Safari)
-    --- Fix Me is on expanded widget
-    --- Fix clear bed to only say 'CLEAR' and show it on Me
     - Handover View
+    -BUG empty beds are highest priority; they should be least..
 */
 
 let taskLists = [];
@@ -16,6 +13,7 @@ let activeListId = null;
 let editingList = false;
 //show the handover view
 let handoverView = false;
+let handoverPriorityToggle = false;
 
 let addingBed = false;
 let addingTask = false;
@@ -37,6 +35,7 @@ function drawView(){
     }
     else if(handoverView){
         //show handover list
+        renderHandover();
     }
     else {
         //show dashboard
@@ -155,10 +154,38 @@ function togglePriorityOrder(){
     saveState();
 }
 
+function toggleHandoverView(){
+    handoverView = !handoverView;
+
+    let button = document.getElementsByClassName("handover-button")[0];
+    
+    if(handoverView){
+        button.classList.add("active");
+
+        //default the handover view to alphabetical
+        if(orderByProity){
+            togglePriorityOrder();
+            //toggle priority when handover view is closed
+            handoverPriorityToggle = true;
+        }
+    } 
+    else {
+        button.classList.remove("active");
+
+        if(handoverPriorityToggle && orderByProity == false){
+            handoverPriorityToggle = false;
+            togglePriorityOrder();
+        }
+    } 
+
+    saveState();
+}
+
 function renderDashboard(){
 
         //display the correct view
         document.getElementById("tasks_view").classList.add("hidden");
+        document.getElementById("handover_view").classList.add("hidden");
         document.getElementById("dashboard_view").classList.remove("hidden");
         
 
@@ -212,6 +239,7 @@ function renderActiveList(){
 
     //display the correct view
     document.getElementById("dashboard_view").classList.add("hidden");
+    document.getElementById("handover_view").classList.add("hidden");
     document.getElementById("tasks_view").classList.remove("hidden");
 
 
@@ -247,6 +275,42 @@ function renderActiveList(){
     
     document.getElementById("active_list_icon").src = isMe ? "./img/nurse.png" : src="./img/bed.png"
 
+}
+
+function renderHandover(){
+        //display the correct view
+        document.getElementById("dashboard_view").classList.add("hidden");
+        document.getElementById("tasks_view").classList.add("hidden");
+        document.getElementById("handover_view").classList.remove("hidden");
+
+        //render the handover
+        var container = document.getElementById("handover_view");
+        container.innerHTML = "";
+
+        
+        taskLists.forEach(el => { 
+            
+            let tasks = ``;
+            if(el.tasks.length > 0)
+                el.tasks.forEach(t =>{
+                    tasks += `<li>${t.name}<span>${t.due !== "" ? moment(t.due).format("DD/MM HH:mm"):"Anytime"}</span></li>`;
+                });
+
+
+            
+            let handoverItem = document.createElement("div");
+            handoverItem.classList.add("handover-item");
+            handoverItem.innerHTML =`
+                <h4>${el.name}</h4>
+                <ul>
+                    ${tasks}
+                </ul>
+            `;
+
+            container.appendChild(handoverItem);
+        });
+        
+    
 }
 
 function getTasksHtml(activeList){

@@ -27,7 +27,7 @@
             </div>
         </div>
         <div id="status_view">
-            <div class="handover-button" onclick="togglePriorityOrder()">
+            <div class="handover-button" onclick="toggleHandoverView()">
                 <img src="./img/handover.png"/>
             </div>
             <div class="priority-button active" onclick="togglePriorityOrder()">
@@ -67,6 +67,10 @@
                     <p onclick="addTaskPrompt()">NEW TASK</p>
                     <p onclick="closeActiveList()">DONE</p>
                 </div>            </div>
+        </div>
+        <div id="handover_view" class="view hidden">
+            <span>loading handover...</span>
+            <!--shows the handover view-->
         </div>
 
 
@@ -137,10 +141,6 @@
             </div>
         </div>
 
-        <div id="handover_view" class="view hidden">
-            <span>loading handover...</span>
-            <!--shows the handover view-->
-        </div>
         <div class="navbar footer">
             <div>
                 <p>
