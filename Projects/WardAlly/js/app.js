@@ -115,11 +115,32 @@ function updateStatusBar(){
     let total = s_overdue+s_alert+s_warn+s_normal+s_any;
     let showBar = total > 0;
 
-    document.getElementsByClassName("status-overdue")[0].style.width = (showBar? (s_overdue/total)*100 : 0) +"%";
-    document.getElementsByClassName("status-alert")[0].style.width = (showBar? (s_alert/total)*100 : 0) +"%";
-    document.getElementsByClassName("status-warn")[0].style.width = (showBar? (s_warn/total)*100 : 0) +"%";
-    document.getElementsByClassName("status-normal")[0].style.width = (showBar? (s_normal/total)*100 : 0) +"%";
-    document.getElementsByClassName("status-any")[0].style.width = (showBar? (s_any/total)*100 : 0) +"%";
+    let overdueBar = document.getElementsByClassName("status-overdue")[0];
+    let alertBar = document.getElementsByClassName("status-alert")[0];
+    let warnBar = document.getElementsByClassName("status-warn")[0];
+    let normalBar = document.getElementsByClassName("status-normal")[0];
+    let anyBar = document.getElementsByClassName("status-any")[0];
+
+    let overduePercent = (s_overdue/total)*100;
+    overdueBar.style.width = (showBar? overduePercent : 0) +"%";
+    overdueBar.innerText = overduePercent > 10 ? s_overdue > 0 ? s_overdue : "" : "";
+
+    let alertPercent = (s_alert/total)*100;
+    alertBar.style.width = (showBar? alertPercent : 0) +"%";
+    alertBar.innerText = alertPercent > 10 ? s_alert > 0 ? s_alert : "" : "";
+
+    let warnPercent = (s_warn/total)*100;
+    warnBar.style.width = (showBar? warnPercent : 0) +"%";
+    warnBar.innerText = warnPercent > 10 ? s_warn > 0 ? s_warn : "" : "";
+
+    let normalPercent = (s_normal/total)*100;
+    normalBar.style.width = (showBar? normalPercent : 0) +"%";
+    normalBar.innerText = normalPercent > 10 ? s_normal > 0 ? s_normal : "" : "";
+
+    let anyPercent = (s_any/total)*100;
+    anyBar.style.width = (showBar? anyPercent : 0) +"%";
+    anyBar.innerText = anyPercent > 10 ? s_any > 0 ? s_any : "" : "";
+
 
 }
 
@@ -262,10 +283,11 @@ function getTasksHtml(activeList){
             <img src="./img/tick.png"/>
         </div>`;
 
+        let repeatIcon = t.repeat>0 ? `<img src="./img/repeat.png"/>` : ``;
         listItems+=`
             <div class="task-item">
                 <div class="item-name">${t.name}</div>
-                <div class="item-due">${getDuePillHtml(t.due)}</div>
+                <div class="item-due">${repeatIcon}${getDuePillHtml(t.due)}</div>
                 ${taskAction}
             </div>
         `;
@@ -310,8 +332,8 @@ function getDuePillHtml(taskDue){
     let pill = ``;
     let dueModel = getDueState(taskDue);
 
-    if(dueModel.state === 0) pill = `<span class="pill pill-green">ANY</span>`;
-    if(dueModel.state === 1) pill = `<span class="pill">${dueModel.label}</span>`;
+    if(dueModel.state === 0) pill = `<span class="pill">ANY</span>`;
+    if(dueModel.state === 1) pill = `<span class="pill pill-green">${dueModel.label}</span>`;
     if(dueModel.state === 2) pill = `<span class="pill pill-amber">${dueModel.label}</span>`;
     if(dueModel.state === 3) pill = `<span class="pill pill-red">${dueModel.label}</span>`;
     if(dueModel.state === 4) pill = `<span class="pill pill-alert">OVERDUE ${dueModel.label}</span>`;
@@ -605,6 +627,17 @@ function completeTask(taskId){
 
                     //found the task
                     taskLists[i].tasks[j].complete = moment();
+                    
+                    let thisTask = taskLists[i].tasks[j];
+                    if(thisTask.repeat > 0){
+                        //create next task
+                        document.getElementById("task_name_input").value = thisTask.name;
+                        taskPreposition = "EVERY";
+                        taskMinutes = thisTask.repeat;
+                        createTask();
+                    }
+
+
                     break;
                 }
             }
