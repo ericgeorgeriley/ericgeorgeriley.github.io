@@ -732,7 +732,7 @@ function completeTask(taskId){
         }    
     }  
     
-    saveState();
+    setTimeout(saveState, 3000);
 
 }
 
