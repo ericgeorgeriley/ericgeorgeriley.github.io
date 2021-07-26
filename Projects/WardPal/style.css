@@ -372,7 +372,16 @@ input[type=text]:focus, input[type=number]:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+    transition: all .3s linear
+}
+
+.task-item {
+    height: 34px;
+}
+
+.task-item.hide{
+    opacity: 0;
+    height: 0px;
 }
 
 .task-item{

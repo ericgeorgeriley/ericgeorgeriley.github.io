@@ -23,6 +23,15 @@ let orderByProity = true;
 let showClearBed = false;
 let showCredits = false;
 
+//animations
+let successAnim = bodymovin.loadAnimation({
+    container: document.getElementById("success_svg"),
+    autoplay:false,
+    loop:false,
+    animationData:successPulse,
+    renderer:'svg'
+});
+
 
 function drawView(){
 
@@ -75,21 +84,14 @@ function drawView(){
 
 function attachAnimations(){
 
-    let successContainer = document.getElementById("success_svg");
-    let successAnim = bodymovin.loadAnimation({
-        wrapper:successContainer,
-        animType: 'svg',
-        loop: false,
-        autoplay:false,
-        path: './success_pulse.json'
-    });
-
     var buttons = document.getElementsByClassName("item-complete");
-
-
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', ()=>{
+
+            successAnim.addEventListener('complete', ()=>successAnim.goToAndStop(0));
             successAnim.goToAndPlay(0,true);
+
+
         });
     }
 }
@@ -371,7 +373,7 @@ function getTasksHtml(activeList){
 
         let repeatIcon = t.repeat>0 ? `<img src="./img/repeat.png"/>` : ``;
         listItems+=`
-            <div class="task-item">
+            <div class="task-item" id="task-item-${t.id}">
                 <div class="item-name">${t.name}</div>
                 <div class="item-due">${repeatIcon}${getDuePillHtml(t.due)}</div>
                 ${taskAction}
@@ -704,6 +706,10 @@ function createTask(){
 function completeTask(taskId){
     let id = activeListId;
 
+    //start the hide animation
+    let taskItem = document.getElementById(`task-item-${taskId}`);
+    taskItem.classList.add("hide");
+
     for (let i in taskLists) {
         if (taskLists[i].id == id) {
         
@@ -732,7 +738,8 @@ function completeTask(taskId){
         }    
     }  
     
-    setTimeout(saveState, 3000);
+    //allow animation to run
+    setTimeout(saveState, 500);
 
 }
 
