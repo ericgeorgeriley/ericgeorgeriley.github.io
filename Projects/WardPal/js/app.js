@@ -69,6 +69,29 @@ function drawView(){
     } else {
         creditsModal.classList.add("hidden");
     }
+
+    attachAnimations();
+}
+
+function attachAnimations(){
+
+    let successContainer = document.getElementById("success_svg");
+    let successAnim = bodymovin.loadAnimation({
+        wrapper:successContainer,
+        animType: 'svg',
+        loop: false,
+        autoplay:false,
+        path: './success_pulse.json'
+    });
+
+    var buttons = document.getElementsByClassName("item-complete");
+
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', ()=>{
+            successAnim.goToAndPlay(0,true);
+        });
+    }
 }
 
 function updateStatusBar(){

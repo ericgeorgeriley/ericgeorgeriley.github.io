@@ -7,7 +7,7 @@
     --color-lightgrey: #b0b0b0;
     --color-blue: #4791FF;
     --color-red: #ED7593;
-    --color-green: #6CD447;
+    --color-green: #2CD994;
     --color-amber: #FFA560;
 
 }
@@ -353,6 +353,17 @@ input[type=text]:focus, input[type=number]:focus {
 
 .status-bar span.status-any{
     background-color: var(--color-lightgrey);
+}
+
+.success-svg {
+    position: fixed;
+    width: 200px;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 999;
 }
 
 .task-item, .history-item {
