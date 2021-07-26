@@ -2,7 +2,6 @@
 //TODO
 /*
     - Help screens for empty/me/bed
-    - Handover View
     -BUG empty beds are highest priority; they should be least..
 */
 
