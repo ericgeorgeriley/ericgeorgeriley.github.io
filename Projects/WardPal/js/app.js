@@ -32,6 +32,13 @@ let successAnim = bodymovin.loadAnimation({
     renderer:'svg'
 });
 
+let heartAnim = bodymovin.loadAnimation({
+    container: document.getElementById("heart_svg"),
+    autoplay:false,
+    loop:false,
+    animationData:heartPulse,
+    renderer:'svg'
+});
 
 function drawView(){
 
@@ -84,9 +91,9 @@ function drawView(){
 
 function attachAnimations(){
 
-    var buttons = document.getElementsByClassName("item-complete");
-    for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener('click', ()=>{
+    var completeButtons = document.getElementsByClassName("item-complete");
+    for (var i = 0; i < completeButtons.length; i++) {
+        completeButtons[i].addEventListener('click', ()=>{
 
             successAnim.addEventListener('complete', ()=>successAnim.goToAndStop(0));
             successAnim.goToAndPlay(0,true);
@@ -94,6 +101,13 @@ function attachAnimations(){
 
         });
     }
+
+    var momentButton = document.getElementById("update_moment");
+    momentButton.addEventListener('click', ()=>{
+
+        heartAnim.addEventListener('complete', ()=>heartAnim.goToAndStop(0));
+        heartAnim.goToAndPlay(0,true);
+    });
 }
 
 function updateStatusBar(){
