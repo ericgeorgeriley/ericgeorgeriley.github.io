@@ -19,16 +19,17 @@ let addingTask = false;
 let taskPreposition = "IN"; //default to IN
 let taskHours = 0; //default to 0 hours
 let taskMinutes = 15; //default to 15 mins
-let orderByProity = true;
+let orderByPriority = true;
 let showClearBed = false;
 let showCredits = false;
+let showReset = false;
 
 //animations
 let successAnim = bodymovin.loadAnimation({
     container: document.getElementById("success_svg"),
     autoplay:false,
     loop:false,
-    animationData:successPulse,
+    animationData:animation.successPulse,
     renderer:'svg'
 });
 
@@ -36,26 +37,37 @@ let heartAnim = bodymovin.loadAnimation({
     container: document.getElementById("heart_svg"),
     autoplay:false,
     loop:false,
-    animationData:heartPulse,
+    animationData:animation.heartPulse,
+    renderer:'svg'
+});
+
+let addedAnim = bodymovin.loadAnimation({
+    container: document.getElementById("added_svg"),
+    autoplay:false,
+    loop:false,
+    animationData:animation.addedPulse,
     renderer:'svg'
 });
 
 function drawView(){
 
-    updateStatusBar();
+    if(!showReset){
+        updateStatusBar();
 
-    if(activeListId){
-        //show list view
-        renderActiveList();
+        if(activeListId){
+            //show list view
+            renderActiveList();
+        }
+        else if(handoverView){
+            //show handover list
+            renderHandover();
+        }
+        else {
+            //show dashboard
+            renderDashboard();   
+        }
     }
-    else if(handoverView){
-        //show handover list
-        renderHandover();
-    }
-    else {
-        //show dashboard
-        renderDashboard();   
-    }
+
 
     var bedModal = document.getElementById("new_bed_modal");
     if(addingBed){//show new bed modal
@@ -71,6 +83,20 @@ function drawView(){
         taskModal.classList.add("hidden");
     }
 
+    var resetModal = document.getElementById("reset_modal");
+    if(showReset){//show reset modal
+
+        //hide all views
+        document.getElementById("status_view").classList.add("hidden");
+        document.getElementById("tasks_view").classList.add("hidden");
+        document.getElementById("handover_view").classList.add("hidden");
+        document.getElementById("dashboard_view").classList.add("hidden");
+
+
+        resetModal.classList.remove("hidden");
+    }else{
+        resetModal.classList.add("hidden");
+    }
 
     var clearBedModal = document.getElementById("clear_bed_modal");
     if(showClearBed){//show clear bed modal
@@ -85,6 +111,7 @@ function drawView(){
     } else {
         creditsModal.classList.add("hidden");
     }
+
 
     attachAnimations();
 }
@@ -108,6 +135,12 @@ function attachAnimations(){
         heartAnim.addEventListener('complete', ()=>heartAnim.goToAndStop(0));
         heartAnim.goToAndPlay(0,true);
     });
+
+    var createButton = document.getElementById("create_task");
+    createButton.addEventListener('click', ()=>{
+        addedAnim.addEventListener('complete', ()=>addedAnim.goToAndStop(0));
+        addedAnim.goToAndPlay(0,true);
+    })
 }
 
 function updateStatusBar(){
@@ -143,7 +176,8 @@ function updateStatusBar(){
         }
     }
 
-
+    //shows the view if it was hidden (by reset prompt)
+    document.getElementById("status_view").classList.remove("hidden");
 
     //hides the overdue border when nothing to show
     if(s_overdue<1)document.getElementsByClassName("status-overdue")[0].style.display = "none";
@@ -182,11 +216,11 @@ function updateStatusBar(){
 }
 
 function togglePriorityOrder(){
-    orderByProity = !orderByProity;
+    orderByPriority = !orderByPriority;
 
     let button = document.getElementsByClassName("priority-button")[0];
     
-    if(orderByProity) button.classList.add("active");
+    if(orderByPriority) button.classList.add("active");
     else button.classList.remove("active");
 
     saveState();
@@ -201,7 +235,7 @@ function toggleHandoverView(){
         button.classList.add("active");
 
         //default the handover view to alphabetical
-        if(orderByProity){
+        if(orderByPriority){
             togglePriorityOrder();
             //toggle priority when handover view is closed
             handoverPriorityToggle = true;
@@ -210,7 +244,7 @@ function toggleHandoverView(){
     else {
         button.classList.remove("active");
 
-        if(handoverPriorityToggle && orderByProity == false){
+        if(handoverPriorityToggle && orderByPriority == false){
             handoverPriorityToggle = false;
             togglePriorityOrder();
         }
@@ -329,10 +363,22 @@ function renderHandover(){
         taskLists.forEach(el => { 
             
             let tasks = ``;
-            if(el.tasks.length > 0)
+            if(el.tasks.filter(x=>x.complete == false).length > 0){
                 el.tasks.forEach(t =>{
-                    tasks += `<li>${t.name}<span>${t.due !== "" ? moment(t.due).format("DD/MM HH:mm"):"Anytime"}</span></li>`;
+                    if(t.complete == false){
+
+                        let name = t.name.length > 0 ? t.name : ".";
+                        let overdue = getDueState(t.due).state== 4;
+                        let dueClass = overdue? "text-alert" : "";
+
+                        tasks += `<li>${name}<span class="${dueClass}">${t.due !== "" ? moment(t.due).format("DD/MM HH:mm"):"<small> Anytime </small>"}</span></li>`;
+
+                    }
                 });
+            } else {
+                //no tasks
+                tasks+="<li><small>No outstanding tasks</small></li>";
+            }
 
 
             
@@ -558,7 +604,8 @@ function createBed(){
         id: bedId,
         name: bedInput.value,
         isMe:false,
-        tasks:[]
+        tasks:[],
+        moment:moment()
     });
     bedInput.value = "";
     addingBed = false;
@@ -836,6 +883,20 @@ function closeClearBedPrompt(confirm){
 
 }
 
+function showResetPrompt(){
+    showReset = true;
+    drawView();
+}
+
+function closeResetPrompt(confirm){
+    showReset = false;
+    
+    if(confirm)
+        loadState(true);
+
+    drawView();
+}
+
 function showCreditsPrompt(){
     showCredits = true;
     drawView();
@@ -870,22 +931,36 @@ function saveState(){
         }
     }); 
 
-    if(orderByProity){
+    if(orderByPriority){
         //sort the tasklists by soonest task datetime
+       
         taskLists.sort((left,right)=>{
 
-            let leftTask = left.tasks.length>0 ? left.tasks[0].due : 0;
-            let rightTask = right.tasks.length>0? right.tasks[0].due: 0;
+            let leftTask = left.tasks.length > 0 ? 
+                left.tasks[0].due : 0;
+
+            let rightTask = right.tasks.length > 0 ? 
+                right.tasks[0].due: 0;
+
             return moment.utc(leftTask).diff(moment(rightTask));
         });
+
+        //then move lists with no incomplete tasks to the end
+        let complete = taskLists.filter(x=>x.tasks.filter(y=>y.complete === false).length == 0);
+        let incomplete = taskLists.filter(x=>x.tasks.filter(y=>y.complete === false).length > 0);
+
+        taskLists = incomplete.concat(complete);
+
+
     } else {
         //sort the tasklists alphabetically
         taskLists.sort((a, b) => a.name.localeCompare(b.name))
     }
 
-
     //always put the main tasklist first
     taskLists.sort(function(x,y){ return x.isMe == true ? -1 : y.isMe == true ? 1 : 0; });
+
+
 
     localStorage.setItem("taskLists", JSON.stringify(taskLists));
     drawView();
