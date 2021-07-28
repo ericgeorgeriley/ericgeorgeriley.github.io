@@ -94,6 +94,26 @@ h3{
     padding-bottom: 40px;
 }
 
+.helper {
+    margin: 3em;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    
+    opacity: .6;
+}
+
+.helper p {
+    padding-bottom: 1em;
+}
+
+.helper .highlight {
+    font-weight: 700;
+    font-size: smaller;
+    color:var(--color-blue);
+    text-transform: uppercase;
+}
+
 .hidden, #status_view.hidden {
     display: none;
 }

@@ -304,7 +304,23 @@ function renderDashboard(){
             if((taskLists.length + 1) % 2 != 0){ //not divisible by 2
                 container.appendChild(blankWidget);
             }
-        } 
+        }
+        
+        if(taskLists.length === 1 && taskLists[0].tasks.length === 0){
+            //this is an empty ward, show welcome message
+
+            let welcomeHelper = document.createElement("div");
+            welcomeHelper.className = "helper welcome-helper";
+
+            welcomeHelper.innerHTML = `
+            <h2>Welcome!</h2>
+            <p> Tap on <span class="highlight">create a new bed</span> to start building your ward.</p>
+            <p>New to WardPal? There's a handy <span class="highlight">help</span> guide if you get stuck.</p>
+            `;
+
+            container.appendChild(welcomeHelper);
+
+        }
 }
 
 function renderActiveList(){
@@ -331,11 +347,22 @@ function renderActiveList(){
     if(activeList.tasks.length>0)
         getTasksHtml(activeList);
     else{
-        //this should show some help info with arrows
-        //about moments
-        //new task
-        //etc..
-        getTasksHtml(activeList);
+
+        let isMe = activeList.isMe;
+
+        var helperTarget = document.getElementById("active_list_tasks");
+
+        let welcomeHelper = document.createElement("div");
+        welcomeHelper.className = "helper welcome-helper";
+
+        welcomeHelper.innerHTML = `
+        <p> You can create tasks for this bed by tapping on the <span class="highlight">new task</span> button below.</p>
+        <p>Remember to take time throughout the day to think about the patients in your care, tap <img width="20" src="./img/heart.png" width=.5em/> to record a moment. 
+        Learn more about moments</p>
+        `;
+
+        helperTarget.innerHTML = "";
+        helperTarget.appendChild(welcomeHelper);
 
     }
 
