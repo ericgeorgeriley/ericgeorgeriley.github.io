@@ -981,7 +981,7 @@ function loadState(reset) {
   saveState();
 }
 
-async function loadHandover() {
+function loadHandover() {
   console.log("loading handover");
   const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
   const wId = uuidv4();
@@ -998,12 +998,12 @@ async function loadHandover() {
       body: taskLists,
     }
   ).then(
-    (result) => {
-      let tasklist = await result.json();
-      console.log("sucess!", tasklist);
-    },
+    (result) => result.json(),
     (error) => console.log(error)
-  );
+  ).then(data=>{
+      console.log("got data", data);
+  })
+  .catch(console.error);
 }
 
 function uuidv4() {
