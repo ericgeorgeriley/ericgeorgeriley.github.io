@@ -986,9 +986,6 @@ function loadHandover() {
   const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
   const wId = uuidv4();
 
-  let appJson = {
-      wardData: taskLists
-    }
 
 console.log("attempting", appJson)
 
@@ -1001,7 +998,7 @@ console.log("attempting", appJson)
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: appJson,
+      body: taskLists,
     }
   ).then(
     (result) => result.json(),
@@ -1009,7 +1006,7 @@ console.log("attempting", appJson)
   ).then(data=>{
       console.log("got data", data);
   })
-  .catch(console.error);
+  .catch(err => console.error(err));
 }
 
 function uuidv4() {
