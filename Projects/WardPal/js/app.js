@@ -986,6 +986,12 @@ function loadHandover() {
   const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
   const wId = uuidv4();
 
+  let appJson = {
+      wardData: taskLists
+    }
+
+console.log("attempting", appJson)
+
   fetch(
     "https://getpantry.cloud/apiv1/pantry/11625bbc-a050-424e-b13f-42a15692e161/basket/" +
       wId,
@@ -995,7 +1001,7 @@ function loadHandover() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: {warddata: taskLists},
+      body: appJson,
     }
   ).then(
     (result) => result.json(),
