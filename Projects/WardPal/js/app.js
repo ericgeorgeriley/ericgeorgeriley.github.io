@@ -981,7 +981,7 @@ function loadState(reset) {
   saveState();
 }
 
-function loadHandover() {
+async function loadHandover() {
   console.log("loading handover");
   const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
   const wId = uuidv4();
