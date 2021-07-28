@@ -1047,7 +1047,7 @@ function loadHandover(){
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(taskLists)
+    body: taskLists
   }).then((result)=>{
         console.log(result);
   },
