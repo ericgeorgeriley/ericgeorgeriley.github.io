@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 
 * {
     font-family: 'Open Sans', sans-serif;
@@ -96,15 +97,34 @@ h3{
 
 .helper {
     margin: 3em;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    
+    justify-content: center;
     opacity: .6;
+    font-size: 1.2em;
+    text-align: justify;
 }
 
-.helper p {
-    padding-bottom: 1em;
+
+.helper div:first-child {
+    border: 2px dashed var(--color-blue);
+    border-radius: 15px;
+    padding:.5em;
+    max-width: 400px;
+    margin:10px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+.helper p, .helper p a, .helper p small {
+    font-family: 'Patrick Hand', cursive;
+    padding-bottom: .5em;
+}
+
+.helper h2 {
+    font-family: 'Patrick Hand', cursive;
+    margin-top: 0;
 }
 
 .helper .highlight {
@@ -116,6 +136,20 @@ h3{
 
 .hidden, #status_view.hidden {
     display: none;
+}
+
+.no-tasks {
+    display: flex;
+    flex-direction: column;
+    opacity: .5;
+    align-items:  center;
+    margin: 2em;
+    font-weight: 600;
+}
+
+.no-tasks img {
+    width: 3em;
+    margin-bottom: .5em;
 }
 
 .note-label{

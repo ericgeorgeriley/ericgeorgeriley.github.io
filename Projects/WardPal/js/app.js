@@ -313,9 +313,11 @@ function renderDashboard(){
             welcomeHelper.className = "helper welcome-helper";
 
             welcomeHelper.innerHTML = `
-            <h2>Welcome!</h2>
-            <p> Tap on <span class="highlight">create a new bed</span> to start building your ward.</p>
-            <p>New to WardPal? There's a handy <span class="highlight">help</span> guide if you get stuck.</p>
+            <div>
+                <h2>Welcome to WardPal!</h2>
+                <p> Tap on <span class="highlight">create a new bed</span> to start building your ward.</p>
+                <p>New to WardPal? There's a handy <span class="highlight">help</span> guide if you get stuck.</p>
+            <div>
             `;
 
             container.appendChild(welcomeHelper);
@@ -344,24 +346,41 @@ function renderActiveList(){
         saveState();
     }
 
-    if(activeList.tasks.length>0)
+    if(activeList.tasks.length > 0)
         getTasksHtml(activeList);
     else{
 
-        let isMe = activeList.isMe;
-
+        //clear out any old task data
         var helperTarget = document.getElementById("active_list_tasks");
+        helperTarget.innerHTML = "";
+        document.getElementById("active_list_history").innerHTML="";
 
+        //show the no-tasks icon
+        let noTasks = document.createElement("div");
+        noTasks.className = "no-tasks"
+        noTasks.innerHTML = `<img src="./img/bookmark.png"/><p>No tasks</p>`;
+
+        helperTarget.appendChild(noTasks);
+
+
+        
+        
+
+        //create the helper div
         let welcomeHelper = document.createElement("div");
         welcomeHelper.className = "helper welcome-helper";
 
-        welcomeHelper.innerHTML = `
-        <p> You can create tasks for this bed by tapping on the <span class="highlight">new task</span> button below.</p>
-        <p>Remember to take time throughout the day to think about the patients in your care, tap <img width="20" src="./img/heart.png" width=.5em/> to record a moment. 
-        Learn more about moments</p>
-        `;
+        let taskText = activeList.isMe ? `<p> This is your personal task list! tap the <span class="highlight">new task</span> button below.</p>` 
+        : `<p> You can create tasks for this bed by tapping on the <span class="highlight">new task</span> button below.</p>`;
+        let momentText = activeList.isMe ? `<p>Take a moment for yourself, tap <img width="20" src="./img/heart.png" width=.5em/> to record a moment.</p>` 
+        : `<p>Take a moment <img width="15" src="./img/heart.png" width=.5em/> to think about the patients in your care.</p>`
 
-        helperTarget.innerHTML = "";
+        welcomeHelper.innerHTML = `<div>
+            ${taskText}
+            ${momentText}
+            <p><small><a href="https://google.com">Learn more</a> about moments.<small></p>
+        </div>`;
+
         helperTarget.appendChild(welcomeHelper);
 
     }
