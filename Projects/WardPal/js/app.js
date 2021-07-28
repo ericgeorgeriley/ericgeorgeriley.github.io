@@ -987,8 +987,6 @@ function loadHandover() {
   const wId = uuidv4();
 
 
-console.log("attempting", appJson)
-
   fetch(
     "https://getpantry.cloud/apiv1/pantry/11625bbc-a050-424e-b13f-42a15692e161/basket/" +
       wId,
