@@ -1030,12 +1030,29 @@ function loadState(reset){
 
 
 
-
-
-
-
     window.setInterval(saveState,10000);
     saveState();
+}
+
+function loadHandover(){
+
+    console.log("loading handover");
+    const pantryId = '11625bbc-a050-424e-b13f-42a15692e161';
+    const wId = uuidv4();
+
+
+    fetch('https://getpantry.cloud/apiv1/pantry/11625bbc-a050-424e-b13f-42a15692e161/basket/' + wId, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(taskLists)
+  }).then((result)=>{
+        console.log(result);
+  },
+  (error)=>console.log(error));
+
 }
 
 function uuidv4() {
@@ -1046,7 +1063,7 @@ return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
 }
 
 
-
+loadHandover();
 loadState();
 
 window.addEventListener('resize', function() {

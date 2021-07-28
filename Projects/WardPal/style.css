@@ -129,7 +129,7 @@ h3{
 
 .helper .highlight {
     font-weight: 700;
-    font-size: smaller;
+    font-size: .6em;
     color:var(--color-blue);
     text-transform: uppercase;
 }
