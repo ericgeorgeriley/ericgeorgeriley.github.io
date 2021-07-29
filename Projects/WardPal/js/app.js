@@ -959,52 +959,96 @@ function saveState() {
   drawView();
 }
 
-function loadState(reset) {
-  let savedLists = JSON.parse(localStorage.getItem("taskLists"));
-  if (!savedLists) reset = true;
+async function loadState(reset) {
+  let wardId = getWardId();
+  if (wardId) {
+    //load the shared handover
+    console.log("loading state from handover");
 
-  taskLists = !reset
-    ? savedLists
-    : [
-        {
-          id: uuidv4(),
-          name: "Me",
-          isMe: true,
-          moment: moment().subtract({ hours: 3 }),
-          tasks: [
-            //{id:uuidv4(), name: "Complete this task", due: moment().add(10,'minutes'), complete: false}
-          ],
-        },
-      ];
+    let ward = await getHandover(wardId);
+    taskLists = ward.wardData;
+  } else {
+    //load local storage
+    console.log("loading state from localstorage");
 
-  window.setInterval(saveState, 10000);
+    let savedLists = JSON.parse(localStorage.getItem("taskLists"));
+    if (!savedLists) reset = true;
+
+    taskLists = !reset
+      ? savedLists
+      : [
+          {
+            id: uuidv4(),
+            name: "Me",
+            isMe: true,
+            moment: moment().subtract({ hours: 3 }),
+            tasks: [],
+          },
+        ];
+  }
+
+  //setup the live update
+  window.setInterval(saveState, 15000);
   saveState();
 }
 
-function loadHandover() {
-  console.log("loading handover");
-  const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
-  const wId = uuidv4();
+function getShareHandoverURL() {
 
+    return new Promise(resolve=>{
+        const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
+        const wId = uuidv4();
+    
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({ wardData: taskLists }),
+          redirect: "follow",
+        };
+    
+        fetch(
+          `https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`,
+          requestOptions
+        )
+          .then((response) => response.text())
+          .then((result) => {
+            resolve(`https://wardpal.com/?wid=${wId}`);
+          })
+          .catch((error) => console.log("error", error));
+    });
+}
 
-  fetch(
-    "https://getpantry.cloud/apiv1/pantry/11625bbc-a050-424e-b13f-42a15692e161/basket/" +
-      wId,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: taskLists,
-    }
-  ).then(
-    (result) => result.json(),
-    (error) => console.log(error)
-  ).then(data=>{
-      console.log("got data", data);
-  })
-  .catch(err => console.error(err));
+function getHandover(wId) {
+  return new Promise((resolve) => {
+    const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    fetch(
+      `https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        console.log("got result!", result);
+        resolve(JSON.parse(result));
+      })
+      .catch((error) => console.log("error", error));
+  });
+}
+
+function getWardId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("wid");
 }
 
 function uuidv4() {
@@ -1017,9 +1061,16 @@ function uuidv4() {
   );
 }
 
-loadHandover();
-loadState();
+//load WardPal!
+  loadState();
+  //get a handover link!
+  let url = getShareHandoverURL();
 
+  Promise.resolve(url).then(href => {
+      document.getElementById("credits").innerHTML += `<a href="${href}">${href}</a>`
+  });
+
+//listen for resize so we can rerender the view
 window.addEventListener(
   "resize",
   function () {
