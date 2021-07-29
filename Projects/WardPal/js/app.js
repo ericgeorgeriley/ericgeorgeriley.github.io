@@ -992,6 +992,19 @@ async function loadState(reset) {
   saveState();
 }
 
+function getHandoverLink() {
+  //get a handover link!
+  let url = getShareHandoverURL();
+
+  Promise.resolve(url).then(href => {
+
+      let target = document.getElementById("handover_link");
+      target.src = href;
+      target.innerText = href;
+      
+  });
+}
+
 function getShareHandoverURL() {
 
     return new Promise(resolve=>{
@@ -1039,11 +1052,33 @@ function getHandover(wId) {
     )
       .then((response) => response.text())
       .then((result) => {
-        console.log("got result!", result);
         resolve(JSON.parse(result));
+
+        //delete handover data once it has been recieved
+        burnHandover(pantryId, wId);
       })
       .catch((error) => console.log("error", error));
   });
+}
+
+function burnHandover(pantryId, wId){
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+   
+    var requestOptions = {
+      method: 'DELETE',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    
+    fetch(`https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+          //do something when completed?
+      })
+      .catch(error => console.log('error', error));
 }
 
 function getWardId() {
@@ -1063,12 +1098,7 @@ function uuidv4() {
 
 //load WardPal!
   loadState();
-  //get a handover link!
-  let url = getShareHandoverURL();
 
-  Promise.resolve(url).then(href => {
-      document.getElementById("credits").innerHTML += `<a href="${href}">${href}</a>`
-  });
 
 //listen for resize so we can rerender the view
 window.addEventListener(
