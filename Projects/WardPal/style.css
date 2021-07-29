@@ -218,7 +218,7 @@ input[type=text]:focus, input[type=number]:focus {
     padding: 1em;
     border-radius: 15px;
     border: 1px solid transparent;
-    min-width: 2em;
+    min-width: 3em;
 
     transition: box-shadow 0.2s linear,
         background-color 0.2s linear;
@@ -230,9 +230,15 @@ input[type=text]:focus, input[type=number]:focus {
     color: var(--color-blue);
     border: 1px solid #e6e6e6;
 
-    background: linear-gradient(145deg, #e6e6e6, #ffffff);
-    box-shadow:  5px 5px 12px #d1d1d1,
+    border:2px solid var(--color-blue);
+    background: #ffffff;
+    box-shadow:  5px 5px 10px #d1d1d1,
+                 -5px -5px 10px #ffffff;
+
+    /*background: linear-gradient(145deg, #e6e6e6, #ffffff);
+      box-shadow:  5px 5px 12px #d1d1d1,
                 -5px -5px 12px #ffffff;
+                */
 }
 
 .modal .time-picker-container {
@@ -330,6 +336,25 @@ input[type=text]:focus, input[type=number]:focus {
 .handover-button img {
     width: 2em;
 }
+
+.handover-options{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 1em;
+    font-weight: 700;
+    color: var(--color-blue);
+}
+.handover-options p {
+    border-radius: 2em;
+    padding: .5em 1em .5em 1em;
+    font-size: .8em;
+    border:1px solid var(--color-blue);
+    background: #ffffff;
+    box-shadow:  5px 5px 10px #d1d1d1,
+                 -5px -5px 10px #ffffff;
+}
+
 
 .handover-item {
     width: 100%;

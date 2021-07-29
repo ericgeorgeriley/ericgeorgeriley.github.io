@@ -1,7 +1,10 @@
 //TODO
 /*
-    - Help screens for empty/me/bed
-    -BUG empty beds are highest priority; they should be least..
+    -BUG remove param after load to prevent errors on refreshing!!
+    - handover button on handover
+    - fix when handover fails to load
+    - favicon.ico
+    - share popup
 */
 
 let taskLists = [];
@@ -399,7 +402,9 @@ function renderHandover() {
 
   //render the handover
   var container = document.getElementById("handover_view");
-  container.innerHTML = "";
+
+    //share handover link
+    container.innerHTML = `<div class="handover-options"><p onclick="getHandoverLink()">SHARE HANDOVER</p></div>`;
 
   taskLists.forEach((el) => {
     let tasks = ``;
@@ -998,9 +1003,29 @@ function getHandoverLink() {
 
   Promise.resolve(url).then(href => {
 
-      let target = document.getElementById("handover_link");
-      target.href = href;
-      target.innerText = href;
+      if (navigator.share) {
+        navigator.share({
+          title: 'WardPal Handover!',
+          url: href
+        }).then(() => {
+          console.log('Thanks for sharing!');
+        })
+        .catch(console.error);
+      } else {
+        
+
+            //share not supported
+            //copy the link to clipboard instead
+            const el = document.createElement('textarea');
+            el.value = href;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+
+            console.log("share not supported by browser; copied link to clipboard instead");
+      }
       
   });
 }
@@ -1053,6 +1078,10 @@ function getHandover(wId) {
       .then((response) => response.text())
       .then((result) => {
         resolve(JSON.parse(result));
+
+        //remove id from url to prevent error on reload
+        let url = location.protocol + '//' + location.host + location.pathname;
+        window.history.replaceState(null,"WardPal",url);
 
         //delete handover data once it has been recieved
         burnHandover(pantryId, wId);
