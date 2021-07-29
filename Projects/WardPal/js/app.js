@@ -999,7 +999,7 @@ function getHandoverLink() {
   Promise.resolve(url).then(href => {
 
       let target = document.getElementById("handover_link");
-      target.src = href;
+      target.href = href;
       target.innerText = href;
       
   });
@@ -1027,7 +1027,7 @@ function getShareHandoverURL() {
         )
           .then((response) => response.text())
           .then((result) => {
-            resolve(`https://wardpal.com/?wid=${wId}`);
+            resolve(`http://wardpal.com/?id=${wId}`);
           })
           .catch((error) => console.log("error", error));
     });
@@ -1083,7 +1083,7 @@ function burnHandover(pantryId, wId){
 
 function getWardId() {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("wid");
+  return urlParams.get("id");
 }
 
 function uuidv4() {
