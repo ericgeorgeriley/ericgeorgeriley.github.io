@@ -3,8 +3,6 @@
     - ??show an error?? fix when handover fails to load
 
 
-    --widget notifs
-
     -- WardPal PRO - look into what would need to change to make
     --             - a fully collaborative version of wardpal
     --             - where you could invite people to the ward
@@ -31,6 +29,7 @@ let orderByPriority = true;
 let showClearBed = false;
 let showCredits = false;
 let showReset = false;
+let showHandoverFailed = false;
 
 //animations
 let loadingAnim = bodymovin.loadAnimation({
@@ -127,6 +126,14 @@ function drawView() {
     creditsModal.classList.remove("hidden");
   } else {
     creditsModal.classList.add("hidden");
+  }
+
+  var handoverFailedModal = document.getElementById("handover_failed_modal");
+  if (showHandoverFailed) {
+    //show credits modal
+    handoverFailedModal.classList.remove("hidden");
+  } else {
+    handoverFailedModal.classList.add("hidden");
   }
 
   attachAnimations();
@@ -991,6 +998,11 @@ function closeCreditsPrompt() {
   drawView();
 }
 
+function closeHandoverFailedPrompt() {
+    showHandoverFailed = false;
+    drawView();
+  }
+
 function saveState() {
   //sort the tasks in each tasklist by datetime
   taskLists.forEach((list) => {
@@ -1055,6 +1067,7 @@ async function loadState(reset) {
 
     if (ward == null) {
       //fallback to localstorage
+      showHandoverFailed = true;
       loadFromLocalStorage();
     } else {
       //update the taskLists
@@ -1065,7 +1078,7 @@ async function loadState(reset) {
   }
 
   //setup the live update
-  //window.setInterval(saveState, 15000);
+  window.setInterval(saveState, 15000);
   saveState();
 }
 
@@ -1090,6 +1103,14 @@ function loadFromLocalStorage(reset) {
 }
 
 function getHandoverLink() {
+
+  let shareButton = document.getElementById("share_handover");
+  shareButton.innerText = "SHARING...";
+  shareButton.onclick = () => void 0;
+  shareButton.classList.add("sharing");
+
+
+
   //get a handover link!
   let url = getShareHandoverURL();
 
@@ -1103,11 +1124,8 @@ function getHandoverLink() {
         .then(() => {
           //update the share button to show success
           //and disable onclick to prevent re-clicks
-          let shareButton = document.getElementById("share_handover");
           disableShareText = "SHARED!";
           shareButton.innerText = disableShareText;
-          shareButton.classList.add("shared");
-          shareButton.onclick = () => void 0;
         })
         .catch(console.error);
     } else {
@@ -1122,16 +1140,14 @@ function getHandoverLink() {
 
       //update the share button to show copied link
       //and disable onclick to prevent re-clicks
-      let shareButton = document.getElementById("share_handover");
       disableShareText = "LINK COPIED!";
       shareButton.innerText = disableShareText;
-      shareButton.classList.add("shared");
-      shareButton.onclick = () => void 0;
 
       console.log(
         "share api not supported by browser; copied link to clipboard instead"
       );
     }
+    shareButton.className ="shared";
   });
 }
 
@@ -1188,9 +1204,6 @@ function getHandover(wId) {
       .then((result) => {
         resolve(JSON.parse(result));
 
-        //remove id from url to prevent error on reload
-        let url = location.protocol + "//" + location.host + location.pathname;
-        window.history.replaceState(null, "WardPal", url);
 
         //delete handover data once it has been recieved
         burnHandover(pantryId, wId);
@@ -1198,6 +1211,10 @@ function getHandover(wId) {
       .catch((error) => {
         console.log("error", error);
         resolve(null);
+      }).finally(()=>{
+        //remove id from url to prevent error on reload
+        let url = location.protocol + "//" + location.host + location.pathname;
+        window.history.replaceState(null, "WardPal", url);
       });
   });
 }
