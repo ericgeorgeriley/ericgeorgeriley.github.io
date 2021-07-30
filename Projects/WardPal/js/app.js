@@ -5,6 +5,13 @@
     - fix when handover fails to load
     - favicon.ico
     - share popup
+
+
+    -- WardPal PRO - look into what would need to change to make
+    --             - a fully collaborative version of wardpal
+    --             - where you could invite people to the ward
+    --             - and work on the same copy!
+    --             - would need to be a paid service for better data storage..
 */
 
 let taskLists = [];
@@ -15,6 +22,7 @@ let editingList = false;
 //show the handover view
 let handoverView = false;
 let handoverPriorityToggle = false;
+let disableShareText = "";
 
 let addingBed = false;
 let addingTask = false;
@@ -27,6 +35,15 @@ let showCredits = false;
 let showReset = false;
 
 //animations
+let loadingAnim = bodymovin.loadAnimation({
+  container: document.getElementById("loading_svg"),
+  autoplay: true,
+  loop: true,
+  animationData: animation.loadingSpinner,
+  renderer: "svg",
+});
+loadingAnim.goToAndPlay(0, true); //start this immediately
+
 let successAnim = bodymovin.loadAnimation({
   container: document.getElementById("success_svg"),
   autoplay: false,
@@ -403,8 +420,11 @@ function renderHandover() {
   //render the handover
   var container = document.getElementById("handover_view");
 
-    //share handover link
-    container.innerHTML = `<div class="handover-options"><p onclick="getHandoverLink()">SHARE HANDOVER</p></div>`;
+  //share handover button
+  container.innerHTML =
+    disableShareText == ""
+      ? `<div class="handover-options"><p id="share_handover" onclick="getHandoverLink()">SHARE HANDOVER</p></div>`
+      : `<div class="handover-options"><p id="share_handover" class="shared">${disableShareText}</p></div>`;
 
   taskLists.forEach((el) => {
     let tasks = ``;
@@ -968,28 +988,18 @@ async function loadState(reset) {
   let wardId = getWardId();
   if (wardId) {
     //load the shared handover
-    console.log("loading state from handover");
-
     let ward = await getHandover(wardId);
-    taskLists = ward.wardData;
+
+    if (ward == null) {
+      //fallback to localstorage
+      loadFromLocalStorage();
+    }else{
+        //update the taskLists
+        taskLists = ward.wardData;
+    } 
+
   } else {
-    //load local storage
-    console.log("loading state from localstorage");
-
-    let savedLists = JSON.parse(localStorage.getItem("taskLists"));
-    if (!savedLists) reset = true;
-
-    taskLists = !reset
-      ? savedLists
-      : [
-          {
-            id: uuidv4(),
-            name: "Me",
-            isMe: true,
-            moment: moment().subtract({ hours: 3 }),
-            tasks: [],
-          },
-        ];
+    loadFromLocalStorage(reset);
   }
 
   //setup the live update
@@ -997,68 +1007,105 @@ async function loadState(reset) {
   saveState();
 }
 
+function loadFromLocalStorage(reset) {
+  //load local storage
+  console.log("loading state from localstorage");
+
+  let savedLists = JSON.parse(localStorage.getItem("taskLists"));
+  if (!savedLists) reset = true;
+
+  taskLists = !reset
+    ? savedLists
+    : [
+        {
+          id: uuidv4(),
+          name: "Me",
+          isMe: true,
+          moment: moment().subtract({ hours: 3 }),
+          tasks: [],
+        },
+      ];
+}
+
 function getHandoverLink() {
   //get a handover link!
   let url = getShareHandoverURL();
 
-  Promise.resolve(url).then(href => {
-
-      if (navigator.share) {
-        navigator.share({
-          title: 'WardPal Handover!',
-          url: href
-        }).then(() => {
-          console.log('Thanks for sharing!');
+  Promise.resolve(url).then((href) => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "WardPal Handover!",
+          url: href,
+        })
+        .then(() => {
+          //update the share button to show success
+          //and disable onclick to prevent re-clicks
+          let shareButton = document.getElementById("share_handover");
+          disableShareText = "SHARED!";
+          shareButton.innerText = disableShareText;
+          shareButton.classList.add("shared");
+          shareButton.onclick = () => void 0;
         })
         .catch(console.error);
-      } else {
-        
+    } else {
+      //share not supported
+      //copy the link to clipboard instead
+      const el = document.createElement("textarea");
+      el.value = href;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
 
-            //share not supported
-            //copy the link to clipboard instead
-            const el = document.createElement('textarea');
-            el.value = href;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+      //update the share button to show copied link
+      //and disable onclick to prevent re-clicks
+      let shareButton = document.getElementById("share_handover");
+      disableShareText = "LINK COPIED!";
+      shareButton.innerText = disableShareText;
+      shareButton.classList.add("shared");
+      shareButton.onclick = () => void 0;
 
-
-            console.log("share not supported by browser; copied link to clipboard instead");
-      }
-      
+      console.log(
+        "share api not supported by browser; copied link to clipboard instead"
+      );
+    }
   });
 }
 
 function getShareHandoverURL() {
+  return new Promise((resolve) => {
+    const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
+    const wId = uuidv4();
 
-    return new Promise(resolve=>{
-        const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
-        const wId = uuidv4();
-    
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-    
-        var requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({ wardData: taskLists }),
-          redirect: "follow",
-        };
-    
-        fetch(
-          `https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`,
-          requestOptions
-        )
-          .then((response) => response.text())
-          .then((result) => {
-            resolve(`http://wardpal.com/?id=${wId}`);
-          })
-          .catch((error) => console.log("error", error));
-    });
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({ wardData: taskLists }),
+      redirect: "follow",
+    };
+
+    fetch(
+      `https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        resolve(`http://wardpal.com/?id=${wId}`);
+      })
+      .catch((error) => {
+        console.log("error", error);
+        resolve(null);
+      });
+  });
 }
 
 function getHandover(wId) {
+  console.log("loading state from handover");
+
   return new Promise((resolve) => {
     const pantryId = "11625bbc-a050-424e-b13f-42a15692e161";
 
@@ -1080,34 +1127,38 @@ function getHandover(wId) {
         resolve(JSON.parse(result));
 
         //remove id from url to prevent error on reload
-        let url = location.protocol + '//' + location.host + location.pathname;
-        window.history.replaceState(null,"WardPal",url);
+        let url = location.protocol + "//" + location.host + location.pathname;
+        window.history.replaceState(null, "WardPal", url);
 
         //delete handover data once it has been recieved
         burnHandover(pantryId, wId);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => {
+        console.log("error", error);
+        resolve(null);
+      });
   });
 }
 
-function burnHandover(pantryId, wId){
+function burnHandover(pantryId, wId) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    
-   
-    var requestOptions = {
-      method: 'DELETE',
-      headers: myHeaders,
-      redirect: 'follow'
-    };
-    
-    fetch(`https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-          //do something when completed?
-      })
-      .catch(error => console.log('error', error));
+  var requestOptions = {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  fetch(
+    `https://getpantry.cloud/apiv1/pantry/${pantryId}/basket/${wId}`,
+    requestOptions
+  )
+    .then((response) => response.text())
+    .then((result) => {
+      //do something when completed?
+    })
+    .catch((error) => console.log("error", error));
 }
 
 function getWardId() {
@@ -1126,8 +1177,7 @@ function uuidv4() {
 }
 
 //load WardPal!
-  loadState();
-
+loadState();
 
 //listen for resize so we can rerender the view
 window.addEventListener(

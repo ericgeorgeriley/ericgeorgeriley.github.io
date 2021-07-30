@@ -355,6 +355,11 @@ input[type=text]:focus, input[type=number]:focus {
                  -5px -5px 10px #ffffff;
 }
 
+.handover-options p.shared{
+    border:1px solid var(--color-green);
+    color: var(--color-green);
+}
+
 
 .handover-item {
     width: 100%;
@@ -445,6 +450,8 @@ input[type=text]:focus, input[type=number]:focus {
 
 .svg {
     position: fixed;
+    display: flex;
+    flex-direction: column-reverse;
     width: 200px;
     top: 25%;
     left: 50%;
@@ -452,6 +459,14 @@ input[type=text]:focus, input[type=number]:focus {
     transform: translate(-50%, -25%);
     pointer-events: none;
     z-index: 999;
+}
+
+.svg .svg-label{
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-lightgrey);
+    font-size: .8em;
+    font-weight: 700;
 }
 
 .task-item, .history-item {
