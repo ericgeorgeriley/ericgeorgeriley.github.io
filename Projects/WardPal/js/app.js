@@ -973,10 +973,10 @@ function showResetPrompt() {
   drawView();
 }
 
-function closeResetPrompt(confirm) {
+async function closeResetPrompt(confirm) {
   showReset = false;
 
-  if (confirm) loadState(true);
+  if (confirm) await loadState(true);
 
   drawView();
 }
