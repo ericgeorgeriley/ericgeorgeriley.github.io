@@ -629,10 +629,11 @@ input[type=text]:focus, input[type=number]:focus {
 
 .widget .widget-footer {
     position: absolute;
+    width: calc(100% - 1.5em);
     bottom: 10px;
 }
 
-.widget .widget-header .widget-title,  .widget .widget-footer .widget-totals{
+.widget .widget-header .widget-title{
     flex:1;
     text-align: right;
     padding-right: 1em;
@@ -679,6 +680,50 @@ input[type=text]:focus, input[type=number]:focus {
 .widget-body .task-summary ul li.widget-task .widget-task-due {
     text-align: right;
 }
+
+.widget-totals{
+    flex:1;
+    text-align: right;
+    font-weight: 600;
+    font-size: 1.2em;
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    
+}
+
+.widget-totals .widget-total {
+    
+    margin: 0 .2em 0 .2em;
+
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    display: block;
+    text-align: center;
+    font-weight: 700;
+    color: white;
+    font-size: .6em;
+    border-radius: 2em;
+    background-color: var(--color-grey);
+    
+}
+
+.widget-total.widget-total-overdue{
+    color: var(--color-red);
+    background-color: white;
+    border: 2px dotted var(--color-red);
+}
+.widget-total.widget-total-alert{
+    background-color: var(--color-red);
+}
+.widget-total.widget-total-warn{
+    background-color: var(--color-amber);
+}
+.widget-total.widget-total-normal{
+    background-color: var(--color-green);
+}
+
 
 .new-bed-label {
     padding-right: 1em;

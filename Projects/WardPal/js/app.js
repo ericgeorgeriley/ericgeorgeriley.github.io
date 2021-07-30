@@ -1,11 +1,9 @@
 //TODO
 /*
-    -BUG remove param after load to prevent errors on refreshing!!
-    - handover button on handover
-    - fix when handover fails to load
-    - favicon.ico
-    - share popup
+    - ??show an error?? fix when handover fails to load
 
+
+    --widget notifs
 
     -- WardPal PRO - look into what would need to change to make
     --             - a fully collaborative version of wardpal
@@ -586,6 +584,7 @@ function getWidget(el) {
   let itemsVisible = window.innerWidth < 375 ? 1 : 2;
 
   pendingTasks.forEach((t, i) => {
+    //only show most recent items
     if (i < itemsVisible) {
       pendingItems += `
                 <li class="widget-task">
@@ -596,6 +595,8 @@ function getWidget(el) {
                 </li>`;
     }
   });
+
+  let totals = getTaskTotalsHtml(pendingTasks);
 
   let icon = el.isMe ? "./img/nurse.png" : "./img/bed.png";
 
@@ -615,7 +616,9 @@ function getWidget(el) {
         </div>
         <div class="widget-footer">
             <div class="widget-icon" style="opacity:${momentOpacity}"><img src="./img/heart.png"/></div>
-            <div class="widget-totals"><p>${/*el.tasks.length*/ " "}</p></div>
+            <div class="widget-totals">
+                    ${totals}
+            </div>
         </div>            
     `;
 
@@ -624,6 +627,66 @@ function getWidget(el) {
   widget.onclick = () => openActiveList(el.id);
 
   return widget;
+}
+
+function getTaskTotalsHtml(tasks) {
+  let totals = getTaskTotals(tasks);
+
+  let totalHtml = ``;
+
+  if (totals.overdue > 0)
+    totalHtml += `<div class="widget-total widget-total-overdue">${totals.overdue}</div>`;
+  if (totals.alert > 0)
+    totalHtml += `<div class="widget-total widget-total-alert">${totals.alert}</div>`;
+  if (totals.warn > 0)
+    totalHtml += `<div class="widget-total widget-total-warn">${totals.warn}</div>`;
+  if (totals.normal > 0)
+    totalHtml += `<div class="widget-total widget-total-normal">${totals.normal}</div>`;
+  if (totals.any > 0)
+    totalHtml += `<div class="widget-total widget-total-any">${totals.any}</div>`;
+
+    return totalHtml;
+}
+
+function getTaskTotals(tasks) {
+  let s_overdue = (s_alert = s_warn = s_normal = s_any = 0);
+
+  for (let i in tasks) {
+    if (tasks[i].complete !== false) continue;
+
+    let duestate = getDueState(tasks[i].due);
+    switch (duestate.state) {
+      case 4:
+        s_overdue++;
+        break;
+      case 3:
+        s_alert++;
+        break;
+      case 2:
+        s_warn++;
+        break;
+      case 1:
+        s_normal++;
+        break;
+      case 0:
+        s_any++;
+        break;
+      default:
+        break;
+    }
+  }
+
+  let result = {
+    overdue: s_overdue,
+    alert: s_alert,
+    warn: s_warn,
+    normal: s_normal,
+    any: s_any,
+  };
+
+  console.log(result);
+
+  return result;
 }
 
 function getMoment(datetime) {
@@ -993,17 +1056,16 @@ async function loadState(reset) {
     if (ward == null) {
       //fallback to localstorage
       loadFromLocalStorage();
-    }else{
-        //update the taskLists
-        taskLists = ward.wardData;
-    } 
-
+    } else {
+      //update the taskLists
+      taskLists = ward.wardData;
+    }
   } else {
     loadFromLocalStorage(reset);
   }
 
   //setup the live update
-  window.setInterval(saveState, 15000);
+  //window.setInterval(saveState, 15000);
   saveState();
 }
 
