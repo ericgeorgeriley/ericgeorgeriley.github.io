@@ -338,7 +338,7 @@ function renderDashboard() {
             <div>
                 <h2>Welcome to WardPal!</h2>
                 <p> Tap on <span class="highlight">create a new bed</span> to start building your ward.</p>
-                <p>New to WardPal? There's a handy <span class="highlight">help</span> guide if you get stuck.</p>
+                <p> There's also a handy <span class="highlight">help</span> guide if you get stuck.</p>
             <div>
             `;
 
@@ -603,7 +603,7 @@ function getWidget(el) {
     }
   });
 
-  let totals = getTaskTotalsHtml(pendingTasks);
+  let totals = getTaskTotalsHtml(pendingTasks.splice(itemsVisible,pendingTasks.length));
 
   let icon = el.isMe ? "./img/nurse.png" : "./img/bed.png";
 
@@ -690,8 +690,6 @@ function getTaskTotals(tasks) {
     normal: s_normal,
     any: s_any,
   };
-
-  console.log(result);
 
   return result;
 }
