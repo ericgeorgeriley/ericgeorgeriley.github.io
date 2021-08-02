@@ -1,13 +1,10 @@
 //TODO
 /*
-    - ??show an error?? fix when handover fails to load
-
-
     -- WardPal PRO - look into what would need to change to make
     --             - a fully collaborative version of wardpal
     --             - where you could invite people to the ward
     --             - and work on the same copy!
-    --             - would need to be a paid service for better data storage..
+    --             - would need to be a paid service for data storage..
 */
 
 let taskLists = [];
@@ -758,6 +755,7 @@ function openActiveList(id) {
 
 function closeActiveList(e) {
   setActiveList(null);
+  editingList = false;
   drawView();
 }
 
