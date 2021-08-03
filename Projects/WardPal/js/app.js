@@ -390,7 +390,7 @@ function renderActiveList() {
     welcomeHelper.innerHTML = `<div>
             ${taskText}
             ${momentText}
-            <p><small><a href="https://google.com">Learn more</a> about moments.<small></p>
+            <p><small><a href="https://ericgeorgeriley.wordpress.com/2021/08/01/introducing-wardpal/#moments-section">Learn more</a> about moments.<small></p>
         </div>`;
 
     helperTarget.appendChild(welcomeHelper);
