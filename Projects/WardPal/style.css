@@ -3,6 +3,7 @@
 
 * {
   font-family: "Open Sans", sans-serif;
+  user-select: none;
 
   --color-grey: #747474;
   --color-lightgrey: #b0b0b0;
@@ -272,11 +273,17 @@ input[type="number"]:focus {
   color: var(--color-blue);
 }
 
-.moment-button {
+#update_moment{
+    cursor: pointer;
+}
+
+#update_moment img.moment-button {
   border-radius: 50%;
   border: 2px solid var(--color-red);
   background: linear-gradient(145deg, #ffffff, #d9d9d9);
   box-shadow: 5px 5px 9px #cdcdcd, -5px -5px 9px #ffffff;
+  width: 2.5em;
+  padding: .25em;
 }
 
 .margin-footer p {

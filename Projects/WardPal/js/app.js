@@ -7,28 +7,26 @@
     --             - would need to be a paid service for data storage..
 */
 
-let taskLists = [];
+//---------------Config
+let updateInterval = 15000; //how often the ui updates (ms)
+let taskLists = []; //ward data; beds/tasks
+let activeListId = null; //show specific list view
+let editingList = false; //show edit controls in list view
+let handoverView = false; //show the handover view
+let addingBed = false; //show the add bed modal
+let addingTask = false; //show the add task modal
+let showClearBed = false; //show the clear beds modal
+let showCredits = false; //show the credits modal
+let showReset = false; //show the reset ward modal
+let showHandoverFailed = false; //show handover error modal
+let taskPreposition = "IN"; //default preposition for a new task
+let taskHours = 0; //default hours for a new task
+let taskMinutes = 15; //default minutes for a new task
+let orderByPriority = true; //order beds by task due time
+let handoverPriorityToggle = false; //toggle priority when switching from handover
+let disableShareText = ""; //text in the share button after sharing completes
 
-//show specific list view
-let activeListId = null;
-let editingList = false;
-//show the handover view
-let handoverView = false;
-let handoverPriorityToggle = false;
-let disableShareText = "";
-
-let addingBed = false;
-let addingTask = false;
-let taskPreposition = "IN"; //default to IN
-let taskHours = 0; //default to 0 hours
-let taskMinutes = 15; //default to 15 mins
-let orderByPriority = true;
-let showClearBed = false;
-let showCredits = false;
-let showReset = false;
-let showHandoverFailed = false;
-
-//animations
+//-------------- Animations
 let loadingAnim = bodymovin.loadAnimation({
   container: document.getElementById("loading_svg"),
   autoplay: true,
@@ -62,6 +60,7 @@ let addedAnim = bodymovin.loadAnimation({
   renderer: "svg",
 });
 
+//---------------- UI
 function drawView() {
   if (!showReset) {
     updateStatusBar();
@@ -287,7 +286,7 @@ function renderDashboard() {
   buttonWidget.id = "new-bed-widget";
   buttonWidget.className = "widget";
   buttonWidget.onclick = function () {
-    addBedPrompt();
+    showAddBedPrompt();
   };
   buttonWidget.innerHTML = `   
             <div class="content">
@@ -600,7 +599,9 @@ function getWidget(el) {
     }
   });
 
-  let totals = getTaskTotalsHtml(pendingTasks.splice(itemsVisible,pendingTasks.length));
+  let totals = getTaskTotalsHtml(
+    pendingTasks.splice(itemsVisible, pendingTasks.length)
+  );
 
   let icon = el.isMe ? "./img/nurse.png" : "./img/bed.png";
 
@@ -649,7 +650,7 @@ function getTaskTotalsHtml(tasks) {
   if (totals.any > 0)
     totalHtml += `<div class="widget-total widget-total-any">${totals.any}</div>`;
 
-    return totalHtml;
+  return totalHtml;
 }
 
 function getTaskTotals(tasks) {
@@ -701,36 +702,6 @@ function getMoment(datetime) {
 function selectTaskList(id) {
   //used to show the modal for a taskList
   activeListId = id;
-}
-
-function addBedPrompt() {
-  addingBed = true;
-  drawView();
-  document.getElementById("bed_name_input").focus();
-}
-
-function cancelBed() {
-  let bedInput = document.getElementById("bed_name_input");
-  bedInput.value = "";
-  addingBed = false;
-  drawView();
-}
-
-function createBed() {
-  let bedInput = document.getElementById("bed_name_input");
-
-  let bedId = uuidv4();
-  taskLists.push({
-    id: bedId,
-    name: bedInput.value,
-    isMe: false,
-    tasks: [],
-    moment: moment(),
-  });
-  bedInput.value = "";
-  addingBed = false;
-  setActiveList(bedId);
-  saveState();
 }
 
 function removeBed() {
@@ -826,7 +797,6 @@ function createTask() {
 
   for (var i in taskLists) {
     if (taskLists[i].id == id) {
-      //TODO take the model and work out the due datetime of the task
       let due = "";
       let repeat = 0;
 
@@ -949,6 +919,37 @@ function undoComplete(taskId) {
   saveState();
 }
 
+//------------ Modals
+
+function showAddBedPrompt() {
+  addingBed = true;
+  drawView();
+  document.getElementById("bed_name_input").focus();
+}
+
+function closeAddBedPrompt(confirm) {
+  let bedInput = document.getElementById("bed_name_input");
+
+  if (confirm) { //create the bed
+    let bedId = uuidv4();
+    taskLists.push({
+      id: bedId,
+      name: bedInput.value,
+      isMe: false,
+      tasks: [],
+      moment: moment(),
+    });
+    setActiveList(bedId); //open the bed
+  }
+
+  //clear and close the modal
+  bedInput.value = "";
+  addingBed = false;
+
+  if (confirm) saveState();
+  else drawView();
+}
+
 function showClearBedPrompt() {
   showClearBed = true;
   drawView();
@@ -995,9 +996,12 @@ function closeCreditsPrompt() {
 }
 
 function closeHandoverFailedPrompt() {
-    showHandoverFailed = false;
-    drawView();
-  }
+  showHandoverFailed = false;
+  drawView();
+}
+
+
+//-------- Persistence / Data
 
 function saveState() {
   //sort the tasks in each tasklist by datetime
@@ -1074,7 +1078,7 @@ async function loadState(reset) {
   }
 
   //setup the live update
-  window.setInterval(saveState, 15000);
+  window.setInterval(saveState, updateInterval);
   saveState();
 }
 
@@ -1099,15 +1103,12 @@ function loadFromLocalStorage(reset) {
 }
 
 function getHandoverLink() {
-
   let shareButton = document.getElementById("share_handover");
   shareButton.innerText = "SHARING...";
   shareButton.onclick = () => void 0;
   shareButton.classList.add("sharing");
 
-
-
-  //get a handover link!
+  //get a handover link
   let url = getShareHandoverURL();
 
   Promise.resolve(url).then((href) => {
@@ -1143,7 +1144,7 @@ function getHandoverLink() {
         "share api not supported by browser; copied link to clipboard instead"
       );
     }
-    shareButton.className ="shared";
+    shareButton.className = "shared";
   });
 }
 
@@ -1200,14 +1201,14 @@ function getHandover(wId) {
       .then((result) => {
         resolve(JSON.parse(result));
 
-
         //delete handover data once it has been recieved
         burnHandover(pantryId, wId);
       })
       .catch((error) => {
         console.log("error", error);
         resolve(null);
-      }).finally(()=>{
+      })
+      .finally(() => {
         //remove id from url to prevent error on reload
         let url = location.protocol + "//" + location.host + location.pathname;
         window.history.replaceState(null, "WardPal", url);
@@ -1251,7 +1252,8 @@ function uuidv4() {
   );
 }
 
-//load WardPal!
+
+//----------- Start WardPal
 loadState();
 
 //listen for resize so we can rerender the view
