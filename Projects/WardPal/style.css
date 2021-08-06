@@ -433,6 +433,7 @@ input[type="number"]:focus {
   font-weight: 700;
   color: white;
   font-size: 0.8em;
+  transition: width .5s ease-in;
 }
 .status-bar span.status-overdue {
   background-color: white;
@@ -718,7 +719,7 @@ input[type="number"]:focus {
   color: white;
   font-size: 0.6em;
   border-radius: 2em;
-  background-color: var(--color-grey);
+  background-color: var(--color-lightgrey);
 }
 
 .widget-total.widget-total-overdue {
