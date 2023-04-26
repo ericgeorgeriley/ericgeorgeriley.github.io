@@ -259,7 +259,7 @@ function update() {
 }
 cacs.push(new cacy(cac.v1));
 
-function generate(doubleGenRatio = 0.2, regen = time, repeat = true) //20%
+function generate(doubleGenRatio = 0.4, regen = time, repeat = true) //20%
 {
     setTimeout(() => {
 
