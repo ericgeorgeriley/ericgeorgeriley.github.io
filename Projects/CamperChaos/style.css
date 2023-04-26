@@ -1,3 +1,6 @@
+.container {
+    user-select: none;
+}
 #src img {
     display: none;
 }
