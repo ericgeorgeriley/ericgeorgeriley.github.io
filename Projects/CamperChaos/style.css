@@ -10,7 +10,7 @@
     bottom: 0;
     top: 0;
     height: 350px;
-    font-family: "Caveat Brush", cursive; 
+    font-family: "Caveat", cursive; 
 
     color: #343434;
 }
@@ -57,7 +57,7 @@
     background: url('./restart_hover.png');  
 }
 #copy {
-    font-family: "Caveat Brush", cursive; 
+    font-family: "Caveat", cursive; 
     position: absolute;
     bottom: 10px;
     margin: auto;
