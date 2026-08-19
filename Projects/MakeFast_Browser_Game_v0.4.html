@@ -153,7 +153,7 @@
 'use strict';
 
 const SAVE_KEY='makefast_save_v1';
-const VERSION=12;
+const VERSION=12.1;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -435,9 +435,14 @@ function ensureResidentData(p,seedKey='resident',biome='meadow'){
   const rr=rng(hashString(String(p?.id||seedKey)+'resident-data'));if(!p.archetype)p.archetype=residentArchetype(p.id||seedKey,biome);const def=CONTENT.residentArchetypes[p.archetype]||CONTENT.residentArchetypes.maker;
   if(!p.occupation)p.occupation=def.occupations[Math.floor(rr()*def.occupations.length)];if(!Array.isArray(p.interests)||!p.interests.length)p.interests=[...def.interests].sort(()=>rr()-.5).slice(0,2);if(!p.note)p.note=contentLine('copy.residents.arrivedNote',{},rr);return p;
 }
-function makeResident(seedKey='resident',fixedName=null,biome='meadow'){
+function nameKey(name){return String(name||'').trim().replace(/\s+/g,' ').toLocaleLowerCase()}
+function romanSuffix(n){const vals=[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let out='';for(const [v,r] of vals)while(n>=v){out+=r;n-=v}return out||'II'}
+function uniqueDisplayName(base,used){base=String(base||'').trim()||'Unnamed';if(!used.has(nameKey(base)))return base;for(let n=2;n<30;n++){const candidate=`${base} ${romanSuffix(n)}`;if(!used.has(nameKey(candidate)))return candidate}return `${base} ${Math.abs(hashString(base))%997}`}
+function uniquePersonName(seedKey,used){const h=Math.abs(hashString(String(seedKey)||'person')),total=RESIDENT_FIRST.length*RESIDENT_LAST.length;for(let k=0;k<total;k++){const idx=(h+k*37)%total,candidate=`${RESIDENT_FIRST[idx%RESIDENT_FIRST.length]} ${RESIDENT_LAST[Math.floor(idx/RESIDENT_FIRST.length)%RESIDENT_LAST.length]}`;if(!used.has(nameKey(candidate)))return candidate}return uniqueDisplayName('Island Mariner',used)}
+function makeResident(seedKey='resident',fixedName=null,biome='meadow',usedNames=null){
   const rr=rng(hashString(String(seedKey))),outfit=OUTFITS[Math.floor(rr()*OUTFITS.length)];let accent=OUTFITS[Math.floor(rr()*OUTFITS.length)];if(accent===outfit)accent=OUTFITS[(OUTFITS.indexOf(outfit)+3)%OUTFITS.length];
-  const p={id:uid('person'),name:fixedName||`${RESIDENT_FIRST[Math.floor(rr()*RESIDENT_FIRST.length)]} ${RESIDENT_LAST[Math.floor(rr()*RESIDENT_LAST.length)]}`,outfit,accent,style:Math.floor(rr()*4),joinedAt:nowReal()};return ensureResidentData(p,seedKey,biome);
+  let name=fixedName||`${RESIDENT_FIRST[Math.floor(rr()*RESIDENT_FIRST.length)]} ${RESIDENT_LAST[Math.floor(rr()*RESIDENT_LAST.length)]}`;if(usedNames?.has(nameKey(name)))name=uniquePersonName(seedKey,usedNames);if(usedNames)usedNames.add(nameKey(name));
+  const p={id:uid('person'),name,outfit,accent,style:Math.floor(rr()*4),joinedAt:nowReal()};return ensureResidentData(p,seedKey,biome);
 }
 function ensureIslandData(i){
   if(!i.shape)i.shape=makeIslandShape(i.id||i.name);if(!i.stock)i.stock={};if(!Array.isArray(i.projects))i.projects=[];if(!Array.isArray(i.residents))i.residents=[];if(!Array.isArray(i.vesselBuilds))i.vesselBuilds=[];if(!Array.isArray(i.commissionedVessels))i.commissionedVessels=[];
@@ -463,7 +468,7 @@ function boatUpgradeDef(id){return CONTENT.boatVisuals.upgrades.find(u=>u.id===i
 function canAffordBoatUpgrade(isl,u){return Object.entries(u.cost||{}).every(([m,n])=>(isl.stock[m]||0)>=n)}
 function fitBoatUpgrade(isl,id){const u=boatUpgradeDef(id),style=ensurePlayerBoatStyle();if(!u||style.upgrades[id]||!canAffordBoatUpgrade(isl,u))return;Object.entries(u.cost).forEach(([m,n])=>isl.stock[m]-=n);style.upgrades[id]=true;state.journal.unshift(`${u.name} fitted to ${state.boat.name}.`);save();renderUI();toast(`${u.name} fitted.`)}
 function setBoatCosmetic(group,id){const style=ensurePlayerBoatStyle();style[group]=id;save();renderVoyagePanel()}
-function renamePlayerBoat(name){name=String(name||'').trim().slice(0,28);if(!name)return;const style=ensurePlayerBoatStyle();style.name=name;state.boat.name=name;save();renderUI();toast(`${name} is painted on the stern.`)}
+function renamePlayerBoat(name){name=String(name||'').trim().replace(/\s+/g,' ').slice(0,28);if(!name)return;if(boatNameTaken(name)){toast('Another boat already carries that name.');return}const style=ensurePlayerBoatStyle();style.name=name;state.boat.name=name;save();renderUI();toast(`${name} is painted on the stern.`)}
 function boatFitoutHTML(isl){const style=ensurePlayerBoatStyle();const swatches=(group,list,current,color)=>`<div class="boat-swatches">${list.map(o=>`<button class="boat-swatch ${o.id===current?'active':''}" data-boat-${group}="${o.id}" title="${o.name}" style="--swatch:${color(o)}"><i></i><span>${o.name}</span></button>`).join('')}</div>`;return`<div class="section"><div class="section-title">Fitting out <span>${state.boat.name}</span></div><div class="boat-live-preview"><canvas id="boatFitoutCanvas" width="300" height="150"></canvas><div class="preview-label">LIVE SPRITE PREVIEW</div></div><div class="card"><h3>Boat name</h3><div class="row"><input id="boatNameInput" value="${String(style.name||state.boat.name).replaceAll('&','&amp;').replaceAll('"','&quot;')}" maxlength="28" style="flex:1;min-width:0;padding:8px;border:2px solid var(--ink);border-radius:6px;background:#fff"><button class="tiny-btn" id="renameBoatBtn">PAINT NAME</button></div></div><div class="card"><h3>Paintwork</h3>${swatches('paint',CONTENT.boatVisuals.paints,style.paint,o=>o.hull)}</div><div class="card"><h3>Sails</h3>${swatches('sail',CONTENT.boatVisuals.sails,style.sail,o=>o.accent)}</div><div class="card"><h3>Pennant</h3>${swatches('pennant',CONTENT.boatVisuals.pennants,style.pennant,o=>o.color)}</div><div class="section-title" style="margin-top:10px">Fittings</div>${CONTENT.boatVisuals.upgrades.map(u=>{const fitted=!!style.upgrades[u.id],ok=canAffordBoatUpgrade(isl,u),cost=Object.entries(u.cost).map(([m,n])=>`${MATERIALS[m]?.icon||'•'} ${n} ${materialName(m)}`).join(' · ');return`<div class="card ${fitted?'selected':''}"><h3>${fitted?'✓ ':''}${u.name}</h3><p>${u.desc}<br>${fitted?'Fitted aboard.':`Needs ${cost}`}</p>${!fitted?`<button class="big-btn ghost" data-fit-upgrade="${u.id}" ${ok?'':'disabled'}>FIT ${u.name.toUpperCase()}</button>`:''}</div>`}).join('')}</div>`}
 function bindBoatFitout(isl){renderBoatFitoutPreview();$$('[data-boat-paint]').forEach(b=>b.onclick=()=>setBoatCosmetic('paint',b.dataset.boatPaint));$$('[data-boat-sail]').forEach(b=>b.onclick=()=>setBoatCosmetic('sail',b.dataset.boatSail));$$('[data-boat-pennant]').forEach(b=>b.onclick=()=>setBoatCosmetic('pennant',b.dataset.boatPennant));$$('[data-fit-upgrade]').forEach(b=>b.onclick=()=>fitBoatUpgrade(isl,b.dataset.fitUpgrade));if($('#renameBoatBtn'))$('#renameBoatBtn').onclick=()=>renamePlayerBoat($('#boatNameInput').value)}
 function boatCargoUnits(){return Object.values(state.boatCargo||{}).reduce((a,n)=>a+(+n||0),0)}
@@ -472,7 +477,7 @@ function transferAllCargo(isl,direction){if(direction==='unload'){Object.keys(st
 function cargoTransferHTML(isl){ensureIslandData(isl);const keys=Object.keys(MATERIALS).filter(m=>(isl.stock[m]||0)>0||(state.boatCargo?.[m]||0)>0);const used=boatCargoUnits(),cap=playerBoatCapacity();return`<div class="card"><h3>${state.boat.name} hold · ${used}/${cap}</h3><p>Move stores between the island and your boat before the next crossing.</p><div class="hold-meter"><i style="width:${Math.min(100,used/cap*100)}%"></i></div></div>${keys.length?`<div class="cargo-board">${keys.map(m=>{const onIsland=isl.stock[m]||0,onBoat=state.boatCargo?.[m]||0,mat=MATERIALS[m];return`<div class="cargo-row"><div><b>${mat.icon} ${mat.name}</b><small>Island ${onIsland} · Hold ${onBoat}</small></div><div class="cargo-actions"><button data-cargo-unload="${m}" ${!onBoat?'disabled':''}>← UNLOAD</button><button class="load" data-cargo-load="${m}" ${!onIsland||used>=cap?'disabled':''}>LOAD →</button></div></div>`}).join('')}</div>`:`<div class="card"><p>There is nothing in the hold or island stores to move just now.</p></div>`}<div class="row" style="margin-top:7px"><button class="big-btn ghost" id="unloadAllCargo" ${!used?'disabled':''}>UNLOAD ALL</button><button class="big-btn secondary" id="loadCargo" ${used>=cap?'disabled':''}>LOAD STORES</button></div>`}
 function bindCargoTransfers(isl){$$('[data-cargo-load]').forEach(b=>b.onclick=()=>transferCargo(isl,b.dataset.cargoLoad,'load',false));$$('[data-cargo-unload]').forEach(b=>b.onclick=()=>transferCargo(isl,b.dataset.cargoUnload,'unload',false));if($('#unloadAllCargo'))$('#unloadAllCargo').onclick=()=>transferAllCargo(isl,'unload');if($('#loadCargo'))$('#loadCargo').onclick=()=>transferAllCargo(isl,'load')}
 function islandProjectNeeds(isl){ensureIslandData(isl);const needs={};isl.projects.filter(p=>!p.complete).forEach(p=>{const t=projectTemplate(p.templateId);if(!t)return;Object.entries(t.req).forEach(([m,n])=>{const left=Math.max(0,n-(p.contributed?.[m]||0));needs[m]=(needs[m]||0)+left})});return needs}
-function residentHTML(p){return`<div class="resident"><span class="outfit-dot" style="background:linear-gradient(135deg,${p.outfit} 0 55%,${p.accent||p.outfit} 55% 100%)"></span><span><b>${p.name}</b><br><span style="color:var(--ink-soft)">${p.occupation||'Island resident'} · ${(p.interests||[]).join(', ')}</span><br><span style="color:var(--ink-soft)">${p.note||''}</span></span></div>`}
+function residentHTML(p){const cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),where=away?.kind==='captain'?` · Away aboard ${away.vessel.name}`:away?.kind==='passenger'?' · Away between islands':cap?` · Captain of ${cap.name}`:'';return`<div class="resident"><span class="outfit-dot" style="background:linear-gradient(135deg,${p.outfit} 0 55%,${p.accent||p.outfit} 55% 100%)"></span><span><b>${p.name}</b><br><span style="color:var(--ink-soft)">${p.occupation||'Island resident'}${where} · ${(p.interests||[]).join(', ')}</span><br><span style="color:var(--ink-soft)">${p.note||''}</span></span></div>`}
 function vesselCardHTML(v){const t=vesselType(v.typeId),dest=getIsland(v.destinationId),home=getIsland(v.homeId);const load=[Object.keys(v.cargo||{}).length?cargoLabel(v.cargo):'',(v.passengers||[]).length?`${v.passengers.length} passenger${v.passengers.length===1?'':'s'}`:''].filter(Boolean).join(' · '),status=v.status==='sailing'?`${v.mission} → ${dest?.name||'open water'} · ${fmtDuration(Math.max(0,v.arrivalAt-gameNow()),true)} away`:`Alongside at ${getIsland(v.locationId)?.name||home?.name||'the quay'}`;return`<div class="traffic"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${v.name} · ${t.name}</b><span>Captain ${v.captainName} · ${status}${load?`<br>Aboard: ${load}`:''}</span></div></div>`}
 function worldLogHTML(items,limit=8){return(items||[]).slice(0,limit).map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${fmtDate(e.at)} · ${formatClockInZone(e.at,state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}
 function materialName(k){return MATERIALS[k]?.name||k}
@@ -531,10 +536,10 @@ function migrate(s){
   if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
   s.version=VERSION;
   if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
-  return s;
+  repairIdentityIntegrity(s);return s;
 }
 let storageWarned=false;
-function save(){state.lastSavedAt=nowReal();try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){if(!storageWarned){storageWarned=true;console.warn('MakeFast could not access browser storage in this context.',e)}}}
+function save(){repairIdentityIntegrity(state);state.lastSavedAt=nowReal();try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){if(!storageWarned){storageWarned=true;console.warn('MakeFast could not access browser storage in this context.',e)}}}
 function gameNow(){return nowReal()+(state.sim?.active?state.sim.offsetMs:0)}
 
 const canvas=$('#game'), ctx=canvas.getContext('2d'); ctx.imageSmoothingEnabled=false;
@@ -594,6 +599,57 @@ function shoreElapsed(){return Math.max(0,gameNow()-state.phaseStartedAt)}
 function selectedDest(){return state.selectedDestinationId==='uncharted'?null:getIsland(state.selectedDestinationId)}
 
 // ============================================================
+// WORLD IDENTITY INTEGRITY
+// Names are presentation; IDs are identity. These helpers keep captains,
+// passengers, residents, boats and islands from becoming visually ambiguous.
+// ============================================================
+function rootPersonRefs(root=state){
+  const refs=[],seen=new Set(),add=p=>{if(p?.id&&!seen.has(p.id)){seen.add(p.id);refs.push(p)}};
+  (root?.islands||[]).forEach(i=>(i.residents||[]).forEach(add));(root?.boatPassengers||[]).forEach(x=>add(x.person));
+  (root?.world?.vessels||[]).forEach(v=>(v.passengers||[]).forEach(x=>add(x.person)));(root?.voyage?.discoveries||[]).forEach(d=>add(d.person));return refs;
+}
+function worldPersonNameSet(root=state,exceptId=null){const set=new Set();rootPersonRefs(root).forEach(p=>{if(p.id!==exceptId&&p.name)set.add(nameKey(p.name))});(root?.world?.vessels||[]).forEach(v=>{if(v.captainName&&v.captainPersonId!==exceptId)set.add(nameKey(v.captainName))});return set}
+function travellerPersonIds(root=state){const ids=new Set();(root?.liftRequests||[]).filter(r=>['waiting','aboard','npc_aboard'].includes(r.status)).forEach(r=>ids.add(r.personId));(root?.boatPassengers||[]).forEach(p=>ids.add(p.person?.id));(root?.world?.vessels||[]).forEach(v=>(v.passengers||[]).forEach(p=>ids.add(p.person?.id)));return ids}
+function aboardPersonIds(root=state){const ids=new Set();(root?.liftRequests||[]).filter(r=>['aboard','npc_aboard'].includes(r.status)).forEach(r=>ids.add(r.personId));(root?.boatPassengers||[]).forEach(p=>ids.add(p.person?.id));(root?.world?.vessels||[]).forEach(v=>(v.passengers||[]).forEach(p=>ids.add(p.person?.id)));return ids}
+function assignedCaptainIds(root=state,exceptVesselId=null){const ids=new Set();(root?.world?.vessels||[]).forEach(v=>{if(v.id!==exceptVesselId&&v.captainPersonId)ids.add(v.captainPersonId)});return ids}
+function residentCaptainVessel(personId,root=state){return(root?.world?.vessels||[]).find(v=>v.captainSource==='resident'&&v.captainPersonId===personId)||null}
+function residentAwayAssignment(personId,root=state){const cap=residentCaptainVessel(personId,root);if(cap&&(cap.status==='sailing'||cap.locationId!==cap.homeId))return{kind:'captain',vessel:cap};const pp=(root?.boatPassengers||[]).find(x=>x.person?.id===personId);if(pp)return{kind:'passenger',targetId:pp.targetId};for(const v of root?.world?.vessels||[]){const ps=(v.passengers||[]).find(x=>x.person?.id===personId);if(ps)return{kind:'passenger',vessel:v,targetId:ps.targetId}}return null}
+function roleCaptainArchetype(type){return type?.role==='fishing'?'fisher':type?.role==='work'?'carpenter':type?.role==='trade'||type?.role==='cargo'?'trader':type?.role==='survey'?'navigator':type?.role==='naturalist'?'naturalist':null}
+function chooseResidentCaptain(home,type,seed,usedIds=assignedCaptainIds(),busyIds=travellerPersonIds()){
+  ensureIslandData(home);const rr=rng(hashString(String(seed)+'captain')),preferred=roleCaptainArchetype(type),free=home.residents.filter(p=>!usedIds.has(p.id)&&!busyIds.has(p.id));if(!free.length)return null;const preferredPool=preferred?free.filter(p=>p.archetype===preferred):[];const pool=preferredPool.length?preferredPool:free;return pool[Math.floor(rr()*pool.length)]||pool[0];
+}
+function uniqueVesselName(seed,used){const p=CONTENT.vesselNames.prefixes,n=CONTENT.vesselNames.nouns,h=Math.abs(hashString(String(seed)+'vessel-name')),total=p.length*n.length;for(let k=0;k<total;k++){const idx=(h+k*43)%total,candidate=`${p[idx%p.length]} ${n[Math.floor(idx/p.length)%n.length]}`;if(!used.has(nameKey(candidate)))return candidate}return uniqueDisplayName('Harbour Boat',used)}
+function worldVesselNameSet(root=state,exceptVesselId=null){const set=new Set();Object.values(root?.boatStyles||{}).forEach(st=>{if(st?.name)set.add(nameKey(st.name))});if(root?.boat?.name)set.add(nameKey(root.boat.name));(root?.world?.vessels||[]).forEach(v=>{if(v.id!==exceptVesselId&&v.name)set.add(nameKey(v.name))});return set}
+function uniqueIslandNameFromSeed(seed,used,suffixOverride=null){const rr=rng(hashString(String(seed)+'island-name'));for(let k=0;k<80;k++){const candidate=generateIslandName(rr,suffixOverride);if(!used.has(nameKey(candidate)))return candidate}return uniqueDisplayName(suffixOverride?`Quiet ${suffixOverride}`:'Quiet Island',used)}
+function repairIdentityIntegrity(root){
+  if(!root)return root;
+  // People: one display name per persistent person.
+  const people=rootPersonRefs(root),usedPeople=new Set();for(const p of people){let nm=String(p.name||'').trim();if(!nm||usedPeople.has(nameKey(nm)))nm=uniquePersonName(p.id||nm,usedPeople);p.name=nm;usedPeople.add(nameKey(nm))}
+  // Player boats keep their chosen names where possible; duplicate player hull names receive a gentle suffix.
+  const usedBoats=new Set();for(const [type,st] of Object.entries(root.boatStyles||{})){if(!st?.name)continue;st.name=uniqueDisplayName(st.name,usedBoats);usedBoats.add(nameKey(st.name))}if(root.boatStyles?.[root.boat?.type]?.name)root.boat.name=root.boatStyles[root.boat.type].name;else if(root.boat?.name)usedBoats.add(nameKey(root.boat.name));
+  // NPC vessel names are guaranteed unique against player boats and each other.
+  for(const v of root.world?.vessels||[]){let nm=String(v.name||'').trim();if(!nm||usedBoats.has(nameKey(nm)))nm=uniqueVesselName(v.id||`${v.homeId}-${v.typeId}`,usedBoats);v.name=nm;usedBoats.add(nameKey(nm))}
+  // Islands also use names as map labels, so repair duplicate labels while IDs/routes remain untouched.
+  const usedIslands=new Set();for(const i of root.islands||[]){let nm=String(i.name||'').trim()||'Unnamed Island';if(usedIslands.has(nameKey(nm)))nm=uniqueIslandNameFromSeed(i.id||nm,usedIslands,nm.endsWith('Cove')?'Cove':null);i.name=nm;usedIslands.add(nameKey(nm))}
+  // Captains: bind a real identity to each vessel. A resident may captain one vessel only,
+  // and anyone currently travelling cannot simultaneously be assigned to the helm.
+  const busy=aboardPersonIds(root),usedCaptainIds=new Set(),personNames=new Set(rootPersonRefs(root).map(p=>nameKey(p.name)).filter(Boolean));const islandById=id=>(root.islands||[]).find(i=>i.id===id);
+  for(const v of (root.world?.vessels||[]).slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)||String(a.id).localeCompare(String(b.id)))){
+    const home=islandById(v.homeId),type=NPC_VESSEL_TYPES.find(t=>t.id===v.typeId)||NPC_VESSEL_TYPES[0],residents=home?.residents||[];let captain=null;
+    if(v.captainPersonId&&!String(v.captainPersonId).startsWith('crew:'))captain=residents.find(p=>p.id===v.captainPersonId&&!usedCaptainIds.has(p.id)&&!busy.has(p.id));
+    if(!captain&&v.captainName)captain=residents.find(p=>nameKey(p.name)===nameKey(v.captainName)&&!usedCaptainIds.has(p.id)&&!busy.has(p.id));
+    if(!captain&&home){const preferred=roleCaptainArchetype(type),free=residents.filter(p=>!usedCaptainIds.has(p.id)&&!busy.has(p.id)),pref=preferred?free.filter(p=>p.archetype===preferred):[];captain=(pref[0]||free[0]||null)}
+    if(captain){v.captainPersonId=captain.id;v.captainName=captain.name;v.captainSource='resident';usedCaptainIds.add(captain.id);personNames.add(nameKey(captain.name))}
+    else {let crewName=(v.captainSource==='crew'&&v.captainName&&!personNames.has(nameKey(v.captainName)))?v.captainName:uniquePersonName(`crew-${v.id}`,personNames);v.captainPersonId=`crew:${v.id}`;v.captainName=crewName;v.captainSource='crew';usedCaptainIds.add(v.captainPersonId);personNames.add(nameKey(crewName))}
+  }
+  // A captain cannot retain a stale waiting lift request from an older save.
+  const residentCaptains=new Set((root.world?.vessels||[]).filter(v=>v.captainSource==='resident').map(v=>v.captainPersonId));for(const r of root.liftRequests||[])if(r.status==='waiting'&&residentCaptains.has(r.personId))r.status='cancelled';return root;
+}
+function makeWorldResident(seedKey='resident',fixedName=null,biome='meadow'){return makeResident(seedKey,fixedName,biome,worldPersonNameSet())}
+function generateUniqueIslandName(rand=Math.random,suffixOverride=null){const used=new Set((state.islands||[]).map(i=>nameKey(i.name)));for(let k=0;k<80;k++){const candidate=generateIslandName(rand,suffixOverride);if(!used.has(nameKey(candidate)))return candidate}return uniqueIslandNameFromSeed(`${nowReal()}-${state.islands.length}`,used,suffixOverride)}
+function boatNameTaken(name,exceptType=state.boat.type){const key=nameKey(name);if(!key)return false;if((state.world?.vessels||[]).some(v=>nameKey(v.name)===key))return true;return Object.entries(state.boatStyles||{}).some(([type,st])=>type!==exceptType&&nameKey(st?.name)===key)}
+
+// ============================================================
 // LIVING ARCHIPELAGO SIMULATION
 // Persistent NPC vessels move residents and stock whether or not the player
 // is currently looking at the chart. Health/fasting history is never invented;
@@ -614,12 +670,12 @@ function npcRuleMet(rule,isl){
   return true;
 }
 function vesselType(id){return NPC_VESSEL_TYPES.find(v=>v.id===id)||NPC_VESSEL_TYPES[0]}
-function vesselName(seed){const rr=rng(hashString(seed+'vessel-name')),p=CONTENT.vesselNames.prefixes,n=CONTENT.vesselNames.nouns;return `${p[Math.floor(rr()*p.length)]} ${n[Math.floor(rr()*n.length)]}`}
+function vesselName(seed){return uniqueVesselName(seed,new Set())}
 function makeNpcVessel(typeId,homeId){
-  const type=vesselType(typeId),home=getIsland(homeId),serial=++worldState().serial,seed=`${homeId}-${typeId}-${serial}`,rr=rng(hashString(seed));
-  const residents=ensureIslandData(home).residents,preferred=type.role==='fishing'?'fisher':type.role==='work'?'carpenter':type.role==='trade'?'trader':type.role==='survey'?'navigator':null;
-  const captain=(preferred&&residents.find(p=>p.archetype===preferred))||residents[Math.floor(rr()*Math.max(1,residents.length))];
-  const createdAt=worldState().lastSimAt||nowReal(),v={id:uid('npcboat'),typeId,role:type.role,name:vesselName(seed),homeId,locationId:homeId,status:'docked',originId:homeId,destinationId:homeId,departAt:0,arrivalAt:0,nextActionAt:0,cargo:{},passengers:[],captainName:captain?.name||'Harbour crew',mission:'Waiting by the quay',trips:0,createdAt};
+  const type=vesselType(typeId),home=getIsland(homeId),serial=++worldState().serial,seed=`${homeId}-${typeId}-${serial}`,rr=rng(hashString(seed)),id=uid('npcboat');
+  const captain=chooseResidentCaptain(home,type,seed),usedPersonNames=worldPersonNameSet();let captainPersonId,captainName,captainSource;
+  if(captain){captainPersonId=captain.id;captainName=captain.name;captainSource='resident'}else{captainPersonId=`crew:${id}`;captainName=uniquePersonName(`crew-${id}`,usedPersonNames);captainSource='crew'}
+  const createdAt=worldState().lastSimAt||nowReal(),v={id,typeId,role:type.role,name:uniqueVesselName(seed,worldVesselNameSet()),homeId,locationId:homeId,status:'docked',originId:homeId,destinationId:homeId,departAt:0,arrivalAt:0,nextActionAt:0,cargo:{},passengers:[],captainPersonId,captainName,captainSource,mission:'Waiting by the quay',trips:0,createdAt};
   v.nextActionAt=nextNpcActionAt(v,home,createdAt,rr);return v;
 }
 function ensureWorldFleet(){
@@ -655,7 +711,7 @@ function makeTradeCargo(origin,dest,capacity=3,targeted=true){
 }
 function takeResidentForNpc(origin,target,vessel,request=null){
   ensureIslandData(origin);let person=request?origin.residents.find(p=>p.id===request.personId):null;
-  if(!person||origin.residents.length<=1)return null;
+  if(!person||origin.residents.length<=1||assignedCaptainIds().has(person.id)){if(request&&person&&assignedCaptainIds().has(person.id))request.status='cancelled';return null}
   origin.residents=origin.residents.filter(p=>p.id!==person.id);if(request)request.status='npc_aboard';
   return{person,originId:origin.id,targetId:target.id,requestId:request?.id||null};
 }
@@ -689,13 +745,13 @@ function beginNpcTrip(v,dest,at,{cargo={},passengers=[],mission='Crossing betwee
 }
 function maybeCreateWorldLiftRequest(isl,at,rr){
   ensureIslandData(isl);if(isl.residents.length<2)return;const active=state.liftRequests.filter(r=>['waiting','npc_aboard','aboard'].includes(r.status)&&r.originId===isl.id),limit=Math.min(5,Math.max(1,Math.floor(isl.residents.length/2)));if(active.length>=limit)return;
-  if(rr()>.035)return;const targets=state.islands.filter(i=>i.known&&i.id!==isl.id);if(!targets.length)return;const busy=new Set(active.map(r=>r.personId)),people=isl.residents.filter(p=>!busy.has(p.id));if(!people.length)return;const person=people[Math.floor(rr()*people.length)],target=targets[Math.floor(rr()*targets.length)];
+  if(rr()>.035)return;const targets=state.islands.filter(i=>i.known&&i.id!==isl.id);if(!targets.length)return;const busy=new Set(active.map(r=>r.personId)),captains=assignedCaptainIds(),people=isl.residents.filter(p=>!busy.has(p.id)&&!captains.has(p.id));if(!people.length)return;const person=people[Math.floor(rr()*people.length)],target=targets[Math.floor(rr()*targets.length)];
   state.liftRequests.push({id:uid('lift'),personId:person.id,originId:isl.id,targetId:target.id,status:'waiting',createdAt:at});person.note=contentLine('copy.residents.liftNote',{destination:target.name},rr);
 }
 function productionRatesForResident(p){return{fisher:{glass:.012,stories:.01,timber:.006},gardener:{seeds:.032},carpenter:{timber:.022,hardware:.008},trader:{stories:.018},navigator:{charts:.018,stories:.006},naturalist:{glass:.016,seeds:.012},maker:{hardware:.018,cloth:.014,brass:.004}}[p.archetype]||{}}
 function projectProductionRates(isl){const r={};if(completedFeature(isl,'orchard'))r.seeds=(r.seeds||0)+.03;if(completedFeature(isl,'boatyard'))r.hardware=(r.hardware||0)+.012;if(completedFeature(isl,'market_hall'))r.stories=(r.stories||0)+.012;return r}
 function produceIslandResources(isl,hours,at){
-  ensureIslandData(isl);const w=worldState(),key=isl.id,wbuf=w.productionCarry[key]||(w.productionCarry[key]={}),rates=projectProductionRates(isl);isl.residents.forEach(p=>{const pr=productionRatesForResident(p);Object.entries(pr).forEach(([m,r])=>rates[m]=(rates[m]||0)+r)});
+  ensureIslandData(isl);const w=worldState(),key=isl.id,wbuf=w.productionCarry[key]||(w.productionCarry[key]={}),rates=projectProductionRates(isl);isl.residents.filter(p=>!residentAwayAssignment(p.id)).forEach(p=>{const pr=productionRatesForResident(p);Object.entries(pr).forEach(([m,r])=>rates[m]=(rates[m]||0)+r)});
   Object.entries(rates).forEach(([m,r])=>{wbuf[m]=(wbuf[m]||0)+r*hours;const n=Math.floor(wbuf[m]);if(n>0){addStock(isl,m,n);wbuf[m]-=n}});
   const rr=rng(hashString(`${isl.id}-${Math.floor(at/21600000)}-lift`));maybeCreateWorldLiftRequest(isl,at,rr);
 }
@@ -953,14 +1009,13 @@ function generateUnchartedIslandFrom(origin=currentIsland()){
   const rr=rng(state.worldSeed+state.islands.length*7919+Date.now()%99991+hashString(origin.id));
   const ang=rr()*Math.PI*2, dist=2.1+rr()*1.7; let x=Math.round((origin.x+Math.cos(ang)*dist)*10)/10, y=Math.round((origin.y+Math.sin(ang)*dist)*10)/10;
   for(let tries=0;tries<6;tries++){if(!state.islands.some(i=>Math.hypot(i.x-x,i.y-y)<1.2))break;x+=.8;y+=.4}
-  const name=generateIslandName(rr);return makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]);
+  const name=generateUniqueIslandName(rr);return makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]);
 }
 function generateUnchartedIsland(){return generateUnchartedIslandFrom(currentIsland())}
 function generateCove(progress,v){
   const a=getIsland(v.originId), b=getIsland(v.destinationId); const t=clamp(progress,.18,.88); const rr=rng(hashString(v.id+'cove'));
   const x=lerp(a.x,b.x,t)+(rr()-.5)*.5, y=lerp(a.y,b.y,t)+(rr()-.5)*.5;
-  let name=generateIslandName(rr,'Cove');
-  if(state.islands.some(i=>i.name===name))name='Little '+name;
+  const name=generateUniqueIslandName(rr,'Cove');
   const c=makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]); c.features=['tiny_jetty']; c.notes.push('First entered on a change of tide.'); return c;
 }
 
@@ -969,7 +1024,7 @@ function addDiscovery(kind=null){
   const pool=DISCOVERIES.filter(d=>!state.voyage.discoveries.some(x=>x.kind===d.kind)); if(!pool.length)return;
   const dest=getIsland(state.voyage.destinationId),bias=biomeDef(dest?.biome).findBias||[],weighted=pool.flatMap(d=>bias.includes(d.kind)?[d,d,d]:[d]);
   const base=kind?DISCOVERIES.find(d=>d.kind===kind):weighted[Math.floor(Math.random()*weighted.length)]; if(!base)return;
-  let d={...base,id:uid('find')};if(d.kind==='traveller'){const dest=getIsland(state.voyage.destinationId),person=makeResident(state.voyage.id+d.id,null,dest?.biome||'meadow');d={...d,name:person.name,person,desc:`${person.name}, ${person.occupation.toLowerCase()}, was found between islands and is glad to see a friendly deck.`}} state.voyage.discoveries.push(d); save(); beep('find'); notifyVoyage(`${d.icon||'◆'} ${d.name} aboard`,'The find is safely stowed for arrival.',contentLine('copy.voyage.discoveryToast',{item:d.name})); renderUI();
+  let d={...base,id:uid('find')};if(d.kind==='traveller'){const dest=getIsland(state.voyage.destinationId),person=makeWorldResident(state.voyage.id+d.id,null,dest?.biome||'meadow');d={...d,name:person.name,person,desc:`${person.name}, ${person.occupation.toLowerCase()}, was found between islands and is glad to see a friendly deck.`}} state.voyage.discoveries.push(d); save(); beep('find'); notifyVoyage(`${d.icon||'◆'} ${d.name} aboard`,'The find is safely stowed for arrival.',contentLine('copy.voyage.discoveryToast',{item:d.name})); renderUI();
 }
 
 function addStock(isl,material,amount=1){ensureIslandData(isl);isl.stock[material]=(isl.stock[material]||0)+amount}
@@ -977,15 +1032,15 @@ function unloadVoyageCargo(dest,discoveries=[]){
   ensureIslandData(dest);const notes=[];
   discoveries.forEach(d=>{
     if(d.kind==='traveller'){
-      const person=ensureResidentData(d.person||makeResident(d.id||d.name,null,dest.biome),d.id||d.name,dest.biome);person.note=contentLine('copy.residents.arrivedNote');if(!dest.residents.some(r=>r.id===person.id))dest.residents.push(person);const line=contentLine('copy.journal.residentSettled',{person:person.name,destination:dest.name});notes.push(line);state.journal.unshift(line);return;
+      const person=ensureResidentData(d.person||makeWorldResident(d.id||d.name,null,dest.biome),d.id||d.name,dest.biome);person.note=contentLine('copy.residents.arrivedNote');if(!dest.residents.some(r=>r.id===person.id))dest.residents.push(person);const line=contentLine('copy.journal.residentSettled',{person:person.name,destination:dest.name});notes.push(line);state.journal.unshift(line);return;
     }
     const bundle=DISCOVERY_STOCK[d.kind]||{};Object.entries(bundle).forEach(([m,n])=>addStock(dest,m,n));if(Object.keys(bundle).length)notes.push(`${d.name} went into the island stores.`);
   });return notes;
 }
 function boardWaitingPassengers(origin,dest){
   ensureIslandData(origin);const matching=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===origin.id&&r.targetId===dest.id);
-  matching.forEach(req=>{const idx=origin.residents.findIndex(p=>p.id===req.personId);if(idx<0)return;const person=origin.residents.splice(idx,1)[0];state.boatPassengers.push({requestId:req.id,person,targetId:req.targetId,originId:req.originId});req.status='aboard';state.journal.unshift(contentLine('copy.journal.passengerBoarded',{person:person.name,destination:getIsland(req.targetId).name}))});
-  return matching.length;
+  let boarded=0;const captains=assignedCaptainIds();matching.forEach(req=>{const idx=origin.residents.findIndex(p=>p.id===req.personId);if(idx<0)return;const person=origin.residents[idx];if(captains.has(person.id)){req.status='cancelled';return}origin.residents.splice(idx,1);state.boatPassengers.push({requestId:req.id,person,targetId:req.targetId,originId:req.originId});req.status='aboard';boarded++;state.journal.unshift(contentLine('copy.journal.passengerBoarded',{person:person.name,destination:getIsland(req.targetId).name}))});
+  return boarded;
 }
 function deliverPassengers(dest){
   ensureIslandData(dest);const delivered=[];state.boatPassengers=state.boatPassengers.filter(p=>{if(p.targetId!==dest.id)return true;if(!dest.residents.some(r=>r.id===p.person.id))dest.residents.push(p.person);const req=state.liftRequests.find(r=>r.id===p.requestId);if(req)req.status='delivered';p.person.note=contentLine('copy.residents.movedNote',{origin:getIsland(p.originId).name});delivered.push(p.person);state.journal.unshift(contentLine('copy.journal.passengerArrived',{person:p.person.name,destination:dest.name}));return false});return delivered;
@@ -993,8 +1048,8 @@ function deliverPassengers(dest){
 function maybeGenerateLiftRequest(isl){
   ensureIslandData(isl);if(!isl.residents.length)return; if(state.liftRequests.some(r=>r.status==='waiting'&&r.originId===isl.id))return;
   const targets=state.islands.filter(i=>i.known&&i.id!==isl.id);if(!targets.length)return;
-  const rr=rng(hashString(`${isl.id}-${isl.visits}-${state.sessions.length}-lift`));if(rr()>.64)return;
-  const person=isl.residents[Math.floor(rr()*isl.residents.length)],target=targets[Math.floor(rr()*targets.length)];state.liftRequests.push({id:uid('lift'),personId:person.id,originId:isl.id,targetId:target.id,status:'waiting',createdAt:nowReal()});person.note=contentLine('copy.residents.liftNote',{destination:target.name});
+  const rr=rng(hashString(`${isl.id}-${isl.visits}-${state.sessions.length}-lift`));if(rr()>.64)return;const captains=assignedCaptainIds(),eligible=isl.residents.filter(p=>!captains.has(p.id));if(!eligible.length)return;
+  const person=eligible[Math.floor(rr()*eligible.length)],target=targets[Math.floor(rr()*targets.length)];state.liftRequests.push({id:uid('lift'),personId:person.id,originId:isl.id,targetId:target.id,status:'waiting',createdAt:nowReal()});person.note=contentLine('copy.residents.liftNote',{destination:target.name});
 }
 function availableProjects(isl){const bias=biomeDef(isl.biome).projectBias||[];return PROJECT_TEMPLATES.filter(t=>projectAvailable(isl,t)).sort((a,b)=>(bias.includes(b.id)?1:0)-(bias.includes(a.id)?1:0))}
 function startIslandProject(isl,templateId,site){const t=projectTemplate(templateId);if(!t||!projectAvailable(isl,t))return;if(t.prereq){const prev=isl.projects.find(p=>p.complete&&projectTemplate(p.templateId)?.feature===t.prereq);if(prev)site=prev.site}isl.projects.push({id:uid('proj'),templateId,site,contributed:{},complete:false,startedAt:nowReal()});state.journal.unshift(contentLine('copy.journal.projectStarted',{island:isl.name,project:t.name}));save()}
@@ -1501,7 +1556,7 @@ function drawIslandScene(isl){
   // One cottage sprite represents several homes, keeping large populations bustling without filling every tile with roofs.
   const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
   for(let i=0;i<extraHomes;i++){const q=islandLayoutPoint(...homeSlots[i]);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
-  const limit=visibleResidentLimit(isl),residentPoses=rotatingSubset(isl.residents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
+  const presentResidents=isl.residents.filter(p=>!residentAwayAssignment(p.id)),limit=Math.min(visibleResidentLimit(isl),presentResidents.length),residentPoses=rotatingSubset(presentResidents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
   residentPoses.forEach(r=>queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')}));
   actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
   const playerDock=islandLayoutPoint(340,290);drawTopBoat(playerDock.x,playerDock.y,ISLAND_ART.playerBoat,-.2,state.boat.type,playerBoatAppearance());
