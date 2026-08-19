@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>MakeFast — Voyage Edition</title>
+<title>MakeFast — Living Archipelago</title>
 <style>
   :root{
     --ink:#18313a;
@@ -66,6 +66,13 @@
   .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.stat{background:#fff;border:3px solid var(--ink);border-radius:7px;padding:8px}.stat b{font-size:14px;display:block}.stat span{font-size:8px;color:var(--ink-soft)}
   .session{display:grid;grid-template-columns:48px 1fr 52px;gap:7px;align-items:center;font-size:8px;border-bottom:2px dashed #d8cda8;padding:6px 0}.session:last-child{border-bottom:0}.session .bar{height:8px;border:2px solid var(--ink);background:#fff}.session .bar>i{display:block;height:100%;background:var(--sea)}
   .pill{display:inline-flex;align-items:center;border:2px solid var(--ink);background:#fff;padding:3px 5px;border-radius:999px;font-size:8px;margin:2px 3px 2px 0}
+  .stock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.stock-item{border:2px solid var(--ink);background:#fff;padding:6px;border-radius:6px;font-size:8px}.stock-item b{display:block;font-size:11px}.stock-item span{color:var(--ink-soft)}
+  .project-card{border:3px solid var(--ink);background:#fff;border-radius:8px;padding:9px;margin-bottom:8px;box-shadow:3px 3px 0 var(--shadow)}.project-card.done{background:#e7f2d9}.project-card h3{font-size:10px;margin:0 0 4px}.project-card p{font-size:8px;margin:0 0 6px;color:var(--ink-soft);line-height:1.4}
+  .project-meter{height:10px;border:2px solid var(--ink);background:#fff;border-radius:4px;overflow:hidden;margin:5px 0}.project-meter i{display:block;height:100%;background:var(--grass);width:0}
+  .materials{display:flex;flex-wrap:wrap;gap:4px}.material{display:inline-flex;gap:4px;align-items:center;border:2px solid var(--ink);background:var(--cream);padding:3px 5px;border-radius:5px;font-size:8px}.material.met{background:#dff1cf}.material button{border:0;background:var(--gold);font-weight:900;cursor:pointer;padding:1px 4px;margin-left:2px}
+  .resident-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.resident{display:flex;gap:7px;align-items:center;border:2px solid var(--ink);background:#fff;border-radius:6px;padding:6px;font-size:8px}.outfit-dot{width:17px;height:17px;border:2px solid var(--ink);border-radius:3px;flex:0 0 auto}
+  .traffic-list{display:grid;gap:6px}.traffic{display:flex;gap:8px;align-items:flex-start;border:2px solid var(--ink);background:#fff;border-radius:7px;padding:7px;font-size:8px}.traffic .vessel-icon{width:28px;height:22px;display:grid;place-items:center;background:#dff1cf;border:2px solid var(--ink);border-radius:4px;flex:0 0 auto}.traffic b{font-size:9px}.traffic span{color:var(--ink-soft);line-height:1.35;display:block;margin-top:2px}.world-log{border-left:3px solid #cbbd91;padding:3px 0 3px 8px;margin-bottom:6px;font-size:8px}.world-log b{display:block;font-size:9px}.world-log span{color:var(--ink-soft);line-height:1.35}
+  .site-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.site-choice{border:3px solid var(--ink);background:#fff;border-radius:7px;padding:9px;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}.site-choice:hover{background:#edf7dc}.site-choice b{display:block;font-size:10px}.site-choice span{display:block;font-size:8px;color:var(--ink-soft);margin-top:3px}
   .muted{color:var(--ink-soft);font-size:8px;line-height:1.4}.divider{height:3px;background:var(--ink);opacity:.15;margin:10px 0}
   .bottomnav{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:4px solid var(--ink);background:var(--paper);padding-bottom:env(safe-area-inset-bottom);z-index:11}.navbtn{border:0;border-right:2px solid #c9b98e;background:var(--paper);padding:8px 4px;cursor:pointer;color:var(--ink);font-weight:900;font-size:9px}.navbtn:last-child{border-right:0}.navbtn.active{background:#dff1cf;box-shadow:inset 0 4px 0 var(--grass-dark)}.navbtn span{display:block;font-size:15px;margin-bottom:2px}
 
@@ -77,12 +84,17 @@
   .event-card{background:#e8f5ed;border:3px solid var(--ink);border-radius:8px;padding:10px;box-shadow:3px 3px 0 var(--shadow);margin-bottom:8px;position:relative;overflow:hidden}.event-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--sea)}.event-card h3{font-size:11px;margin:0 0 4px;padding-left:5px}.event-card p{font-size:9px;line-height:1.45;margin:0;padding-left:5px;color:var(--ink-soft)}
   .activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.activity{border:3px solid var(--ink);background:#fff;border-radius:8px;padding:9px;text-align:left;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}.activity:hover{background:#edf7dc;transform:translateY(-1px)}.activity b{display:block;font-size:9px}.activity span{display:block;font-size:8px;color:var(--ink-soft);line-height:1.3;margin-top:3px}
   .sea-log{display:flex;gap:7px;align-items:flex-start;border-bottom:2px dashed #d8cda8;padding:6px 0}.sea-log:last-child{border-bottom:0}.sea-log i{font-style:normal;font-size:14px;line-height:1}.sea-log span{font-size:8px;color:var(--ink-soft);line-height:1.35}.sea-log b{font-size:8px;display:block;color:var(--ink)}
+  .sheet-toggle{display:none;position:absolute;left:50%;top:3px;transform:translateX(-50%);width:64px;height:20px;border:0;background:transparent;cursor:pointer;z-index:2}.sheet-toggle:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:var(--ink);opacity:.28;margin:auto}.sheet-toggle span{display:none}
+  .scene-caption{position:absolute;left:10px;bottom:10px;display:none;min-width:190px;max-width:min(70%,340px);background:rgba(255,247,222,.94);border:3px solid var(--ink);padding:7px 9px;border-radius:7px;box-shadow:3px 3px 0 rgba(22,49,58,.18);font-size:9px;pointer-events:none}.scene-caption.show{display:block}.scene-caption b{display:block;font-size:11px;margin-bottom:2px}.scene-caption span{color:var(--ink-soft);line-height:1.35}
+  .map-controls{position:absolute;right:10px;top:10px;display:none;gap:5px;z-index:6}.map-controls.show{display:flex}.map-controls button{width:34px;height:34px;border:3px solid var(--ink);background:var(--paper);border-radius:7px;box-shadow:3px 3px 0 var(--shadow);font-weight:1000;cursor:pointer;color:var(--ink)}.map-controls button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+  .rhythm-picker{background:#fff;border:3px solid var(--ink);border-radius:9px;padding:12px;box-shadow:3px 3px 0 var(--shadow)}.rhythm-readout{text-align:center;margin-bottom:10px}.rhythm-readout b{font-size:24px;letter-spacing:-1px;display:block}.rhythm-readout span{font-size:9px;color:var(--ink-soft)}.rhythm-picker input[type=range]{width:100%;accent-color:var(--grass-dark);height:28px}.rhythm-scale{display:flex;justify-content:space-between;gap:3px;font-size:7px;color:var(--ink-soft);margin-top:2px}.rhythm-scale span{text-align:center;flex:1}.rhythm-help{font-size:8px;color:var(--ink-soft);line-height:1.45;margin-top:8px}
+  .onboard-viewport{overflow:hidden;margin-top:10px}.onboard-track{display:flex;width:200%;transition:transform .28s ease}.onboard-track.step-2{transform:translateX(-50%)}.onboard-step{width:50%;flex:0 0 50%;padding:2px 3px}.onboard-dots{display:flex;justify-content:center;gap:6px;margin:9px 0 2px}.onboard-dot{width:7px;height:7px;border:2px solid var(--ink);background:#fff;border-radius:50%}.onboard-dot.active{background:var(--grass)}
 
   @media (max-width:900px){
-    body{overflow:auto}.app{min-height:100%;height:auto;grid-template-rows:auto auto auto}.topbar{position:sticky;top:0}.brand{min-width:0}.brand small{display:none}.phase-chip{display:none}.timerbox{min-width:130px}.timerbox .timer{font-size:18px}
-    .main{grid-template-columns:1fr;grid-template-rows:minmax(380px,56vh) auto}.panel{max-height:none}.bottomnav{position:sticky;bottom:0}
+    html,body{height:100%;overflow:hidden;overscroll-behavior:none}.app{height:100dvh;min-height:100dvh;grid-template-rows:auto minmax(0,1fr) auto}.topbar{position:relative;min-height:58px}.brand{min-width:0}.brand small{display:none}.phase-chip{display:none}.timerbox{min-width:120px}.timerbox .timer{font-size:18px}
+    .main{position:relative;display:block;min-height:0;padding:0;background:linear-gradient(#bfe9e4,#89cfda);overflow:hidden}.stage-wrap{position:absolute;margin:0;min-width:0;min-height:0;border-radius:9px}.stage-wrap canvas{touch-action:none}.panel{position:absolute;left:7px;right:7px;bottom:7px;height:min(56dvh,520px);max-height:calc(100% - 14px);z-index:15;border-radius:12px;transition:transform .24s ease;will-change:transform}.panel.sheet-collapsed{transform:translateY(calc(100% - 48px))}.panel-head{min-height:48px;padding:18px 44px 8px 12px;cursor:pointer;user-select:none}.panel-head h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.panel-head p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.panel-body{padding:10px;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.sheet-toggle{display:block}.bottomnav{position:relative;z-index:22}.scene-caption{bottom:58px;max-width:calc(100% - 24px)}
   }
-  @media (max-width:520px){.topbar{gap:6px;padding:7px}.brandmark{width:36px;height:36px}.brand h1{font-size:15px}.tiny-btn{padding:6px 7px}.timerbox .sub{display:none}.main{padding:6px;gap:6px}.panel-body{padding:9px}.ratio-grid{grid-template-columns:1fr}.mini-grid{grid-template-columns:1fr 1fr 1fr}}
+  @media (max-width:520px){.topbar{gap:5px;padding:6px 7px}.brandmark{width:34px;height:34px}.brand h1{font-size:14px}.tiny-btn{padding:6px 7px;font-size:8px}.timerbox{min-width:100px}.timerbox .timer{font-size:16px}.timerbox .sub{display:none}.panel-body{padding:8px}.mini-grid{grid-template-columns:1fr 1fr 1fr}.map-controls{right:7px;top:7px}.map-controls button{width:32px;height:32px}.scene-caption{font-size:8px}.scene-caption b{font-size:10px}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -99,12 +111,14 @@
     <section class="stage-wrap" id="stageWrap">
       <canvas id="game" width="640" height="360" aria-label="MakeFast game world"></canvas>
       <div class="stage-label" id="stageLabel"><b>HOME HARBOUR</b><br><span>the world is happy when you return</span></div>
+      <div class="scene-caption" id="sceneCaption"></div>
+      <div class="map-controls" id="mapControls" aria-label="Chart controls"><button id="mapZoomOut" title="Zoom out">−</button><button id="mapReset" title="Reset chart">⌂</button><button id="mapZoomIn" title="Zoom in">+</button></div>
       <div class="game-hud" id="gameHud"><b id="gameHudTitle">REEF RUN</b><div id="gameHudText">0 pts</div><div class="gamebar"><i id="gameHudBar"></i></div></div>
       <div class="toast" id="toast"></div>
     </section>
 
-    <aside class="panel">
-      <div class="panel-head"><h2 id="panelTitle">Home Harbour</h2><p id="panelSubtitle">Plan your next crossing, or spend a little time ashore.</p></div>
+    <aside class="panel" id="infoPanel">
+      <div class="panel-head" id="panelHead"><button class="sheet-toggle" id="sheetToggle" aria-label="Show or hide panel"><span>toggle</span></button><h2 id="panelTitle">Home Harbour</h2><p id="panelSubtitle">Plan your next crossing, or spend a little time ashore.</p></div>
       <div class="panel-body" id="panelBody"></div>
     </aside>
   </main>
@@ -125,7 +139,7 @@
 'use strict';
 
 const SAVE_KEY='makefast_save_v1';
-const VERSION=1;
+const VERSION=8.0;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -136,63 +150,286 @@ const fmtDuration=(ms,short=false)=>{
   ms=Math.max(0,ms); const total=Math.floor(ms/1000); const h=Math.floor(total/3600), m=Math.floor((total%3600)/60), s=total%60;
   return short?`${h}h ${fmt2(m)}m`:`${fmt2(h)}:${fmt2(m)}:${fmt2(s)}`;
 };
-const fmtClock=ts=>new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+const fmtClock=ts=>formatClockInZone(ts,(typeof state!=='undefined'&&state?.settings?.timezone)||DEFAULT_TIMEZONE);
 const fmtDate=ts=>new Date(ts).toLocaleDateString([], {weekday:'short',day:'numeric',month:'short'});
 const uid=(p='id')=>p+'_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
 const hashString=s=>{let h=2166136261; for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)} return h>>>0};
 function rng(seed){let x=seed||123456789;return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return((x>>>0)%100000)/100000}}
 
-const RATIO_OPTIONS=[
-  {fast:14,eat:10,label:'14:10',name:'Coastal',desc:'A gentle coastal rhythm.'},
-  {fast:16,eat:8,label:'16:8',name:'Archipelago',desc:'A classic island crossing.'},
-  {fast:18,eat:6,label:'18:6',name:'Open Sea',desc:'A long crossing with a compact harbour stay.'}
-];
-const BOAT_TYPES=[
-  {id:'cutter',name:'Little Cutter',need:()=>true,desc:'Responsive and cheerful. A good all-rounder.',bias:'reef'},
-  {id:'fishing',name:'Fishing Boat',need:()=>state.islands.filter(i=>i.known).length>=3,desc:'A working boat that tends to find wildlife.',bias:'wildlife'},
-  {id:'shallow',name:'Shallow-Draft Skiff',need:()=>state.islands.filter(i=>i.known).length>=5,desc:'Made for reefs, coves and narrow channels.',bias:'reef'},
-  {id:'cabin',name:'Cabin Cruiser',need:()=>getIsland('home').features.some(f=>['market','new_resident','guesthouse'].includes(f)),desc:'Cosy, sociable and good for story-led crossings.',bias:'signal'},
-  {id:'sailer',name:'Traditional Sailer',need:()=>state.islands.filter(i=>i.known).length>=8,desc:'A beautiful rig for players who enjoy trimming the wind.',bias:'wind'}
-];
+const DEFAULT_TIMEZONE='Europe/London';
+const COMMON_TIMEZONES=['Europe/London','Europe/Paris','Europe/Berlin','UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','America/Toronto','America/Vancouver','Asia/Dubai','Asia/Kolkata','Asia/Singapore','Asia/Tokyo','Australia/Sydney','Pacific/Auckland'];
+function validTimeZone(tz){try{new Intl.DateTimeFormat('en-GB',{timeZone:tz}).format();return true}catch(e){return false}}
+function formatClockInZone(ts,tz){try{return new Intl.DateTimeFormat([],{timeZone:validTimeZone(tz)?tz:DEFAULT_TIMEZONE,hour:'2-digit',minute:'2-digit'}).format(new Date(ts))}catch(e){return new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}}
+function zonedParts(ts=gameNow()){
+  const tz=validTimeZone(state?.settings?.timezone)?state.settings.timezone:DEFAULT_TIMEZONE;
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ts));
+  const obj={};parts.forEach(p=>{if(p.type!=='literal')obj[p.type]=p.value});
+  return {year:+obj.year,month:+obj.month,day:+obj.day,hour:+obj.hour,minute:+obj.minute,second:+obj.second,key:`${obj.year}-${obj.month}-${obj.day}`,timezone:tz};
+}
+function dayPhase(ts=gameNow()){const t=zonedParts(ts),h=t.hour+t.minute/60;if(h>=5&&h<7)return'dawn';if(h>=7&&h<17)return'day';if(h>=17&&h<19)return'golden';if(h>=19&&h<21)return'dusk';return'night'}
 
-const ISLAND_NAMES_A=['Mosswick','Sunberry','Gullhaven','Bramble','Fern','Driftwood','Wren','Moonstone','Pebble','Juniper','Tansy','Saltmere','Willow','Starling','Reedwater','Kelp','Honeycomb','Cloudberry','Oyster','Plover'];
-const ISLAND_NAMES_B=['Island','Cove','Bay','Reach','Haven','Key','Point','Isle','Harbour','Shoal'];
-const BIOMES=['meadow','pine','marsh','cliff','orchard','dune'];
-const DISCOVERIES=[
-  {kind:'bottle',icon:'✉',name:'Sealed bottle',desc:'A salt-clouded bottle with a careful wax seal.'},
-  {kind:'timber',icon:'▰',name:'Driftwood beam',desc:'A sound old beam, worn smooth by the sea.'},
-  {kind:'seeds',icon:'✿',name:'Strange seeds',desc:'Tiny blue-green seeds wrapped in sailcloth.'},
-  {kind:'chart',icon:'⌁',name:'Damaged chart',desc:'A torn chart showing coastlines you do not recognise.'},
-  {kind:'traveller',icon:'☻',name:'Lost traveller',desc:'A cheerful traveller whose ferry never arrived.'},
-  {kind:'crate',icon:'▣',name:'Weathered crate',desc:'Marked with the crest of an old island guild.'},
-  {kind:'glass',icon:'◆',name:'Sea glass',desc:'A handful of beautifully polished sea glass.'},
-  {kind:'bell',icon:'♢',name:'Old harbour bell',desc:'Small, brass and still surprisingly clear-toned.'}
-];
-
-const MINIGAME_META={
-  reef:{title:'REEF RUN',icon:'◇',desc:'Thread through shoals and scoop up drifting bottles.'},
-  signal:{title:'LANTERN CODE',icon:'✦',desc:'Read a lighthouse pattern and signal it back.'},
-  wind:{title:'SAIL TRIM',icon:'≈',desc:'Hold the sail in the sweet spot as the breeze shifts.'},
-  wildlife:{title:'WILDLIFE WATCH',icon:'⌁',desc:'Spot dolphins and seabirds as they surface.'},
-  soundings:{title:'DEEP SOUNDINGS',icon:'◎',desc:'Ping the seabed and home in on a hidden wreck.'},
-  repair:{title:'DECK PATCH',icon:'✚',desc:'Patch little leaks before the next wave rolls through.'}
+// ============================================================
+// 1. CONTENT DATABASE
+// Add names, prose, projects, discoveries, biomes and events here.
+// The game engine below consumes these records instead of owning them.
+// ============================================================
+const CONTENT={
+  ratios:[
+    {fast:14,eat:10,label:'14:10',name:'Coastal',desc:'A gentle coastal rhythm.'},
+    {fast:16,eat:8,label:'16:8',name:'Archipelago',desc:'A classic island crossing.'},
+    {fast:18,eat:6,label:'18:6',name:'Open Sea',desc:'A long crossing with a compact harbour stay.'}
+  ],
+  boats:[
+    {id:'cutter',name:'Little Cutter',unlock:{type:'always'},desc:'Responsive and cheerful. A good all-rounder.',bias:'reef'},
+    {id:'fishing',name:'Fishing Boat',unlock:{type:'known_islands',count:3},desc:'A working boat that tends to find wildlife.',bias:'wildlife'},
+    {id:'shallow',name:'Shallow-Draft Skiff',unlock:{type:'known_islands',count:5},desc:'Made for reefs, coves and narrow channels.',bias:'reef'},
+    {id:'cabin',name:'Cabin Cruiser',unlock:{type:'any',rules:[{type:'home_population',count:3},{type:'feature',island:'home',feature:'market_stall'},{type:'feature',island:'home',feature:'market'},{type:'feature',island:'home',feature:'guesthouse'}]},desc:'Cosy, sociable and good for story-led crossings.',bias:'signal'},
+    {id:'sailer',name:'Traditional Sailer',unlock:{type:'known_islands',count:8},desc:'A beautiful rig for players who enjoy trimming the wind.',bias:'wind'}
+  ],
+  npcVessels:[
+    {id:'island_sloop',name:'Island Sloop',icon:'◁',role:'neighbour',sprite:'cutter',capacity:2,passengers:1,speed:1.0,unlock:{minPop:1},desc:'A little local boat carrying parcels and neighbours between nearby jetties.'},
+    {id:'fishing_smack',name:'Fishing Smack',icon:'⌁',role:'fishing',sprite:'fishing',capacity:2,passengers:0,speed:.9,unlock:{archetype:'fisher'},desc:'Works the nearby water and brings useful salvage ashore.'},
+    {id:'trader_cutter',name:'Trading Cutter',icon:'◇',role:'trade',sprite:'sailer',capacity:5,passengers:1,speed:1.05,unlock:{featureAny:['market_stall','market_square','market_hall']},desc:'Carries island surpluses toward places that need them.'},
+    {id:'mail_packet',name:'Mail Packet',icon:'✉',role:'mail',sprite:'cutter',capacity:2,passengers:1,speed:1.2,unlock:{minPop:1,minKnown:2},desc:'Moves letters, small parcels and the occasional passenger.'},
+    {id:'passenger_ferry',name:'Passenger Ferry',icon:'☻',role:'ferry',sprite:'cabin',capacity:1,passengers:5,speed:1.0,unlock:{feature:'ferry'},desc:'Runs dependable passenger crossings from a proper ferry landing.'},
+    {id:'workboat',name:'Harbour Workboat',icon:'✚',role:'work',sprite:'fishing',capacity:6,passengers:1,speed:.85,unlock:{feature:'boatyard'},commission:{timber:6,hardware:4,cloth:2},desc:'Takes building materials where island projects need them.'},
+    {id:'survey_launch',name:'Survey Launch',icon:'⌁',role:'survey',sprite:'shallow',capacity:1,passengers:2,speed:1.15,unlock:{feature:'map_room'},desc:'Runs sounding lines and occasionally returns with a fresh route.'},
+    {id:'naturalist_launch',name:'Naturalist Launch',icon:'☼',role:'naturalist',sprite:'shallow',capacity:2,passengers:2,speed:.95,unlock:{archetype:'naturalist',minPop:3},desc:'Makes quiet wildlife trips and brings small shore finds home.'},
+    {id:'cargo_barge',name:'Cargo Barge',icon:'▣',role:'cargo',sprite:'cabin',capacity:12,passengers:1,speed:.7,unlock:{feature:'market_hall'},commission:{timber:10,hardware:6,cloth:3,stone:2},desc:'Moves heavy building stock between the busiest settlements.'},
+    {id:'sailing_yacht',name:'Island Yacht',icon:'△',role:'visitor',sprite:'sailer',capacity:1,passengers:4,speed:1.1,unlock:{any:[{feature:'tea_house',minPop:5},{feature:'market_hall',minPop:6}]},commission:{timber:8,hardware:3,cloth:4,glass:2},desc:'Carries visitors and residents on leisurely calls around the archipelago.'},
+    {id:'harbour_tender',name:'Harbour Tender',icon:'≈',role:'tender',sprite:'shallow',capacity:3,passengers:2,speed:1.25,unlock:{minPop:8},commission:{timber:5,hardware:3,brass:1},desc:'A busy little harbour boat for short cargo and passenger jobs.'}
+  ],
+  vesselNames:{prefixes:['Sea','Little','Merry','Good','Blue','Golden','Quiet','Brisk','Old','Bright','North','Tide','Harbour','Silver','Red'],nouns:['Thistle','Puffin','Rose','Pip','Mackerel','Wren','Lantern','Kestrel','Sprat','Juniper','Skylark','Petrel','Nettle','Molly','Starling','Daisy','Tern','Otter','Minnow','Clover']},
+  names:{
+    islandPrefixes:['Mosswick','Sunberry','Gullhaven','Bramble','Fern','Driftwood','Wren','Moonstone','Pebble','Juniper','Tansy','Saltmere','Willow','Starling','Reedwater','Kelp','Honeycomb','Cloudberry','Oyster','Plover','Alder','Bluebell','Mackerel','Sorrel','Thimble','Foxglove','Bracken','Larkspur','Candlewick','Morrow'],
+    islandSuffixes:['Island','Cove','Bay','Reach','Haven','Key','Point','Isle','Harbour','Shoal'],
+    residentFirst:['Mara','Orla','Nell','Tobin','Pippa','Ivo','Mae','Rowan','Kit','Elsie','Finn','Ada','Jory','Mina','Otto','Cora','Luca','Bess','Theo','Wren','Hugo','Nora','Milo','Iris','Mabel','Rafi','Cleo','Aster','Bea','Ollie'],
+    residentLast:['Reed','Bell','Finch','Moss','Vale','Hart','Shore','Pike','Wells','Dove','Fenn','Gale','Marsh','Rowe','Tide','Birch','Cove','Sail','Brook','Quill','Alder','Drift','Keel','Moor','Lark']
+  },
+  outfits:['#df7c68','#e5b54e','#65bdd1','#83bf6a','#b48cc7','#e89565','#6f9f86','#d18d9d','#7f91c5','#c6a15b'],
+  residentArchetypes:{
+    fisher:{occupations:['Fisher','Net maker','Harbour hand'],interests:['wildlife','weather','old boats'],biomes:['marsh','cliff','dune']},
+    gardener:{occupations:['Gardener','Orchard keeper','Seed collector'],interests:['flowers','seeds','tea'],biomes:['meadow','orchard']},
+    carpenter:{occupations:['Carpenter','Boatbuilder','Joiner'],interests:['timber','boats','old buildings'],biomes:['pine','meadow']},
+    trader:{occupations:['Trader','Storekeeper','Market keeper'],interests:['markets','letters','new arrivals'],biomes:['meadow','dune','orchard']},
+    navigator:{occupations:['Navigator','Chart restorer','Signal keeper'],interests:['charts','lighthouses','weather'],biomes:['cliff','dune']},
+    naturalist:{occupations:['Naturalist','Bird watcher','Shore collector'],interests:['wildlife','sea glass','quiet coves'],biomes:['marsh','cliff','orchard']},
+    maker:{occupations:['Mender','Potter','Sail maker'],interests:['canvas','brass','crafts'],biomes:['pine','meadow','dune']}
+  },
+  biomes:{
+    meadow:{label:'Meadow Coast',color:'#80bf67',tree:'broadleaf',residentBias:['gardener','carpenter','trader'],projectBias:['orchard','cottage_row','tea_house'],findBias:['seeds','timber']},
+    pine:{label:'Pine Coast',color:'#5b9a62',tree:'pine',residentBias:['carpenter','maker','naturalist'],projectBias:['windmill','cottage_row'],findBias:['timber','crate']},
+    marsh:{label:'Marsh Coast',color:'#77a77b',tree:'willow',residentBias:['fisher','naturalist','gardener'],projectBias:['ferry','orchard'],findBias:['seeds','bottle']},
+    cliff:{label:'Cliff Coast',color:'#98a88d',tree:'pine',residentBias:['navigator','naturalist','fisher'],projectBias:['lighthouse','observatory'],findBias:['stone','glass']},
+    orchard:{label:'Orchard Coast',color:'#8abd68',tree:'fruit',residentBias:['gardener','trader','maker'],projectBias:['orchard','market_stall','tea_house'],findBias:['seeds','cloth']},
+    dune:{label:'Dune Coast',color:'#d5bc75',tree:'scrub',residentBias:['fisher','navigator','trader'],projectBias:['lighthouse','market_stall'],findBias:['glass','cloth']}
+  },
+  discoveries:[
+    {kind:'bottle',icon:'✉',name:'Sealed bottle',desc:'A salt-clouded bottle with a careful wax seal.',stock:{stories:1}},
+    {kind:'timber',icon:'▰',name:'Driftwood beam',desc:'A sound old beam, worn smooth by the sea.',stock:{timber:2}},
+    {kind:'seeds',icon:'✿',name:'Strange seeds',desc:'Tiny blue-green seeds wrapped in sailcloth.',stock:{seeds:2}},
+    {kind:'chart',icon:'⌁',name:'Damaged chart',desc:'A torn chart showing coastlines you do not recognise.',stock:{charts:1}},
+    {kind:'traveller',icon:'☻',name:'Lost traveller',desc:'A traveller between islands, very glad to see a friendly deck.',stock:{}},
+    {kind:'crate',icon:'▣',name:'Weathered crate',desc:'Marked with the crest of an old island guild.',stock:{hardware:2}},
+    {kind:'glass',icon:'◆',name:'Sea glass',desc:'A handful of beautifully polished sea glass.',stock:{glass:2}},
+    {kind:'bell',icon:'♢',name:'Old harbour bell',desc:'Small, brass and still surprisingly clear-toned.',stock:{brass:1}},
+    {kind:'stone',icon:'⬟',name:'Cut stone',desc:'A pair of old dressed stones recovered from a ruined quay.',stock:{stone:2}},
+    {kind:'cloth',icon:'▤',name:'Canvas roll',desc:'A dry roll of sturdy sailcloth tied with blue cord.',stock:{cloth:2}}
+  ],
+  materials:{
+    timber:{name:'Timber',icon:'▰'},hardware:{name:'Fittings',icon:'⚙'},stone:{name:'Stone',icon:'⬟'},glass:{name:'Glass',icon:'◆'},brass:{name:'Brass',icon:'◈'},seeds:{name:'Seeds',icon:'✿'},cloth:{name:'Canvas',icon:'▤'},charts:{name:'Charts',icon:'⌁'},stories:{name:'Letters',icon:'✉'}
+  },
+  buildSites:{
+    harbour:{name:'Harbourfront',desc:'Close to the jetty and the boats.',x:392,y:216},
+    village:{name:'Village Green',desc:'Among the cottages and footpaths.',x:350,y:170},
+    hill:{name:'High Ground',desc:'Windy, bright and visible from the sea.',x:250,y:112},
+    meadow:{name:'North Meadow',desc:'A quiet patch of open ground.',x:255,y:206}
+  },
+  projects:[
+    {id:'market_stall',name:'Market Stall',desc:'A striped stall where residents can trade small finds.',pop:1,sites:['harbour','village'],req:{timber:3,cloth:2,hardware:1},feature:'market_stall',draw:'market',effects:[{type:'feature',feature:'market_stall'}]},
+    {id:'market_square',name:'Market Square',desc:'Turn the little stall into a lively cluster of traders.',pop:4,sites:['harbour','village'],req:{timber:5,stone:3,cloth:3,hardware:2},feature:'market_square',prereq:'market_stall',draw:'market_square',effects:[{type:'feature',feature:'market_square'}]},
+    {id:'market_hall',name:'Covered Market Hall',desc:'A proper market building for a busy island community.',pop:8,sites:['harbour','village'],req:{timber:8,stone:6,glass:4,hardware:4},feature:'market_hall',prereq:'market_square',draw:'market_hall',effects:[{type:'feature',feature:'market_hall'}]},
+    {id:'windmill',name:'Harbour Windmill',desc:'Stone base, timber frame and broad canvas sails.',pop:2,sites:['hill','meadow'],req:{timber:6,stone:4,cloth:3,hardware:2},feature:'windmill',draw:'windmill',effects:[{type:'feature',feature:'windmill'}]},
+    {id:'lighthouse',name:'Lighthouse',desc:'A proper beacon assembled over several return voyages.',pop:3,sites:['hill','harbour'],req:{stone:8,timber:3,glass:4,brass:2,hardware:3},feature:'lighthouse',draw:'lighthouse',effects:[{type:'feature',feature:'lighthouse'}]},
+    {id:'orchard',name:'Shoreline Orchard',desc:'Sheltered fruit trees and a little fence above the beach.',pop:1,sites:['meadow','village'],req:{seeds:6,timber:2},feature:'orchard',draw:'garden',effects:[{type:'feature',feature:'orchard'}]},
+    {id:'cottage_row',name:'Cottage Row',desc:'A few more warm windows for a growing island.',pop:2,sites:['village','meadow'],req:{timber:5,stone:3,hardware:2},feature:'cottage_row',draw:'cottages',effects:[{type:'feature',feature:'cottage_row'}]},
+    {id:'tea_house',name:'Tea House',desc:'A calm room overlooking the harbour.',pop:4,sites:['harbour','village'],req:{timber:4,stone:2,glass:2,cloth:2},feature:'tea_house',draw:'tea',effects:[{type:'feature',feature:'tea_house'}]},
+    {id:'ferry',name:'Ferry Landing',desc:'A dependable landing for residents travelling between islands.',pop:5,sites:['harbour'],req:{timber:6,hardware:4,brass:1},feature:'ferry',draw:'ferry',effects:[{type:'feature',feature:'ferry'}]},
+    {id:'map_room',name:'Chart Room',desc:'A place to restore sea charts and piece together new routes.',pop:3,sites:['village','hill'],req:{timber:4,charts:3,glass:2},feature:'map_room',draw:'map_room',effects:[{type:'feature',feature:'map_room'},{type:'reveal_route'}]},
+    {id:'boatyard',name:'Island Boatyard',desc:'A slipway, workshop and timber shed where working boats can be kept in good order.',pop:5,sites:['harbour'],req:{timber:8,hardware:5,cloth:3,stone:3},feature:'boatyard',draw:'boatyard',effects:[{type:'feature',feature:'boatyard'}]},
+    {id:'observatory',name:'Hilltop Lookout',desc:'A glassy lookout above the island roofs.',pop:6,sites:['hill'],req:{stone:6,glass:5,brass:2},feature:'observatory',draw:'observatory',effects:[{type:'feature',feature:'observatory'}]}
+  ],
+  minigames:{
+    reef:{title:'REEF RUN',icon:'◇',desc:'Thread through shoals and scoop up drifting bottles.',instruction:'THREAD THE SHOALS • SCOOP UP THE BOTTLES',rewardThreshold:2},
+    signal:{title:'LANTERN CODE',icon:'✦',desc:'Read a lighthouse pattern and signal it back.',watchText:'WATCH THE LANTERN CODE',inputText:'SEND THE PATTERN BACK',rewardThreshold:1},
+    wind:{title:'SAIL TRIM',icon:'≈',desc:'Hold the sail in the sweet spot as the breeze shifts.',instruction:'KEEP THE MAST IN THE GREEN BREEZE',rewardThreshold:2},
+    wildlife:{title:'WILDLIFE WATCH',icon:'⌁',desc:'Spot dolphins and seabirds as they surface.',instruction:'TAP EACH SIGHTING BEFORE IT SLIPS AWAY',rewardThreshold:2},
+    soundings:{title:'DEEP SOUNDINGS',icon:'◎',desc:'Ping the seabed and home in on a hidden wreck.',instruction:'TAKE SOUNDINGS AND FOLLOW THE STRONGEST ECHO',rewardThreshold:1,hints:{start:'Tap the chart to take a sounding.',found:'Wreck located! A new echo is forming…',close:'A strong echo — very close.',warm:'The echo is getting warmer.',cold:'Only a faint return here.'}},
+    repair:{title:'DECK PATCH',icon:'✚',desc:'Patch little leaks before the next wave rolls through.',instruction:'TAP THE LEAKS BEFORE THE NEXT WAVE',rewardThreshold:2}
+  },
+  voyageEvents:[
+    {id:'dolphins',scene:'dolphins',icon:'⌁',title:['Dolphins off the bow','Company in the blue'],log:['A pod of dolphins kept pace with the boat for a while.','Silver backs rose beside the bow, then slipped under again.'],ambient:true,weight:1.2},
+    {id:'seabirds',scene:'seabirds',icon:'⌃',title:['A wheel of terns','Birds over the water'],log:['Terns circled a bright patch of water, then vanished toward the east.','A little flock wheeled overhead before pointing toward the horizon.'],ambient:true,weight:1},
+    {id:'trader',scene:'trader',icon:'◁',title:['Red sail on the horizon','A neighbour at sea'],log:['A little red-sailed trader crossed the route and dipped its flag.','Another boat passed at a comfortable distance and exchanged a wave.'],ambient:true,weight:.8},
+    {id:'squall',scene:'squall',icon:'☂',title:['Rain on the water','A soft squall'],log:['A soft squall swept over the deck and left the sea shining.','Rain stitched the water for a few minutes before moving on.'],ambient:true,weight:.8,conditions:{weather:['rain','breezy','clear']}},
+    {id:'bottle',scene:'bottle',icon:'✉',title:['Something in the wake','A bottle in the swell'],log:['A sealed bottle bobbed into view.','A glass bottle flashed between two small waves.'],interaction:{minigame:'reef'},rewards:[{kind:'bottle',weight:1}],weight:1},
+    {id:'signal',scene:'signal',icon:'✦',title:['A distant lantern','A light across the water','Someone is signalling'],log:['A tiny lantern flashed a careful pattern from far off the route.','A point of light blinked in a deliberate rhythm beyond the mist.'],interaction:{minigame:'signal'},rewards:[{kind:'chart',weight:.7},{kind:'bottle',weight:.3}],conditions:{phase:['dusk','night','dawn']},weight:1.1},
+    {id:'shoal',scene:'shoal',icon:'◎',title:['A mark beneath the keel','An odd echo below'],log:['The sounder picked up an odd shape beneath the boat.','A clean echo returned from something resting on the seabed.'],interaction:{minigame:'soundings'},rewards:[{kind:'crate',weight:.65},{kind:'stone',weight:.35}],weight:1},
+    {id:'rigging',scene:'rigging',icon:'✚',title:['A loose line on deck','Rigging in the breeze'],log:['A gust rattled the rigging and loosened a few fittings.','One of the deck lines began tapping against the mast.'],interaction:{minigame:'repair'},rewards:[{kind:'timber',weight:.6},{kind:'cloth',weight:.4}],weight:.9},
+    {id:'breeze',scene:'breeze',icon:'≈',title:['The wind turns kindly','A fair breeze'],log:['A clean breeze arrived from the west.','The sail filled cleanly and the boat found an easy rhythm.'],interaction:{minigame:'wind'},rewards:[{kind:'glass',weight:.55},{kind:'cloth',weight:.45}],weight:1},
+    {id:'wildlife',scene:'wildlife',icon:'☼',title:['Life in the blue','Movement beyond starboard'],log:['Dark shapes surfaced beyond the starboard rail.','A patch of water ahead suddenly came alive.'],interaction:{minigame:'wildlife'},rewards:[{kind:'seeds',weight:.55},{kind:'glass',weight:.45}],weight:1},
+    {id:'castaway',scene:'castaway',icon:'☻',title:['A hand from a dinghy','Someone between islands'],log:['A lone traveller waved from a little dinghy just off the route.','A small boat drifted nearby with one relieved passenger aboard.'],interaction:{minigame:'reef'},rewards:[{kind:'traveller',weight:1}],weight:.65},
+    {id:'stonecargo',scene:'stonecargo',icon:'⬟',title:['Old quay stones','Stone in the netting'],log:['A few dressed stones were caught together in floating netting.','Old masonry bobbed strangely beneath a tangle of rope.'],interaction:{minigame:'soundings'},rewards:[{kind:'stone',weight:1}],weight:.75},
+    {id:'canvas',scene:'canvas',icon:'▤',title:['Canvas in the tide','A pale roll by the buoy'],log:['A dry roll of sailcloth had snagged on a marker buoy.','Something pale and tightly rolled tugged against a buoy line.'],interaction:{minigame:'wind'},rewards:[{kind:'cloth',weight:1}],weight:.8}
+  ],
+  featureLabels:{dock:'dock',cottage:'cottage',jetty:'jetty',tiny_jetty:'tiny jetty',windmill_ruin:'old windmill',windmill:'windmill',pier:'new pier',garden:'garden',guesthouse:'guesthouse',workshop:'workshop',mosaic:'sea-glass mosaic',bell_tower:'bell tower',story_post:'post box',chart_house:'chart room',boatyard:'boatyard',home_garden:'garden',new_resident:'new neighbour',market:'market',museum_glass:'museum display',harbour_bell:'harbour bell',post_office:'post office',map_room:'chart room',footbridge:'footbridge',orchard:'orchard',tea_house:'tea house',observatory:'lookout',ferry:'ferry landing',nature_path:'nature trail',market_stall:'market stall',market_square:'market square',market_hall:'market hall',cottage_row:'cottage row',memory:'little monument',souvenir:'voyage shelf'},
+  copy:{
+    journal:{
+      inherited:['You inherited a little harbour, an old sailing boat, and a chart with more blank water than ink.'],
+      departure:['{origin} slipped astern as the bow turned toward {destination}.','The harbour ropes came free at {time}; {destination} lay ahead.','{boat} nosed away from {origin}, bound for {destination}.'],
+      landSighted:['Land rose from the blue ahead: {destination}.','The shoreline of {destination} came clear ahead.'],
+      earlyDock:['The tide turned and the boat put into {destination}.','A sheltered turn in the coast became {destination}.'],
+      docked:['Made fast at {destination} after {duration} at sea.','The boat came alongside at {destination} after {duration}.'],
+      discovered:['The chart gained a new name: {destination}.','Discovered {destination}.'],
+      passengerBoarded:['{person} came aboard for {destination}.','{person} stepped onto the deck with a small bag, bound for {destination}.'],
+      passengerArrived:['{person} came ashore at {destination}.','{person} reached {destination} and waved from the jetty.'],
+      residentSettled:['{person} decided to stay awhile in {destination}.','{person} came ashore and found a place in {destination}.'],
+      projectStarted:['Work began on {project} at {island}.','{island} marked out a site for {project}.'],
+      projectComplete:['{project} opened at {island}.','The last piece went into place on {project} at {island}.'],
+      routeRevealed:['The restored charts revealed a route toward {destination}.','A fresh line appeared on the chart, leading toward {destination}.']
+    },
+    voyage:{
+      underway:['{origin} slipped astern and the bow turned toward {destination}.','The water opened ahead as {origin} fell behind.'],
+      eventPassed:['{event} slipped astern as the voyage carried on.','The moment passed and the boat settled back onto her course.'],
+      backOnCourse:['The sea settles again.','The wake straightens behind the boat.'],
+      landToast:['Land sighted.','The shoreline is clear ahead.'],
+      discoveryToast:['{item} brought aboard.','{item} is safely aboard.']
+    },
+    residents:{
+      arrivedNote:['Arrived by sea.','Found a new home by the water.','Came ashore with a small bag and stayed.'],
+      liftNote:['Hoping to visit {destination}.','Waiting for a boat toward {destination}.','Has a reason to call at {destination}.'],
+      movedNote:['Moved here from {origin}.','Recently arrived from {origin}.']
+    },
+    harbour:{
+      emptyStores:['The store shed is waiting for the next useful cargo.'],
+      noProjects:['No building work is underway at the moment.'],
+      quietPaths:['The paths are quiet here for now.'],
+      welcome:['The boat is tied up and the stores are open.','Made fast. The jetty is quiet and the island board is waiting.'],
+      boardIntro:['See what the island has in store, who lives here, and what is taking shape.'],
+      projectPicker:['{population} resident{plural} call {island} home. Choose what they should begin next.'],
+      sitePicker:['Pick a corner of {island}. The project will grow there as materials arrive.'],
+      liftRequest:['{person} is hoping to catch a lift across the water.'],
+      courseMarked:['Course marked on the chart.'],
+      timezoneAdjusted:['Island clock adjusted.']
+    },
+    projects:{
+      completeToast:['{project} is complete.','{project} is ready to open.'],
+      siteNote:['{project} was completed at {site}.']
+    },
+    world:{
+      departed:['{vessel} left {origin} for {destination}.','{vessel} eased away from {origin}, bound for {destination}.'],
+      arrived:['{vessel} came alongside at {destination}.','{vessel} reached {destination} with the tide.'],
+      cargo:['{vessel} brought {cargo} to {destination}.','{cargo} came ashore from {vessel} at {destination}.'],
+      passenger:['{person} travelled aboard {vessel} to {destination}.','{person} stepped ashore from {vessel} at {destination}.'],
+      projectHelp:['The crew of {vessel} lent a hand with {project} at {destination}.','{vessel} left part of its cargo with the builders working on {project}.'],
+      fishing:['{vessel} returned to {destination} with useful finds from the water.'],
+      survey:['{vessel} returned with a fresh line for the chart near {destination}.'],
+      nearby:['{vessel} passed nearby, heading for {destination}.','{vessel} crossed the water ahead on the way to {destination}.'],
+      quiet:['The archipelago kept moving while you were away.'],
+      summaryTitle:['While you were away…']
+    },
+    minigames:{
+      success:['A good little spell at the helm — {score}.','A tidy bit of seamanship — {score}.'],
+      quiet:['The boat settles back onto her course.','The sea goes quiet around the hull.'],
+      trial:['Three-minute sea trial under way.','The little cutter slips out for a short sea trial.']
+    }
+  }
 };
-const VOYAGE_EVENT_TYPES=[
-  {type:'dolphins',icon:'⌁',title:'Dolphins off the bow',log:'A pod of dolphins kept pace with the boat for a while.',ambient:true},
-  {type:'seabirds',icon:'⌃',title:'A wheel of terns',log:'Terns circled a bright patch of water, then vanished toward the east.',ambient:true},
-  {type:'trader',icon:'◁',title:'Red sail on the horizon',log:'A little red-sailed trader crossed the route and dipped its flag.',ambient:true},
-  {type:'squall',icon:'☂',title:'Rain on the water',log:'A soft squall swept over the deck and left the sea shining.',ambient:true},
-  {type:'bottle',icon:'✉',title:'Something in the wake',log:'A sealed bottle bobbed into view.',minigame:'reef',rewardKind:'bottle'},
-  {type:'signal',icon:'✦',title:'A distant lantern',log:'A tiny lantern flashed a careful pattern from far off the route.',minigame:'signal',rewardKind:'chart'},
-  {type:'shoal',icon:'◎',title:'A mark beneath the keel',log:'The sounder picked up an odd shape beneath the boat.',minigame:'soundings',rewardKind:'crate'},
-  {type:'rigging',icon:'✚',title:'A loose line on deck',log:'A gust rattled the rigging and loosened a few fittings.',minigame:'repair',rewardKind:'timber'},
-  {type:'breeze',icon:'≈',title:'The wind turns kindly',log:'A clean breeze arrived from the west.',minigame:'wind',rewardKind:'glass'},
-  {type:'wildlife',icon:'☼',title:'Life in the blue',log:'Dark shapes surfaced beyond the starboard rail.',minigame:'wildlife',rewardKind:'seeds'}
-];
 
+function getPath(obj,path){return String(path).split('.').reduce((v,k)=>v&&v[k],obj)}
+function fillTemplate(str,vars={}){return String(str).replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'')}
+function contentLine(path,vars={},rand=Math.random){const value=getPath(CONTENT,path);if(Array.isArray(value)){if(!value.length)return'';const n=Math.min(value.length-1,Math.floor(rand()*value.length));return fillTemplate(value[n],vars)}return fillTemplate(value??'',vars)}
+function weightedPick(items,rand=Math.random,weightKey='weight'){if(!items?.length)return null;const total=items.reduce((a,x)=>a+(+x[weightKey]||1),0);let r=rand()*total;for(const x of items){r-=+x[weightKey]||1;if(r<=0)return x}return items[items.length-1]}
+function generateIslandName(rand=Math.random,suffixOverride=null){const a=CONTENT.names.islandPrefixes[Math.floor(rand()*CONTENT.names.islandPrefixes.length)],b=suffixOverride||CONTENT.names.islandSuffixes[Math.floor(rand()*CONTENT.names.islandSuffixes.length)];return `${a} ${b}`}
+function biomeDef(id){return CONTENT.biomes[id]||CONTENT.biomes.meadow}
 
-function starterIsland(){return {id:'home',name:'Home Harbour',x:0,y:0,biome:'meadow',visits:1,known:true,home:true,features:['dock','cottage'],story:0,notes:['Your little harbour.'],createdAt:nowReal()}}
-function makeIsland(name,x,y,biome='meadow'){return {id:uid('isl'),name,x,y,biome,visits:0,known:true,home:false,features:['jetty'],story:0,notes:[],createdAt:nowReal()}}
+// Compatibility aliases keep the engine concise while all editable content
+// lives in CONTENT above.
+const RATIO_OPTIONS=CONTENT.ratios;
+const ISLAND_NAMES_A=CONTENT.names.islandPrefixes;
+const ISLAND_NAMES_B=CONTENT.names.islandSuffixes;
+const BIOMES=Object.keys(CONTENT.biomes);
+const DISCOVERIES=CONTENT.discoveries;
+const MATERIALS=CONTENT.materials;
+const DISCOVERY_STOCK=Object.fromEntries(CONTENT.discoveries.map(d=>[d.kind,d.stock||{}]));
+const RESIDENT_FIRST=CONTENT.names.residentFirst;
+const RESIDENT_LAST=CONTENT.names.residentLast;
+const OUTFITS=CONTENT.outfits;
+const BUILD_SITES=CONTENT.buildSites;
+const PROJECT_TEMPLATES=CONTENT.projects;
+const MINIGAME_META=CONTENT.minigames;
+const VOYAGE_EVENT_TYPES=CONTENT.voyageEvents;
+
+function unlockRuleMet(rule){
+  if(!rule||rule.type==='always')return true;
+  if(rule.type==='known_islands')return state.islands.filter(i=>i.known).length>=rule.count;
+  if(rule.type==='home_population')return population(getIsland('home'))>=rule.count;
+  if(rule.type==='feature')return completedFeature(getIsland(rule.island||'home'),rule.feature)||getIsland(rule.island||'home').features?.includes(rule.feature);
+  if(rule.type==='any')return (rule.rules||[]).some(unlockRuleMet);
+  if(rule.type==='all')return (rule.rules||[]).every(unlockRuleMet);
+  return false;
+}
+const BOAT_TYPES=CONTENT.boats.map(b=>({...b,need:()=>unlockRuleMet(b.unlock)}));
+const NPC_VESSEL_TYPES=CONTENT.npcVessels;
+
+function makeIslandShape(seedKey){const rr=rng(hashString(String(seedKey)+'shape'));return{rx:7.6+rr()*3.5,ry:5.4+rr()*2.5,k1:2+Math.floor(rr()*3),k2:3+Math.floor(rr()*4),a1:.10+rr()*.14,a2:.06+rr()*.12,p1:rr()*Math.PI*2,p2:rr()*Math.PI*2,coveAngle:rr()*Math.PI*2,coveDepth:.04+rr()*.13,coveWidth:.35+rr()*.35,rotation:(rr()-.5)*.7};}
+function residentArchetype(seedKey,biome='meadow'){const rr=rng(hashString(String(seedKey)+'arch')),defs=CONTENT.residentArchetypes,bias=biomeDef(biome).residentBias||[],ids=Object.keys(defs),pool=[...bias,...bias,...ids];return pool[Math.floor(rr()*pool.length)]||ids[0]}
+function ensureResidentData(p,seedKey='resident',biome='meadow'){
+  const rr=rng(hashString(String(p?.id||seedKey)+'resident-data'));if(!p.archetype)p.archetype=residentArchetype(p.id||seedKey,biome);const def=CONTENT.residentArchetypes[p.archetype]||CONTENT.residentArchetypes.maker;
+  if(!p.occupation)p.occupation=def.occupations[Math.floor(rr()*def.occupations.length)];if(!Array.isArray(p.interests)||!p.interests.length)p.interests=[...def.interests].sort(()=>rr()-.5).slice(0,2);if(!p.note)p.note=contentLine('copy.residents.arrivedNote',{},rr);return p;
+}
+function makeResident(seedKey='resident',fixedName=null,biome='meadow'){
+  const rr=rng(hashString(String(seedKey))),outfit=OUTFITS[Math.floor(rr()*OUTFITS.length)];let accent=OUTFITS[Math.floor(rr()*OUTFITS.length)];if(accent===outfit)accent=OUTFITS[(OUTFITS.indexOf(outfit)+3)%OUTFITS.length];
+  const p={id:uid('person'),name:fixedName||`${RESIDENT_FIRST[Math.floor(rr()*RESIDENT_FIRST.length)]} ${RESIDENT_LAST[Math.floor(rr()*RESIDENT_LAST.length)]}`,outfit,accent,style:Math.floor(rr()*4),joinedAt:nowReal()};return ensureResidentData(p,seedKey,biome);
+}
+function ensureIslandData(i){
+  if(!i.shape)i.shape=makeIslandShape(i.id||i.name);if(!i.stock)i.stock={};if(!Array.isArray(i.projects))i.projects=[];if(!Array.isArray(i.residents))i.residents=[];if(!Array.isArray(i.vesselBuilds))i.vesselBuilds=[];if(!Array.isArray(i.commissionedVessels))i.commissionedVessels=[];
+  if(!i.biome||!CONTENT.biomes[i.biome])i.biome='meadow';
+  if(!i.residents.length&&i.home)i.residents=[makeResident('home-orla','Orla Reed',i.biome)];
+  if(!i.residents.length&&!i.home&&i.name==='Mosswick Island')i.residents=[makeResident('moss-mara','Mara Bell',i.biome)];
+  i.residents.forEach((p,idx)=>ensureResidentData(p,`${i.id}-${idx}`,i.biome));return i;
+}
+function population(i){return ensureIslandData(i).residents.length}
+function projectTemplate(id){return PROJECT_TEMPLATES.find(p=>p.id===id)}
+function projectProgress(p){const t=projectTemplate(p.templateId);if(!t)return 0;let have=0,need=0;Object.entries(t.req).forEach(([m,n])=>{need+=n;have+=Math.min(n,p.contributed?.[m]||0)});return need?have/need:1}
+function completedFeature(i,f){return i.features?.includes(f)||i.projects?.some(p=>p.complete&&projectTemplate(p.templateId)?.feature===f)}
+function projectAvailable(i,t){if(population(i)<t.pop)return false;if(t.prereq&&!completedFeature(i,t.prereq))return false;if(i.projects.some(p=>p.templateId===t.id))return false;return true}
+function stockHTML(i){ensureIslandData(i);const entries=Object.entries(MATERIALS).filter(([k])=>(i.stock[k]||0)>0);return entries.length?`<div class="stock-grid">${entries.map(([k,m])=>`<div class="stock-item"><b>${m.icon} ${i.stock[k]||0}</b><span>${m.name}</span></div>`).join('')}</div>`:`<div class="card"><p>${contentLine('copy.harbour.emptyStores')}</p></div>`}
+function residentHTML(p){return`<div class="resident"><span class="outfit-dot" style="background:linear-gradient(135deg,${p.outfit} 0 55%,${p.accent||p.outfit} 55% 100%)"></span><span><b>${p.name}</b><br><span style="color:var(--ink-soft)">${p.occupation||'Island resident'} · ${(p.interests||[]).join(', ')}</span><br><span style="color:var(--ink-soft)">${p.note||''}</span></span></div>`}
+function vesselCardHTML(v){const t=vesselType(v.typeId),dest=getIsland(v.destinationId),home=getIsland(v.homeId);const load=[Object.keys(v.cargo||{}).length?cargoLabel(v.cargo):'',(v.passengers||[]).length?`${v.passengers.length} passenger${v.passengers.length===1?'':'s'}`:''].filter(Boolean).join(' · '),status=v.status==='sailing'?`${v.mission} → ${dest?.name||'open water'} · ${fmtDuration(Math.max(0,v.arrivalAt-gameNow()),true)} away`:`Alongside at ${getIsland(v.locationId)?.name||home?.name||'the quay'}`;return`<div class="traffic"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${v.name} · ${t.name}</b><span>Captain ${v.captainName} · ${status}${load?`<br>Aboard: ${load}`:''}</span></div></div>`}
+function worldLogHTML(items,limit=8){return(items||[]).slice(0,limit).map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${fmtDate(e.at)} · ${formatClockInZone(e.at,state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}
+function materialName(k){return MATERIALS[k]?.name||k}
+function featureLabel(f){return CONTENT.featureLabels[f]||String(f).replaceAll('_',' ')}
+function eventEligible(def,ctx={}){const c=def.conditions||{};if(c.phase&&ctx.phase&&!c.phase.includes(ctx.phase))return false;if(c.weather&&ctx.weather&&!c.weather.includes(ctx.weather))return false;if(c.biome&&ctx.destination&&!c.biome.includes(ctx.destination.biome))return false;return true}
+function materializeVoyageEvent(def,rr=Math.random){
+  const reward=def.rewards?.length?weightedPick(def.rewards,rr):null;return{type:def.id,scene:def.scene||def.id,icon:def.icon,title:Array.isArray(def.title)?def.title[Math.floor(rr()*def.title.length)]:def.title,log:Array.isArray(def.log)?def.log[Math.floor(rr()*def.log.length)]:def.log,ambient:!!def.ambient,minigame:def.interaction?.minigame||null,rewardKind:reward?.kind||null,contentId:def.id};
+}
+
+// ============================================================
+// 2. EFFECT REGISTRY
+// Project records declare effects; the engine only dispatches them.
+// ============================================================
+const PROJECT_EFFECTS={
+  feature({island,effect}){if(effect.feature&&!island.features.includes(effect.feature))island.features.push(effect.feature)},
+  reveal_route({island}){const n=generateUnchartedIslandFrom(island);n.known=true;state.islands.push(n);state.routes.push([island.id,n.id]);const line=contentLine('copy.journal.routeRevealed',{destination:n.name});island.notes.unshift(line);state.journal.unshift(line)}
+};
+function applyProjectEffects(island,project,template){(template.effects||[{type:'feature',feature:template.feature}]).forEach(effect=>PROJECT_EFFECTS[effect.type]?.({island,project,template,effect}))}
+
+// ============================================================
+// 3. GAME STATE + RULES
+// ============================================================
+function starterIsland(){const i={id:'home',name:'Home Harbour',x:0,y:0,biome:'meadow',visits:1,known:true,home:true,features:['dock','cottage'],story:0,notes:['Your little harbour.'],createdAt:nowReal(),stock:{timber:1},projects:[],residents:[makeResident('home-orla','Orla Reed')],vesselBuilds:[],commissionedVessels:[],shape:makeIslandShape('home')};return i}
+function makeIsland(name,x,y,biome='meadow'){const id=uid('isl');return{id,name,x,y,biome,visits:0,known:true,home:false,features:['jetty'],story:0,notes:[],createdAt:nowReal(),stock:{},projects:[],residents:[],vesselBuilds:[],commissionedVessels:[],shape:makeIslandShape(id)}}
 
 function defaultState(){
   const home=starterIsland();
@@ -202,8 +439,10 @@ function defaultState(){
     phase:'ashore', phaseStartedAt:nowReal(), selectedRatio:16, voyage:null, activeView:'harbour',
     islands:[home,moss], routes:[['home',moss.id]], sessions:[], currentIslandId:'home', pendingResolutions:[],
     totalMinigames:0, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
-    journal:['You inherited a little harbour, an old sailing boat, and a chart with more blank water than ink.'],
-    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, settings:{prototypeTools:false},
+    journal:[contentLine('copy.journal.inherited')],
+    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, settings:{prototypeTools:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16},
+    liftRequests:[],boatPassengers:[],
+    world:{lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0},
     sim:{active:false,offsetMs:0}, achievements:{}, lastSavedAt:nowReal()
   }
 }
@@ -214,10 +453,16 @@ function loadState(){
   return defaultState();
 }
 function migrate(s){
+  const hadWorld=!!(s.world&&typeof s.world==='object'&&s.world.lastSimAt);const priorLastSaved=s.lastSavedAt;
   const d=defaultState(); s={...d,...s}; s.settings={...d.settings,...(s.settings||{})}; s.sim={...d.sim,...(s.sim||{})}; s.boat={...d.boat,...(s.boat||{})};
-  if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;
+  if(!validTimeZone(s.settings.timezone))s.settings.timezone=DEFAULT_TIMEZONE;
+  if(!Number.isFinite(+s.settings.defaultFastHours))s.settings.defaultFastHours=Number.isFinite(+s.selectedRatio)?+s.selectedRatio:16;s.settings.defaultFastHours=clamp(Math.round(+s.settings.defaultFastHours*2)/2,12,20);s.selectedRatio=s.settings.defaultFastHours;
+  if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;s.islands.forEach(ensureIslandData);
   if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!Array.isArray(s.journal))s.journal=[];
-  if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;}
+  if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];
+  if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
+  s.version=VERSION;
+  if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
   return s;
 }
 let storageWarned=false;
@@ -226,6 +471,7 @@ function gameNow(){return nowReal()+(state.sim?.active?state.sim.offsetMs:0)}
 
 const canvas=$('#game'), ctx=canvas.getContext('2d'); ctx.imageSmoothingEnabled=false;
 let DPR=1, frame=0, lastTs=0, toastTimer=null, minigame=null, particles=[], sceneEvent=null, lastVoyageEventCheck=0;
+let mobilePanelCollapsed=false;const chartView={zoom:1,panX:0,panY:0,dragging:false,lastX:0,lastY:0};
 const pointer={x:0,y:0,down:false};
 
 function toast(msg){const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2400)}
@@ -239,7 +485,12 @@ function beep(type='bell'){
   }catch(e){}
 }
 
-function currentRatio(){return RATIO_OPTIONS.find(r=>r.fast===state.selectedRatio)||RATIO_OPTIONS[1]}
+function fmtRatioHours(h){return Number.isInteger(h)?String(h):h.toFixed(1)}
+function currentRatio(){const fast=clamp(Number(state.settings?.defaultFastHours??state.selectedRatio??16),12,20),eat=24-fast,exact=RATIO_OPTIONS.find(r=>r.fast===fast);return {fast,eat,label:`${fmtRatioHours(fast)}:${fmtRatioHours(eat)}`,name:exact?.name||rhythmName(fast),desc:exact?.desc||'Your usual daily rhythm.'}}
+function setDefaultFastHours(value){const fast=clamp(Math.round(Number(value)*2)/2,12,20);state.settings.defaultFastHours=fast;state.selectedRatio=fast;return currentRatio()}
+function rhythmName(fast){return RATIO_OPTIONS.find(r=>r.fast===fast)?.name||({12:'Balanced',20:'Short Harbour'}[fast]||'Custom')}
+function rhythmPickerHTML(prefix='rhythm'){const r=currentRatio();return `<div class="rhythm-picker"><div class="rhythm-readout"><b id="${prefix}Ratio">${r.label}</b><span id="${prefix}Name">${r.name} rhythm · ${fmtRatioHours(r.fast)}h at sea / ${fmtRatioHours(r.eat)}h ashore</span></div><input id="${prefix}Slider" type="range" min="12" max="20" step="0.5" value="${r.fast}" aria-label="Default fasting hours"><div class="rhythm-scale"><span>12:12</span><span>14:10</span><span>16:8</span><span>18:6</span><span>20:4</span></div><div class="rhythm-help">Set the rhythm MakeFast should assume when you set sail. Half-hour steps let you choose a window between the common patterns.</div></div>`}
+function bindRhythmPicker(prefix='rhythm',onCommit=null){const slider=$('#'+prefix+'Slider'),ratio=$('#'+prefix+'Ratio'),name=$('#'+prefix+'Name');if(!slider)return;const update=commit=>{const fast=clamp(Math.round(+slider.value*2)/2,12,20),eat=24-fast,exact=RATIO_OPTIONS.find(r=>r.fast===fast);ratio.textContent=`${fmtRatioHours(fast)}:${fmtRatioHours(eat)}`;name.textContent=`${exact?.name||rhythmName(fast)} rhythm · ${fmtRatioHours(fast)}h at sea / ${fmtRatioHours(eat)}h ashore`;if(commit){setDefaultFastHours(fast);save();onCommit?.(currentRatio())}};slider.oninput=()=>update(false);slider.onchange=()=>update(true)}
 function getIsland(id){return state.islands.find(i=>i.id===id)||state.islands[0]}
 function currentIsland(){return getIsland(state.currentIslandId)}
 function voyageProgress(){
@@ -248,6 +499,166 @@ function voyageProgress(){
 function actualFastMs(){return state.voyage?Math.max(0,gameNow()-state.voyage.startedAt):0}
 function shoreElapsed(){return Math.max(0,gameNow()-state.phaseStartedAt)}
 function selectedDest(){return state.selectedDestinationId==='uncharted'?null:getIsland(state.selectedDestinationId)}
+
+// ============================================================
+// LIVING ARCHIPELAGO SIMULATION
+// Persistent NPC vessels move residents and stock whether or not the player
+// is currently looking at the chart. Health/fasting history is never invented;
+// this simulation advances only the game world.
+// ============================================================
+let worldSimulating=false;
+function worldState(){if(!state.world)state.world={lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0};return state.world}
+function connectedIslands(id){const ids=[];state.routes.forEach(r=>{if(r[0]===id)ids.push(r[1]);else if(r[1]===id)ids.push(r[0])});return [...new Set(ids)].map(getIsland).filter(i=>i?.known)}
+function hasArchetype(isl,arch){ensureIslandData(isl);return isl.residents.some(p=>p.archetype===arch)}
+function npcRuleMet(rule,isl){
+  if(!rule)return true;
+  if(rule.minPop&&population(isl)<rule.minPop)return false;
+  if(rule.minKnown&&state.islands.filter(i=>i.known).length<rule.minKnown)return false;
+  if(rule.feature&&!completedFeature(isl,rule.feature))return false;
+  if(rule.featureAny&&!(rule.featureAny.some(f=>completedFeature(isl,f))))return false;
+  if(rule.archetype&&!hasArchetype(isl,rule.archetype))return false;
+  if(rule.any&&!(rule.any.some(r=>npcRuleMet(r,isl))))return false;
+  return true;
+}
+function vesselType(id){return NPC_VESSEL_TYPES.find(v=>v.id===id)||NPC_VESSEL_TYPES[0]}
+function vesselName(seed){const rr=rng(hashString(seed+'vessel-name')),p=CONTENT.vesselNames.prefixes,n=CONTENT.vesselNames.nouns;return `${p[Math.floor(rr()*p.length)]} ${n[Math.floor(rr()*n.length)]}`}
+function makeNpcVessel(typeId,homeId){
+  const type=vesselType(typeId),home=getIsland(homeId),serial=++worldState().serial,seed=`${homeId}-${typeId}-${serial}`,rr=rng(hashString(seed));
+  const residents=ensureIslandData(home).residents,preferred=type.role==='fishing'?'fisher':type.role==='work'?'carpenter':type.role==='trade'?'trader':type.role==='survey'?'navigator':null;
+  const captain=(preferred&&residents.find(p=>p.archetype===preferred))||residents[Math.floor(rr()*Math.max(1,residents.length))];
+  const createdAt=worldState().lastSimAt||nowReal(),v={id:uid('npcboat'),typeId,role:type.role,name:vesselName(seed),homeId,locationId:homeId,status:'docked',originId:homeId,destinationId:homeId,departAt:0,arrivalAt:0,nextActionAt:0,cargo:{},passengers:[],captainName:captain?.name||'Harbour crew',mission:'Waiting by the quay',trips:0,createdAt};
+  v.nextActionAt=nextNpcActionAt(v,home,createdAt,rr);return v;
+}
+function ensureWorldFleet(){
+  const w=worldState(),known=state.islands.filter(i=>i.known&&population(i)>0);let total=w.vessels.length;
+  for(const isl of known){
+    for(const type of NPC_VESSEL_TYPES){
+      if(total>=42)break;if(!npcRuleMet(type.unlock,isl))continue;if(type.commission&&!isl.commissionedVessels.includes(type.id))continue;
+      if(w.vessels.some(v=>v.homeId===isl.id&&v.typeId===type.id))continue;
+      const fresh=makeNpcVessel(type.id,isl.id);w.vessels.push(fresh);logWorld(`${fresh.name}, a ${type.name.toLowerCase()}, joined the boats working from ${isl.name}.`,w.lastSimAt||nowReal(),true,type.icon);total++;
+    }
+  }
+}
+function vesselWorldPosition(v,at=gameNow()){
+  const a=getIsland(v.originId||v.locationId),b=getIsland(v.destinationId||v.locationId);if(!a)return{x:0,y:0};
+  if(v.status!=='sailing'||!b)return{x:a.x,y:a.y};
+  if(a.id===b.id){const p=clamp((at-v.departAt)/Math.max(1,v.arrivalAt-v.departAt),0,1),ang=p*Math.PI*2;return{x:a.x+Math.cos(ang)*.55,y:a.y+Math.sin(ang)*.38}}
+  const p=clamp((at-v.departAt)/Math.max(1,v.arrivalAt-v.departAt),0,1);return{x:lerp(a.x,b.x,p),y:lerp(a.y,b.y,p)};
+}
+function playerWorldPosition(){if(!state.voyage)return{x:currentIsland().x,y:currentIsland().y};const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId),p=voyageProgress();return{x:lerp(a.x,b.x,p),y:lerp(a.y,b.y,p)}}
+function projectNeeds(isl){ensureIslandData(isl);const need={};isl.projects.filter(p=>!p.complete).forEach(p=>{const t=projectTemplate(p.templateId);if(!t)return;Object.entries(t.req).forEach(([m,n])=>need[m]=(need[m]||0)+Math.max(0,n-(p.contributed?.[m]||0)))});return need}
+function cargoLabel(cargo){const parts=Object.entries(cargo||{}).filter(([,n])=>n>0).map(([m,n])=>`${n} ${materialName(m).toLowerCase()}`);return parts.length?parts.join(', '):'a few parcels'}
+function chooseDemandDestination(origin,capacity=3,rr=Math.random,anyKnown=false){
+  const candidates=(anyKnown?state.islands.filter(i=>i.known&&i.id!==origin.id):connectedIslands(origin.id)).filter(Boolean);if(!candidates.length)return null;
+  const scored=candidates.map(i=>({i,need:Object.values(projectNeeds(i)).reduce((a,b)=>a+b,0),pop:population(i)})).sort((a,b)=>(b.need+b.pop*.05)-(a.need+a.pop*.05));
+  return scored[0]?.i||candidates[Math.floor(rr()*candidates.length)];
+}
+function makeTradeCargo(origin,dest,capacity=3,targeted=true){
+  ensureIslandData(origin);ensureIslandData(dest);const demand=projectNeeds(dest),cargo={},reserve=targeted?1:2;let left=capacity;
+  const mats=Object.keys(MATERIALS).sort((a,b)=>(demand[b]||0)-(demand[a]||0));
+  for(const m of mats){if(left<=0)break;const avail=Math.max(0,(origin.stock[m]||0)-reserve),want=targeted?(demand[m]||0):avail;if(avail<=0||want<=0)continue;const n=Math.min(left,avail,Math.max(1,want));origin.stock[m]-=n;cargo[m]=n;left-=n}
+  if(left>0&&!Object.keys(cargo).length){for(const m of mats){const avail=Math.max(0,(origin.stock[m]||0)-2);if(avail>0){const n=Math.min(left,avail);origin.stock[m]-=n;cargo[m]=n;left-=n;if(left<=0)break}}}
+  return cargo;
+}
+function takeResidentForNpc(origin,target,vessel,request=null){
+  ensureIslandData(origin);let person=request?origin.residents.find(p=>p.id===request.personId):null;
+  if(!person||origin.residents.length<=1)return null;
+  origin.residents=origin.residents.filter(p=>p.id!==person.id);if(request)request.status='npc_aboard';
+  return{person,originId:origin.id,targetId:target.id,requestId:request?.id||null};
+}
+function npcTravelMs(a,b,type){const dist=Math.max(.6,Math.hypot((a?.x||0)-(b?.x||0),(a?.y||0)-(b?.y||0))),speed=type.speed||1;return clamp((.65+dist*.72)/speed,1,7)*3600000}
+function nextNpcActionAt(v,isl,at,rr=Math.random){
+  const type=vesselType(v.typeId),role=type.role;
+  // Passenger ferries keep a recognisable two-hour rhythm. Markets shorten cargo turnaround.
+  if(role==='ferry'){const slot=2*3600000;return Math.ceil((at+10*60000)/slot)*slot}
+  let min=45,max=135;
+  if(role==='mail'){min=55;max=115}else if(role==='fishing'){min=150;max=270}else if(role==='survey'||role==='naturalist'){min=100;max=210}else if(role==='tender'){min=30;max=75}else if(role==='trade'||role==='cargo'||role==='work'){
+    if(completedFeature(isl,'market_hall')){min=30;max=65}else if(completedFeature(isl,'market_square')){min=40;max=85}else if(completedFeature(isl,'market_stall')){min=50;max=105}else{min=75;max=150}
+  }
+  return at+(min+rr()*(max-min))*60000;
+}
+function trafficCanDepart(v,origin,at,rr=Math.random){
+  const role=vesselType(v.typeId).role,phase=dayPhase(at),weather=worldWeather(at);
+  // Essential local services keep going; discretionary traffic becomes quieter in poor weather and darkness.
+  if(weather==='rain'&&!['ferry','mail','tender'].includes(role)&&rr()<.42)return false;
+  if(phase==='night'&&!['ferry','mail','fishing','tender'].includes(role)){
+    const beacon=completedFeature(origin,'lighthouse');if(!beacon&&rr()<.68)return false;if(beacon&&rr()<.16)return false;
+  }
+  return true;
+}
+function logWorld(text,at=nowReal(),important=false,icon='⛵'){
+  if(!text)return;const w=worldState();w.log.unshift({id:uid('worldlog'),at,text,icon});w.log=w.log.slice(0,180);if(important&&w.collectingSummary)w.pendingSummary.push({at,text,icon});if(w.pendingSummary.length>30)w.pendingSummary=w.pendingSummary.slice(-30);
+}
+function beginNpcTrip(v,dest,at,{cargo={},passengers=[],mission='Crossing between islands'}={}){
+  const origin=getIsland(v.locationId)||getIsland(v.homeId),type=vesselType(v.typeId);if(!origin||!dest)return false;
+  v.status='sailing';v.originId=origin.id;v.destinationId=dest.id;v.departAt=at;v.arrivalAt=at+npcTravelMs(origin,dest,type);v.cargo=cargo;v.passengers=passengers;v.mission=mission;v.trips=(v.trips||0)+1;
+  logWorld(contentLine('copy.world.departed',{vessel:v.name,origin:origin.name,destination:dest.name}),at,false,type.icon);return true;
+}
+function maybeCreateWorldLiftRequest(isl,at,rr){
+  ensureIslandData(isl);if(isl.residents.length<2)return;const active=state.liftRequests.filter(r=>['waiting','npc_aboard','aboard'].includes(r.status)&&r.originId===isl.id),limit=Math.min(5,Math.max(1,Math.floor(isl.residents.length/2)));if(active.length>=limit)return;
+  if(rr()>.035)return;const targets=state.islands.filter(i=>i.known&&i.id!==isl.id);if(!targets.length)return;const busy=new Set(active.map(r=>r.personId)),people=isl.residents.filter(p=>!busy.has(p.id));if(!people.length)return;const person=people[Math.floor(rr()*people.length)],target=targets[Math.floor(rr()*targets.length)];
+  state.liftRequests.push({id:uid('lift'),personId:person.id,originId:isl.id,targetId:target.id,status:'waiting',createdAt:at});person.note=contentLine('copy.residents.liftNote',{destination:target.name},rr);
+}
+function productionRatesForResident(p){return{fisher:{glass:.012,stories:.01,timber:.006},gardener:{seeds:.032},carpenter:{timber:.022,hardware:.008},trader:{stories:.018},navigator:{charts:.018,stories:.006},naturalist:{glass:.016,seeds:.012},maker:{hardware:.018,cloth:.014,brass:.004}}[p.archetype]||{}}
+function projectProductionRates(isl){const r={};if(completedFeature(isl,'orchard'))r.seeds=(r.seeds||0)+.03;if(completedFeature(isl,'boatyard'))r.hardware=(r.hardware||0)+.012;if(completedFeature(isl,'market_hall'))r.stories=(r.stories||0)+.012;return r}
+function produceIslandResources(isl,hours,at){
+  ensureIslandData(isl);const w=worldState(),key=isl.id,wbuf=w.productionCarry[key]||(w.productionCarry[key]={}),rates=projectProductionRates(isl);isl.residents.forEach(p=>{const pr=productionRatesForResident(p);Object.entries(pr).forEach(([m,r])=>rates[m]=(rates[m]||0)+r)});
+  Object.entries(rates).forEach(([m,r])=>{wbuf[m]=(wbuf[m]||0)+r*hours;const n=Math.floor(wbuf[m]);if(n>0){addStock(isl,m,n);wbuf[m]-=n}});
+  const rr=rng(hashString(`${isl.id}-${Math.floor(at/21600000)}-lift`));maybeCreateWorldLiftRequest(isl,at,rr);
+}
+function worldSupplyProject(isl,vessel,at,maxUnits=1){
+  const p=isl.projects.find(p=>!p.complete);if(!p)return false;const t=projectTemplate(p.templateId);if(!t)return false;let moved=0;
+  for(const m of Object.keys(t.req)){while(moved<maxUnits&&(isl.stock[m]||0)>0&&(p.contributed[m]||0)<t.req[m]){isl.stock[m]--;p.contributed[m]=(p.contributed[m]||0)+1;moved++}}
+  if(moved){logWorld(contentLine('copy.world.projectHelp',{vessel:vessel.name,project:t.name,destination:isl.name}),at,true,'✚');if(projectProgress(p)>=.999)completeIslandProject(isl,p);return true}return false;
+}
+function revealSurveyRoute(from,at,vessel){
+  if(state.islands.filter(i=>i.known).length>=24)return false;const n=generateUnchartedIslandFrom(from);n.known=true;state.islands.push(n);state.routes.push([from.id,n.id]);const txt=contentLine('copy.world.survey',{vessel:vessel.name,destination:from.name});logWorld(`${txt} ${n.name} was added to the chart.`,at,true,'⌁');return true;
+}
+function resolveNpcArrival(v,at){
+  const dest=getIsland(v.destinationId),type=vesselType(v.typeId);if(!dest)return;ensureIslandData(dest);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=nextNpcActionAt(v,dest,at,Math.random);
+  if(Object.keys(v.cargo||{}).length){Object.entries(v.cargo).forEach(([m,n])=>addStock(dest,m,n));logWorld(contentLine('copy.world.cargo',{vessel:v.name,cargo:cargoLabel(v.cargo),destination:dest.name}),at,true,type.icon)}
+  (v.passengers||[]).forEach(ps=>{const person=ensureResidentData(ps.person,ps.person.id,dest.biome);if(!dest.residents.some(p=>p.id===person.id))dest.residents.push(person);person.note=contentLine('copy.residents.movedNote',{origin:getIsland(ps.originId)?.name||'another island'});const req=state.liftRequests.find(r=>r.id===ps.requestId);if(req)req.status='delivered';logWorld(contentLine('copy.world.passenger',{person:person.name,vessel:v.name,destination:dest.name}),at,true,'☻')});
+  if(type.role==='work')worldSupplyProject(dest,v,at,2);else if(type.role==='tender')worldSupplyProject(dest,v,at,1);
+  if(type.role==='survey'){const rr=rng(hashString(`${v.id}-${v.trips}-survey`));if(rr()<.16)revealSurveyRoute(dest,at,v)}
+  if(type.role==='fishing')logWorld(contentLine('copy.world.fishing',{vessel:v.name,destination:dest.name}),at,false,type.icon);
+  v.cargo={};v.passengers=[];
+}
+function dispatchNpcVessel(v,at){
+  const type=vesselType(v.typeId),origin=getIsland(v.locationId)||getIsland(v.homeId);if(!origin||!origin.known)return;const rr=rng(hashString(`${v.id}-${v.trips}-${Math.floor(at/1800000)}`)),neighbors=connectedIslands(origin.id),known=state.islands.filter(i=>i.known&&i.id!==origin.id);if(!known.length)return;if(!trafficCanDepart(v,origin,at,rr)){v.nextActionAt=nextNpcActionAt(v,origin,at,rr);return;}
+  let dest=null,cargo={},passengers=[],mission='Making an island crossing';
+  if(type.role==='fishing'){dest=neighbors[Math.floor(rr()*neighbors.length)]||origin;const kinds=['glass','timber','stories'];const m=kinds[Math.floor(rr()*kinds.length)];cargo[m]=1+(rr()>.78?1:0);mission='Working the coastal water'}
+  else if(type.role==='naturalist'){dest=neighbors[Math.floor(rr()*neighbors.length)]||origin;const m=rr()<.62?'seeds':'glass';cargo[m]=1;mission='Watching the shore and wildlife'}
+  else if(type.role==='survey'){dest=neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)];mission='Running a line of soundings'}
+  else if(type.role==='ferry'){
+    const waiting=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===origin.id);const first=waiting[0];dest=first?getIsland(first.targetId):(neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)]);if(dest){for(const req of waiting.filter(r=>r.targetId===dest.id).slice(0,type.passengers||1)){const ps=takeResidentForNpc(origin,dest,v,req);if(ps)passengers.push(ps)}}mission='Running the passenger service';
+  }
+  else if(type.role==='mail'){dest=neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)];if((origin.stock.stories||0)>0){origin.stock.stories--;cargo.stories=1}const req=state.liftRequests.find(r=>r.status==='waiting'&&r.originId===origin.id&&r.targetId===dest.id);if(req){const ps=takeResidentForNpc(origin,dest,v,req);if(ps)passengers.push(ps)}mission='Carrying mail and small parcels'}
+  else if(type.role==='trade'||type.role==='cargo'||type.role==='work'||type.role==='tender'||type.role==='neighbour'){
+    const anyKnown=type.role==='cargo';dest=chooseDemandDestination(origin,type.capacity,rr,anyKnown)||(neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)]);if(!dest)return;cargo=makeTradeCargo(origin,dest,type.capacity,type.role!=='neighbour');
+    if(type.role==='neighbour'&&rr()<.2){const req=state.liftRequests.find(r=>r.status==='waiting'&&r.originId===origin.id&&r.targetId===dest.id);if(req){const ps=takeResidentForNpc(origin,dest,v,req);if(ps)passengers.push(ps)}}mission=type.role==='work'?'Taking stores to the builders':type.role==='trade'?'Carrying island trade':type.role==='cargo'?'Moving a heavy cargo':type.role==='tender'?'A short harbour job':'Calling at a neighbouring island';
+  }
+  else if(type.role==='visitor'){const waiting=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===origin.id),first=waiting[0];dest=first?getIsland(first.targetId):(neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)]);if(dest){for(const req of waiting.filter(r=>r.targetId===dest.id).slice(0,type.passengers||1)){const ps=takeResidentForNpc(origin,dest,v,req);if(ps)passengers.push(ps)}}mission=passengers.length?'Taking neighbours on an island visit':'Making a leisurely island call'}
+  if(!dest)dest=known[Math.floor(rr()*known.length)];beginNpcTrip(v,dest,at,{cargo,passengers,mission});
+}
+function simulateWorldTo(target=nowReal(),summarize=false){
+  const w=worldState(),start=w.lastSimAt||target;if(target<=start){ensureWorldFleet();return 0}const gap=target-start,from=Math.max(start,target-30*86400000),step=30*60000;worldSimulating=true;w.collectingSummary=!!summarize;if(summarize)w.pendingSummary=[];let t=from;
+  ensureWorldFleet();
+  while(t<target){const next=Math.min(target,t+step),hours=(next-t)/3600000;state.islands.filter(i=>i.known).forEach(i=>produceIslandResources(i,hours,next));ensureWorldFleet();
+    for(const v of w.vessels){if(v.status==='sailing'&&v.arrivalAt<=next)resolveNpcArrival(v,v.arrivalAt);if(v.status==='docked'&&(v.nextActionAt||0)<=next)dispatchNpcVessel(v,next)}
+    t=next;
+  }
+  w.lastSimAt=target;w.collectingSummary=false;worldSimulating=false;return gap;
+}
+function fastForwardWorld(hours=12){const w=worldState(),real=nowReal(),base=Math.max(w.lastSimAt||real,real),delta=hours*3600000;simulateWorldTo(base+delta,false);w.vessels.forEach(v=>{['departAt','arrivalAt','nextActionAt','createdAt'].forEach(k=>{if(v[k]>real)v[k]-=delta})});w.log.forEach(e=>{if(e.at>real)e.at-=delta});state.liftRequests.forEach(r=>{if(r.createdAt>real)r.createdAt-=delta});w.lastSimAt=real;save();renderUI();toast(`The archipelago clock turned ahead ${hours} hours.`)}
+function activeWorldVessels(){return worldState().vessels.filter(v=>v.status==='sailing')}
+function vesselsAtIsland(id){return worldState().vessels.filter(v=>v.status==='docked'&&v.locationId===id)}
+function nearbyWorldVessels(radius=1.25){const pos=playerWorldPosition();return activeWorldVessels().map(v=>({v,pos:vesselWorldPosition(v,gameNow())})).filter(x=>Math.hypot(x.pos.x-pos.x,x.pos.y-pos.y)<=radius).sort((a,b)=>Math.hypot(a.pos.x-pos.x,a.pos.y-pos.y)-Math.hypot(b.pos.x-pos.x,b.pos.y-pos.y)).slice(0,4)}
+function syncPlayerTrafficEncounters(){
+  if(!state.voyage||state.phase!=='fasting')return;if(!Array.isArray(state.voyage.trafficSeen))state.voyage.trafficSeen=[];
+  for(const {v} of nearbyWorldVessels(1.05)){if(state.voyage.trafficSeen.includes(v.id))continue;state.voyage.trafficSeen.push(v.id);const dest=getIsland(v.destinationId),type=vesselType(v.typeId),text=contentLine('copy.world.nearby',{vessel:v.name,destination:dest?.name||'another island'});state.voyage.seaLog.unshift({at:gameNow(),icon:type.icon,title:v.name,text});sceneEvent={id:`traffic-${v.id}`,scene:'npcboat',vesselId:v.id,started:performance.now(),duration:12000,ambient:true};toast(`${v.name} off the beam`)}
+}
+function showOfflineWorldSummary(){
+  const w=worldState(),items=w.pendingSummary||[];if(!items.length)return;const top=items.slice(-8).reverse();w.pendingSummary=[];save();showModal(`<h2>${contentLine('copy.world.summaryTitle')}</h2><p>${contentLine('copy.world.quiet')}</p><div class="section">${top.map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${fmtDate(e.at)} · ${formatClockInZone(e.at,state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE ARCHIPELAGO</button></div>`)}
 
 function totalFastMs(){
   let total=state.sessions.filter(s=>!s.simulated).reduce((a,s)=>a+(s.durationMs||0),0);
@@ -266,24 +677,27 @@ function rollingStats(days=30){
 
 function setView(view){
   if(minigame){toast('Finish or leave the minigame first.');return}
-  state.activeView=view; save(); renderUI();
+  state.activeView=view;if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=false;syncMobilePanel()} save(); renderUI();
 }
+
+function syncMobilePanel(){const panel=$('#infoPanel');if(!panel)return;panel.classList.toggle('sheet-collapsed',window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed)}
+function toggleMobilePanel(force){if(!window.matchMedia('(max-width:900px)').matches)return;mobilePanelCollapsed=typeof force==='boolean'?force:!mobilePanelCollapsed;syncMobilePanel()}
+function fitResponsiveStage(){const wrap=$('#stageWrap'),main=document.querySelector('.main');if(!wrap||!main)return;if(!window.matchMedia('(max-width:900px)').matches){wrap.style.cssText='';return}const r=main.getBoundingClientRect(),pad=10,ratio=16/9;let w=Math.max(200,r.width-pad*2),h=w/ratio;const maxH=Math.max(150,r.height-pad*2);if(h>maxH){h=maxH;w=h*ratio}wrap.style.width=`${Math.floor(w)}px`;wrap.style.height=`${Math.floor(h)}px`;wrap.style.left=`${Math.floor((r.width-w)/2)}px`;wrap.style.top=`${pad}px`;wrap.style.right='auto';wrap.style.bottom='auto'}
+function resetChartView(){chartView.zoom=1;chartView.panX=0;chartView.panY=0}
+function zoomChart(delta){chartView.zoom=clamp(chartView.zoom+delta,.65,2.6)}
 
 function ensureArrived(){
   if(state.phase==='fasting'&&state.voyage&&voyageProgress()>=1){
     state.phase='arrived';
     if(Array.isArray(state.voyage.events)){state.voyage.events.filter(e=>e.triggered&&!e.resolved).forEach(e=>{e.resolved=true});state.voyage.activeEventId=null;}
-    if(!state.voyage.landSightedAt){state.voyage.landSightedAt=gameNow(); state.journal.unshift(`Land sighted on the voyage toward ${state.voyage.destinationName}.`); beep('bell'); toast('Land sighted. Dock whenever you are ready.');}
+    if(!state.voyage.landSightedAt){state.voyage.landSightedAt=gameNow(); state.journal.unshift(contentLine('copy.journal.landSighted',{destination:state.voyage.destinationName})); beep('bell'); toast(contentLine('copy.voyage.landToast'));}
     save(); renderUI();
   }
 }
 
-function buildVoyageEvents(voyageId){
-  const rr=rng(hashString(String(voyageId)+'makefast-events'));
-  const slots=[.08,.21,.36,.52,.68,.84];
-  const pool=[...VOYAGE_EVENT_TYPES]; const events=[];
-  slots.forEach((p,idx)=>{let pick=Math.floor(rr()*pool.length);const base=pool.splice(pick,1)[0]||VOYAGE_EVENT_TYPES[Math.floor(rr()*VOYAGE_EVENT_TYPES.length)];events.push({...base,id:uid('evt'),p,triggered:false,resolved:false});});
-  return events;
+function buildVoyageEvents(voyageId,ctx={}){
+  const rr=rng(hashString(String(voyageId)+'makefast-events')),slots=[.08,.21,.36,.52,.68,.84],events=[];let pool=VOYAGE_EVENT_TYPES.filter(e=>eventEligible(e,ctx));if(pool.length<slots.length)pool=[...VOYAGE_EVENT_TYPES];
+  slots.forEach(p=>{const choices=pool.length?pool:VOYAGE_EVENT_TYPES,base=weightedPick(choices,rr)||VOYAGE_EVENT_TYPES[0],idx=pool.indexOf(base);if(idx>=0)pool.splice(idx,1);events.push({...materializeVoyageEvent(base,rr),id:uid('evt'),p,triggered:false,resolved:false});});return events;
 }
 function activeVoyageEvent(){
   if(!state.voyage?.events)return null; return state.voyage.events.find(e=>e.triggered&&!e.resolved&&!e.ambient)||null;
@@ -291,8 +705,9 @@ function activeVoyageEvent(){
 function voyageEventById(id){return state.voyage?.events?.find(e=>e.id===id)||null}
 function processVoyageEvents(){
   if(!state.voyage||state.phase!=='fasting'||minigame)return;
+  syncPlayerTrafficEncounters();
   const t=performance.now(); if(t-lastVoyageEventCheck<700)return; lastVoyageEventCheck=t;
-  if(!Array.isArray(state.voyage.events)||!state.voyage.events.length)state.voyage.events=buildVoyageEvents(state.voyage.id);
+  if(!Array.isArray(state.voyage.events)||!state.voyage.events.length)state.voyage.events=buildVoyageEvents(state.voyage.id,{phase:dayPhase(),weather:worldWeather(),destination:getIsland(state.voyage.destinationId)});
   if(!Array.isArray(state.voyage.seaLog))state.voyage.seaLog=[];
   const p=voyageProgress(); let changed=false;
   for(const e of state.voyage.events){
@@ -309,7 +724,7 @@ function investigateVoyageEvent(id){
   const e=voyageEventById(id); if(!e||e.resolved||state.phase!=='fasting')return; state.voyage.activeEventId=e.id; startMinigame(e.minigame||'reef',75,{eventId:e.id,rewardKind:e.rewardKind});
 }
 function letVoyageEventPass(id){
-  const e=voyageEventById(id); if(!e)return; e.resolved=true; if(state.voyage.activeEventId===id)state.voyage.activeEventId=null; if(sceneEvent?.id===id)sceneEvent=null; state.voyage.seaLog.unshift({at:gameNow(),icon:'≈',title:'Back on course',text:`${e.title} slipped astern as the voyage carried on.`}); save();renderUI();toast('The sea settles again.');
+  const e=voyageEventById(id); if(!e)return; e.resolved=true; if(state.voyage.activeEventId===id)state.voyage.activeEventId=null; if(sceneEvent?.id===id)sceneEvent=null; state.voyage.seaLog.unshift({at:gameNow(),icon:'≈',title:'Back on course',text:contentLine('copy.voyage.eventPassed',{event:e.title})}); save();renderUI();toast(contentLine('copy.voyage.backOnCourse'));
 }
 function resolveEncounterEvent(id,score){
   const e=voyageEventById(id); if(!e)return; e.resolved=true; if(state.voyage.activeEventId===id)state.voyage.activeEventId=null; if(sceneEvent?.id===id)sceneEvent=null; const note=score>0?`${e.title} became a small story for the log.`:`${e.title} passed into the wake.`; state.voyage.seaLog.unshift({at:gameNow(),icon:e.icon,title:e.title,text:note});
@@ -324,15 +739,16 @@ function startVoyage(){
     dest=selectedDest();
     if(!dest||dest.id===state.currentIslandId) dest=state.islands.find(i=>i.known&&i.id!==state.currentIslandId)||state.islands[0];
   }
+  const boarded=boardWaitingPassengers(currentIsland(),dest);
   const voyageId=uid('voy');
   state.voyage={
     id:voyageId, startedAt:gameNow(), startedAtReal:nowReal(), targetMs:r.fast*3600000, targetHours:r.fast, eatingHours:r.eat,
     originId:state.currentIslandId, originName:currentIsland().name, destinationId:dest.id, destinationName:dest.name,
     discoveryIds:[], discoveries:[], minigamesPlayed:0, plannedProgress:0, simulated:!!state.sim.active, uncharted:!dest.known,
-    events:buildVoyageEvents(voyageId), seaLog:[{at:gameNow(),icon:'⚑',title:'Under way',text:`${currentIsland().name} slipped astern and the bow turned toward ${dest.known?dest.name:'open water'}.`}],activeEventId:null
+    events:buildVoyageEvents(voyageId,{phase:dayPhase(),weather:worldWeather(),destination:dest}), passengers:[...state.boatPassengers], trafficSeen:[], seaLog:[{at:gameNow(),icon:'⚑',title:'Under way',text:contentLine('copy.voyage.underway',{origin:currentIsland().name,destination:dest.known?dest.name:'open water'})},...(boarded?[{at:gameNow(),icon:'☻',title:'Passenger aboard',text:contentLine('copy.journal.passengerBoarded',{person:state.boatPassengers[state.boatPassengers.length-1]?.person?.name||'A neighbour',destination:dest.name})}]:[])],activeEventId:null
   };
   state.phase='fasting'; state.phaseStartedAt=gameNow(); state.activeView='voyage';
-  state.journal.unshift(`Set sail from ${currentIsland().name} toward ${dest.known?dest.name:'uncharted waters'} on a ${r.label} rhythm.`);
+  state.journal.unshift(contentLine('copy.journal.departure',{origin:currentIsland().name,destination:dest.known?dest.name:'uncharted waters',boat:state.boat.name||'The boat',time:fmtClock(gameNow())}));
   save(); beep('soft'); renderUI();
 }
 
@@ -350,40 +766,29 @@ function earlyDockPrompt(){
 
 function dock(early=false){
   if(!state.voyage)return;
-  const v=state.voyage; const ended=gameNow(); const duration=ended-v.startedAt; const progress=clamp(duration/v.targetMs,0,1);
-  let dest=getIsland(v.destinationId);
-  if(early&&progress<.995){
-    const cove=generateCove(progress,v); state.islands.push(cove); state.routes.push([v.originId,cove.id]); dest=cove;
-    state.journal.unshift(`Plans changed: put into ${cove.name} after ${fmtDuration(duration,true)} at sea.`);
-  }else{
-    if(!dest.known){dest.known=true; state.journal.unshift(`Discovered ${dest.name}.`)}
-    state.journal.unshift(`Docked at ${dest.name} after ${fmtDuration(duration,true)} at sea.`);
-  }
-  dest.visits=(dest.visits||0)+1; state.currentIslandId=dest.id;
-  const session={id:v.id,startedAt:v.startedAtReal||v.startedAt,endedAt:nowReal(),durationMs:state.sim.active?duration:Math.max(0,nowReal()-(v.startedAtReal||nowReal())),targetHours:v.targetHours,completed:progress>=.995,progress,destinationId:dest.id,simulated:!!v.simulated};
-  state.sessions.push(session);
-  state.pendingResolutions=(v.discoveries||[]).map(d=>({...d,resolveAt:dest.id}));
-  sceneEvent=null; state.voyage=null; state.phase='ashore'; state.phaseStartedAt=gameNow(); state.activeView='harbour';
-  const nextHome=getIsland('home');
-  const nextOther=state.islands.find(i=>i.known&&i.id!==dest.id);
-  state.selectedDestinationId=dest.id!=='home'?nextHome.id:(nextOther?.id||'uncharted');
-  if(state.sim.active){state.sim.active=false;state.sim.offsetMs=0;toast('Sea trial complete.')}
-  save(); beep('bell'); renderUI();
-  if(state.pendingResolutions.length) setTimeout(()=>openResolution(),250);
-  else setTimeout(()=>openArrivalProject(dest),250);
+  const v=state.voyage,ended=gameNow(),duration=ended-v.startedAt,progress=clamp(duration/v.targetMs,0,1);let dest=getIsland(v.destinationId);
+  if(early&&progress<.995){const cove=generateCove(progress,v);state.islands.push(cove);state.routes.push([v.originId,cove.id]);dest=cove;state.journal.unshift(contentLine('copy.journal.earlyDock',{destination:cove.name}))}
+  else{if(!dest.known){dest.known=true;state.journal.unshift(contentLine('copy.journal.discovered',{destination:dest.name}))}state.journal.unshift(contentLine('copy.journal.docked',{destination:dest.name,duration:fmtDuration(duration,true)}))}
+  ensureIslandData(dest);dest.visits=(dest.visits||0)+1;state.currentIslandId=dest.id;
+  const cargoNotes=unloadVoyageCargo(dest,v.discoveries||[]),delivered=deliverPassengers(dest);maybeGenerateLiftRequest(dest);
+  const session={id:v.id,startedAt:v.startedAtReal||v.startedAt,endedAt:nowReal(),durationMs:state.sim.active?duration:Math.max(0,nowReal()-(v.startedAtReal||nowReal())),targetHours:v.targetHours,completed:progress>=.995,progress,destinationId:dest.id,simulated:!!v.simulated};state.sessions.push(session);
+  state.pendingResolutions=[];sceneEvent=null;state.voyage=null;state.phase='ashore';state.phaseStartedAt=gameNow();state.activeView='harbour';
+  const nextHome=getIsland('home'),nextOther=state.islands.find(i=>i.known&&i.id!==dest.id);state.selectedDestinationId=dest.id!=='home'?nextHome.id:(nextOther?.id||'uncharted');
+  if(state.sim.active){state.sim.active=false;state.sim.offsetMs=0;toast('Sea trial complete.')}save();beep('bell');renderUI();
+  const summary=[...cargoNotes,...delivered.map(p=>contentLine('copy.journal.passengerArrived',{person:p.name,destination:dest.name}))];if(summary.length)state.journal.unshift(`${dest.name}: ${summary.join(' ')}`);save();setTimeout(()=>openDocksideBoard(dest,true),220);
 }
 
-function generateUnchartedIsland(){
-  const rr=rng(state.worldSeed+state.islands.length*7919+Date.now()%99991); const origin=currentIsland();
+function generateUnchartedIslandFrom(origin=currentIsland()){
+  const rr=rng(state.worldSeed+state.islands.length*7919+Date.now()%99991+hashString(origin.id));
   const ang=rr()*Math.PI*2, dist=2.1+rr()*1.7; let x=Math.round((origin.x+Math.cos(ang)*dist)*10)/10, y=Math.round((origin.y+Math.sin(ang)*dist)*10)/10;
   for(let tries=0;tries<6;tries++){if(!state.islands.some(i=>Math.hypot(i.x-x,i.y-y)<1.2))break;x+=.8;y+=.4}
-  const name=ISLAND_NAMES_A[Math.floor(rr()*ISLAND_NAMES_A.length)]+' '+ISLAND_NAMES_B[Math.floor(rr()*ISLAND_NAMES_B.length)];
-  return makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]);
+  const name=generateIslandName(rr);return makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]);
 }
+function generateUnchartedIsland(){return generateUnchartedIslandFrom(currentIsland())}
 function generateCove(progress,v){
   const a=getIsland(v.originId), b=getIsland(v.destinationId); const t=clamp(progress,.18,.88); const rr=rng(hashString(v.id+'cove'));
   const x=lerp(a.x,b.x,t)+(rr()-.5)*.5, y=lerp(a.y,b.y,t)+(rr()-.5)*.5;
-  let name=ISLAND_NAMES_A[Math.floor(rr()*ISLAND_NAMES_A.length)]+' Cove';
+  let name=generateIslandName(rr,'Cove');
   if(state.islands.some(i=>i.name===name))name='Little '+name;
   const c=makeIsland(name,x,y,BIOMES[Math.floor(rr()*BIOMES.length)]); c.features=['tiny_jetty']; c.notes.push('First entered on a change of tide.'); return c;
 }
@@ -391,61 +796,73 @@ function generateCove(progress,v){
 function addDiscovery(kind=null){
   if(!state.voyage)return;
   const pool=DISCOVERIES.filter(d=>!state.voyage.discoveries.some(x=>x.kind===d.kind)); if(!pool.length)return;
-  const base=kind?DISCOVERIES.find(d=>d.kind===kind):pool[Math.floor(Math.random()*pool.length)]; if(!base)return;
-  const d={...base,id:uid('find')}; state.voyage.discoveries.push(d); save(); beep('find'); toast(`${d.name} brought aboard.`); renderUI();
+  const dest=getIsland(state.voyage.destinationId),bias=biomeDef(dest?.biome).findBias||[],weighted=pool.flatMap(d=>bias.includes(d.kind)?[d,d,d]:[d]);
+  const base=kind?DISCOVERIES.find(d=>d.kind===kind):weighted[Math.floor(Math.random()*weighted.length)]; if(!base)return;
+  let d={...base,id:uid('find')};if(d.kind==='traveller'){const dest=getIsland(state.voyage.destinationId),person=makeResident(state.voyage.id+d.id,null,dest?.biome||'meadow');d={...d,name:person.name,person,desc:`${person.name}, ${person.occupation.toLowerCase()}, was found between islands and is glad to see a friendly deck.`}} state.voyage.discoveries.push(d); save(); beep('find'); toast(contentLine('copy.voyage.discoveryToast',{item:d.name})); renderUI();
 }
 
-function openResolution(){
-  if(!state.pendingResolutions.length){openArrivalProject(currentIsland());return}
-  const d=state.pendingResolutions[0], dest=currentIsland(), home=getIsland('home');
-  const choices=resolutionChoices(d,dest,home);
+function addStock(isl,material,amount=1){ensureIslandData(isl);isl.stock[material]=(isl.stock[material]||0)+amount}
+function unloadVoyageCargo(dest,discoveries=[]){
+  ensureIslandData(dest);const notes=[];
+  discoveries.forEach(d=>{
+    if(d.kind==='traveller'){
+      const person=ensureResidentData(d.person||makeResident(d.id||d.name,null,dest.biome),d.id||d.name,dest.biome);person.note=contentLine('copy.residents.arrivedNote');if(!dest.residents.some(r=>r.id===person.id))dest.residents.push(person);const line=contentLine('copy.journal.residentSettled',{person:person.name,destination:dest.name});notes.push(line);state.journal.unshift(line);return;
+    }
+    const bundle=DISCOVERY_STOCK[d.kind]||{};Object.entries(bundle).forEach(([m,n])=>addStock(dest,m,n));if(Object.keys(bundle).length)notes.push(`${d.name} went into the island stores.`);
+  });return notes;
+}
+function boardWaitingPassengers(origin,dest){
+  ensureIslandData(origin);const matching=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===origin.id&&r.targetId===dest.id);
+  matching.forEach(req=>{const idx=origin.residents.findIndex(p=>p.id===req.personId);if(idx<0)return;const person=origin.residents.splice(idx,1)[0];state.boatPassengers.push({requestId:req.id,person,targetId:req.targetId,originId:req.originId});req.status='aboard';state.journal.unshift(contentLine('copy.journal.passengerBoarded',{person:person.name,destination:getIsland(req.targetId).name}))});
+  return matching.length;
+}
+function deliverPassengers(dest){
+  ensureIslandData(dest);const delivered=[];state.boatPassengers=state.boatPassengers.filter(p=>{if(p.targetId!==dest.id)return true;if(!dest.residents.some(r=>r.id===p.person.id))dest.residents.push(p.person);const req=state.liftRequests.find(r=>r.id===p.requestId);if(req)req.status='delivered';p.person.note=contentLine('copy.residents.movedNote',{origin:getIsland(p.originId).name});delivered.push(p.person);state.journal.unshift(contentLine('copy.journal.passengerArrived',{person:p.person.name,destination:dest.name}));return false});return delivered;
+}
+function maybeGenerateLiftRequest(isl){
+  ensureIslandData(isl);if(!isl.residents.length)return; if(state.liftRequests.some(r=>r.status==='waiting'&&r.originId===isl.id))return;
+  const targets=state.islands.filter(i=>i.known&&i.id!==isl.id);if(!targets.length)return;
+  const rr=rng(hashString(`${isl.id}-${isl.visits}-${state.sessions.length}-lift`));if(rr()>.64)return;
+  const person=isl.residents[Math.floor(rr()*isl.residents.length)],target=targets[Math.floor(rr()*targets.length)];state.liftRequests.push({id:uid('lift'),personId:person.id,originId:isl.id,targetId:target.id,status:'waiting',createdAt:nowReal()});person.note=contentLine('copy.residents.liftNote',{destination:target.name});
+}
+function availableProjects(isl){const bias=biomeDef(isl.biome).projectBias||[];return PROJECT_TEMPLATES.filter(t=>projectAvailable(isl,t)).sort((a,b)=>(bias.includes(b.id)?1:0)-(bias.includes(a.id)?1:0))}
+function startIslandProject(isl,templateId,site){const t=projectTemplate(templateId);if(!t||!projectAvailable(isl,t))return;if(t.prereq){const prev=isl.projects.find(p=>p.complete&&projectTemplate(p.templateId)?.feature===t.prereq);if(prev)site=prev.site}isl.projects.push({id:uid('proj'),templateId,site,contributed:{},complete:false,startedAt:nowReal()});state.journal.unshift(contentLine('copy.journal.projectStarted',{island:isl.name,project:t.name}));save()}
+function contributeMaterial(isl,projectId,material,all=false){
+  const p=isl.projects.find(x=>x.id===projectId),t=p&&projectTemplate(p.templateId);if(!p||!t||p.complete)return;const need=Math.max(0,(t.req[material]||0)-(p.contributed[material]||0)),have=isl.stock[material]||0;if(!need||!have)return;const n=all?Math.min(need,have):1;p.contributed[material]=(p.contributed[material]||0)+n;isl.stock[material]-=n;if(projectProgress(p)>=.999)completeIslandProject(isl,p);save();
+}
+function contributeAll(isl,projectId){const p=isl.projects.find(x=>x.id===projectId),t=p&&projectTemplate(p.templateId);if(!p||!t)return;Object.keys(t.req).forEach(m=>contributeMaterial(isl,projectId,m,true));}
+function completeIslandProject(isl,p){if(p.complete)return;p.complete=true;p.completedAt=worldSimulating?(worldState().lastSimAt||nowReal()):nowReal();const t=projectTemplate(p.templateId);if(!t)return;applyProjectEffects(isl,p,t);isl.story=(isl.story||0)+1;isl.notes.unshift(contentLine('copy.projects.siteNote',{project:t.name,site:BUILD_SITES[p.site]?.name||'the island'}));state.journal.unshift(contentLine('copy.journal.projectComplete',{project:t.name,island:isl.name}));ensureWorldFleet();if(!worldSimulating){beep('bell');toast(contentLine('copy.projects.completeToast',{project:t.name}))}}
+function projectCardHTML(isl,p){
+  const t=projectTemplate(p.templateId);if(!t)return'';const prog=projectProgress(p),done=p.complete;const mats=Object.entries(t.req).map(([m,n])=>{const given=p.contributed[m]||0,met=given>=n,stock=isl.stock[m]||0;return`<span class="material ${met?'met':''}">${MATERIALS[m]?.icon||'•'} ${materialName(m)} ${given}/${n}${!done&&!met&&stock?` <button data-give="${p.id}|${m}" title="Assign one">+</button>`:''}</span>`}).join('');
+  return`<div class="project-card ${done?'done':''}"><h3>${done?'✓ ':''}${t.name} · ${BUILD_SITES[p.site]?.name||p.site}</h3><p>${t.desc}</p><div class="project-meter"><i style="width:${prog*100}%"></i></div><div class="materials">${mats}</div>${!done?`<button class="big-btn ghost" style="margin-top:7px" data-fill-project="${p.id}">SUPPLY WHAT FITS</button>`:''}</div>`;
+}
+function vesselBuildProgress(build){const type=vesselType(build.typeId);if(!type?.commission)return 1;let have=0,need=0;Object.entries(type.commission).forEach(([m,n])=>{need+=n;have+=Math.min(n,build.contributed?.[m]||0)});return need?have/need:1}
+function availableVesselCommissions(isl){ensureIslandData(isl);if(!completedFeature(isl,'boatyard'))return[];return NPC_VESSEL_TYPES.filter(t=>t.commission&&npcRuleMet(t.unlock,isl)&&!isl.commissionedVessels.includes(t.id)&&!isl.vesselBuilds.some(b=>b.typeId===t.id&&!b.complete)&&!worldState().vessels.some(v=>v.homeId===isl.id&&v.typeId===t.id))}
+function startVesselCommission(isl,typeId){const type=vesselType(typeId);if(!type?.commission||!availableVesselCommissions(isl).some(t=>t.id===typeId))return;isl.vesselBuilds.push({id:uid('hull'),typeId,contributed:{},complete:false,startedAt:nowReal()});state.journal.unshift(`${isl.name} laid down the keel for a new ${type.name.toLowerCase()}.`);save()}
+function contributeVesselMaterial(isl,buildId,material,all=false){const b=isl.vesselBuilds.find(x=>x.id===buildId),type=b&&vesselType(b.typeId);if(!b||!type?.commission||b.complete)return;const need=Math.max(0,(type.commission[material]||0)-(b.contributed[material]||0)),have=isl.stock[material]||0;if(!need||!have)return;const n=all?Math.min(need,have):1;b.contributed[material]=(b.contributed[material]||0)+n;isl.stock[material]-=n;if(vesselBuildProgress(b)>=.999)completeVesselCommission(isl,b);save()}
+function contributeAllVessel(isl,buildId){const b=isl.vesselBuilds.find(x=>x.id===buildId),type=b&&vesselType(b.typeId);if(!b||!type?.commission)return;Object.keys(type.commission).forEach(m=>contributeVesselMaterial(isl,buildId,m,true))}
+function completeVesselCommission(isl,b){if(b.complete)return;const type=vesselType(b.typeId);b.complete=true;b.completedAt=nowReal();if(!isl.commissionedVessels.includes(type.id))isl.commissionedVessels.push(type.id);const before=new Set(worldState().vessels.map(v=>v.id));ensureWorldFleet();const fresh=worldState().vessels.find(v=>!before.has(v.id)&&v.homeId===isl.id&&v.typeId===type.id);const name=fresh?.name||`the new ${type.name.toLowerCase()}`;state.journal.unshift(`${name} was launched at ${isl.name}.`);if(!worldSimulating){beep('bell');toast(`${name} joined the harbour.`)}}
+function vesselBuildHTML(isl,b){const type=vesselType(b.typeId),prog=vesselBuildProgress(b),done=b.complete,mats=Object.entries(type.commission||{}).map(([m,n])=>{const given=b.contributed[m]||0,met=given>=n,stock=isl.stock[m]||0;return`<span class="material ${met?'met':''}">${MATERIALS[m]?.icon||'•'} ${materialName(m)} ${given}/${n}${!done&&!met&&stock?` <button data-give-hull="${b.id}|${m}">+</button>`:''}</span>`}).join('');return`<div class="project-card ${done?'done':''}"><h3>${done?'✓ ':''}${type.icon} ${type.name}</h3><p>${type.desc}</p><div class="project-meter"><i style="width:${prog*100}%"></i></div><div class="materials">${mats}</div>${!done?`<button class="big-btn ghost" style="margin-top:7px" data-fill-hull="${b.id}">SUPPLY WHAT FITS</button>`:''}</div>`}
+function openVesselCommissionPicker(isl){const options=availableVesselCommissions(isl);showModal(`<h2>Boatyard orders</h2><p>Choose a working boat for ${isl.name}. Once the materials are assigned, the finished vessel will join the archipelago permanently.</p>${options.map(t=>`<div class="choice" data-commission="${t.id}"><b>${t.icon} ${t.name}</b><span>${t.desc}<br>Needs ${Object.entries(t.commission).map(([m,n])=>`${MATERIALS[m]?.icon||''}${n} ${materialName(m)}`).join(' · ')}</span></div>`).join('')||`<div class="card"><p>The yard has no new orders ready just now.</p></div>`}<div class="modal-actions"><button class="big-btn ghost" id="backBoardFromYard">BACK</button></div>`);$$('[data-commission]').forEach(b=>b.onclick=()=>{startVesselCommission(isl,b.dataset.commission);openDocksideBoard(isl,false)});$('#backBoardFromYard').onclick=()=>openDocksideBoard(isl,false)}
+function openDocksideBoard(isl,welcome=false){
+  ensureIslandData(isl);const active=isl.projects.filter(p=>!p.complete),done=isl.projects.filter(p=>p.complete),requests=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===isl.id),hulls=isl.vesselBuilds||[],commissionOptions=availableVesselCommissions(isl);const available=availableProjects(isl);
   showModal(`
-    <h2>${d.icon} ${d.name}</h2><p>${d.desc}</p>
-    <div class="notice">You carried this safely ashore to <b>${dest.name}</b>. What should happen to it?</div>
-    ${choices.map((c,i)=>`<div class="choice" data-resolve="${i}"><b>${c.title}</b><span>${c.desc}</span></div>`).join('')}
-  `,false);
-  $$('[data-resolve]').forEach(el=>el.onclick=()=>{
-    const c=choices[+el.dataset.resolve]; c.apply(); state.pendingResolutions.shift(); save(); beep('soft');
-    if(state.pendingResolutions.length)openResolution(); else {closeModal(); setTimeout(()=>openArrivalProject(dest),150)}
-  });
-}
-
-function resolutionChoices(d,dest,home){
-  const addFeature=(isl,feature,note)=>{if(!isl.features.includes(feature))isl.features.push(feature); if(note)isl.notes.unshift(note)};
-  const revealRoute=()=>{const n=generateUnchartedIsland();n.known=true;state.islands.push(n);state.routes.push([dest.id,n.id]);state.journal.unshift(`The restored chart revealed a route to ${n.name}.`)};
-  const local={title:`Use it in ${dest.name}`,desc:'Let this place change because you brought it here.',apply:()=>{
-    const m={timber:'pier',seeds:'garden',traveller:'guesthouse',crate:'workshop',glass:'mosaic',bell:'bell_tower',bottle:'story_post',chart:'chart_house'}; addFeature(dest,m[d.kind]||'memory',`${d.name} became part of the island.`); dest.story=(dest.story||0)+1; if(d.kind==='chart')revealRoute();
-  }};
-  const homeChoice={title:'Bring its story home',desc:'Add a trace of this voyage to Home Harbour.',apply:()=>{
-    const m={timber:'boatyard',seeds:'home_garden',traveller:'new_resident',crate:'market',glass:'museum_glass',bell:'harbour_bell',bottle:'post_office',chart:'map_room'}; addFeature(home,m[d.kind]||'souvenir',`${d.name} returned home from ${dest.name}.`); if(d.kind==='chart')revealRoute();
-  }};
-  return [local,homeChoice];
-}
-
-function openArrivalProject(dest){
-  if(!dest||dest.home)return;
-  const visit=dest.visits||1; const options=islandProjects(dest,visit);
-  showModal(`
-    <h2>Welcome to ${dest.name}</h2>
-    <p>This is visit <b>${visit}</b>. Familiar paths have changed since the last time your boat came in.</p>
-    <div class="notice">There is time for one small project before the next departure.</div>
-    ${options.map((o,i)=>`<div class="choice" data-project="${i}"><b>${o.title}</b><span>${o.desc}</span></div>`).join('')}
-    <div class="modal-actions"><button class="big-btn ghost" data-close>WANDER FOR NOW</button></div>
+    <h2>${welcome?'Made fast at ':'Island board · '}${isl.name}</h2>
+    <p>${welcome?contentLine('copy.harbour.welcome'):contentLine('copy.harbour.boardIntro')}</p>
+    <div class="section"><div class="section-title">Island stores</div>${stockHTML(isl)}</div>
+    <div class="section"><div class="section-title">Projects <span>${active.length} underway</span></div>${active.length?active.map(p=>projectCardHTML(isl,p)).join(''):`<div class="card"><p>${contentLine('copy.harbour.noProjects')}</p></div>`}${available.length?`<button class="big-btn secondary" id="startProjectBtn">START A PROJECT</button>`:''}${done.length?`<div class="muted" style="margin-top:7px">Completed: ${done.slice(-5).map(p=>projectTemplate(p.templateId)?.name).filter(Boolean).join(' · ')}</div>`:''}</div>
+    ${completedFeature(isl,'boatyard')?`<div class="section"><div class="section-title">Boatyard <span>${hulls.filter(h=>!h.complete).length} on the slip</span></div>${hulls.length?hulls.slice(-4).reverse().map(h=>vesselBuildHTML(isl,h)).join(''):`<div class="card"><p>The slipway is clear and ready for its first working boat.</p></div>`}${commissionOptions.length?`<button class="big-btn secondary" id="commissionVesselBtn">COMMISSION A BOAT</button>`:''}</div>`:''}
+    <div class="section"><div class="section-title">Residents <span>${population(isl)}</span></div>${isl.residents.length?`<div class="resident-list">${isl.residents.slice(0,8).map(residentHTML).join('')}</div>`:`<div class="card"><p>${contentLine('copy.harbour.quietPaths')}</p></div>`}</div>
+    ${requests.length?`<div class="section"><div class="section-title">Waiting by the jetty</div>${requests.map(r=>{const person=isl.residents.find(p=>p.id===r.personId),target=getIsland(r.targetId);return person?`<div class="card"><h3>${person.name} → ${target.name}</h3><p>${contentLine('copy.harbour.liftRequest',{person:person.name})}</p><button class="big-btn ghost" data-lift-course="${target.id}">SET COURSE FOR ${target.name.toUpperCase()}</button></div>`:''}).join('')}</div>`:''}
+    <div class="modal-actions"><button class="big-btn ghost" data-close>RETURN TO HARBOUR</button></div>
   `);
-  $$('[data-project]').forEach(el=>el.onclick=()=>{const o=options[+el.dataset.project]; if(!dest.features.includes(o.feature))dest.features.push(o.feature);dest.story=(dest.story||0)+1;dest.notes.unshift(o.note);state.journal.unshift(`${dest.name}: ${o.note}`);save();closeModal();toast(`${dest.name} changed a little.`);renderUI()});
+  $$('[data-give]').forEach(b=>b.onclick=()=>{const [pid,m]=b.dataset.give.split('|');contributeMaterial(isl,pid,m,false);openDocksideBoard(isl,false)});$$('[data-fill-project]').forEach(b=>b.onclick=()=>{contributeAll(isl,b.dataset.fillProject);openDocksideBoard(isl,false)});$$('[data-give-hull]').forEach(b=>b.onclick=()=>{const [bid,m]=b.dataset.giveHull.split('|');contributeVesselMaterial(isl,bid,m,false);openDocksideBoard(isl,false)});$$('[data-fill-hull]').forEach(b=>b.onclick=()=>{contributeAllVessel(isl,b.dataset.fillHull);openDocksideBoard(isl,false)});if($('#commissionVesselBtn'))$('#commissionVesselBtn').onclick=()=>openVesselCommissionPicker(isl);if($('#startProjectBtn'))$('#startProjectBtn').onclick=()=>openProjectPicker(isl);$$('[data-lift-course]').forEach(b=>b.onclick=()=>{state.selectedDestinationId=b.dataset.liftCourse;save();closeModal();renderUI();toast(contentLine('copy.harbour.courseMarked'))});
 }
-function islandProjects(dest,visit){
-  const pool=[
-    {feature:'windmill',title:'Set the old windmill turning',desc:'Clear the path and patch the sails. A baker may notice.',note:'The old windmill was restored.'},
-    {feature:'footbridge',title:'Build a little footbridge',desc:'Connect the harbour path to the hills.',note:'A footbridge now crosses the inlet.'},
-    {feature:'orchard',title:'Plant a shoreline orchard',desc:'Create a sheltered patch of fruit trees.',note:'A young orchard was planted near the shore.'},
-    {feature:'tea_house',title:'Help open a tea house',desc:'A cosy room overlooking the water.',note:'A small tea house opened by the harbour.'},
-    {feature:'observatory',title:'Restore the hilltop lookout',desc:'Clear an old stone lookout above the village.',note:'The hilltop lookout was restored.'},
-    {feature:'ferry',title:'Reopen the ferry landing',desc:'Reconnect this island to nearby routes.',note:'The old ferry landing reopened.'},
-    {feature:'nature_path',title:'Mark a nature trail',desc:'Protect a quiet stretch of coast and make it walkable.',note:'A coastal nature trail was marked out.'}
-  ];
-  const available=pool.filter(p=>!dest.features.includes(p.feature)); const rr=rng(hashString(dest.id+visit)); return available.sort(()=>rr()-.5).slice(0,3);
+function openProjectPicker(isl){
+  const options=availableProjects(isl),intro=contentLine('copy.harbour.projectPicker',{population:population(isl),plural:population(isl)===1?'':'s',island:isl.name});showModal(`<h2>Start something new</h2><p>${intro}</p>${options.map(t=>`<div class="choice" data-pick-project="${t.id}"><b>${t.name}</b><span>${t.desc}<br>Needs ${Object.entries(t.req).map(([m,n])=>`${MATERIALS[m]?.icon||''}${n} ${materialName(m)}`).join(' · ')}</span></div>`).join('')}<div class="modal-actions"><button class="big-btn ghost" id="backBoard">BACK</button></div>`);$$('[data-pick-project]').forEach(b=>b.onclick=()=>{const t=projectTemplate(b.dataset.pickProject);if(t?.prereq){const prev=isl.projects.find(p=>p.complete&&projectTemplate(p.templateId)?.feature===t.prereq);startIslandProject(isl,t.id,prev?.site||t.sites[0]);openDocksideBoard(isl,false)}else openSitePicker(isl,b.dataset.pickProject)});$('#backBoard').onclick=()=>openDocksideBoard(isl,false)
 }
+function openSitePicker(isl,templateId){const t=projectTemplate(templateId);showModal(`<h2>Where should ${t.name} go?</h2><p>${contentLine('copy.harbour.sitePicker',{island:isl.name})}</p><div class="site-grid">${t.sites.map(s=>`<div class="site-choice" data-site="${s}"><b>${BUILD_SITES[s].name}</b><span>${BUILD_SITES[s].desc}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn ghost" id="backProjects">BACK</button></div>`);$$('[data-site]').forEach(b=>b.onclick=()=>{startIslandProject(isl,templateId,b.dataset.site);openDocksideBoard(isl,false)});$('#backProjects').onclick=()=>openProjectPicker(isl)}
+
 
 function showModal(html,closable=true){
   $('#modal').innerHTML=html; $('#modalBack').classList.add('show');
@@ -456,12 +873,25 @@ function closeModal(){$('#modalBack').classList.remove('show')}
 function onboarding(){
   showModal(`
     <h2>Welcome to MakeFast</h2>
-    <p><b>Every fast goes somewhere.</b> Finish eating and set sail. When you begin eating again, bring the boat into harbour. Voyages uncover an archipelago that slowly becomes your own.</p>
-    <div class="notice"><b>Before you set sail</b><br>MakeFast is a fasting timer and game prototype, not medical advice. Fasting is not suitable for everyone. Do not use it if you are under 18, pregnant or breastfeeding, have a history of an eating disorder, or have a condition or medication that makes fasting inappropriate.</div>
-    <label style="font-size:9px;font-weight:900">CAPTAIN NAME<br><input id="captainName" maxlength="18" value="Captain" style="width:100%;margin-top:5px;padding:9px;border:3px solid var(--ink);background:#fff;border-radius:6px"></label>
-    <div class="modal-actions"><button class="big-btn" id="beginBtn">STEP ABOARD</button></div>
+    <p><b>Every fast goes somewhere.</b> Set up your captain, choose the daily rhythm you usually sail by, then the harbour is yours.</p>
+    <div class="onboard-viewport"><div class="onboard-track" id="onboardTrack">
+      <div class="onboard-step">
+        <div class="notice"><b>Before you set sail</b><br>MakeFast is a fasting timer and game prototype, not medical advice. Fasting is not suitable for everyone. Do not use it if you are under 18, pregnant or breastfeeding, have a history of an eating disorder, or have a condition or medication that makes fasting inappropriate.</div>
+        <label style="font-size:9px;font-weight:900">CAPTAIN NAME<br><input id="captainName" maxlength="18" value="Captain" style="width:100%;margin-top:5px;padding:9px;border:3px solid var(--ink);background:#fff;border-radius:6px"></label>
+        <div class="modal-actions"><button class="big-btn" id="onboardNext">CHOOSE MY RHYTHM</button></div>
+      </div>
+      <div class="onboard-step">
+        <p>Your rhythm is the default crossing MakeFast prepares when you set sail. You can change it later in Settings.</p>
+        ${rhythmPickerHTML('onboardRhythm')}
+        <div class="modal-actions"><button class="big-btn ghost" id="onboardBack">BACK</button><button class="big-btn" id="beginBtn">STEP ABOARD</button></div>
+      </div>
+    </div></div>
+    <div class="onboard-dots"><i class="onboard-dot active" id="onboardDot1"></i><i class="onboard-dot" id="onboardDot2"></i></div>
   `,false);
-  $('#beginBtn').onclick=()=>{state.playerName=($('#captainName').value||'Captain').trim().slice(0,18);state.onboarded=true;save();closeModal();renderUI();toast('Welcome home, '+state.playerName+'.')};
+  let step=1;const showStep=n=>{step=n;$('#onboardTrack').classList.toggle('step-2',n===2);$('#onboardDot1').classList.toggle('active',n===1);$('#onboardDot2').classList.toggle('active',n===2)};
+  bindRhythmPicker('onboardRhythm');
+  $('#onboardNext').onclick=()=>showStep(2);$('#onboardBack').onclick=()=>showStep(1);
+  $('#beginBtn').onclick=()=>{state.playerName=($('#captainName').value||'Captain').trim().slice(0,18);setDefaultFastHours($('#onboardRhythmSlider').value);state.onboarded=true;save();closeModal();renderUI();toast('Welcome home, '+state.playerName+'.')};
 }
 
 function renderUI(){
@@ -491,29 +921,24 @@ function updateStageLabel(){
   else if(state.phase==='fasting'||state.phase==='arrived'){title=state.phase==='arrived'?'LAND SIGHTED':'AT SEA';sub=state.voyage?`toward ${getIsland(state.voyage.destinationId).known?state.voyage.destinationName:'uncharted waters'}`:''}
   else {title=isl.name.toUpperCase();sub=isl.home?'the world is happy when you return':`${isl.visits||1} visit${isl.visits===1?'':'s'} • ${isl.biome} coast`}
   $('#stageLabel').innerHTML=`<b>${title}</b><br><span>${sub}</span>`;
+  const caption=$('#sceneCaption'),showCaption=!minigame&&state.phase==='ashore'&&state.activeView==='harbour';caption.classList.toggle('show',showCaption);if(showCaption){caption.innerHTML=`<b>${isl.name}</b><span>${population(isl)} resident${population(isl)===1?'':'s'} · ${dayPhase()} · ${worldWeather()}</span>`}
+  $('#mapControls').classList.toggle('show',!minigame&&state.activeView==='chart');
 }
 
 function renderHarbourPanel(){
-  const body=$('#panelBody'), isl=currentIsland(), r=currentRatio(); $('#panelTitle').textContent=isl.name; $('#panelSubtitle').textContent=state.phase==='ashore'?'Choose where the next voyage should take your world.':'You are currently away at sea.';
-  if(state.phase!=='ashore'){
-    body.innerHTML=`<div class="card"><h3>Your boat is away</h3><p>Harbour mode returns when you dock and begin eating.</p></div><button class="big-btn secondary" id="goVoyage">GO TO VOYAGE</button>`; $('#goVoyage').onclick=()=>setView('voyage'); return;
-  }
-  const known=state.islands.filter(i=>i.known&&i.id!==state.currentIslandId);
+  const body=$('#panelBody'),isl=currentIsland(),r=currentRatio();ensureIslandData(isl);$('#panelTitle').textContent=isl.name;$('#panelSubtitle').textContent=state.phase==='ashore'?'Plan the next crossing and tend to the island.':'You are currently away at sea.';
+  if(state.phase!=='ashore'){body.innerHTML=`<div class="card"><h3>Your boat is away</h3><p>The harbour will be here when you come back in.</p></div><button class="big-btn secondary" id="goVoyage">GO TO VOYAGE</button>`;$('#goVoyage').onclick=()=>setView('voyage');return}
+  const known=state.islands.filter(i=>i.known&&i.id!==state.currentIslandId),requests=state.liftRequests.filter(x=>x.status==='waiting'&&x.originId===isl.id),active=isl.projects.filter(p=>!p.complete),localFleet=vesselsAtIsland(isl.id);
   body.innerHTML=`
-    ${state.pendingResolutions.length?`<div class="section"><button class="big-btn warm" id="resolveBtn">RESOLVE ${state.pendingResolutions.length} DISCOVER${state.pendingResolutions.length===1?'Y':'IES'}</button></div>`:''}
-    <div class="section"><div class="section-title">Choose your rhythm <span>today's tide</span></div><div class="ratio-grid">${RATIO_OPTIONS.map(x=>`<button class="ratio ${x.fast===state.selectedRatio?'active':''}" data-ratio="${x.fast}"><b>${x.label}</b><span>${x.name}</span></button>`).join('')}</div><div class="muted" style="margin-top:7px">Pick the rhythm that suits the day. Each one charts a complete crossing.</div></div>
-    <div class="section"><div class="section-title">Next destination <span>explore or enrich</span></div>
-      <div class="card ${state.selectedDestinationId==='uncharted'?'selected':''}" data-dest="uncharted" style="cursor:pointer"><h3>Uncharted waters</h3><p>Let the map grow. A new island will emerge somewhere beyond the ink.</p></div>
-      ${known.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).map(i=>`<div class="card ${state.selectedDestinationId===i.id?'selected':''}" data-dest="${i.id}" style="cursor:pointer"><h3>${i.name}</h3><p>${i.visits?`Visited ${i.visits} time${i.visits===1?'':'s'}. `:'Never visited. '}${islandSummary(i)}</p></div>`).join('')}
-    </div>
-    <div class="section"><div class="card"><h3>${r.name} voyage • ${r.label}</h3><p>Set sail now → land sighted around <b>${fmtClock(gameNow()+r.fast*3600000)}</b>. Dock whenever you begin eating; your eating window moves with you.</p></div><button class="big-btn" id="setSail">SET SAIL</button></div>
-    <div class="section"><div class="section-title">This place</div><div class="card"><h3>${isl.home?'Your Home Harbour':'A place shaped by revisits'}</h3><p>${islandSummary(isl)}</p><div style="margin-top:6px">${isl.features.slice(-8).map(f=>`<span class="pill">${featureLabel(f)}</span>`).join('')}</div></div></div>
-    ${isl.home?`<div class="section"><div class="section-title">Your little fleet <span>boats found around the archipelago</span></div>${BOAT_TYPES.map(b=>{const unlocked=b.need();return `<div class="card ${state.boat.type===b.id?'selected':''}" ${unlocked?`data-boat="${b.id}" style="cursor:pointer"`:''}><h3>${unlocked?'':'? '}${b.name}</h3><p>${unlocked?b.desc:'Keep exploring and enriching the archipelago to discover this boat.'}</p></div>`}).join('')}</div>`:''}
-  `;
-  $$('[data-ratio]').forEach(b=>b.onclick=()=>{state.selectedRatio=+b.dataset.ratio;save();renderUI()});
-  $$('[data-dest]').forEach(b=>b.onclick=()=>{state.selectedDestinationId=b.dataset.dest;save();renderUI()});
-  $$('[data-boat]').forEach(b=>b.onclick=()=>{state.boat.type=b.dataset.boat;state.boat.name=BOAT_TYPES.find(x=>x.id===b.dataset.boat)?.name||'Boat';save();toast(`${state.boat.name} is ready at the pier.`);renderUI()});
-  $('#setSail').onclick=startVoyage; if($('#resolveBtn'))$('#resolveBtn').onclick=openResolution;
+    <div class="section"><button class="big-btn warm" id="islandBoardBtn">OPEN ISLAND BOARD</button></div>
+    <div class="section"><div class="section-title">Next destination <span>explore or enrich</span></div><div class="card ${state.selectedDestinationId==='uncharted'?'selected':''}" data-dest="uncharted" style="cursor:pointer"><h3>Uncharted waters</h3><p>Let the map grow. A new shoreline will emerge as the boat draws near.</p></div>${known.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).map(i=>`<div class="card ${state.selectedDestinationId===i.id?'selected':''}" data-dest="${i.id}" style="cursor:pointer"><h3>${i.name}</h3><p>${population(i)} resident${population(i)===1?'':'s'} · ${i.projects.filter(p=>!p.complete).length} project${i.projects.filter(p=>!p.complete).length===1?'':'s'} underway. ${islandSummary(i)}</p></div>`).join('')}</div>
+    ${state.boatPassengers.length?`<div class="section"><div class="section-title">Travelling with you</div>${state.boatPassengers.map(p=>`<div class="card"><h3>☻ ${p.person.name}</h3><p>Bound for ${getIsland(p.targetId).name}.</p></div>`).join('')}</div>`:''}
+    ${requests.length?`<div class="section"><div class="section-title">By the jetty</div>${requests.map(q=>{const person=isl.residents.find(p=>p.id===q.personId),target=getIsland(q.targetId);return person?`<div class="card"><h3>${person.name} → ${target.name}</h3><p>${person.name} is hoping to make the crossing.</p><button class="big-btn ghost" data-route-request="${target.id}">MARK THAT ROUTE</button></div>`:''}).join('')}</div>`:''}
+    <div class="section"><div class="section-title">Harbour traffic <span>${localFleet.length} alongside</span></div>${localFleet.length?`<div class="traffic-list">${localFleet.slice(0,5).map(vesselCardHTML).join('')}</div>`:`<div class="card"><p>The jetty is quiet just now. Working boats will begin to call as the island grows.</p></div>`}</div>
+    <div class="section"><div class="card"><h3>${r.name} voyage • ${r.label}</h3><p>Set sail now → land sighted around <b>${fmtClock(gameNow()+r.fast*3600000)}</b> (${state.settings.timezone}).</p></div><button class="big-btn" id="setSail">SET SAIL</button></div>
+    <div class="section"><div class="section-title">This place <span>${population(isl)} resident${population(isl)===1?'':'s'}</span></div><div class="card"><h3>${active.length?`${active.length} project${active.length===1?'':'s'} taking shape`:'A quiet day ashore'}</h3><p>${islandSummary(isl)}</p></div>${stockHTML(isl)}</div>
+    ${isl.home?`<div class="section"><div class="section-title">Your little fleet <span>boats found around the archipelago</span></div>${BOAT_TYPES.map(b=>{const unlocked=b.need();return`<div class="card ${state.boat.type===b.id?'selected':''}" ${unlocked?`data-boat="${b.id}" style="cursor:pointer"`:''}><h3>${unlocked?'':'? '}${b.name}</h3><p>${unlocked?b.desc:'Keep exploring and enriching the archipelago to discover this boat.'}</p></div>`}).join('')}</div>`:''}`;
+  $$('[data-dest]').forEach(b=>b.onclick=()=>{state.selectedDestinationId=b.dataset.dest;save();renderUI()});$$('[data-route-request]').forEach(b=>b.onclick=()=>{state.selectedDestinationId=b.dataset.routeRequest;save();renderUI();toast('Route marked for your passenger.')});$$('[data-boat]').forEach(b=>b.onclick=()=>{state.boat.type=b.dataset.boat;state.boat.name=BOAT_TYPES.find(x=>x.id===b.dataset.boat)?.name||'Boat';save();toast(`${state.boat.name} is ready at the pier.`);renderUI()});$('#setSail').onclick=startVoyage;$('#islandBoardBtn').onclick=()=>openDocksideBoard(isl,false);
 }
 
 function renderVoyagePanel(){
@@ -522,7 +947,7 @@ function renderVoyagePanel(){
     $('#panelSubtitle').textContent='Voyages begin when you finish eating.';
     body.innerHTML=`<div class="card"><h3>The boat is at her mooring</h3><p>Choose a destination in Harbour, then set sail when the eating window closes.</p></div><button class="big-btn" id="toHarbour">PLAN A VOYAGE</button>`; $('#toHarbour').onclick=()=>setView('harbour'); return;
   }
-  const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=Math.max(0,v.targetMs-actualFastMs()), encounter=activeVoyageEvent();
+  const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=Math.max(0,v.targetMs-actualFastMs()), encounter=activeVoyageEvent(),nearby=nearbyWorldVessels(1.45);
   $('#panelSubtitle').textContent=state.phase==='arrived'?'The harbour lies just ahead.':'The boat keeps her course between check-ins.';
   const games=Object.entries(MINIGAME_META).map(([id,m])=>`<button class="activity" data-game="${id}"><b>${m.icon} ${m.title}</b><span>${m.desc}</span></button>`).join('');
   body.innerHTML=`
@@ -530,6 +955,7 @@ function renderVoyagePanel(){
     ${encounter&&state.phase==='fasting'?`<div class="section"><div class="section-title">Something ahead</div><div class="event-card"><h3>${encounter.icon} ${encounter.title}</h3><p>${encounter.log}</p></div><div class="row"><button class="big-btn secondary" id="investigateEvent">LOOK CLOSER</button><button class="big-btn ghost" id="passEvent">SAIL ON</button></div></div>`:''}
     ${state.phase==='arrived'?`<div class="event-card"><h3>⚑ Land sighted</h3><p>${dest.known?dest.name:'A new island'} is waiting beyond the harbour wall. Bring the boat in when the eating window begins.</p></div><button class="big-btn warm" id="dockBtn">⚓ DOCK — I'M EATING</button>`:
     `<div class="section"><div class="section-title">Need a diversion? <span>take the helm</span></div><button class="big-btn secondary" id="helmBtn">SURPRISE ME</button><div class="activity-grid" style="margin-top:8px">${games}</div></div><button class="big-btn ghost" id="dockEarly">⚓ MAKE FOR HARBOUR — I'M EATING</button>`}
+    ${nearby.length?`<div class="section"><div class="section-title">Traffic nearby <span>${nearby.length}</span></div><div class="traffic-list">${nearby.map(x=>vesselCardHTML(x.v)).join('')}</div></div>`:''}
     <div class="section"><div class="section-title">Happenings at sea <span>${v.seaLog?.length||0}</span></div>${(v.seaLog||[]).slice(0,5).map(e=>`<div class="sea-log"><i>${e.icon||'≈'}</i><div><b>${e.title||'At sea'}</b><span>${e.text}</span></div></div>`).join('')||`<div class="card"><p>The water is quiet for now.</p></div>`}</div>
     <div class="section"><div class="section-title">Things aboard <span>${v.discoveries.length}</span></div>${v.discoveries.length?v.discoveries.map(d=>findHTML(d)).join(''):`<div class="card"><p>The lockers are empty, but the route still has plenty of water ahead.</p></div>`}</div>
   `;
@@ -542,64 +968,64 @@ function renderVoyagePanel(){
 
 function renderChartPanel(){
   const body=$('#panelBody'); $('#panelTitle').textContent='Chart'; $('#panelSubtitle').textContent='A map grown from choices, revisits and changes of plan.';
-  const known=state.islands.filter(i=>i.known); const current=currentIsland();
+  const known=state.islands.filter(i=>i.known); const current=currentIsland(),traffic=activeWorldVessels();
   body.innerHTML=`
-    <div class="section"><div class="stat-grid"><div class="stat"><b>${known.length}</b><span>places discovered</span></div><div class="stat"><b>${state.routes.length}</b><span>charted routes</span></div></div></div>
+    <div class="section"><div class="stat-grid"><div class="stat"><b>${known.length}</b><span>places discovered</span></div><div class="stat"><b>${state.routes.length}</b><span>charted routes</span></div><div class="stat"><b>${worldState().vessels.length}</b><span>working boats</span></div><div class="stat"><b>${traffic.length}</b><span>under way now</span></div></div></div>
     <div class="section"><div class="section-title">Current shore</div><div class="card"><h3>${current.name}</h3><p>${islandSummary(current)}</p></div></div>
+    <div class="section"><div class="section-title">Archipelago traffic <span>live</span></div>${traffic.length?`<div class="traffic-list">${traffic.slice(0,6).map(vesselCardHTML).join('')}</div>`:`<div class="card"><p>Most boats are alongside just now.</p></div>`}</div>
     <div class="section"><div class="section-title">Your places <span>tap to inspect</span></div>${known.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).map(i=>`<div class="card" data-inspect="${i.id}" style="cursor:pointer"><h3>${i.home?'⌂ ':''}${i.name}</h3><p>${i.home?'Home harbour':`${i.visits||0} visit${i.visits===1?'':'s'}`} • ${featureWords(i)}</p></div>`).join('')}</div>
   `;
   $$('[data-inspect]').forEach(b=>b.onclick=()=>inspectIsland(b.dataset.inspect));
 }
 function inspectIsland(id){
-  const i=getIsland(id); showModal(`<h2>${i.name}</h2><p>${i.home?'Your persistent home harbour.':`${i.biome[0].toUpperCase()+i.biome.slice(1)} coast • ${i.visits||0} visits`}</p><div class="notice">${islandSummary(i)}</div><div>${i.features.map(f=>`<span class="pill">${featureLabel(f)}</span>`).join('')}</div>${i.notes?.length?`<div class="divider"></div><p><b>Island notes</b><br>${i.notes.slice(0,5).join('<br>')}</p>`:''}<div class="modal-actions"><button class="big-btn ghost" data-close>CLOSE</button></div>`)}
+  const i=getIsland(id),fleet=vesselsAtIsland(i.id),active=i.projects.filter(p=>!p.complete);showModal(`<h2>${i.name}</h2><p>${i.home?'Your persistent home harbour.':`${biomeDef(i.biome).label} • ${i.visits||0} visits`}</p><div class="notice">${islandSummary(i)}</div><div>${i.features.map(f=>`<span class="pill">${featureLabel(f)}</span>`).join('')}</div><div class="divider"></div><p><b>${population(i)} residents · ${fleet.length} boats alongside · ${active.length} projects underway</b></p>${fleet.length?`<div class="traffic-list">${fleet.slice(0,5).map(vesselCardHTML).join('')}</div>`:''}${i.notes?.length?`<div class="divider"></div><p><b>Island notes</b><br>${i.notes.slice(0,5).join('<br>')}</p>`:''}<div class="modal-actions"><button class="big-btn ghost" data-close>CLOSE</button></div>`)}
+
 
 function renderLogPanel(){
   const body=$('#panelBody'), roll=rollingStats(30), sessions=state.sessions.filter(s=>!s.simulated).slice(-12).reverse(); $('#panelTitle').textContent="Captain's Log"; $('#panelSubtitle').textContent='A record of time at sea and time ashore.';
   body.innerHTML=`
     <div class="section"><div class="stat-grid"><div class="stat"><b>${fmtDuration(totalFastMs(),true)}</b><span>lifetime at sea</span></div><div class="stat"><b>${fmtDuration(totalShoreMs(),true)}</b><span>lifetime ashore</span></div><div class="stat"><b>${roll.count?fmtDuration(roll.avgFast,true):'—'}</b><span>30d avg fast</span></div><div class="stat"><b>${roll.count?fmtDuration(roll.avgEat,true):'—'}</b><span>30d avg ashore</span></div></div></div>
     <div class="section"><div class="section-title">Recent voyages <span>${sessions.length}</span></div>${sessions.length?sessions.map(s=>`<div class="session"><span>${fmtDate(s.endedAt)}</span><div><div class="bar"><i style="width:${clamp((s.durationMs/(s.targetHours*3600000))*100,0,100)}%"></i></div><span>${getIsland(s.destinationId).name}</span></div><b>${fmtDuration(s.durationMs,true)}</b></div>`).join(''):`<div class="card"><p>Your first completed voyage will be written here.</p></div>`}</div>
+    <div class="section"><div class="section-title">Archipelago log <span>${worldState().log.length}</span></div>${worldState().log.length?worldLogHTML(worldState().log,10):`<div class="card"><p>The island boats are only just beginning their rounds.</p></div>`}</div>
     <div class="section"><div class="section-title">Journal</div>${state.journal.slice(0,8).map(j=>`<div class="card"><p>${j}</p></div>`).join('')}</div>
   `;
 }
 
 function renderSettingsPanel(){
-  const body=$('#panelBody'); $('#panelTitle').textContent='Settings'; $('#panelSubtitle').textContent='Sound, saves and sea-trial tools.';
+  const body=$('#panelBody');$('#panelTitle').textContent='Settings';$('#panelSubtitle').textContent='Your usual rhythm, island clock, sound and saves.';const tz=state.settings.timezone||DEFAULT_TIMEZONE;
   body.innerHTML=`
     <div class="section"><div class="card"><h3>Local save</h3><p>MakeFast automatically remembers your world, fasting state and log in this browser. Closing the tab does not stop a voyage.</p></div><div class="row"><button class="big-btn ghost" id="exportSave">EXPORT SAVE</button><button class="big-btn ghost" id="importSave">IMPORT SAVE</button></div><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+    <div class="section"><div class="section-title">Living archipelago</div><div class="card"><h3>${worldState().vessels.length} working boats · ${activeWorldVessels().length} under way</h3><p>Residents, island stores, construction traffic and working boats continue their rounds while MakeFast is closed. Ferries keep regular crossings, weather can quiet the sea lanes, and lighthouse harbours stay busier after dark. Your personal fasting log only records voyages you actually start and dock.</p></div></div>
+    <div class="section"><div class="section-title">Island clock</div><div class="card"><h3>${formatClockInZone(gameNow(),tz)} · ${tz}</h3><p>Sunset, harbour lights, stars and weather ambience follow this timezone.</p></div><label style="font-size:9px;font-weight:900">TIMEZONE<br><input id="timezoneInput" list="timezones" value="${tz}" style="width:100%;margin-top:5px;padding:9px;border:3px solid var(--ink);background:#fff;border-radius:6px"></label><datalist id="timezones">${COMMON_TIMEZONES.map(z=>`<option value="${z}"></option>`).join('')}</datalist><button class="big-btn ghost" style="margin-top:7px" id="saveTimezone">SET ISLAND CLOCK</button></div>
+    <div class="section"><div class="section-title">Default rhythm <span>used when you set sail</span></div>${rhythmPickerHTML('settingsRhythm')}</div>
     <div class="section"><div class="section-title">Sound & comfort</div><button class="big-btn ghost" id="toggleSound">${state.sound?'TURN SOUND OFF':'TURN SOUND ON'}</button></div>
-    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Preview voyages without waiting hours</h3><p>Run a three-minute crossing to try encounters, arrivals and island changes without waiting for a full voyage.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn secondary" id="previewVoyage">START 3-MIN PREVIEW VOYAGE</button></div>`:''}</div>
+    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Preview voyages without waiting hours</h3><p>Run a three-minute crossing to try encounters, arrivals and island changes without waiting for a full voyage.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn secondary" id="previewVoyage">START 3-MIN PREVIEW VOYAGE</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12H</button>${state.voyage?.simulated?`<button class="big-btn ghost" style="margin-top:7px" id="advanceTrial">ADVANCE SEA TRIAL 30 SEC</button>`:''}</div>`:''}</div>
     <div class="section"><div class="section-title">Data</div><button class="big-btn danger" id="resetGame">RESET MAKEFAST</button><div class="muted" style="margin-top:7px">Reset permanently clears this browser save.</div></div>
-    <div class="section"><div class="notice" style="background:#fff0ce;border:3px solid var(--ink);padding:9px;border-radius:7px;font-size:8px;line-height:1.45"><b>Health reminder</b><br>MakeFast is not medical advice. Fasting is not suitable for everyone; use an appropriate eating pattern for your circumstances and seek medical guidance where needed.</div></div>
-  `;
-  $('#toggleSound').onclick=()=>{state.sound=!state.sound;save();renderUI()}; $('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};
-  $('#exportSave').onclick=exportSave; $('#importSave').onclick=()=>$('#importFile').click(); $('#importFile').onchange=importSave; $('#resetGame').onclick=resetGame;
-  if($('#previewVoyage'))$('#previewVoyage').onclick=startPreviewVoyage;
+    <div class="section"><div class="notice" style="background:#fff0ce;border:3px solid var(--ink);padding:9px;border-radius:7px;font-size:8px;line-height:1.45"><b>Health reminder</b><br>MakeFast is not medical advice. Fasting is not suitable for everyone; use an appropriate eating pattern for your circumstances and seek medical guidance where needed.</div></div>`;
+  bindRhythmPicker('settingsRhythm',()=>{renderUI();toast('Your usual rhythm is set.')});  $('#toggleSound').onclick=()=>{state.sound=!state.sound;save();renderUI()};$('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};$('#saveTimezone').onclick=()=>{const v=$('#timezoneInput').value.trim();if(!validTimeZone(v)){toast('That timezone was not recognised.');return}state.settings.timezone=v;save();renderUI();toast(contentLine('copy.harbour.timezoneAdjusted'))};$('#exportSave').onclick=exportSave;$('#importSave').onclick=()=>$('#importFile').click();$('#importFile').onchange=importSave;$('#resetGame').onclick=resetGame;if($('#previewVoyage'))$('#previewVoyage').onclick=startPreviewVoyage;if($('#advanceWorld'))$('#advanceWorld').onclick=()=>fastForwardWorld(12);if($('#advanceTrial'))$('#advanceTrial').onclick=()=>{if(state.voyage?.simulated){state.voyage.startedAt-=30000;state.voyage.startedAtReal-=30000;save();processVoyageEvents();renderUI();toast('The sea trial moves ahead.')}};
 }
 
 function startPreviewVoyage(){
   if(state.phase!=='ashore'){toast('Dock your current voyage first.');return}
   let dest=selectedDest(); if(!dest){dest=generateUnchartedIsland();dest.known=false;state.islands.push(dest);state.routes.push([state.currentIslandId,dest.id])}
   state.sim.active=true; state.sim.offsetMs=0;
-  const demoId=uid('demo'); state.voyage={id:demoId,startedAt:gameNow(),startedAtReal:nowReal(),targetMs:180000,targetHours:16,eatingHours:8,originId:state.currentIslandId,originName:currentIsland().name,destinationId:dest.id,destinationName:dest.name,discoveryIds:[],discoveries:[],minigamesPlayed:0,simulated:true,uncharted:!dest.known,events:buildVoyageEvents(demoId),seaLog:[{at:gameNow(),icon:'⚑',title:'Sea trial under way',text:'The little boat leaves the harbour for a quick test crossing.'}],activeEventId:null};
-  state.phase='fasting';state.phaseStartedAt=gameNow();state.activeView='voyage';save();renderUI();toast('Three-minute sea trial under way.')
+  const demoId=uid('demo'); state.voyage={id:demoId,startedAt:gameNow(),startedAtReal:nowReal(),targetMs:180000,targetHours:currentRatio().fast,eatingHours:currentRatio().eat,originId:state.currentIslandId,originName:currentIsland().name,destinationId:dest.id,destinationName:dest.name,discoveryIds:[],discoveries:[],minigamesPlayed:0,simulated:true,uncharted:!dest.known,passengers:[...state.boatPassengers],trafficSeen:[],events:buildVoyageEvents(demoId,{phase:dayPhase(),weather:worldWeather(),destination:dest}),seaLog:[{at:gameNow(),icon:'⚑',title:'Sea trial under way',text:'The little boat leaves the harbour for a quick test crossing.'}],activeEventId:null};
+  state.phase='fasting';state.phaseStartedAt=gameNow();state.activeView='voyage';save();renderUI();toast(contentLine('copy.minigames.trial'))
 }
 
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='makefast-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function importSave(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);state=migrate(obj);save();renderUI();toast('Save imported. Welcome back.')}catch(err){alert('That save file could not be read.')}};r.readAsText(f)}
 function resetGame(){showModal(`<h2>Reset MakeFast?</h2><p>This permanently clears the world stored in this browser.</p><div class="modal-actions"><button class="big-btn ghost" data-close>CANCEL</button><button class="big-btn danger" id="reallyReset">CLEAR EVERYTHING</button></div>`);$('#reallyReset').onclick=()=>{localStorage.removeItem(SAVE_KEY);state=defaultState();closeModal();onboarding();renderUI()}}
 
-function islandSummary(i){
-  const special=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty','windmill_ruin'].includes(f));
-  if(i.home){if(!special.length)return 'A tiny dock, a cottage and a lot of room to grow.';return `Your harbour has grown to include ${special.slice(-3).map(featureLabel).join(', ')}.`}
-  if(!i.visits)return 'A place on the chart waiting for its first proper arrival.';
-  if(!special.length)return 'A quiet little settlement with more stories still hidden.';
-  return `${featureLabel(special[special.length-1])} now shapes the island${special.length>1?', alongside '+special.slice(-3,-1).map(featureLabel).join(' and '):''}.`;
-}
+function islandSummary(i){ensureIslandData(i);const pop=population(i),active=i.projects.filter(p=>!p.complete),done=i.projects.filter(p=>p.complete);if(active.length)return`${active.map(p=>projectTemplate(p.templateId)?.name).filter(Boolean).slice(0,2).join(' and ')} ${active.length===1?'is':'are'} taking shape here. ${pop} resident${pop===1?'':'s'} live on the island.`;if(done.length)return`${projectTemplate(done[done.length-1].templateId)?.name||'A new place'} now stands here. ${pop} resident${pop===1?'':'s'} call the island home.`;const special=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty','windmill_ruin'].includes(f));if(!special.length)return`${pop?`${pop} resident${pop===1?'':'s'} share`:'Quiet paths cross'} a mostly undeveloped ${i.biome} shore.`;return`${featureLabel(special[special.length-1])} now shapes the island. ${pop} resident${pop===1?'':'s'} live here.`;}
+
 function featureWords(i){const a=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty'].includes(f)).slice(-3).map(featureLabel);return a.length?a.join(' • '):'quiet shoreline'}
-function featureLabel(f){return ({dock:'dock',cottage:'cottage',jetty:'jetty',tiny_jetty:'tiny jetty',windmill_ruin:'old windmill',windmill:'windmill',pier:'new pier',garden:'garden',guesthouse:'guesthouse',workshop:'workshop',mosaic:'sea-glass mosaic',bell_tower:'bell tower',story_post:'post box',chart_house:'chart room',boatyard:'boatyard',home_garden:'garden',new_resident:'new neighbour',market:'market',museum_glass:'museum display',harbour_bell:'harbour bell',post_office:'post office',map_room:'map room',footbridge:'footbridge',orchard:'orchard',tea_house:'tea house',observatory:'lookout',ferry:'ferry landing',nature_path:'nature trail',memory:'little monument',souvenir:'voyage shelf'})[f]||f.replaceAll('_',' ')}
 function findHTML(d){return `<div class="find"><div class="find-icon">${d.icon}</div><div><b>${d.name}</b><small>${d.desc}</small></div></div>`}
 
-// ---------- Minigames ----------
+// ============================================================
+// 4. GAMEPLAY PLUG-INS
+// Each minigame registers create/render/input handlers in MINIGAME_PLUGINS.
+// ============================================================
 function startRandomMinigame(seconds=75){
   if(state.phase!=='fasting'||!state.voyage)return;
   const types=Object.keys(MINIGAME_META), boat=BOAT_TYPES.find(b=>b.id===state.boat.type)||BOAT_TYPES[0];
@@ -607,50 +1033,45 @@ function startRandomMinigame(seconds=75){
   if(Math.random()<.38&&types.includes(boat.bias))type=boat.bias;
   const actual=state.sim?.active?Math.min(seconds,30):seconds; startMinigame(type,actual);
 }
+const MINIGAME_PLUGINS={
+  reef:{...MINIGAME_META.reef,create:c=>({...c,boatX:320,boatY:280,rocks:[],drops:[],spawn:0,bumpUntil:0}),render:renderReef,pointer:(g,type,x)=>{if(type==='move'&&pointer.down)g.boatX=clamp(x,35,605)},key:(g,e)=>{if(e.key==='ArrowLeft')g.boatX-=25;if(e.key==='ArrowRight')g.boatX+=25}},
+  signal:{...MINIGAME_META.signal,create:c=>({...c,seq:[],input:[],round:0,flashIndex:-1,phase:'show',nextAt:performance.now()+700}),render:renderSignal,pointer:(g,type,x,y)=>{if(type!=='down')return;const centers=[[240,150],[400,150],[240,250],[400,250]];centers.forEach((c,i)=>{if(Math.hypot(x-c[0],y-c[1])<45)signalInput(i)})},key:(g,e)=>{if(['1','2','3','4'].includes(e.key))signalInput(+e.key-1)}},
+  wind:{...MINIGAME_META.wind,create:c=>({...c,angle:.5,target:.2+Math.random()*.6,hold:0,nextShift:performance.now()+4200}),render:renderWind,pointer:(g,type,x)=>{if(type==='down'||type==='move')g.angle=clamp(x/640,0,1)},key:(g,e)=>{if(e.key==='ArrowLeft')g.angle-=.06;if(e.key==='ArrowRight')g.angle+=.06}},
+  wildlife:{...MINIGAME_META.wildlife,create:c=>({...c,animals:[],spawn:0}),render:renderWildlife,pointer:(g,type,x,y)=>{if(type!=='down')return;for(let i=g.animals.length-1;i>=0;i--){const a=g.animals[i];if(Math.hypot(x-a.x,y-a.y)<28){g.animals.splice(i,1);g.score++;beep('soft');break}}}},
+  soundings:{...MINIGAME_META.soundings,create:c=>({...c,target:{x:Math.floor(Math.random()*6),y:Math.floor(Math.random()*4)},pings:[],lastHint:MINIGAME_META.soundings.hints.start}),render:renderSoundings,pointer:(g,type,x,y)=>{if(type==='down')soundingTap(x,y)}},
+  repair:{...MINIGAME_META.repair,create:c=>({...c,leaks:[],spawn:0,waveAt:performance.now()+5000}),render:renderRepair,pointer:(g,type,x,y)=>{if(type!=='down')return;for(let i=g.leaks.length-1;i>=0;i--){const a=g.leaks[i];if(Math.hypot(x-a.x,y-a.y)<24){g.leaks.splice(i,1);g.score++;beep('soft');break}}}}
+};
 function startMinigame(type,seconds,opts={}){
-  if(!state.voyage)return; state.totalMinigames++; state.voyage.minigamesPlayed++; save();
-  const meta=MINIGAME_META[type]||MINIGAME_META.reef,common={type,duration:seconds*1000,started:performance.now(),score:0,done:false,title:meta.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null};
-  if(type==='reef')minigame={...common,boatX:320,boatY:280,rocks:[],drops:[],spawn:0,bumpUntil:0};
-  if(type==='signal')minigame={...common,seq:[],input:[],round:0,flashIndex:-1,phase:'show',nextAt:performance.now()+700};
-  if(type==='wind')minigame={...common,angle:.5,target:.2+Math.random()*.6,hold:0,nextShift:performance.now()+4200};
-  if(type==='wildlife')minigame={...common,animals:[],spawn:0};
-  if(type==='soundings')minigame={...common,target:{x:Math.floor(Math.random()*6),y:Math.floor(Math.random()*4)},pings:[],lastHint:'Tap the chart to take a sounding.'};
-  if(type==='repair')minigame={...common,leaks:[],spawn:0,waveAt:performance.now()+5000};
-  state.activeView='voyage'; $('#gameHud').classList.add('show'); $('#gameHudTitle').textContent=minigame.title; renderUI();
+  if(!state.voyage)return;const plugin=MINIGAME_PLUGINS[type]||MINIGAME_PLUGINS.reef;state.totalMinigames++;state.voyage.minigamesPlayed++;save();const common={type,duration:seconds*1000,started:performance.now(),score:0,done:false,title:plugin.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null};minigame=plugin.create(common);state.activeView='voyage';if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=true;syncMobilePanel()}$('#gameHud').classList.add('show');$('#gameHudTitle').textContent=minigame.title;renderUI();
 }
 function endMinigame(reason='done'){
   if(!minigame)return; const g=minigame,score=g.score, success=score>0;
   if(reason!=='leave'&&g.eventId&&state.voyage)resolveEncounterEvent(g.eventId,score);
   if(reason!=='leave'&&success&&state.voyage&&state.voyage.discoveries.length<5){
-    const threshold=g.type==='signal'?1:g.type==='soundings'?1:2;
+    const threshold=MINIGAME_PLUGINS[g.type]?.rewardThreshold??2;
     if(score>=threshold){const desired=g.rewardKind||null; const chance=g.eventId?.length?1:Math.min(.72,.22+score*.055); if(Math.random()<chance)addDiscovery(desired)}
   }
   minigame=null; $('#gameHud').classList.remove('show'); save(); renderUI();
-  toast(success?`A good little spell at the helm — ${score}.`:'The boat settles back onto her course.');
+  toast(success?contentLine('copy.minigames.success',{score}):contentLine('copy.minigames.quiet'));
   if(reason!=='leave'&&state.phase==='fasting'&&state.voyage){setTimeout(()=>{
     showModal(`<h2>Back on course</h2><p>The sea is quiet again.</p><div class="choice" id="feelFine"><b>Let her sail</b><span>Return to the voyage.</span></div><div class="choice" id="feelAgain"><b>Another diversion</b><span>Take the helm for another short encounter.</span></div><div class="choice" id="feelEat"><b>Make for harbour</b><span>Bring the boat in and begin the eating window.</span></div>`,false);
     $('#feelFine').onclick=closeModal; $('#feelAgain').onclick=()=>{closeModal();startRandomMinigame(75)}; $('#feelEat').onclick=()=>{closeModal();earlyDockPrompt()};
   },180)}
 }
-canvas.addEventListener('pointerdown',e=>{const r=canvas.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*canvas.width;pointer.y=(e.clientY-r.top)/r.height*canvas.height;pointer.down=true;if(minigame)minigamePointer('down',pointer.x,pointer.y)});
-canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*canvas.width;pointer.y=(e.clientY-r.top)/r.height*canvas.height;if(minigame)minigamePointer('move',pointer.x,pointer.y)});
-window.addEventListener('pointerup',()=>{pointer.down=false;if(minigame)minigamePointer('up',pointer.x,pointer.y)});
-window.addEventListener('keydown',e=>{if(!minigame)return;if(e.key==='Escape'){endMinigame('leave');return}if(minigame.type==='reef'){if(e.key==='ArrowLeft')minigame.boatX-=25;if(e.key==='ArrowRight')minigame.boatX+=25}else if(minigame.type==='signal'&&['1','2','3','4'].includes(e.key))signalInput(+e.key-1);else if(minigame.type==='wind'){if(e.key==='ArrowLeft')minigame.angle-=.06;if(e.key==='ArrowRight')minigame.angle+=.06}});
-function minigamePointer(type,x,y){
-  if(!minigame)return;
-  if(minigame.type==='reef'&&type==='move'&&pointer.down)minigame.boatX=clamp(x,35,605);
-  if(minigame.type==='signal'&&type==='down'){const centers=[[240,150],[400,150],[240,250],[400,250]];centers.forEach((c,i)=>{if(Math.hypot(x-c[0],y-c[1])<45)signalInput(i)})}
-  if(minigame.type==='wind'&&(type==='down'||type==='move'))minigame.angle=clamp(x/640,0,1);
-  if(minigame.type==='wildlife'&&type==='down'){for(let i=minigame.animals.length-1;i>=0;i--){const a=minigame.animals[i];if(Math.hypot(x-a.x,y-a.y)<28){minigame.animals.splice(i,1);minigame.score++;beep('soft');break}}}
-  if(minigame.type==='soundings'&&type==='down')soundingTap(x,y);
-  if(minigame.type==='repair'&&type==='down'){for(let i=minigame.leaks.length-1;i>=0;i--){const a=minigame.leaks[i];if(Math.hypot(x-a.x,y-a.y)<24){minigame.leaks.splice(i,1);minigame.score++;beep('soft');break}}}
-}
+canvas.addEventListener('pointerdown',e=>{const r=canvas.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*canvas.width;pointer.y=(e.clientY-r.top)/r.height*canvas.height;pointer.down=true;if(minigame)minigamePointer('down',pointer.x,pointer.y);else if(state.activeView==='chart'){chartView.dragging=true;chartView.lastX=e.clientX;chartView.lastY=e.clientY;canvas.setPointerCapture?.(e.pointerId)}});
+canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*canvas.width;pointer.y=(e.clientY-r.top)/r.height*canvas.height;if(minigame)minigamePointer('move',pointer.x,pointer.y);else if(chartView.dragging&&state.activeView==='chart'){chartView.panX+=(e.clientX-chartView.lastX)*(640/r.width);chartView.panY+=(e.clientY-chartView.lastY)*(360/r.height);chartView.lastX=e.clientX;chartView.lastY=e.clientY}});
+window.addEventListener('pointerup',()=>{pointer.down=false;chartView.dragging=false;if(minigame)minigamePointer('up',pointer.x,pointer.y)});
+canvas.addEventListener('wheel',e=>{if(state.activeView!=='chart'||minigame)return;e.preventDefault();zoomChart(e.deltaY<0?.15:-.15)},{passive:false});
+window.addEventListener('keydown',e=>{if(!minigame)return;if(e.key==='Escape'){endMinigame('leave');return}MINIGAME_PLUGINS[minigame.type]?.key?.(minigame,e)});
+function minigamePointer(type,x,y){if(!minigame)return;MINIGAME_PLUGINS[minigame.type]?.pointer?.(minigame,type,x,y)}
 function signalInput(i){if(!minigame||minigame.type!=='signal'||minigame.phase!=='input')return;minigame.input.push(i);const pos=minigame.input.length-1;if(i!==minigame.seq[pos]){minigame.phase='pause';minigame.input=[];minigame.nextAt=performance.now()+800;return}if(minigame.input.length===minigame.seq.length){minigame.score++;minigame.round++;minigame.phase='pause';minigame.nextAt=performance.now()+650;beep('soft')}}
 function soundingTap(x,y){
   if(!minigame||minigame.type!=='soundings')return; const left=128,top=88,cw=64,ch=58; if(x<left||x>left+cw*6||y<top||y>top+ch*4)return; const gx=Math.floor((x-left)/cw),gy=Math.floor((y-top)/ch); const d=Math.hypot(gx-minigame.target.x,gy-minigame.target.y); minigame.pings.push({gx,gy,d,at:performance.now()});
-  if(d<.5){minigame.score++;beep('find');minigame.lastHint='Wreck located! A new echo is forming…';minigame.target={x:Math.floor(Math.random()*6),y:Math.floor(Math.random()*4)};minigame.pings=[]} else if(d<1.5)minigame.lastHint='A strong echo — very close.'; else if(d<2.7)minigame.lastHint='The echo is getting warmer.'; else minigame.lastHint='Only a faint return here.';
+  if(d<.5){minigame.score++;beep('find');minigame.lastHint=MINIGAME_META.soundings.hints.found;minigame.target={x:Math.floor(Math.random()*6),y:Math.floor(Math.random()*4)};minigame.pings=[]} else if(d<1.5)minigame.lastHint=MINIGAME_META.soundings.hints.close; else if(d<2.7)minigame.lastHint=MINIGAME_META.soundings.hints.warm; else minigame.lastHint=MINIGAME_META.soundings.hints.cold;
 }
-// ---------- Pixel rendering ----------
+// ============================================================
+// 5. RENDERER
+// ============================================================
 function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function pxText(text,x,y,c='#18313a',size=10,align='left'){ctx.fillStyle=c;ctx.font=`bold ${size}px monospace`;ctx.textAlign=align;ctx.fillText(text,Math.round(x),Math.round(y));ctx.textAlign='left'}
 function poly(points,c,stroke=null,lw=2){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
@@ -660,7 +1081,7 @@ function roundedRect(x,y,w,h,r,c,stroke=null,lw=2){ctx.beginPath();ctx.moveTo(x+
 function shadow(x,y,w,h,a=.14){ctx.fillStyle=`rgba(18,46,55,${a})`;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function pixelCloud(x,y,s=1){rect(x,y,30*s,8*s,'#fff8df');rect(x+8*s,y-6*s,15*s,8*s,'#fff8df');rect(x+17*s,y-11*s,10*s,6*s,'#fffdf1');rect(x+5*s,y-10*s,7*s,5*s,'#fffdf1')}
 function drawSparkle(x,y,c='#fffdf1'){rect(x,y,1,1,c);rect(x-2,y,5,1,c);rect(x,y-2,1,5,c)}
-function drawWaveTile(x,y,phase=0){const c1='rgba(255,255,255,.12)',c2='rgba(255,255,255,.2)';rect(x,y,16,16,'#4d9fbe');rect(x,y+8,16,8,'#4596b5');if(((x+y+phase)>>4)%2===0){rect(x+2,y+4,6,2,c1);rect(x+9,y+10,4,1,c2)}else{rect(x+6,y+3,7,2,c2);rect(x+2,y+11,5,1,c1)}}
+function drawWaveTile(x,y,phase=0){const c1='rgba(255,255,255,.10)',c2='rgba(255,255,255,.17)',ph=dayPhase(),a=ph==='night'?'#244f6a':ph==='dusk'?'#477f99':ph==='dawn'?'#6aa8bd':'#4d9fbe',b=ph==='night'?'#214760':ph==='dusk'?'#42758e':ph==='dawn'?'#639eb3':'#4596b5';rect(x,y,16,16,a);rect(x,y+8,16,8,b);if(((x+y+phase)>>4)%2===0){rect(x+2,y+4,6,2,c1);rect(x+9,y+10,4,1,c2)}else{rect(x+6,y+3,7,2,c2);rect(x+2,y+11,5,1,c1)}}
 function drawWaterField(){for(let y=0;y<360;y+=16){for(let x=0;x<640;x+=16){drawWaveTile(x,y,Math.floor(frame*.03)%32)}}}
 function drawTopBoat(x,y,s=1,heading=0,type=state.boat.type){
   ctx.save();ctx.translate(x,y);ctx.rotate(heading);
@@ -689,27 +1110,22 @@ function drawTopHouse(x,y,kind='house',s=1){
   if(kind==='garden'){roundedRect(x-14*s,y-7*s,28*s,14*s,2,'#6ea65a','#315f54',2);for(let r=0;r<2;r++)for(let c=0;c<4;c++){rect(x-11*s+c*6*s,y-4*s+r*5*s,3*s,3*s,(r+c)%2?'#df7c68':'#e5b54e')}return}
   roundedRect(x-12*s,y-7*s,24*s,14*s,3,'#f0dfb6','#18313a',2);poly([[x-14*s,y-7*s],[x,y-17*s],[x+14*s,y-7*s]],'#a86d45','#18313a',2);rect(x-3*s,y-1*s,6*s,6*s,'#704630');rect(x-9*s,y-3*s,4*s,3*s,'#70b9d4');rect(x+5*s,y-3*s,4*s,3*s,'#70b9d4');
 }
-function drawTopVillager(x,y,shirt='#df7c68'){const bob=Math.sin((frame+x)*.03)>0?1:0;shadow(x-4,y+8,8,2,.14);circle(x,y-2,4,'#e8bd91');rect(x-4,y+2,8,7,shirt);rect(x-4,y+9,3,4+bob,'#18313a');rect(x+1,y+9-bob,3,4+bob,'#18313a')}
-function worldWeather(){const d=new Date(),key=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${state.worldSeed}`;const r=rng(hashString(key))();return r<.13?'rain':r<.22?'mist':r<.31?'breezy':'clear'}
+function drawTopVillager(x,y,shirt='#df7c68',accent='#e5b54e',style=0){const bob=Math.sin((frame+x)*.03)>0?1:0;shadow(x-4,y+8,8,2,.14);circle(x,y-2,4,'#e8bd91');rect(x-4,y+2,8,7,shirt);if(style===0)rect(x-4,y+4,8,2,accent);else if(style===1){rect(x-5,y-6,10,2,accent);rect(x-3,y-8,6,2,accent)}else if(style===2)rect(x+2,y+2,2,7,accent);else{rect(x-4,y+2,3,7,accent);rect(x+1,y+2,3,7,shirt)}rect(x-4,y+9,3,4+bob,'#18313a');rect(x+1,y+9-bob,3,4+bob,'#18313a')}
+function worldWeather(ts=gameNow()){const z=zonedParts(ts),key=`${z.key}-${state.worldSeed}`;const r=rng(hashString(key))();return r<.13?'rain':r<.22?'mist':r<.31?'breezy':'clear'}
 function drawWeather(){const w=worldWeather();if(w==='rain'){for(let i=0;i<48;i++){const x=(i*83+frame*.18)%680-20,y=(i*47+frame*.31)%400-20;rect(x,y,1,8,'rgba(240,252,255,.55)')}}else if(w==='mist'){rect(0,0,640,360,'rgba(240,247,235,.08)')}else if(w==='breezy'){for(let i=0;i<6;i++){const x=((i*150+frame*.04)%760)-60;rect(x,72+i*44,38,1,'rgba(255,255,255,.28)')}}}
-function biomeColor(b){return ({meadow:'#80bf67',pine:'#5b9a62',marsh:'#77a77b',cliff:'#98a88d',orchard:'#8abd68',dune:'#e7ce82'})[b]||'#80bf67'}
-function renderIslandTiles(isl){
-  const cx=320, cy=180, tile=16, base=biomeColor(isl.biome), sand='#e7ce82';
-  const path=[];
-  for(let gy=-8; gy<=8; gy++){
-    for(let gx=-11; gx<=11; gx++){
-      const px=cx+gx*tile, py=cy+gy*tile;
-      const n=((Math.sin((gx+isl.visits)*1.2)+Math.cos((gy+hashString(isl.id)%7)*1.1))*0.5);
-      const d=(gx*gx)/70 + (gy*gy)/42 + n*0.08;
-      if(d<1.18){
-        const shore=d>0.86; shadow(px-8,py+7,16,2,.08); rect(px-8,py-8,16,16,shore?sand:base); rect(px-8,py-8,16,1,shore?'#f3dfa3':'#94d177'); rect(px-8,py+7,16,1,shore?'#c9b168':'#5e9754');
-      }
-    }
-  }
-  // jetty and path
-  for(let i=0;i<5;i++){rect(300,236+i*8,40,8,'#a86d45'); rect(300,236+i*8,40,1,'#c98d61')} for(let i=0;i<5;i++)rect(305+i*8,244,2,34,'#704630');
-  for(let i=0;i<7;i++){rect(314,220-i*12,12,8,'#cfba8a'); rect(314,220-i*12,12,1,'#e7d6a8')}
+function biomeColor(b){return biomeDef(b).color}
+function shapeRadius(isl,theta){const s=ensureIslandData(isl).shape;const dtheta=Math.atan2(Math.sin(theta-s.coveAngle),Math.cos(theta-s.coveAngle));const cove=s.coveDepth*Math.exp(-(dtheta*dtheta)/(s.coveWidth*s.coveWidth));return 1+s.a1*Math.sin(s.k1*theta+s.p1)+s.a2*Math.cos(s.k2*theta+s.p2)-cove}
+function islandTileIsLand(isl,gx,gy,scale=1){const s=ensureIslandData(isl).shape,c=Math.cos(s.rotation),sn=Math.sin(s.rotation),rx=(gx*c-gy*sn)/(s.rx*scale),ry=(gx*sn+gy*c)/(s.ry*scale),theta=Math.atan2(ry,rx),dist=Math.hypot(rx,ry);return dist<shapeRadius(isl,theta)}
+function renderIslandTiles(isl,cx=320,cy=180,tile=16,scale=1,withJetty=true,alpha=1){
+  ensureIslandData(isl);ctx.save();ctx.globalAlpha=alpha;const base=biomeColor(isl.biome),sand='#e7ce82',limitX=Math.ceil(13*scale),limitY=Math.ceil(10*scale);
+  for(let gy=-limitY;gy<=limitY;gy++)for(let gx=-limitX;gx<=limitX;gx++){if(!islandTileIsLand(isl,gx,gy,scale))continue;const edge=!islandTileIsLand(isl,gx+1,gy,scale)||!islandTileIsLand(isl,gx-1,gy,scale)||!islandTileIsLand(isl,gx,gy+1,scale)||!islandTileIsLand(isl,gx,gy-1,scale),px=cx+gx*tile,py=cy+gy*tile;shadow(px-tile/2,py+tile*.38,tile,tile*.14,.07);rect(px-tile/2,py-tile/2,tile,tile,edge?sand:base);rect(px-tile/2,py-tile/2,tile,1,edge?'#f3dfa3':'#94d177');rect(px-tile/2,py+tile/2-1,tile,1,edge?'#c9b168':'#5e9754')}
+  if(withJetty){for(let i=0;i<5;i++){rect(cx-20,cy+56+i*8,40,8,'#a86d45');rect(cx-20,cy+56+i*8,40,1,'#c98d61')}for(let i=0;i<5;i++)rect(cx-15+i*8,cy+64,2,34,'#704630');for(let i=0;i<7;i++){rect(cx-6,cy+40-i*12,12,8,'#cfba8a');rect(cx-6,cy+40-i*12,12,1,'#e7d6a8')}}ctx.restore();
 }
+function drawApproachIsland(isl,cx,cy,scale){const tile=Math.max(3,Math.round(8*scale));renderIslandTiles(isl,cx,cy,tile,Math.max(.45,scale),false,clamp(scale*1.45,.25,1));if(scale>.6){const p=BUILD_SITES.village;drawTopHouse(cx+(p.x-320)*scale*.35,cy+(p.y-180)*scale*.35,'house',.45*scale+0.2)}}
+function timePalette(){const ph=dayPhase();return ph==='night'?{water:'#244f6a',overlay:'rgba(20,31,61,.34)',light:'#ffd978'}:ph==='dusk'?{water:'#4f7f9a',overlay:'rgba(92,58,112,.16)',light:'#ffd978'}:ph==='dawn'?{water:'#6ea7bd',overlay:'rgba(232,151,126,.10)',light:'#ffe29a'}:ph==='golden'?{water:'#559fbd',overlay:'rgba(244,190,100,.08)',light:'#ffe29a'}:{water:'#4d9fbe',overlay:null,light:'#fff0a5'}}
+function drawTimeLighting(){const pal=timePalette(),ph=dayPhase();if(pal.overlay)rect(0,0,640,360,pal.overlay);if(ph==='night'){const z=zonedParts();for(let i=0;i<28;i++){const rr=rng(hashString(`${state.worldSeed}-${z.key}-star-${i}`)),x=rr()*640,y=rr()*340,twinkle=.35+.45*(.5+.5*Math.sin(frame*.004+i));ctx.globalAlpha=twinkle;drawSparkle(x,y,'#fff4c8');ctx.globalAlpha=1}}}
+function drawLamp(x,y){const ph=dayPhase();if(!['night','dusk','dawn'].includes(ph))return;ctx.save();ctx.globalAlpha=.12;circle(x,y,14,timePalette().light);ctx.globalAlpha=.28;circle(x,y,7,timePalette().light);ctx.globalAlpha=1;rect(x-2,y-2,4,4,'#ffd978');ctx.restore()}
+
 function drawSeaBackground(){drawWaterField();}
 function renderScene(ts){
   frame=ts;ctx.clearRect(0,0,640,360);
@@ -718,55 +1134,49 @@ function renderScene(ts){
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
 }
+function projectSitePos(p,index=0){const base=BUILD_SITES[p.site]||BUILD_SITES.village,rr=rng(hashString(p.id||`${p.templateId}${index}`));return{x:base.x+(rr()-.5)*28,y:base.y+(rr()-.5)*20}}
+function drawProjectOnIsland(isl,p,index){const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index),prog=projectProgress(p),s=.9;if(!p.complete){shadow(pos.x-17,pos.y+9,34,5,.18);rect(pos.x-15,pos.y+5,30,4,'#a86d45');const posts=1+Math.floor(prog*4);for(let i=0;i<posts;i++)rect(pos.x-13+i*8,pos.y-12,3,18,'#704630');if(prog>.35)rect(pos.x-14,pos.y-10,28,3,'#c98d61');if(prog>.7)poly([[pos.x-15,pos.y-10],[pos.x,pos.y-20],[pos.x+15,pos.y-10]],'#e7ce82','#18313a',2);return}
+  if(t.draw==='market_square'){drawTopHouse(pos.x-9,pos.y,'market',.8);drawTopHouse(pos.x+13,pos.y+7,'market',.75);return}if(t.draw==='market_hall'){drawTopHouse(pos.x,pos.y,'market',1.25);return}if(t.draw==='cottages'){drawTopHouse(pos.x-10,pos.y,'house',.78);drawTopHouse(pos.x+12,pos.y+8,'house',.72);return}if(t.draw==='ferry'){rect(pos.x-20,pos.y,42,7,'#a86d45');for(let x=pos.x-18;x<pos.x+20;x+=8)rect(x,pos.y+7,2,14,'#704630');return}if(t.draw==='boatyard'){drawTopHouse(pos.x-9,pos.y-2,'house',.82);rect(pos.x+4,pos.y+4,30,6,'#a86d45');for(let x=pos.x+6;x<pos.x+32;x+=7)rect(x,pos.y+10,2,10,'#704630');drawTopBoat(pos.x+23,pos.y+22,.55,.25,'shallow');return}if(t.draw==='map_room')drawTopHouse(pos.x,pos.y,'house',1.05);else if(t.draw==='observatory')drawTopHouse(pos.x,pos.y,'lighthouse',.78);else drawTopHouse(pos.x,pos.y,t.draw||'house',s)}
 function drawIslandScene(isl){
-  drawSeaBackground();
-  renderIslandTiles(isl);
-  const f=isl.features;
-  // environment props
-  for(let i=0;i<10;i++){const rr=rng(hashString(isl.id)+i*91),x=208+rr()*220,y=84+rr()*126; if(i%3===0)drawTopTree(x,y,.9); else if(i%4===0)drawTopRock(x,y,.8); else if(i%5===0)drawFlowerPatch(x-4,y-4)}
-  // buildings
-  drawTopHouse(320,156,'house',1); if(f.includes('cottage'))drawTopHouse(374,145,'house',.95); if(f.includes('windmill')||f.includes('windmill_ruin'))drawTopHouse(252,132,'windmill',1); if(f.includes('lighthouse')||f.includes('bell_tower')||f.includes('harbour_bell'))drawTopHouse(415,138,'lighthouse',1);
-  if(f.includes('garden')||f.includes('home_garden')||f.includes('orchard'))drawTopHouse(260,204,'garden',1); if(f.includes('market')||f.includes('workshop')||f.includes('boatyard'))drawTopHouse(388,198,'market',1); if(f.includes('tea_house')||f.includes('guesthouse'))drawTopHouse(340,210,'tea',.95);
-  if(f.includes('observatory'))drawTopHouse(280,100,'lighthouse',.75);
-  // villagers
-  const villagerCount=Math.min(6,1+Math.floor((isl.visits||1)/2)+Math.floor(isl.features.length/5));
-  for(let i=0;i<villagerCount;i++){const rr=rng(hashString(isl.id+'villager'+i));drawTopVillager(250+rr()*160,150+rr()*80,['#df7c68','#e5b54e','#65bdd1','#83bf6a'][i%4])}
-  // docked boat
-  drawTopBoat(355,292,1.05,-.2); rect(345,282,10,2,'rgba(255,255,255,.2)');
-  drawWeather();
-  roundedRect(12,312,220,36,6,'rgba(255,247,222,.92)','#18313a',2); pxText(isl.name,24,330,'#18313a',12); pxText(isl.home?'HOME HARBOUR':`${isl.visits||0} VISIT${isl.visits===1?'':'S'} • ${isl.biome.toUpperCase()} COAST`,24,343,'#42616a',8);
+  ensureIslandData(isl);drawSeaBackground();renderIslandTiles(isl);
+  for(let i=0;i<12;i++){const rr=rng(hashString(isl.id)+i*91),x=205+rr()*225,y=76+rr()*140;if(i%3===0)drawTopTree(x,y,.9);else if(i%4===0)drawTopRock(x,y,.8);else if(i%5===0)drawFlowerPatch(x-4,y-4)}
+  // legacy core buildings
+  drawTopHouse(320,156,'house',1);if(isl.features.includes('cottage'))drawTopHouse(374,145,'house',.95);if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill'))drawTopHouse(252,132,'windmill',.85);
+  const projectFeatures=new Set(isl.projects.map(p=>projectTemplate(p.templateId)?.feature));if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse'))drawTopHouse(415,138,'lighthouse',1);if(isl.features.includes('market')&&!projectFeatures.has('market_stall'))drawTopHouse(388,198,'market',1);if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house'))drawTopHouse(340,210,'tea',.95);if(isl.features.includes('orchard')&&!projectFeatures.has('orchard'))drawTopHouse(260,204,'garden',1);
+  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature;const superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded)drawProjectOnIsland(isl,p,i)});
+  // extra cottages emerge as population grows
+  const extraHomes=Math.min(4,Math.floor(Math.max(0,population(isl)-2)/2));for(let i=0;i<extraHomes;i++)drawTopHouse(290+i*32,116+(i%2)*22,'house',.68);
+  isl.residents.slice(0,9).forEach((person,i)=>{const rr=rng(hashString(person.id)),x=245+rr()*170,y=150+rr()*82;drawTopVillager(x,y,person.outfit,person.accent||'#e5b54e',person.style||0);if(i<3&&population(isl)<5)pxText(person.name.split(' ')[0],x,y+19,'#18313a',6,'center')});
+  drawTopBoat(355,292,1.05,-.2);vesselsAtIsland(isl.id).slice(0,4).forEach((v,i)=>{const t=vesselType(v.typeId);drawTopBoat(385+i*22,284+(i%2)*14,.55,-.15,t.sprite);if(['night','dusk'].includes(dayPhase()))drawLamp(385+i*22,282+(i%2)*14)});drawWeather();drawTimeLighting();
+  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(320,156);drawLamp(374,145);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i);drawLamp(q.x,q.y)})}
 }
+
 function drawVoyage(){
-  drawSeaBackground(); const v=state.voyage,p=voyageProgress();
-  // grid/route overlay
-  for(let y=20;y<340;y+=32)rect(24,y,592,1,'rgba(255,255,255,.06)'); for(let x=24;x<616;x+=32)rect(x,20,1,320,'rgba(255,255,255,.04)');
-  const start={x:108,y:292}, end={x:544,y:86};
-  ctx.strokeStyle='rgba(255,247,222,.35)'; ctx.lineWidth=3; ctx.setLineDash([8,8]); ctx.beginPath(); ctx.moveTo(start.x,start.y); ctx.lineTo(end.x,end.y); ctx.stroke(); ctx.setLineDash([]);
-  // destination island preview on map
-  const vis=clamp((p-.68)/.30,0,1); if(vis>0){circle(end.x,end.y,18,'#e7ce82','#18313a',2); circle(end.x,end.y,12,biomeColor(getIsland(v.destinationId).biome)); if(vis>.75)rect(end.x-3,end.y-2,6,4,'#a86d45')}
-  // progress pips
-  for(let i=0;i<=4;i++){circle(110+i*108,323,5,i/4<=p?'#fff7de':'rgba(255,247,222,.25)')}
-  const bx=lerp(start.x,end.x,p), by=lerp(start.y,end.y,p)+Math.sin(frame*.01)*2; drawTopBoat(bx,by,1.2,Math.atan2(end.y-start.y,end.x-start.x)+Math.PI/2); rect(bx-12,by+12,24,2,'rgba(255,255,255,.18)');
-  const ev=sceneEvent||activeVoyageEvent(); if(ev)drawVoyageSceneEvent(ev,frame,bx,by);
-  if(v?.discoveries.length){roundedRect(20,20,120,28,5,'rgba(255,247,222,.92)','#18313a',2); pxText(`${v.discoveries.length} FIND${v.discoveries.length===1?'':'S'} ABOARD`,32,38,'#18313a',9)}
-  roundedRect(16,306,240,38,6,'rgba(255,247,222,.92)','#18313a',2); pxText(state.phase==='arrived'?'LAND SIGHTED':`${Math.round(p*100)}% CHARTED`,28,325,'#18313a',12); pxText(state.phase==='arrived'?'The harbour is waiting.':`${fmtDuration(Math.max(0,v.targetMs-actualFastMs()),true)} to land`,28,339,'#42616a',8);
-  if(state.phase==='arrived'){roundedRect(458,16,164,52,6,'rgba(255,247,222,.92)','#18313a',2); pxText(getIsland(v.destinationId).name.toUpperCase(),470,35,'#18313a',10); pxText('The harbour lights are coming into view.',470,50,'#42616a',8)}
-  drawWeather();
+  drawSeaBackground();const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId);for(let y=20;y<340;y+=32)rect(24,y,592,1,'rgba(255,255,255,.05)');for(let x=24;x<616;x+=32)rect(x,20,1,320,'rgba(255,255,255,.035)');
+  const start={x:108,y:292},end={x:455,y:188},shore={x:590,y:100};ctx.strokeStyle='rgba(255,247,222,.28)';ctx.lineWidth=3;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(start.x,start.y);ctx.lineTo(end.x,end.y);ctx.stroke();ctx.setLineDash([]);
+  const vis=clamp((p-.58)/.42,0,1);if(vis>0){drawApproachIsland(dest,shore.x,shore.y,.35+vis*.85);if(vis>.5){const flick=0.75+.25*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(shore.x-22,shore.y+34);ctx.globalAlpha=1}}
+  for(let i=0;i<=5;i++)circle(108+i*86,323,4,i/5<=p?'#fff7de':'rgba(255,247,222,.22)');const bx=lerp(start.x,end.x,p),by=lerp(start.y,end.y,p)+Math.sin(frame*.01)*2;drawTopBoat(bx,by,1.2,Math.atan2(end.y-start.y,end.x-start.x)+Math.PI/2);
+  const playerPos=playerWorldPosition();nearbyWorldVessels(1.75).forEach(({v:npc,pos},i)=>{const type=vesselType(npc.typeId),sx=clamp(bx+(pos.x-playerPos.x)*92,42,600),sy=clamp(by+(pos.y-playerPos.y)*70,58,286);drawTopBoat(sx,sy,.72,.15,type.sprite);if(i<2)pxText(npc.name,sx,sy+18,'#fff7de',6,'center')});
+  const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);if(v?.discoveries.length){roundedRect(20,20,136,28,5,'rgba(255,247,222,.92)','#18313a',2);pxText(`${v.discoveries.length} FIND${v.discoveries.length===1?'':'S'} ABOARD`,32,38,'#18313a',9)}
+  if(state.boatPassengers.length){roundedRect(166,20,142,28,5,'rgba(255,247,222,.92)','#18313a',2);pxText(`${state.boatPassengers.length} PASSENGER${state.boatPassengers.length===1?'':'S'} ABOARD`,178,38,'#18313a',8)}
+  roundedRect(16,306,254,38,6,'rgba(255,247,222,.92)','#18313a',2);pxText(state.phase==='arrived'?'LAND SIGHTED':`${Math.round(p*100)}% CHARTED`,28,325,'#18313a',12);pxText(state.phase==='arrived'?`${dest.name} is close enough to hear the harbour.`:`${fmtDuration(Math.max(0,v.targetMs-actualFastMs()),true)} to land`,28,339,'#42616a',8);if(state.phase==='arrived'){roundedRect(442,16,180,52,6,'rgba(255,247,222,.92)','#18313a',2);pxText(dest.name.toUpperCase(),454,35,'#18313a',10);pxText('The shoreline has resolved out of the blue.',454,50,'#42616a',8)}drawWeather();drawTimeLighting();
 }
+
 function drawChart(){
   rect(0,0,640,360,'#efe1b7'); rect(18,18,604,324,'#f8efd0');
   for(let x=34;x<610;x+=36)rect(x,28,1,304,'rgba(115,88,48,.10)'); for(let y=36;y<330;y+=30)rect(28,y,584,1,'rgba(115,88,48,.10)');
   circle(560,76,24,'#f3e6c6','#8d6b3f',2); line(560,51,560,101,'#8d6b3f',2); line(535,76,585,76,'#8d6b3f',2); poly([[560,48],[565,66],[560,61],[555,66]], '#df7c68', '#8d6b3f',1); pxText('N',560,43,'#8d6b3f',8,'center');
   const known=state.islands.filter(i=>i.known); if(!known.length)return;
-  const xs=known.map(i=>i.x),ys=known.map(i=>i.y),minX=Math.min(...xs,-3),maxX=Math.max(...xs,3),minY=Math.min(...ys,-3),maxY=Math.max(...ys,3); const sx=500/(maxX-minX||1),sy=240/(maxY-minY||1),scale=Math.min(sx,sy,70); const map=i=>({x:320+(i.x-(minX+maxX)/2)*scale,y:185+(i.y-(minY+maxY)/2)*scale*.65});
+  const xs=known.map(i=>i.x),ys=known.map(i=>i.y),minX=Math.min(...xs,-3),maxX=Math.max(...xs,3),minY=Math.min(...ys,-3),maxY=Math.max(...ys,3); const sx=500/(maxX-minX||1),sy=240/(maxY-minY||1),baseScale=Math.min(sx,sy,70),scale=baseScale*chartView.zoom,cx=320+chartView.panX,cy=185+chartView.panY; const mapXY=(x,y)=>({x:cx+(x-(minX+maxX)/2)*scale,y:cy+(y-(minY+maxY)/2)*scale*.65}),map=i=>mapXY(i.x,i.y);
   ctx.strokeStyle='#8d6b3f';ctx.lineWidth=2;state.routes.forEach(r=>{const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const A=map(a),B=map(b);ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
-  known.forEach(i=>{const p=map(i),r=i.home?16:11+Math.min(7,i.visits||0); circle(p.x,p.y,r,'#e7ce82','#18313a',2); circle(p.x,p.y,r*.58,biomeColor(i.biome)); rect(p.x-r*.35,p.y-r*.15,r*.7,2,'rgba(255,255,255,.25)'); pxText(i.home?'HOME':i.name.split(' ')[0].toUpperCase(),p.x,p.y+r+13,'#5e4c2a',7,'center')});
+  known.forEach(i=>{const p=map(i),r=i.home?16:11+Math.min(7,i.visits||0);renderIslandTiles(i,p.x,p.y,Math.max(2,Math.round(r/5)),.42,false,1);roundedRect(p.x-36,p.y+r+6,72,18,3,'rgba(248,239,208,.90)',null,0);pxText(i.home?'HOME':i.name.split(' ')[0].toUpperCase(),p.x,p.y+r+19,'#5e4c2a',window.matchMedia('(max-width:900px)').matches?12:10,'center')});
+  activeWorldVessels().slice(0,24).forEach(v=>{const wp=vesselWorldPosition(v,gameNow()),q=mapXY(wp.x,wp.y),t=vesselType(v.typeId);drawTopBoat(q.x,q.y,.38,0,t.sprite);if(['night','dusk'].includes(dayPhase()))circle(q.x+4,q.y-5,1.4,'#ffd978')});
   if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b&&a.known){const A=map(a),B=b.known?map(b):{x:A.x+120,y:A.y-60};const p=voyageProgress();drawTopBoat(lerp(A.x,B.x,p),lerp(A.y,B.y,p),.7,Math.atan2(B.y-A.y,B.x-A.x)+Math.PI/2)}}
 }
 
 function renderMinigame(ts){
   const g=minigame;if(!g)return;const elapsed=ts-g.started,remain=clamp(1-elapsed/g.duration,0,1);$('#gameHudText').textContent=`${g.score} • ESC to leave`;$('#gameHudBar').style.width=(remain*100)+'%';if(elapsed>=g.duration){endMinigame();return}
-  if(g.type==='reef')renderReef(g,ts);if(g.type==='signal')renderSignal(g,ts);if(g.type==='wind')renderWind(g,ts);if(g.type==='wildlife')renderWildlife(g,ts);if(g.type==='soundings')renderSoundings(g,ts);if(g.type==='repair')renderRepair(g,ts);
+  MINIGAME_PLUGINS[g.type]?.render?.(g,ts);
 }
 function renderReef(g,ts){
   drawSeaBackground();if(ts-g.spawn>520){g.spawn=ts;g.rocks.push({x:35+Math.random()*570,y:-20,s:8+Math.random()*14});if(Math.random()<.48)g.drops.push({x:35+Math.random()*570,y:-20})}
@@ -774,54 +1184,61 @@ function renderReef(g,ts){
   drawTopBoat(g.boatX,g.boatY,1.1,0);g.rocks.forEach(o=>drawTopRock(o.x,o.y,o.s/12));g.drops.forEach(o=>{roundedRect(o.x-5,o.y-8,10,13,2,'#e5b54e','#704630',2);drawSparkle(o.x+5,o.y-6,'#fff7de')});
   for(let i=g.drops.length-1;i>=0;i--){const o=g.drops[i];if(Math.hypot(o.x-g.boatX,o.y-g.boatY)<24){g.drops.splice(i,1);g.score++;beep('soft')}}
   for(let i=g.rocks.length-1;i>=0;i--){const o=g.rocks[i];if(Math.hypot(o.x-g.boatX,o.y-g.boatY)<20){g.rocks.splice(i,1);g.bumpUntil=ts+260;g.boatX=clamp(g.boatX+(Math.random()<.5?-18:18),28,612)}}
-  if(ts<g.bumpUntil)rect(0,0,640,360,'rgba(255,247,222,.07)');pxText('REEF RUN',22,28,'#fff7de',12);pxText('THREAD THE SHOALS • SCOOP UP THE BOTTLES',320,340,'#fff7de',8,'center');
+  if(ts<g.bumpUntil)rect(0,0,640,360,'rgba(255,247,222,.07)');pxText(MINIGAME_META.reef.title,22,28,'#fff7de',12);pxText(MINIGAME_META.reef.instruction,320,340,'#fff7de',8,'center');
 }
 function renderSignal(g,ts){
   rect(0,0,640,360,'#163b52');rect(0,265,640,95,'#23475c');circle(92,52,12,'#fff4c8');rect(76,170,32,120,'#294557');rect(72,156,40,16,'#294557');rect(82,136,20,22,'#d8caa1');rect(88,126,8,12,'#df7c68');
   if(g.phase==='show'&&ts>=g.nextAt){if(g.seq.length===0||g.flashIndex>=g.seq.length-1){g.seq.push(Math.floor(Math.random()*4));g.flashIndex=0}else g.flashIndex++;g.nextAt=ts+500;if(g.flashIndex===g.seq.length-1)setTimeout(()=>{if(minigame===g){g.phase='input';g.input=[]}},500)}if(g.phase==='pause'&&ts>=g.nextAt){g.phase='show';g.flashIndex=-1;g.nextAt=ts+300}
-  const centers=[[240,150],[400,150],[240,250],[400,250]],cols=['#df7c68','#e5b54e','#65bdd1','#83bf6a'];centers.forEach((c,i)=>{const lit=g.phase==='show'&&g.seq[g.flashIndex]===i;circle(c[0],c[1],38,lit?'#fff7de':cols[i],'#18313a',5);if(lit)circle(c[0],c[1],18,'rgba(255,255,255,.55)');pxText(String(i+1),c[0],c[1]+5,'#18313a',14,'center')});pxText(g.phase==='input'?'SEND THE PATTERN BACK':'WATCH THE LANTERN CODE',320,58,'#fff7de',12,'center');pxText(`SHORE SIGNALS READ: ${g.score}`,320,330,'#dff5f4',8,'center');
+  const centers=[[240,150],[400,150],[240,250],[400,250]],cols=['#df7c68','#e5b54e','#65bdd1','#83bf6a'];centers.forEach((c,i)=>{const lit=g.phase==='show'&&g.seq[g.flashIndex]===i;circle(c[0],c[1],38,lit?'#fff7de':cols[i],'#18313a',5);if(lit)circle(c[0],c[1],18,'rgba(255,255,255,.55)');pxText(String(i+1),c[0],c[1]+5,'#18313a',14,'center')});pxText(g.phase==='input'?MINIGAME_META.signal.inputText:MINIGAME_META.signal.watchText,320,58,'#fff7de',12,'center');pxText(`SHORE SIGNALS READ: ${g.score}`,320,330,'#dff5f4',8,'center');
 }
 function renderWind(g,ts){
   drawSeaBackground();if(ts>g.nextShift){g.target=.15+Math.random()*.7;g.nextShift=ts+3900}if(pointer.down)g.angle=clamp(pointer.x/640,0,1);const diff=Math.abs(g.angle-g.target);if(diff<.07){g.hold+=16;if(g.hold>850){g.score++;g.hold=0;g.target=.15+Math.random()*.7;beep('soft')}}else g.hold=Math.max(0,g.hold-11);
-  drawTopBoat(320,225,1.25,0);const x=70+g.angle*500,tx=70+g.target*500;roundedRect(70,92,500,14,4,'#fff','#18313a',2);rect(tx-20,88,40,22,'#83bf6a');rect(x-4,80,8,38,'#18313a');rect(525,120,4,40,'#18313a');poly([[529,124],[560,132],[529,138]],'#df7c68','#18313a',1);pxText('SAIL TRIM',22,28,'#fff7de',12);pxText('KEEP THE MAST IN THE GREEN BREEZE',320,340,'#fff7de',8,'center');
+  drawTopBoat(320,225,1.25,0);const x=70+g.angle*500,tx=70+g.target*500;roundedRect(70,92,500,14,4,'#fff','#18313a',2);rect(tx-20,88,40,22,'#83bf6a');rect(x-4,80,8,38,'#18313a');rect(525,120,4,40,'#18313a');poly([[529,124],[560,132],[529,138]],'#df7c68','#18313a',1);pxText(MINIGAME_META.wind.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wind.instruction,320,340,'#fff7de',8,'center');
 }
 function renderWildlife(g,ts){
-  drawSeaBackground();if(ts-g.spawn>720){g.spawn=ts;if(g.animals.length<6)g.animals.push({x:45+Math.random()*550,y:75+Math.random()*205,born:ts,kind:Math.random()<.62?'dolphin':'bird'})}g.animals=g.animals.filter(a=>ts-a.born<2500);g.animals.forEach(a=>{const bob=Math.sin(ts*.01+a.x)*4;if(a.kind==='dolphin'){poly([[a.x-13,a.y+bob],[a.x+4,a.y+bob-2],[a.x+12,a.y+bob+1],[a.x+4,a.y+bob+4],[a.x-8,a.y+bob+4]],'#2f6f85','#173a4a',1);rect(a.x+8,a.y-4+bob,8,4,'#2f6f85')}else{rect(a.x-9,a.y+bob,8,2,'#fff7de');rect(a.x+1,a.y+bob,8,2,'#fff7de');rect(a.x-1,a.y+bob-2,2,4,'#fff7de')}});drawTopBoat(320,295,1,0);rect(0,0,56,360,'rgba(16,37,48,.3)');rect(584,0,56,360,'rgba(16,37,48,.3)');pxText('WILDLIFE WATCH',22,28,'#fff7de',12);pxText('TAP EACH SIGHTING BEFORE IT SLIPS AWAY',320,340,'#fff7de',8,'center');
+  drawSeaBackground();if(ts-g.spawn>720){g.spawn=ts;if(g.animals.length<6)g.animals.push({x:45+Math.random()*550,y:75+Math.random()*205,born:ts,kind:Math.random()<.62?'dolphin':'bird'})}g.animals=g.animals.filter(a=>ts-a.born<2500);g.animals.forEach(a=>{const bob=Math.sin(ts*.01+a.x)*4;if(a.kind==='dolphin'){poly([[a.x-13,a.y+bob],[a.x+4,a.y+bob-2],[a.x+12,a.y+bob+1],[a.x+4,a.y+bob+4],[a.x-8,a.y+bob+4]],'#2f6f85','#173a4a',1);rect(a.x+8,a.y-4+bob,8,4,'#2f6f85')}else{rect(a.x-9,a.y+bob,8,2,'#fff7de');rect(a.x+1,a.y+bob,8,2,'#fff7de');rect(a.x-1,a.y+bob-2,2,4,'#fff7de')}});drawTopBoat(320,295,1,0);rect(0,0,56,360,'rgba(16,37,48,.3)');rect(584,0,56,360,'rgba(16,37,48,.3)');pxText(MINIGAME_META.wildlife.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wildlife.instruction,320,340,'#fff7de',8,'center');
 }
 function renderSoundings(g,ts){
   rect(0,0,640,360,'#214f67');roundedRect(96,58,448,260,8,'#f5e8c7','#18313a',3);const left=128,top=88,cw=64,ch=58;for(let y=0;y<4;y++)for(let x=0;x<6;x++){rect(left+x*cw,top+y*ch,cw-2,ch-2,(x+y)%2?'#d8e3c5':'#e7edd0');pxText(`${x+1}${String.fromCharCode(65+y)}`,left+x*cw+6,top+y*ch+14,'#6e795e',7)}
-  g.pings.forEach(p=>{const cx=left+p.gx*cw+cw/2,cy=top+p.gy*ch+ch/2;circle(cx,cy,6,p.d<1.5?'#df7c68':p.d<2.7?'#e5b54e':'#65bdd1','#18313a',1)});pxText('DEEP SOUNDINGS',22,28,'#fff7de',12);pxText(g.lastHint,320,338,'#fff7de',8,'center');
+  g.pings.forEach(p=>{const cx=left+p.gx*cw+cw/2,cy=top+p.gy*ch+ch/2;circle(cx,cy,6,p.d<1.5?'#df7c68':p.d<2.7?'#e5b54e':'#65bdd1','#18313a',1)});pxText(MINIGAME_META.soundings.title,22,28,'#fff7de',12);pxText(g.lastHint,320,338,'#fff7de',8,'center');
 }
 function renderRepair(g,ts){
   drawSeaBackground();roundedRect(115,70,410,235,12,'#b98359','#18313a',4);for(let x=130;x<510;x+=34)rect(x,78,3,215,'rgba(88,52,34,.2)');
   if(ts-g.spawn>950&&g.leaks.length<7){g.spawn=ts;g.leaks.push({x:150+Math.random()*340,y:105+Math.random()*160,born:ts})}if(ts>g.waveAt){g.waveAt=ts+5000;g.leaks.forEach(l=>l.born-=900);}
-  g.leaks=g.leaks.filter(l=>ts-l.born<5000);g.leaks.forEach(l=>{const age=(ts-l.born)/5000;circle(l.x,l.y,9,'#65bdd1','#18313a',2);circle(l.x,l.y,3,'#dff5f4');if(age>.7)drawSparkle(l.x+10,l.y-8,'#dff5f4')});pxText('DECK PATCH',22,28,'#fff7de',12);pxText('TAP THE LEAKS BEFORE THE NEXT WAVE',320,340,'#fff7de',8,'center');
+  g.leaks=g.leaks.filter(l=>ts-l.born<5000);g.leaks.forEach(l=>{const age=(ts-l.born)/5000;circle(l.x,l.y,9,'#65bdd1','#18313a',2);circle(l.x,l.y,3,'#dff5f4');if(age>.7)drawSparkle(l.x+10,l.y-8,'#dff5f4')});pxText(MINIGAME_META.repair.title,22,28,'#fff7de',12);pxText(MINIGAME_META.repair.instruction,320,340,'#fff7de',8,'center');
 }
-function drawVoyageSceneEvent(e,ts,bx,by){
-  if(!e)return;const age=ts-(e.started||ts),t=clamp(age/(e.duration||12000),0,1);if(t>=1&&e.ambient){sceneEvent=null;return}
-  const type=e.type;
-  if(type==='dolphins'||type==='wildlife'){for(let i=0;i<4;i++){const x=bx+80+i*26-(t*150),y=by-30+Math.sin(t*12+i)*14;poly([[x-10,y],[x+3,y-2],[x+9,y+1],[x+2,y+4],[x-7,y+3]],'#2f6f85','#173a4a',1)}}
-  if(type==='seabirds'){for(let i=0;i<6;i++){const x=40+t*560+i*16,y=70+i%3*10;line(x-5,y,x,y-3,'#fff7de',2);line(x,y-3,x+5,y,'#fff7de',2)}}
-  if(type==='trader'){drawTopBoat(610-t*700,110,1,-.5,'sailer')}
-  if(type==='squall'){const x=640-t*760;rect(x,0,180,360,'rgba(38,71,83,.28)');for(let i=0;i<20;i++)rect(x+10+(i*31)%170,40+(i*47)%280,1,8,'rgba(240,252,255,.48)')}
-  if(type==='bottle'){roundedRect(bx+70,by-42,10,15,2,'#e5b54e','#704630',2);drawSparkle(bx+83,by-48,'#fff7de')}
-  if(type==='signal'){const pulse=(Math.sin(ts*.008)>0)?1:0;circle(560,68,5,pulse?'#fff7de':'#df7c68');if(pulse)circle(560,68,14,'rgba(255,247,222,.12)')}
-  if(type==='shoal'){for(let i=0;i<8;i++){const x=bx+80+(i%4)*16,y=by+60+Math.floor(i/4)*13;rect(x,y,9,3,'rgba(32,91,112,.65)')}}
-  if(type==='rigging'){for(let i=0;i<4;i++){const x=bx-22+i*14,y=by-30+Math.sin(ts*.02+i)*6;rect(x,y,10,2,'#fff7de')}}
-  if(type==='breeze'){for(let i=0;i<6;i++){const x=((i*120+ts*.08)%760)-60;rect(x,60+i*35,42,2,'rgba(255,255,255,.45)')}}
-}
+const VOYAGE_SCENE_RENDERERS={
+  npcboat(e,ts,bx,by,t){const v=worldState().vessels.find(x=>x.id===e.vesselId);if(!v)return;const type=vesselType(v.typeId),x=620-t*720,y=105+Math.sin(t*Math.PI)*70;drawTopBoat(x,y,.95,-.35,type.sprite);pxText(v.name,x,y+18,'#fff7de',6,'center')},
+  dolphins(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx+80+i*26-(t*150),y=by-30+Math.sin(t*12+i)*14;poly([[x-10,y],[x+3,y-2],[x+9,y+1],[x+2,y+4],[x-7,y+3]],'#2f6f85','#173a4a',1)}},
+  wildlife(e,ts,bx,by,t){VOYAGE_SCENE_RENDERERS.dolphins(e,ts,bx,by,t)},
+  seabirds(e,ts,bx,by,t){for(let i=0;i<6;i++){const x=40+t*560+i*16,y=70+i%3*10;line(x-5,y,x,y-3,'#fff7de',2);line(x,y-3,x+5,y,'#fff7de',2)}},
+  trader(e,ts,bx,by,t){drawTopBoat(610-t*700,110,1,-.5,'sailer')},
+  squall(e,ts,bx,by,t){const x=640-t*760;rect(x,0,180,360,'rgba(38,71,83,.28)');for(let i=0;i<20;i++)rect(x+10+(i*31)%170,40+(i*47)%280,1,8,'rgba(240,252,255,.48)')},
+  bottle(e,ts,bx,by,t){roundedRect(bx+70,by-42,10,15,2,'#e5b54e','#704630',2);drawSparkle(bx+83,by-48,'#fff7de')},
+  signal(e,ts,bx,by,t){const pulse=(Math.sin(ts*.008)>0)?1:0;circle(560,68,5,pulse?'#fff7de':'#df7c68');if(pulse)circle(560,68,14,'rgba(255,247,222,.12)')},
+  shoal(e,ts,bx,by,t){for(let i=0;i<8;i++){const x=bx+80+(i%4)*16,y=by+60+Math.floor(i/4)*13;rect(x,y,9,3,'rgba(32,91,112,.65)')}},
+  rigging(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx-22+i*14,y=by-30+Math.sin(ts*.02+i)*6;rect(x,y,10,2,'#fff7de')}},
+  breeze(e,ts,bx,by,t){for(let i=0;i<6;i++){const x=((i*120+ts*.08)%760)-60;rect(x,60+i*35,42,2,'rgba(255,255,255,.45)')}},
+  castaway(e,ts,bx,by,t){drawTopBoat(bx+78,by-48,.62,.15,'shallow');drawTopVillager(bx+78,by-55,'#b48cc7','#e5b54e',1)},
+  stonecargo(e,ts,bx,by,t){for(let i=0;i<4;i++)drawTopRock(bx+62+i*12,by+48+(i%2)*8,.55)},
+  canvas(e,ts,bx,by,t){VOYAGE_SCENE_RENDERERS.breeze(e,ts,bx,by,t);rect(bx+74,by-35,22,12,'#fff7de');rect(bx+77,by-32,16,2,'#df7c68')}
+};
+function drawVoyageSceneEvent(e,ts,bx,by){if(!e)return;const age=ts-(e.started||ts),t=clamp(age/(e.duration||12000),0,1);if(t>=1&&e.ambient){sceneEvent=null;return}VOYAGE_SCENE_RENDERERS[e.scene||e.type]?.(e,ts,bx,by,t)}
 
 function animationLoop(ts){lastTs=ts;ensureArrived();processVoyageEvents();updateHeader();renderScene(ts);requestAnimationFrame(animationLoop)}
 
 // UI events
 $$('.navbtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('#sheetToggle').onclick=e=>{e.stopPropagation();toggleMobilePanel()};$('#panelHead').onclick=e=>{if(e.target.closest('button'))return;if(window.matchMedia('(max-width:900px)').matches)toggleMobilePanel()};
+$('#mapZoomIn').onclick=()=>zoomChart(.2);$('#mapZoomOut').onclick=()=>zoomChart(-.2);$('#mapReset').onclick=()=>resetChartView();
 $('#soundBtn').onclick=()=>{state.sound=!state.sound;save();renderUI()};
-window.addEventListener('beforeunload',save);
-setInterval(()=>{save();renderUI()},60000);
+window.addEventListener('resize',()=>{fitResponsiveStage();syncMobilePanel()});
+window.addEventListener('beforeunload',()=>{simulateWorldTo(nowReal(),false);save()});
+setInterval(()=>{simulateWorldTo(nowReal(),false);save();if(['harbour','chart','log','voyage'].includes(state.activeView))renderUI()},60000);
 setInterval(()=>{if(state.sim?.active&&state.phase!=='ashore'){/* preview uses real time */}},1000);
 
 // Start
-renderUI();requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);
+const startupWorldGap=Math.max(0,nowReal()-(worldState().lastSimAt||nowReal()));simulateWorldTo(nowReal(),startupWorldGap>10*60000);save();fitResponsiveStage();syncMobilePanel();renderUI();requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if(startupWorldGap>10*60000&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
 })();
 </script>
