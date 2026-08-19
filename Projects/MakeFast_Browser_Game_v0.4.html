@@ -97,12 +97,15 @@
   .rhythm-picker{background:#fff;border:3px solid var(--ink);border-radius:9px;padding:12px;box-shadow:3px 3px 0 var(--shadow)}.sound-controls{background:#fff;border:3px solid var(--ink);border-radius:9px;padding:10px;box-shadow:3px 3px 0 var(--shadow)}.sound-controls input[type=range]{width:100%;accent-color:var(--sea-dark);height:28px}.sound-readout{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px;margin-bottom:4px}.sound-readout b{font-size:10px}.rhythm-readout{text-align:center;margin-bottom:10px}.rhythm-readout b{font-size:24px;letter-spacing:-1px;display:block}.rhythm-readout span{font-size:9px;color:var(--ink-soft)}.rhythm-picker input[type=range]{width:100%;accent-color:var(--grass-dark);height:28px}.rhythm-scale{display:flex;justify-content:space-between;gap:3px;font-size:7px;color:var(--ink-soft);margin-top:2px}.rhythm-scale span{text-align:center;flex:1}.rhythm-help{font-size:8px;color:var(--ink-soft);line-height:1.45;margin-top:8px}
   .onboard-viewport{overflow:hidden;margin-top:10px}.onboard-track{display:flex;width:200%;transition:transform .28s ease}.onboard-track.step-2{transform:translateX(-50%)}.onboard-step{width:50%;flex:0 0 50%;padding:2px 3px}.onboard-dots{display:flex;justify-content:center;gap:6px;margin:9px 0 2px}.onboard-dot{width:7px;height:7px;border:2px solid var(--ink);background:#fff;border-radius:50%}.onboard-dot.active{background:var(--grass)}
 
+  .boat-swatches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}.boat-swatch{border:2px solid var(--ink);background:#fff;padding:6px;border-radius:7px;display:flex;align-items:center;gap:6px;cursor:pointer;text-align:left;font-size:8px;color:var(--ink)}.boat-swatch i{width:18px;height:18px;border:2px solid var(--ink);background:var(--swatch);border-radius:4px;flex:0 0 auto}.boat-swatch.active{background:#dff1cf;box-shadow:inset 0 0 0 2px rgba(255,255,255,.8)}.boat-swatch span{line-height:1.15}
   @media (max-width:900px){
     html,body{height:100%;overflow:hidden;overscroll-behavior:none}.app{height:100dvh;min-height:100dvh;grid-template-rows:auto minmax(0,1fr) auto}.topbar{position:relative;min-height:58px}.brand{min-width:0}.brand small{display:none}.phase-chip{display:none}.timerbox{min-width:120px}.timerbox .timer{font-size:18px}
     .main{position:relative;display:block;min-height:0;padding:0;background:#4d9fbe;overflow:hidden}.stage-wrap{position:absolute;inset:0;margin:0;min-width:0;min-height:0;border:0;border-radius:0;box-shadow:none;background:#4d9fbe;overflow:hidden}.stage-wrap canvas{position:absolute;left:0;top:0;transform:none;width:100%;height:100%;max-width:none;max-height:none;touch-action:none}.panel{position:absolute;left:7px;right:7px;bottom:7px;height:min(56dvh,520px);max-height:calc(100% - 14px);z-index:15;border-radius:12px;transition:transform .24s ease;will-change:transform}.panel.sheet-collapsed{transform:translateY(calc(100% - 48px))}.panel-head{min-height:48px;padding:18px 44px 8px 12px;cursor:pointer;user-select:none}.panel-head h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.panel-head p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.panel-body{padding:10px;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.sheet-toggle{display:block}.bottomnav{position:relative;z-index:22}.scene-caption{display:none!important}.voyage-status{right:7px;top:7px;max-width:40%;padding:5px 7px}.stage-label{max-width:43%;overflow-wrap:anywhere}.map-info{left:7px;width:min(300px,calc(100% - 14px));padding:7px 8px}.map-controls{right:7px;top:7px}.voyage-peek{bottom:54px}.voyage-note{bottom:108px}
   }
   @media (max-width:520px){.topbar{gap:5px;padding:6px 7px}.brandmark{width:34px;height:34px}.brand h1{font-size:14px}.tiny-btn{padding:6px 7px;font-size:8px}.timerbox{min-width:100px}.timerbox .timer{font-size:16px}.timerbox .sub{display:none}.panel-body{padding:8px}.mini-grid{grid-template-columns:1fr 1fr 1fr}.map-controls{right:7px;top:7px}.map-controls button{width:32px;height:32px}.scene-caption{font-size:8px}.scene-caption b{font-size:10px}.voyage-status b{font-size:9px}.voyage-status span{font-size:7px}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  .boat-live-preview{margin:7px 0 9px;border:2px solid var(--ink);border-radius:9px;overflow:hidden;background:#4d9fbe;position:relative;height:150px}.boat-live-preview canvas{display:block;width:100%;height:100%;image-rendering:pixelated}.boat-live-preview .preview-label{position:absolute;left:7px;bottom:6px;background:rgba(255,247,222,.92);border:2px solid var(--ink);border-radius:5px;padding:4px 6px;font-size:8px;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -150,7 +153,7 @@
 'use strict';
 
 const SAVE_KEY='makefast_save_v1';
-const VERSION=9.4;
+const VERSION=12;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -200,7 +203,7 @@ const CONTENT={
   npcVessels:[
     {id:'island_sloop',name:'Island Sloop',icon:'◁',role:'neighbour',sprite:'cutter',capacity:2,passengers:1,speed:1.0,unlock:{minPop:1},desc:'A little local boat carrying parcels and neighbours between nearby jetties.'},
     {id:'fishing_smack',name:'Fishing Smack',icon:'⌁',role:'fishing',sprite:'fishing',capacity:2,passengers:0,speed:.9,unlock:{archetype:'fisher'},desc:'Works the nearby water and brings useful salvage ashore.'},
-    {id:'trader_cutter',name:'Trading Cutter',icon:'◇',role:'trade',sprite:'sailer',capacity:5,passengers:1,speed:1.05,unlock:{featureAny:['market_stall','market_square','market_hall']},desc:'Carries island surpluses toward places that need them.'},
+    {id:'trader_cutter',name:'Trading Cutter',icon:'◇',role:'trade',sprite:'cutter',capacity:5,passengers:1,speed:1.05,unlock:{featureAny:['market_stall','market_square','market_hall']},desc:'Carries island surpluses toward places that need them.'},
     {id:'mail_packet',name:'Mail Packet',icon:'✉',role:'mail',sprite:'cutter',capacity:2,passengers:1,speed:1.2,unlock:{minPop:1,minKnown:2},desc:'Moves letters, small parcels and the occasional passenger.'},
     {id:'passenger_ferry',name:'Passenger Ferry',icon:'☻',role:'ferry',sprite:'cabin',capacity:1,passengers:5,speed:1.0,unlock:{feature:'ferry'},desc:'Runs dependable passenger crossings from a proper ferry landing.'},
     {id:'workboat',name:'Harbour Workboat',icon:'✚',role:'work',sprite:'fishing',capacity:6,passengers:1,speed:.85,unlock:{feature:'boatyard'},commission:{timber:6,hardware:4,cloth:2},desc:'Takes building materials where island projects need them.'},
@@ -211,6 +214,37 @@ const CONTENT={
     {id:'harbour_tender',name:'Harbour Tender',icon:'≈',role:'tender',sprite:'shallow',capacity:3,passengers:2,speed:1.25,unlock:{minPop:8},commission:{timber:5,hardware:3,brass:1},desc:'A busy little harbour boat for short cargo and passenger jobs.'}
   ],
   vesselNames:{prefixes:['Sea','Little','Merry','Good','Blue','Golden','Quiet','Brisk','Old','Bright','North','Tide','Harbour','Silver','Red'],nouns:['Thistle','Puffin','Rose','Pip','Mackerel','Wren','Lantern','Kestrel','Sprat','Juniper','Skylark','Petrel','Nettle','Molly','Starling','Daisy','Tern','Otter','Minnow','Clover']},
+  boatVisuals:{
+    paints:[
+      {id:'harbour_blue',name:'Harbour Blue',hull:'#416f83',trim:'#d8e7df'},
+      {id:'cutter_red',name:'Cutter Red',hull:'#9b564b',trim:'#f0d9b4'},
+      {id:'kelp_green',name:'Kelp Green',hull:'#557866',trim:'#e6d9ae'},
+      {id:'sun_ochre',name:'Sun Ochre',hull:'#b17a42',trim:'#f2dfb2'},
+      {id:'plum',name:'Plum',hull:'#74556f',trim:'#ead7d8'},
+      {id:'deep_navy',name:'Deep Navy',hull:'#294b67',trim:'#e7eadc'},
+      {id:'cream',name:'Warm Cream',hull:'#d9c79e',trim:'#80563d'}
+    ],
+    sails:[
+      {id:'cream',name:'Plain Cream',base:'#fff3cf',accent:'#d9c79e',pattern:'plain'},
+      {id:'red_stripe',name:'Red Stripe',base:'#fff3cf',accent:'#c86355',pattern:'stripe'},
+      {id:'blue_stripe',name:'Blue Stripe',base:'#fff3cf',accent:'#5e8da5',pattern:'stripe'},
+      {id:'sun_panel',name:'Sun Panel',base:'#f4df9b',accent:'#d69a4a',pattern:'panel'},
+      {id:'patchwork',name:'Patchwork',base:'#f2e5c4',accent:'#87a96b',pattern:'patch'},
+      {id:'night_sail',name:'Night Sail',base:'#657b92',accent:'#f0d6a4',pattern:'stripe'}
+    ],
+    pennants:[
+      {id:'coral',name:'Coral Pennant',color:'#df7c68'},
+      {id:'gold',name:'Gold Pennant',color:'#e5b54e'},
+      {id:'blue',name:'Blue Pennant',color:'#65bdd1'},
+      {id:'green',name:'Green Pennant',color:'#83bf6a'},
+      {id:'plum',name:'Plum Pennant',color:'#b48cc7'}
+    ],
+    upgrades:[
+      {id:'deckChest',name:'Deck Chest',desc:'A fitted deck box adds four hold spaces.',cost:{timber:2,hardware:1},capacity:4},
+      {id:'lanterns',name:'Harbour Lanterns',desc:'Warm navigation lamps glow after dusk.',cost:{brass:1,glass:1,hardware:1}},
+      {id:'awning',name:'Weather Awning',desc:'A striped canvas awning shelters the cockpit.',cost:{cloth:2,timber:1}}
+    ]
+  },
   names:{
     islandPrefixes:['Mosswick','Sunberry','Gullhaven','Bramble','Fern','Driftwood','Wren','Moonstone','Pebble','Juniper','Tansy','Saltmere','Willow','Starling','Reedwater','Kelp','Honeycomb','Cloudberry','Oyster','Plover','Alder','Bluebell','Mackerel','Sorrel','Thimble','Foxglove','Bracken','Larkspur','Candlewick','Morrow'],
     islandSuffixes:['Island','Cove','Bay','Reach','Haven','Key','Point','Isle','Harbour','Shoal'],
@@ -418,7 +452,20 @@ function projectProgress(p){const t=projectTemplate(p.templateId);if(!t)return 0
 function completedFeature(i,f){return i.features?.includes(f)||i.projects?.some(p=>p.complete&&projectTemplate(p.templateId)?.feature===f)}
 function projectAvailable(i,t){if(population(i)<t.pop)return false;if(t.prereq&&!completedFeature(i,t.prereq))return false;if(i.projects.some(p=>p.templateId===t.id))return false;return true}
 function stockHTML(i){ensureIslandData(i);const entries=Object.entries(MATERIALS).filter(([k])=>(i.stock[k]||0)>0);return entries.length?`<div class="stock-grid">${entries.map(([k,m])=>`<div class="stock-item"><b>${m.icon} ${i.stock[k]||0}</b><span>${m.name}</span></div>`).join('')}</div>`:`<div class="card"><p>${contentLine('copy.harbour.emptyStores')}</p></div>`}
-function playerBoatCapacity(){return({cutter:10,fishing:12,shallow:8,cabin:14,sailer:16})[state.boat.type]||10}
+function boatVisualDef(group,id){const list=CONTENT.boatVisuals[group]||[];return list.find(x=>x.id===id)||list[0]}
+function defaultPlayerBoatStyle(type=state.boat.type){const idx=Math.max(0,BOAT_TYPES.findIndex(b=>b.id===type)),names=['Mackerel','Sea Fern','Little Wren','Merry Rose','Golden Petrel'];return{name:names[idx]||BOAT_TYPES[idx]?.name||'Boat',paint:CONTENT.boatVisuals.paints[idx%CONTENT.boatVisuals.paints.length].id,sail:CONTENT.boatVisuals.sails[idx%CONTENT.boatVisuals.sails.length].id,pennant:CONTENT.boatVisuals.pennants[idx%CONTENT.boatVisuals.pennants.length].id,upgrades:{}}}
+function ensurePlayerBoatStyle(type=state.boat.type){if(!state.boatStyles)state.boatStyles={};if(!state.boatStyles[type])state.boatStyles[type]=defaultPlayerBoatStyle(type);const s=state.boatStyles[type],fallback=defaultPlayerBoatStyle(type);if(!s.name)s.name=(type===state.boat.type&&state.boat.name)||fallback.name;if(!s.upgrades)s.upgrades={};return s}
+function playerBoatAppearance(type=state.boat.type){const s=ensurePlayerBoatStyle(type),paint=boatVisualDef('paints',s.paint),sail=boatVisualDef('sails',s.sail),pennant=boatVisualDef('pennants',s.pennant);return{hull:paint.hull,trim:paint.trim,sailBase:sail.base,sailAccent:sail.accent,sailPattern:sail.pattern,pennant:pennant.color,upgrades:{...s.upgrades},role:'player',variant:Math.max(0,BOAT_TYPES.findIndex(b=>b.id===type))%4}}
+function defaultBoatAppearance(type='cutter'){const idx=Math.max(0,BOAT_TYPES.findIndex(b=>b.id===type)),paint=CONTENT.boatVisuals.paints[(idx+1)%CONTENT.boatVisuals.paints.length],sail=CONTENT.boatVisuals.sails[(idx+2)%CONTENT.boatVisuals.sails.length],pennant=CONTENT.boatVisuals.pennants[(idx+1)%CONTENT.boatVisuals.pennants.length];return{hull:paint.hull,trim:paint.trim,sailBase:sail.base,sailAccent:sail.accent,sailPattern:sail.pattern,pennant:pennant.color,upgrades:{},role:'neighbour',variant:idx%4}}
+function npcBoatAppearance(v){const rr=rng(hashString(`${v?.id||v?.name||'npc'}-livery`)),paint=CONTENT.boatVisuals.paints[Math.floor(rr()*CONTENT.boatVisuals.paints.length)],sail=CONTENT.boatVisuals.sails[Math.floor(rr()*CONTENT.boatVisuals.sails.length)],pennant=CONTENT.boatVisuals.pennants[Math.floor(rr()*CONTENT.boatVisuals.pennants.length)];return{hull:paint.hull,trim:paint.trim,sailBase:sail.base,sailAccent:sail.accent,sailPattern:sail.pattern,pennant:pennant.color,upgrades:{lanterns:rr()>.45,awning:rr()>.72,deckChest:rr()>.78},role:v?.role||'neighbour',variant:Math.floor(rr()*4),roofTone:rr()>.5?'light':'dark'}}
+function playerBoatCapacity(type=state.boat.type){const base=({cutter:10,fishing:12,shallow:8,cabin:14,sailer:16})[type]||10;return base+(ensurePlayerBoatStyle(type).upgrades?.deckChest?4:0)}
+function boatUpgradeDef(id){return CONTENT.boatVisuals.upgrades.find(u=>u.id===id)}
+function canAffordBoatUpgrade(isl,u){return Object.entries(u.cost||{}).every(([m,n])=>(isl.stock[m]||0)>=n)}
+function fitBoatUpgrade(isl,id){const u=boatUpgradeDef(id),style=ensurePlayerBoatStyle();if(!u||style.upgrades[id]||!canAffordBoatUpgrade(isl,u))return;Object.entries(u.cost).forEach(([m,n])=>isl.stock[m]-=n);style.upgrades[id]=true;state.journal.unshift(`${u.name} fitted to ${state.boat.name}.`);save();renderUI();toast(`${u.name} fitted.`)}
+function setBoatCosmetic(group,id){const style=ensurePlayerBoatStyle();style[group]=id;save();renderVoyagePanel()}
+function renamePlayerBoat(name){name=String(name||'').trim().slice(0,28);if(!name)return;const style=ensurePlayerBoatStyle();style.name=name;state.boat.name=name;save();renderUI();toast(`${name} is painted on the stern.`)}
+function boatFitoutHTML(isl){const style=ensurePlayerBoatStyle();const swatches=(group,list,current,color)=>`<div class="boat-swatches">${list.map(o=>`<button class="boat-swatch ${o.id===current?'active':''}" data-boat-${group}="${o.id}" title="${o.name}" style="--swatch:${color(o)}"><i></i><span>${o.name}</span></button>`).join('')}</div>`;return`<div class="section"><div class="section-title">Fitting out <span>${state.boat.name}</span></div><div class="boat-live-preview"><canvas id="boatFitoutCanvas" width="300" height="150"></canvas><div class="preview-label">LIVE SPRITE PREVIEW</div></div><div class="card"><h3>Boat name</h3><div class="row"><input id="boatNameInput" value="${String(style.name||state.boat.name).replaceAll('&','&amp;').replaceAll('"','&quot;')}" maxlength="28" style="flex:1;min-width:0;padding:8px;border:2px solid var(--ink);border-radius:6px;background:#fff"><button class="tiny-btn" id="renameBoatBtn">PAINT NAME</button></div></div><div class="card"><h3>Paintwork</h3>${swatches('paint',CONTENT.boatVisuals.paints,style.paint,o=>o.hull)}</div><div class="card"><h3>Sails</h3>${swatches('sail',CONTENT.boatVisuals.sails,style.sail,o=>o.accent)}</div><div class="card"><h3>Pennant</h3>${swatches('pennant',CONTENT.boatVisuals.pennants,style.pennant,o=>o.color)}</div><div class="section-title" style="margin-top:10px">Fittings</div>${CONTENT.boatVisuals.upgrades.map(u=>{const fitted=!!style.upgrades[u.id],ok=canAffordBoatUpgrade(isl,u),cost=Object.entries(u.cost).map(([m,n])=>`${MATERIALS[m]?.icon||'•'} ${n} ${materialName(m)}`).join(' · ');return`<div class="card ${fitted?'selected':''}"><h3>${fitted?'✓ ':''}${u.name}</h3><p>${u.desc}<br>${fitted?'Fitted aboard.':`Needs ${cost}`}</p>${!fitted?`<button class="big-btn ghost" data-fit-upgrade="${u.id}" ${ok?'':'disabled'}>FIT ${u.name.toUpperCase()}</button>`:''}</div>`}).join('')}</div>`}
+function bindBoatFitout(isl){renderBoatFitoutPreview();$$('[data-boat-paint]').forEach(b=>b.onclick=()=>setBoatCosmetic('paint',b.dataset.boatPaint));$$('[data-boat-sail]').forEach(b=>b.onclick=()=>setBoatCosmetic('sail',b.dataset.boatSail));$$('[data-boat-pennant]').forEach(b=>b.onclick=()=>setBoatCosmetic('pennant',b.dataset.boatPennant));$$('[data-fit-upgrade]').forEach(b=>b.onclick=()=>fitBoatUpgrade(isl,b.dataset.fitUpgrade));if($('#renameBoatBtn'))$('#renameBoatBtn').onclick=()=>renamePlayerBoat($('#boatNameInput').value)}
 function boatCargoUnits(){return Object.values(state.boatCargo||{}).reduce((a,n)=>a+(+n||0),0)}
 function transferCargo(isl,material,direction,all=false,refresh=true){ensureIslandData(isl);if(!state.boatCargo)state.boatCargo={};const cap=playerBoatCapacity(),used=boatCargoUnits();if(direction==='load'){const have=isl.stock[material]||0,space=Math.max(0,cap-used),n=all?Math.min(have,space):Math.min(1,have,space);if(n<=0)return;isl.stock[material]-=n;state.boatCargo[material]=(state.boatCargo[material]||0)+n}else{const have=state.boatCargo[material]||0,n=all?have:Math.min(1,have);if(n<=0)return;state.boatCargo[material]-=n;if(state.boatCargo[material]<=0)delete state.boatCargo[material];isl.stock[material]=(isl.stock[material]||0)+n}if(refresh){save();renderVoyagePanel()}}
 function transferAllCargo(isl,direction){if(direction==='unload'){Object.keys(state.boatCargo||{}).forEach(m=>transferCargo(isl,m,'unload',true,false))}else{const keys=Object.keys(MATERIALS).sort((a,b)=>(isl.stock[b]||0)-(isl.stock[a]||0));for(const m of keys){if(boatCargoUnits()>=playerBoatCapacity())break;transferCargo(isl,m,'load',true,false)}}save();renderVoyagePanel()}
@@ -460,7 +507,7 @@ function defaultState(){
     islands:[home,moss], routes:[['home',moss.id]], sessions:[], currentIslandId:'home', pendingResolutions:[],
     totalMinigames:0, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
     journal:[contentLine('copy.journal.inherited')],
-    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, settings:{prototypeTools:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34},
+    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, boatStyles:{}, settings:{prototypeTools:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34},
     liftRequests:[],boatPassengers:[],boatCargo:{},
     world:{lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0},
     sim:{active:false,offsetMs:0}, achievements:{}, lastSavedAt:nowReal()
@@ -480,7 +527,7 @@ function migrate(s){
   if(!hadDefaultFastHours)s.settings.defaultFastHours=Number.isFinite(+s.selectedRatio)?+s.selectedRatio:16;s.settings.defaultFastHours=clamp(Math.round(+s.settings.defaultFastHours*2)/2,12,20);s.selectedRatio=s.settings.defaultFastHours;
   if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;s.islands.forEach(ensureIslandData);
   if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!Array.isArray(s.journal))s.journal=[];
-  if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};
+  if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};if(!s.boatStyles||typeof s.boatStyles!=='object'||Array.isArray(s.boatStyles))s.boatStyles={};
   if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
   s.version=VERSION;
   if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
@@ -540,10 +587,9 @@ function rhythmPickerHTML(prefix='rhythm'){const r=currentRatio();return `<div c
 function bindRhythmPicker(prefix='rhythm',onCommit=null){const slider=$('#'+prefix+'Slider'),ratio=$('#'+prefix+'Ratio'),name=$('#'+prefix+'Name');if(!slider)return;const update=commit=>{const fast=clamp(Math.round(+slider.value*2)/2,12,20),eat=24-fast,exact=RATIO_OPTIONS.find(r=>r.fast===fast);ratio.textContent=`${fmtRatioHours(fast)}:${fmtRatioHours(eat)}`;name.textContent=`${exact?.name||rhythmName(fast)} rhythm · ${fmtRatioHours(fast)}h at sea / ${fmtRatioHours(eat)}h ashore`;if(commit){setDefaultFastHours(fast);save();onCommit?.(currentRatio())}};slider.oninput=()=>update(false);slider.onchange=()=>update(true)}
 function getIsland(id){return state.islands.find(i=>i.id===id)||state.islands[0]}
 function currentIsland(){return getIsland(state.currentIslandId)}
-function voyageProgress(){
-  if(!state.voyage)return 0; const p=(gameNow()-state.voyage.startedAt)/(state.voyage.targetMs); return clamp(p,0,1);
-}
-function actualFastMs(){return state.voyage?Math.max(0,gameNow()-state.voyage.startedAt):0}
+function voyageProgress(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed){const u=clamp((gameNow()-v.prototypeStartedAt)/(v.prototypeDurationMs||180000),0,1);return clamp(v.prototypeStartProgress+(1-v.prototypeStartProgress)*u,0,1)}return clamp((gameNow()-v.startedAt)/v.targetMs,0,1)}
+function actualFastMs(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed)return Math.max(0,(v.prototypeOriginalElapsedMs||0)+(gameNow()-v.prototypeStartedAt));return Math.max(0,gameNow()-v.startedAt)}
+function voyageRemainingMs(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed)return Math.max(0,(v.prototypeDurationMs||180000)-(gameNow()-v.prototypeStartedAt));return Math.max(0,v.targetMs-actualFastMs())}
 function shoreElapsed(){return Math.max(0,gameNow()-state.phaseStartedAt)}
 function selectedDest(){return state.selectedDestinationId==='uncharted'?null:getIsland(state.selectedDestinationId)}
 
@@ -891,7 +937,7 @@ function earlyDockPrompt(){
 
 function dock(early=false){
   if(!state.voyage)return;
-  const v=state.voyage,ended=gameNow(),duration=ended-v.startedAt,progress=clamp(duration/v.targetMs,0,1);let dest=getIsland(v.destinationId);
+  const v=state.voyage,ended=gameNow(),duration=actualFastMs(),progress=voyageProgress();let dest=getIsland(v.destinationId);
   if(early&&progress<.995){const cove=generateCove(progress,v);state.islands.push(cove);state.routes.push([v.originId,cove.id]);dest=cove;state.journal.unshift(contentLine('copy.journal.earlyDock',{destination:cove.name}))}
   else{if(!dest.known){dest.known=true;state.journal.unshift(contentLine('copy.journal.discovered',{destination:dest.name}))}state.journal.unshift(contentLine('copy.journal.docked',{destination:dest.name,duration:fmtDuration(duration,true)}))}
   ensureIslandData(dest);dest.visits=(dest.visits||0)+1;state.currentIslandId=dest.id;
@@ -1052,11 +1098,11 @@ function updateStageLabel(){
   if(window.matchMedia('(max-width:900px)').matches)fitResponsiveStage();
 }
 function updateVoyageStatus(){
-  const el=$('#voyageStatus');if(!el)return;const mobileCollapsed=window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed;const active=!minigame&&(state.phase==='fasting'||state.phase==='arrived')&&!mobileCollapsed;el.classList.toggle('show',active);if(active){const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=Math.max(0,v.targetMs-actualFastMs());el.querySelector('b').textContent=state.phase==='arrived'?'LAND SIGHTED':`${Math.round(p*100)}% CHARTED`;el.querySelector('span').textContent=state.phase==='arrived'?`${dest.name} lies just ahead.`:`${fmtDuration(remaining,true)} to ${dest.known?dest.name:'land'}`}
+  const el=$('#voyageStatus');if(!el)return;const mobileCollapsed=window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed;const active=!minigame&&(state.phase==='fasting'||state.phase==='arrived')&&!mobileCollapsed;el.classList.toggle('show',active);if(active){const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=voyageRemainingMs();el.querySelector('b').textContent=state.phase==='arrived'?'LAND SIGHTED':`${Math.round(p*100)}% CHARTED`;el.querySelector('span').textContent=state.phase==='arrived'?`${dest.name} lies just ahead.`:`${fmtDuration(remaining,true)} to ${dest.known?dest.name:'land'}`}
   updateVoyagePeek();
 }
 let voyageNoticeTimer=null;
-function updateVoyagePeek(){const el=$('#voyagePeek');if(!el)return;const show=window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed&&!minigame&&(state.phase==='fasting'||state.phase==='arrived');el.classList.toggle('show',show);if(!show)return;const p=voyageProgress(),v=state.voyage,dest=getIsland(v.destinationId),remaining=Math.max(0,v.targetMs-actualFastMs());$('#voyagePeekTitle').textContent=state.phase==='arrived'?`⚑ ${dest.known?dest.name:'LAND SIGHTED'}`:`${Math.round(p*100)}% CHARTED`;$('#voyagePeekTime').textContent=state.phase==='arrived'?'ready to dock':fmtDuration(remaining,true)+' to land';$('#voyagePeekFill').style.width=(p*100)+'%'}
+function updateVoyagePeek(){const el=$('#voyagePeek');if(!el)return;const show=window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed&&!minigame&&(state.phase==='fasting'||state.phase==='arrived');el.classList.toggle('show',show);if(!show)return;const p=voyageProgress(),v=state.voyage,dest=getIsland(v.destinationId),remaining=voyageRemainingMs();$('#voyagePeekTitle').textContent=state.phase==='arrived'?`⚑ ${dest.known?dest.name:'LAND SIGHTED'}`:`${Math.round(p*100)}% CHARTED`;$('#voyagePeekTime').textContent=state.phase==='arrived'?'ready to dock':fmtDuration(remaining,true)+' to land';$('#voyagePeekFill').style.width=(p*100)+'%'}
 function openVoyageFromOverlay(){state.activeView='voyage';mobilePanelCollapsed=false;syncMobilePanel();save();renderUI()}
 function showVoyageNotice(title,text='Tap to open Voyage'){const el=$('#voyageNote');if(!el||!window.matchMedia('(max-width:900px)').matches||!mobilePanelCollapsed||state.phase==='ashore'||minigame)return;$('#voyageNoteTitle').textContent=title;$('#voyageNoteText').textContent=text;el.classList.add('show');clearTimeout(voyageNoticeTimer);voyageNoticeTimer=setTimeout(()=>el.classList.remove('show'),5200)}
 function notifyVoyage(title,text,plain=title){const collapsed=window.matchMedia('(max-width:900px)').matches&&mobilePanelCollapsed&&state.phase!=='ashore';if(collapsed)showVoyageNotice(title,text);else toast(plain)}
@@ -1091,10 +1137,10 @@ function renderVoyagePanel(){
   if(state.phase==='ashore'){
     const isl=currentIsland(),home=isl.home,localFleet=vesselsAtIsland(isl.id),homeFleet=worldState().vessels.filter(v=>v.homeId===isl.id),builds=isl.vesselBuilds.filter(b=>!b.complete);ensureIslandData(isl);
     $('#panelSubtitle').textContent=home?'Boat stores, your own vessels and the working fleet.':'Load the hold and ready the boat for the next crossing.';
-    body.innerHTML=`<div class="section"><div class="section-title">Boat operations <span>${state.boat.name}</span></div>${cargoTransferHTML(isl)}</div>${state.boatPassengers.length?`<div class="section"><div class="section-title">Passengers aboard</div>${state.boatPassengers.map(p=>`<div class="card"><h3>☻ ${p.person.name}</h3><p>Waiting for a crossing to ${getIsland(p.targetId).name}.</p></div>`).join('')}</div>`:''}${home?`<div class="section"><div class="section-title">Your boats <span>choose your vessel</span></div>${BOAT_TYPES.map(b=>{const unlocked=b.need(),cap=({cutter:10,fishing:12,shallow:8,cabin:14,sailer:16})[b.id]||10,canSwap=unlocked&&boatCargoUnits()<=cap;return`<div class="card ${state.boat.type===b.id?'selected':''}" ${canSwap?`data-boat="${b.id}" style="cursor:pointer"`:''}><h3>${unlocked?'':'? '}${b.name}</h3><p>${unlocked?`${b.desc} · Hold ${cap}${!canSwap?' · unload some cargo before changing to this boat':''}`:'Keep exploring and enriching the archipelago to discover this boat.'}</p></div>`}).join('')}</div><div class="section"><div class="section-title">Working fleet <span>${homeFleet.length} based here</span></div>${homeFleet.length?homeFleet.slice(0,8).map(vesselCardHTML).join(''):`<div class="card"><p>No working boats are based here yet.</p></div>`}${builds.length?`<div class="section-title" style="margin-top:9px">Under construction</div>${builds.map(b=>vesselBuildHTML(isl,b)).join('')}`:''}${completedFeature(isl,'boatyard')?`<button class="big-btn secondary" id="commissionFromVoyage" style="margin-top:7px">COMMISSION A WORKING BOAT</button>`:`<div class="card" style="margin-top:7px"><p>A boatyard will eventually let Home Harbour build working vessels of its own.</p></div>`}</div>`:`<div class="section"><div class="section-title">Harbour traffic <span>${localFleet.length} alongside</span></div>${localFleet.length?localFleet.slice(0,6).map(vesselCardHTML).join(''):`<div class="card"><p>The jetty is quiet just now.</p></div>`}</div>`}<button class="big-btn" id="toHarbour">PLAN NEXT CROSSING</button>`;
-    bindCargoTransfers(isl);$$('[data-boat]').forEach(b=>b.onclick=()=>{state.boat.type=b.dataset.boat;state.boat.name=BOAT_TYPES.find(x=>x.id===b.dataset.boat)?.name||'Boat';save();renderUI();toast(`${state.boat.name} is ready at the pier.`)});$$('[data-give-hull]').forEach(b=>b.onclick=()=>{const [bid,m]=b.dataset.giveHull.split('|');contributeVesselMaterial(isl,bid,m,false);renderVoyagePanel()});$$('[data-fill-hull]').forEach(b=>b.onclick=()=>{contributeAllVessel(isl,b.dataset.fillHull);renderVoyagePanel()});if($('#commissionFromVoyage'))$('#commissionFromVoyage').onclick=()=>openVesselCommissionPicker(isl);$('#toHarbour').onclick=()=>setView('harbour');return;
+    body.innerHTML=`<div class="section"><div class="section-title">Boat operations <span>${state.boat.name}</span></div>${cargoTransferHTML(isl)}</div>${state.boatPassengers.length?`<div class="section"><div class="section-title">Passengers aboard</div>${state.boatPassengers.map(p=>`<div class="card"><h3>☻ ${p.person.name}</h3><p>Waiting for a crossing to ${getIsland(p.targetId).name}.</p></div>`).join('')}</div>`:''}${home?`<div class="section"><div class="section-title">Your boats <span>choose your vessel</span></div>${BOAT_TYPES.map(b=>{const unlocked=b.need(),cap=playerBoatCapacity(b.id),canSwap=unlocked&&boatCargoUnits()<=cap;return`<div class="card ${state.boat.type===b.id?'selected':''}" ${canSwap?`data-boat="${b.id}" style="cursor:pointer"`:''}><h3>${unlocked?'':'? '}${b.name}</h3><p>${unlocked?`${b.desc} · Hold ${cap}${!canSwap?' · unload some cargo before changing to this boat':''}`:'Keep exploring and enriching the archipelago to discover this boat.'}</p></div>`}).join('')}</div>${boatFitoutHTML(isl)}<div class="section"><div class="section-title">Working fleet <span>${homeFleet.length} based here</span></div>${homeFleet.length?homeFleet.slice(0,8).map(vesselCardHTML).join(''):`<div class="card"><p>No working boats are based here yet.</p></div>`}${builds.length?`<div class="section-title" style="margin-top:9px">Under construction</div>${builds.map(b=>vesselBuildHTML(isl,b)).join('')}`:''}${completedFeature(isl,'boatyard')?`<button class="big-btn secondary" id="commissionFromVoyage" style="margin-top:7px">COMMISSION A WORKING BOAT</button>`:`<div class="card" style="margin-top:7px"><p>A boatyard will eventually let Home Harbour build working vessels of its own.</p></div>`}</div>`:`<div class="section"><div class="section-title">Harbour traffic <span>${localFleet.length} alongside</span></div>${localFleet.length?localFleet.slice(0,6).map(vesselCardHTML).join(''):`<div class="card"><p>The jetty is quiet just now.</p></div>`}</div>`}<button class="big-btn" id="toHarbour">PLAN NEXT CROSSING</button>`;
+    bindCargoTransfers(isl);$$('[data-boat]').forEach(b=>b.onclick=()=>{state.boat.type=b.dataset.boat;const style=ensurePlayerBoatStyle(state.boat.type);state.boat.name=style.name;save();renderUI();toast(`${state.boat.name} is ready at the pier.`)});if(home)bindBoatFitout(isl);$$('[data-give-hull]').forEach(b=>b.onclick=()=>{const [bid,m]=b.dataset.giveHull.split('|');contributeVesselMaterial(isl,bid,m,false);renderVoyagePanel()});$$('[data-fill-hull]').forEach(b=>b.onclick=()=>{contributeAllVessel(isl,b.dataset.fillHull);renderVoyagePanel()});if($('#commissionFromVoyage'))$('#commissionFromVoyage').onclick=()=>openVesselCommissionPicker(isl);$('#toHarbour').onclick=()=>setView('harbour');return;
   }
-  const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=Math.max(0,v.targetMs-actualFastMs()), encounter=activeVoyageEvent();
+  const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),remaining=voyageRemainingMs(), encounter=activeVoyageEvent();
   $('#panelSubtitle').textContent=state.phase==='arrived'?'The harbour lies just ahead.':'The boat keeps her course between check-ins.';
   const games=Object.entries(MINIGAME_META).map(([id,m])=>`<button class="activity" data-game="${id}"><b>${m.icon} ${m.title}</b><span>${m.desc}</span></button>`).join('');
   body.innerHTML=`
@@ -1145,21 +1191,19 @@ function renderSettingsPanel(){
     <div class="section"><div class="section-title">Island clock</div><div class="card"><h3>${formatClockInZone(gameNow(),tz)} · ${tz}</h3><p>Sunset, harbour lights, stars and weather ambience follow this timezone.</p></div><label style="font-size:9px;font-weight:900">TIMEZONE<br><input id="timezoneInput" list="timezones" value="${tz}" style="width:100%;margin-top:5px;padding:9px;border:3px solid var(--ink);background:#fff;border-radius:6px"></label><datalist id="timezones">${COMMON_TIMEZONES.map(z=>`<option value="${z}"></option>`).join('')}</datalist><button class="big-btn ghost" style="margin-top:7px" id="saveTimezone">SET ISLAND CLOCK</button></div>
     <div class="section"><div class="section-title">Default rhythm <span>used when you set sail</span></div>${rhythmPickerHTML('settingsRhythm')}</div>
     <div class="section"><div class="section-title">Sound & comfort</div><div class="sound-controls"><div class="sound-readout"><b>Harbour sounds</b><span id="soundVolumeText">${Math.round(audioVolume()*100)}%</span></div><input id="soundVolume" type="range" min="0" max="1" step="0.05" value="${audioVolume()}" aria-label="Sound volume"><div class="row" style="margin-top:6px"><button class="big-btn ghost" id="toggleSound">${state.sound?'MUTE':'TURN SOUND ON'}</button><button class="big-btn ghost" id="sampleSound">PLAY SAMPLE</button></div><div class="muted" style="margin-top:7px">Soft bells, little discovery notes and a quiet wash of sea on departure and arrival.</div></div></div>
-    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Preview voyages without waiting hours</h3><p>Run a three-minute crossing with guaranteed discovery encounters so you can test finds, passengers, cargo, arrivals and island changes without waiting for a full voyage.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn secondary" id="previewVoyage">START 3-MIN PREVIEW VOYAGE</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12H</button>${state.voyage?.simulated?`<button class="big-btn ghost" style="margin-top:7px" id="advanceTrial">ADVANCE SEA TRIAL 30 SEC</button>`:''}</div>`:''}</div>
+    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Compress the voyage already under way</h3><p>Start any route normally, then turn its remaining crossing into a three-minute sea trial while keeping the destination, cargo, passengers and current progress.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn secondary" id="compressVoyage" ${(state.phase==='fasting'&&state.voyage)?'':'disabled'}>${state.voyage?.prototypeCompressed?'VOYAGE ALREADY COMPRESSED':'COMPRESS ACTIVE VOYAGE TO 3 MIN'}</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12H</button>${state.voyage?.prototypeCompressed?`<button class="big-btn ghost" style="margin-top:7px" id="advanceTrial">ADVANCE SEA TRIAL 30 SEC</button>`:''}</div>`:''}</div>
     <div class="section"><div class="section-title">Data</div><button class="big-btn danger" id="resetGame">RESET MAKEFAST</button><div class="muted" style="margin-top:7px">Reset permanently clears this browser save.</div></div>
     <div class="section"><div class="notice" style="background:#fff0ce;border:3px solid var(--ink);padding:9px;border-radius:7px;font-size:8px;line-height:1.45"><b>Health reminder</b><br>MakeFast is not medical advice. Fasting is not suitable for everyone; use an appropriate eating pattern for your circumstances and seek medical guidance where needed.</div></div>`;
   bindRhythmPicker('settingsRhythm',()=>{renderUI();toast('Your usual rhythm is set.')});
   $('#toggleSound').onclick=()=>{state.sound=!state.sound;save();if(state.sound)playCue('soft');renderUI()};
   const vol=$('#soundVolume');if(vol){vol.oninput=()=>{state.settings.soundVolume=clamp(+vol.value,0,1);$('#soundVolumeText').textContent=`${Math.round(state.settings.soundVolume*100)}%`;if(audioEngine.master&&audioEngine.ctx)audioEngine.master.gain.setTargetAtTime(.5*audioVolume(),audioEngine.ctx.currentTime,.03);save()}}
-  $('#sampleSound').onclick=()=>{if(!state.sound){state.sound=true;save();renderSettingsPanel();setTimeout(()=>playCue('arrive'),0)}else playCue('arrive')};$('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};$('#saveTimezone').onclick=()=>{const v=$('#timezoneInput').value.trim();if(!validTimeZone(v)){toast('That timezone was not recognised.');return}state.settings.timezone=v;save();renderUI();toast(contentLine('copy.harbour.timezoneAdjusted'))};$('#exportSave').onclick=exportSave;$('#importSave').onclick=()=>$('#importFile').click();$('#importFile').onchange=importSave;$('#resetGame').onclick=resetGame;if($('#previewVoyage'))$('#previewVoyage').onclick=startPreviewVoyage;if($('#advanceWorld'))$('#advanceWorld').onclick=()=>fastForwardWorld(12);if($('#advanceTrial'))$('#advanceTrial').onclick=()=>{if(state.voyage?.simulated){state.voyage.startedAt-=30000;state.voyage.startedAtReal-=30000;save();processVoyageEvents();renderUI();toast('The sea trial moves ahead.')}};
+  $('#sampleSound').onclick=()=>{if(!state.sound){state.sound=true;save();renderSettingsPanel();setTimeout(()=>playCue('arrive'),0)}else playCue('arrive')};$('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};$('#saveTimezone').onclick=()=>{const v=$('#timezoneInput').value.trim();if(!validTimeZone(v)){toast('That timezone was not recognised.');return}state.settings.timezone=v;save();renderUI();toast(contentLine('copy.harbour.timezoneAdjusted'))};$('#exportSave').onclick=exportSave;$('#importSave').onclick=()=>$('#importFile').click();$('#importFile').onchange=importSave;$('#resetGame').onclick=resetGame;if($('#compressVoyage'))$('#compressVoyage').onclick=compressActiveVoyageToThreeMinutes;if($('#advanceWorld'))$('#advanceWorld').onclick=()=>fastForwardWorld(12);if($('#advanceTrial'))$('#advanceTrial').onclick=()=>{if(state.voyage?.prototypeCompressed){state.voyage.prototypeStartedAt-=30000;save();processVoyageEvents();renderUI();toast('The sea trial moves ahead.')}};
 }
 
-function startPreviewVoyage(){
-  if(state.phase!=='ashore'){toast('Dock your current voyage first.');return}
-  let dest=selectedDest(); if(!dest){dest=generateUnchartedIsland();dest.known=false;state.islands.push(dest);state.routes.push([state.currentIslandId,dest.id])}
-  state.sim.active=true; state.sim.offsetMs=0;
-  const demoId=uid('demo'); state.voyage={id:demoId,startedAt:gameNow(),startedAtReal:nowReal(),targetMs:180000,targetHours:currentRatio().fast,eatingHours:currentRatio().eat,originId:state.currentIslandId,originName:currentIsland().name,destinationId:dest.id,destinationName:dest.name,discoveryIds:[],discoveries:[],minigamesPlayed:0,simulated:true,uncharted:!dest.known,passengers:[...state.boatPassengers],trafficSeen:[],events:buildPreviewVoyageEvents(demoId,{phase:dayPhase(),weather:worldWeather(),destination:dest}),seaLog:[{at:gameNow(),icon:'⚑',title:'Sea trial under way',text:'The little boat leaves the harbour for a quick test crossing. This trial includes a few guaranteed discovery moments.'}],activeEventId:null};
-  state.phase='fasting';state.phaseStartedAt=gameNow();state.activeView='voyage';voyageMicroEvent=null;voyageMicroNext=performance.now()+1200;lastTrafficVisualReal=0;save();renderUI();toast(contentLine('copy.minigames.trial'))
+function compressActiveVoyageToThreeMinutes(){
+  if(state.phase!=='fasting'||!state.voyage){toast('Set sail on a route first.');return}const v=state.voyage;if(v.prototypeCompressed){toast('This voyage is already running as a sea trial.');return}
+  const startP=voyageProgress(),now=gameNow(),originalElapsed=actualFastMs();v.prototypeCompressed=true;v.simulated=true;v.prototypeStartedAt=now;v.prototypeDurationMs=180000;v.prototypeStartProgress=startP;v.prototypeOriginalElapsedMs=originalElapsed;
+  const ctx={phase:dayPhase(),weather:worldWeather(),destination:getIsland(v.destinationId)};v.events=buildPreviewVoyageEvents(v.id+'-compressed',ctx).map(e=>({...e,p:startP+e.p*(1-startP)}));v.activeEventId=null;sceneEvent=null;v.seaLog.unshift({at:now,icon:'⚙',title:'Sea trial engaged',text:'The rest of this crossing is compressed into three minutes for testing.'});voyageMicroEvent=null;voyageMicroNext=performance.now()+900;lastTrafficVisualReal=0;save();renderUI();notifyVoyage('⚙ Sea trial engaged','The remaining crossing will reach land in about three minutes.','Sea trial engaged')
 }
 
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='makefast-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
@@ -1232,34 +1276,146 @@ function pixelCloud(x,y,s=1){rect(x,y,30*s,8*s,'#fff8df');rect(x+8*s,y-6*s,15*s,
 function drawSparkle(x,y,c='#fffdf1'){rect(x,y,1,1,c);rect(x-2,y,5,1,c);rect(x,y-2,1,5,c)}
 function drawWaveTile(x,y,phase=0){const c1='rgba(255,255,255,.10)',c2='rgba(255,255,255,.17)',ph=dayPhase(),a=ph==='night'?'#244f6a':ph==='dusk'?'#477f99':ph==='dawn'?'#6aa8bd':'#4d9fbe',b=ph==='night'?'#214760':ph==='dusk'?'#42758e':ph==='dawn'?'#639eb3':'#4596b5';rect(x,y,16,16,a);rect(x,y+8,16,8,b);if(((x+y+phase)>>4)%2===0){rect(x+2,y+4,6,2,c1);rect(x+9,y+10,4,1,c2)}else{rect(x+6,y+3,7,2,c2);rect(x+2,y+11,5,1,c1)}}
 function drawWaterField(){const W=canvas.width,H=canvas.height,pal=timePalette();rect(0,0,W,H,pal.water);const drift=(frame*.018)%34;for(let y=10;y<H+20;y+=24){for(let x=-36;x<W+36;x+=48){const xx=x+((((y/24)|0)%2)?drift:-drift);rect(xx,y,15,2,'rgba(255,255,255,.11)');rect(xx+19,y+9,8,1,'rgba(255,255,255,.07)')}}}
-function drawTopBoat(x,y,s=1,heading=0,type=state.boat.type){
-  ctx.save();ctx.translate(x,y);ctx.rotate(heading);
-  const hull=type==='fishing'?'#5d7c73':type==='shallow'?'#9a764d':type==='cabin'?'#a57957':'#7c5137';
-  const sail=type==='sailer'?'#df7c68':'#fff7de';
-  shadow(-12*s,9*s,24*s,4*s,.18);
-  poly([[-12*s,2*s],[-9*s,-6*s],[0,-10*s],[9*s,-6*s],[12*s,2*s],[7*s,9*s],[-7*s,9*s]],hull,'#18313a',2);
-  poly([[-7*s,1*s],[0,-4*s],[7*s,1*s],[4*s,6*s],[-4*s,6*s]],'#b98960',null,0);
-  rect(-1*s,-18*s,2*s,20*s,'#18313a');
-  poly([[1*s,-16*s],[11*s,-9*s],[1*s,-4*s]],sail,'#18313a',2);
-  poly([[-1*s,-12*s],[-8*s,-8*s],[-1*s,-5*s]],'#f0e0ad','#18313a',2);
-  if(type==='cabin'){rect(-6*s,-1*s,12*s,5*s,'#ead9b5');rect(-4*s,0,3*s,2*s,'#70b9d4');rect(1*s,0,3*s,2*s,'#70b9d4')}
-  if(type==='fishing'){line(8*s,-6*s,14*s,-11*s,'#18313a',2); line(14*s,-11*s,14*s,-1*s,'#18313a',2)}
-  rect(-12*s,11*s,24*s,2*s,'rgba(255,255,255,.2)');
-  ctx.restore();
+function ellipseFill(x,y,rx,ry,c){ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=c;ctx.fill()}
+// ============================================================
+// v0.10 SPRITE-FIRST VESSEL ART
+// Boats are authored as low-resolution pixel sprites, cached, then scaled with
+// nearest-neighbour sampling. The world never rotates the sprite artwork: heading
+// only mirrors the consistent 3/4 RPG perspective, keeping pixel edges clean.
+// ============================================================
+const boatSpriteCache=new Map();
+function hexRGB(hex){hex=String(hex||'#777').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return[(n>>16)&255,(n>>8)&255,n&255]}
+function rgbHex(r,g,b){return'#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('')}
+function shadeHex(hex,delta){const [r,g,b]=hexRGB(hex);return rgbHex(r+delta,g+delta,b+delta)}
+function mixHex(a,b,t=.5){const A=hexRGB(a),B=hexRGB(b);return rgbHex(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t)}
+function psRect(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function psLine(g,x0,y0,x1,y1,c,w=1){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);let dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1,err=dx+dy;g.fillStyle=c;while(true){g.fillRect(x0-Math.floor((w-1)/2),y0-Math.floor((w-1)/2),w,w);if(x0===x1&&y0===y1)break;const e2=2*err;if(e2>=dy){err+=dy;x0+=sx}if(e2<=dx){err+=dx;y0+=sy}}}
+function psPoly(g,pts,c){const minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1])));g.fillStyle=c;for(let y=minY;y<=maxY;y++){const hits=[];for(let i=0,j=pts.length-1;i<pts.length;j=i++){const a=pts[i],b=pts[j];if((a[1]>y)!==(b[1]>y)){const x=a[0]+(y-a[1])*(b[0]-a[0])/(b[1]-a[1]);hits.push(x)}}hits.sort((a,b)=>a-b);for(let i=0;i<hits.length-1;i+=2){const x0=Math.ceil(hits[i]),x1=Math.floor(hits[i+1]);if(x1>=x0)g.fillRect(x0,y,x1-x0+1,1)}}}
+function psOutlinePoly(g,pts,fill,stroke='#18313a',w=1){psPoly(g,pts,fill);for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];psLine(g,a[0],a[1],b[0],b[1],stroke,w)}}
+function psCircle(g,cx,cy,r,c){g.fillStyle=c;for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)if(x*x+y*y<=r*r)g.fillRect(cx+x,cy+y,1,1)}
+function psRing(g,cx,cy,r,c,inner){psCircle(g,cx,cy,r,c);psCircle(g,cx,cy,inner,'rgba(0,0,0,0)')}
+function pointInPoly(x,y,pts){let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1],hit=((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);if(hit)inside=!inside}return inside}
+function psSail(g,pts,a,pal){psOutlinePoly(g,pts,a.sailBase||'#fff3cf',pal.ink,1);const minX=Math.floor(Math.min(...pts.map(p=>p[0]))),maxX=Math.ceil(Math.max(...pts.map(p=>p[0]))),minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1]))),accent=a.sailAccent||'#c86355';for(let y=minY+1;y<maxY;y++)for(let x=minX+1;x<maxX;x++){if(!pointInPoly(x+.5,y+.5,pts))continue;let paint=false;if(a.sailPattern==='stripe')paint=((x+y)%9<2);else if(a.sailPattern==='panel')paint=x>minX+(maxX-minX)*.58;else if(a.sailPattern==='patch')paint=((x>>2)+(y>>2))%5===0;if(paint)psRect(g,x,y,1,1,accent)}psLine(g,pts[0][0],pts[0][1]+1,pts[1][0],pts[1][1],shadeHex(a.sailBase||'#fff3cf',-26),1)}
+function boatPalette(a){const hull=a.hull||'#416f83',trim=a.trim||'#e8dfbd';return{ink:'#17313a',ink2:'#26454c',hull,hullDark:shadeHex(hull,-42),hullMid:shadeHex(hull,-22),hullLight:shadeHex(hull,34),trim,trimDark:shadeHex(trim,-35),deck:'#b77a45',deckDark:'#805330',deckLight:'#d59b5c',cream:'#f5e4b8',window:'#77b6c7',windowDark:'#315d68',metal:'#8b9c95',rope:'#5d3c29',gold:'#d7a948',white:'#fff3cf',red:'#c75f52',green:'#4f7964'}}
+function boatWaterBase(g,pal,w=88,h=78){psPoly(g,[[13,53],[22,63],[61,66],[77,56],[73,63],[59,70],[23,68],[10,59]],'rgba(16,45,58,.28)');for(const [x,y,n] of [[10,57,13],[17,63,10],[55,67,14],[68,61,9]])for(let i=0;i<n;i+=3)psRect(g,x+i,y+(i%2),2,1,'rgba(238,250,246,.72)')}
+function deckPlanks(g,poly,pal,variant=0){const ys=[38,42,46,50];ys.forEach((y,i)=>{for(let x=18+(i%2)*3;x<68;x+=8){if(pointInPoly(x,y,poly))psRect(g,x,y,5,1,i%2?pal.deckDark:pal.deckLight)}});if(variant%2)psLine(g,29,32,29,51,pal.deckDark,1)}
+function commonHull(g,a,pal,kind='cutter'){
+  const shapes={
+    cutter:{outer:[[8,45],[13,34],[23,26],[56,24],[72,32],[76,42],[71,53],[59,61],[27,62],[13,55]],inner:[[11,44],[16,35],[25,29],[55,27],[69,34],[72,42],[68,49],[58,56],[28,58],[16,52]],deck:[[16,42],[21,34],[28,30],[54,29],[66,35],[68,42],[62,49],[55,53],[29,54],[19,49]]},
+    fishing:{outer:[[7,46],[12,34],[22,26],[58,24],[75,33],[79,44],[74,55],[61,63],[24,64],[11,56]],inner:[[10,45],[15,35],[24,29],[57,27],[72,35],[75,43],[71,51],[60,58],[26,60],[15,53]],deck:[[15,42],[21,34],[28,30],[56,29],[68,35],[71,42],[65,50],[57,54],[28,55],[18,50]]},
+    shallow:{outer:[[11,47],[15,37],[25,30],[57,29],[72,36],[75,45],[69,54],[57,60],[28,60],[15,54]],inner:[[14,46],[18,38],[27,33],[56,32],[68,38],[71,44],[66,50],[56,55],[29,56],[19,51]],deck:[[19,44],[23,38],[30,35],[54,34],[64,39],[66,44],[61,49],[53,52],[31,53],[23,49]]},
+    cabin:{outer:[[6,45],[11,33],[22,24],[60,22],[77,31],[81,43],[76,56],[63,64],[23,65],[9,56]],inner:[[9,44],[14,34],[24,27],[59,25],[74,33],[77,42],[73,52],[61,59],[25,61],[13,53]],deck:[[14,41],[20,33],[28,29],[57,28],[69,34],[73,41],[68,50],[58,55],[27,56],[17,49]]},
+    sailer:{outer:[[8,46],[13,34],[23,25],[56,23],[72,31],[77,42],[72,54],[59,62],[26,63],[12,55]],inner:[[11,45],[16,35],[25,28],[55,26],[69,33],[73,41],[68,50],[58,57],[28,59],[16,52]],deck:[[16,42],[21,34],[28,30],[53,29],[65,34],[68,41],[63,49],[55,54],[29,55],[19,49]]}
+  };const sh=shapes[kind]||shapes.cutter;psOutlinePoly(g,sh.outer,pal.ink,pal.ink,1);psPoly(g,sh.inner,pal.hull);psPoly(g,[[12,47],[18,52],[28,57],[58,55],[69,49],[73,43],[72,51],[60,60],[27,61],[14,54]],pal.hullDark);psLine(g,14,47,69,48,pal.trim,2);psLine(g,18,50,60,56,pal.hullLight,1);psOutlinePoly(g,sh.deck,pal.deck,pal.ink2,1);deckPlanks(g,sh.deck,pal,a.variant||0);psLine(g,23,31,57,29,pal.deckLight,1);return sh}
+function drawPennant(g,x,y,a,pal,dir=1){psLine(g,x,y,x,y+8,pal.rope,1);psOutlinePoly(g,[[x+dir,y],[x+dir*9,y+2],[x+dir,y+5]],a.pennant||'#df7c68',pal.ink,1)}
+function drawCrate(g,x,y,pal,s=1){psRect(g,x,y,8*s,7*s,pal.deckDark);psRect(g,x+1*s,y+1*s,6*s,5*s,pal.deckLight);psLine(g,x+1*s,y+1*s,x+7*s,y+6*s,pal.deckDark,1);psLine(g,x+7*s,y+1*s,x+1*s,y+6*s,pal.deckDark,1)}
+function drawCabinBlock(g,x,y,w,h,pal,roof){psRect(g,x,y,w,h,pal.ink);psRect(g,x+1,y+1,w-2,h-2,pal.cream);psRect(g,x-2,y-3,w+4,4,pal.ink);psRect(g,x-1,y-2,w+2,2,roof);for(let xx=x+3;xx<x+w-4;xx+=7){psRect(g,xx,y+3,5,4,pal.windowDark);psRect(g,xx+1,y+3,4,3,pal.window)}psRect(g,x+w-5,y+h-5,3,5,pal.deckDark)}
+function drawRoleDetails(g,a,pal,type){const role=a.role||'';if(role==='work'){psLine(g,63,31,76,18,pal.rope,2);psLine(g,76,18,79,35,pal.rope,2);psLine(g,79,35,76,39,pal.rope,1);psRect(g,73,17,5,3,pal.gold)}else if(role==='cargo'){for(const [x,y] of [[21,38],[30,36],[39,39]])drawCrate(g,x,y,pal,1)}else if(role==='ferry'){for(const x of [20,54,53]){psCircle(g,x,54,4,pal.white);psCircle(g,x,54,2,pal.red)}}else if(role==='trade'){drawCrate(g,20,39,pal,1);drawCrate(g,28,36,pal,1)}else if(role==='mail'){psRect(g,22,40,7,5,pal.white);psRect(g,23,41,5,3,pal.red)}else if(role==='survey'){psLine(g,45,34,49,28,pal.gold,1);psLine(g,49,28,54,29,pal.gold,1);psLine(g,48,29,45,35,pal.rope,1)}else if(role==='naturalist'){psRect(g,25,40,8,5,pal.green);psRect(g,28,36,2,4,pal.green);psRect(g,26,36,3,2,pal.hullLight)}else if(role==='tender'){for(const x of [19,34,50,65])psCircle(g,x,55,2,pal.ink)}else if(role==='visitor'){psRect(g,22,40,5,3,pal.cream);psRect(g,30,38,4,3,pal.cream)}}
+function drawUpgradeDetails(g,a,pal,type){const u=a.upgrades||{};if(u.deckChest)drawCrate(g,type==='cabin'?20:50,43,pal,1);if(u.awning){psRect(g,44,28,18,2,pal.ink);psRect(g,45,29,16,7,a.sailAccent||pal.red);for(let x=47;x<61;x+=4)psRect(g,x,29,2,7,a.sailBase||pal.white);psLine(g,46,35,46,42,pal.rope,1);psLine(g,60,35,60,42,pal.rope,1)}if(u.lanterns){psRect(g,14,47,2,3,pal.gold);psRect(g,68,47,2,3,pal.gold)}}
+function drawCutterSprite(g,a,pal){commonHull(g,a,pal,'cutter');psSail(g,[[39,8],[17,28],[37,37]],a,pal);psSail(g,[[41,14],[61,27],[42,35]],a,pal);psLine(g,39,8,39,47,pal.rope,2);psLine(g,39,9,13,43,pal.rope,1);psLine(g,39,9,68,34,pal.rope,1);drawPennant(g,39,5,a,pal,1);drawCrate(g,52,39,pal,1);psRect(g,26,42,7,4,pal.cream);drawRoleDetails(g,a,pal,'cutter');drawUpgradeDetails(g,a,pal,'cutter')}
+function drawFishingSprite(g,a,pal){commonHull(g,a,pal,'fishing');psLine(g,31,15,31,47,pal.rope,2);psSail(g,[[32,17],[19,28],[31,34]],a,pal);drawPennant(g,31,11,a,pal,1);drawCabinBlock(g,46,29,20,15,pal,mixHex(pal.hull,pal.trim,.35));psCircle(g,35,43,7,pal.ink2);psCircle(g,35,43,5,'#80958d');for(let i=0;i<5;i++)psLine(g,31+i,39,39-i,47,pal.rope,1);psRect(g,17,43,7,5,pal.cream);drawRoleDetails(g,a,pal,'fishing');drawUpgradeDetails(g,a,pal,'fishing')}
+function drawShallowSprite(g,a,pal){commonHull(g,a,pal,'shallow');psLine(g,31,36,60,36,pal.deckDark,2);psLine(g,28,45,62,44,pal.deckDark,2);drawCrate(g,49,39,pal,1);drawCrate(g,39,42,pal,1);psLine(g,63,29,63,46,pal.rope,2);drawPennant(g,63,25,a,pal,-1);psRect(g,22,42,5,4,pal.cream);drawRoleDetails(g,a,pal,'shallow');drawUpgradeDetails(g,a,pal,'shallow')}
+function drawCabinSprite(g,a,pal){commonHull(g,a,pal,'cabin');const roof=(a.roofTone==='dark'?pal.hullDark:mixHex(pal.hull,pal.trim,.42));drawCabinBlock(g,35,27,31,20,pal,roof);psRect(g,42,20,19,7,pal.ink);psRect(g,43,21,17,5,roof);for(const x of [45,52,59])psRect(g,x,23,4,3,pal.window);psRect(g,58,12,6,10,pal.ink);psRect(g,59,13,4,8,pal.hullDark);psRect(g,57,10,8,3,pal.ink);drawPennant(g,62,7,a,pal,-1);psRect(g,18,39,10,7,pal.cream);psLine(g,15,48,70,48,pal.trim,1);drawRoleDetails(g,a,pal,'cabin');drawUpgradeDetails(g,a,pal,'cabin')}
+function drawSailerSprite(g,a,pal){commonHull(g,a,pal,'sailer');psLine(g,38,7,38,48,pal.rope,2);psSail(g,[[36,9],[13,31],[36,37]],a,pal);psSail(g,[[40,12],[65,27],[40,38]],a,pal);psSail(g,[[35,18],[24,32],[35,35]],{...a,sailAccent:mixHex(a.sailAccent||pal.red,pal.hull,.3)},pal);psLine(g,38,8,13,44,pal.rope,1);psLine(g,38,8,69,35,pal.rope,1);drawPennant(g,38,4,a,pal,1);drawCrate(g,50,41,pal,1);psRect(g,21,43,8,4,pal.cream);drawRoleDetails(g,a,pal,'sailer');drawUpgradeDetails(g,a,pal,'sailer')}
+function createBoatSprite(type,a,mirror=false){const key=JSON.stringify([type,a.hull,a.trim,a.sailBase,a.sailAccent,a.sailPattern,a.pennant,a.role,a.variant,a.roofTone,a.upgrades,mirror,dayPhase()]);if(boatSpriteCache.has(key))return boatSpriteCache.get(key);const off=document.createElement('canvas');off.width=88;off.height=78;const g=off.getContext('2d');g.imageSmoothingEnabled=false;g.save();if(mirror){g.translate(off.width,0);g.scale(-1,1)}const pal=boatPalette(a);boatWaterBase(g,pal);if(type==='fishing')drawFishingSprite(g,a,pal);else if(type==='shallow')drawShallowSprite(g,a,pal);else if(type==='cabin')drawCabinSprite(g,a,pal);else if(type==='sailer')drawSailerSprite(g,a,pal);else drawCutterSprite(g,a,pal);if((a.upgrades?.lanterns||['ferry','work','mail'].includes(a.role))&&['night','dusk','dawn'].includes(dayPhase())){g.globalAlpha=.28;psCircle(g,15,48,5,'#ffd978');psCircle(g,69,48,5,'#ffd978');g.globalAlpha=1;psRect(g,15,47,2,2,'#ffe29a');psRect(g,68,47,2,2,'#ffe29a')}g.restore();boatSpriteCache.set(key,off);return off}
+function drawTopBoat(x,y,s=1,heading=0,type=state.boat.type,appearance=null){appearance=appearance||(type===state.boat.type?playerBoatAppearance(type):defaultBoatAppearance(type));const mirror=heading<-.05,spr=createBoatSprite(type,appearance,mirror),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*.55),Math.round(w),Math.round(h));ctx.restore()}
+function renderBoatPreviewCanvas(canvas,type,appearance,scale=2){if(!canvas)return;const g=canvas.getContext('2d'),W=canvas.width,H=canvas.height;g.imageSmoothingEnabled=false;g.clearRect(0,0,W,H);g.fillStyle='#4d9fbe';g.fillRect(0,0,W,H);for(let y=16;y<H;y+=22){g.fillStyle='rgba(255,255,255,.12)';for(let x=(y%44?8:24);x<W;x+=42)g.fillRect(x,y,14,2)}const spr=createBoatSprite(type,appearance,false),drawScale=Math.min(scale,(W-20)/spr.width,(H-18)/spr.height),w=spr.width*drawScale,h=spr.height*drawScale;g.drawImage(spr,Math.round((W-w)/2),Math.round((H-h)/2),Math.round(w),Math.round(h))}
+function renderBoatFitoutPreview(){const c=$('#boatFitoutCanvas');if(c)renderBoatPreviewCanvas(c,state.boat.type,playerBoatAppearance(),2.2)}
+// ============================================================
+// v0.12 WORLD SPRITE ATLAS + SETTLEMENT SCALE PASS
+// The rest of the visible world now follows the same rule as the v0.10 boats:
+// authored low-resolution sprites are cached, then scaled with nearest-neighbour
+// sampling. Simulation/state stays completely separate from this art layer.
+// ============================================================
+const ISLAND_ART={tile:19,shape:1.08,layoutX:1.22,layoutY:1.17,tree:1.78,house:1.34,landmark:1.48,playerBoat:1.30,npcBoat:.82};
+function islandLayoutPoint(x,y){return{x:320+(x-320)*ISLAND_ART.layoutX,y:180+(y-180)*ISLAND_ART.layoutY}}
+function islandBuildingScale(kind,base=1){return base*(['lighthouse','windmill','market_hall','boatyard','map_room','observatory','ferry'].includes(kind)?ISLAND_ART.landmark:ISLAND_ART.house)}
+function visibleResidentLimit(isl){const n=population(isl);return Math.min(n,12,Math.max(1,4+Math.floor(Math.sqrt(Math.max(1,n))*1.6)))}
+function rotatingSubset(list,limit,key,periodMs=30*60000){if(list.length<=limit)return list;const bucket=Math.floor(gameNow()/periodMs),start=hashString(`${key}:${bucket}`)%list.length;return Array.from({length:limit},(_,i)=>list[(start+i)%list.length])}
+function islandDevelopment(isl){return (isl.projects||[]).filter(p=>p.complete).length+(isl.projects||[]).filter(p=>!p.complete).length*.5+population(isl)/4}
+function islandDecorPoints(isl){
+  const developed=islandDevelopment(isl),wanted=clamp(Math.round(14-developed*.42),7,14),rr=rng(hashString(`${isl.id}:decor-v12`)),pts=[];
+  for(let tries=0;tries<120&&pts.length<wanted;tries++){
+    const a=rr()*Math.PI*2,rad=.68+rr()*.3,x=320+Math.cos(a)*(160*rad),y=180+Math.sin(a)*(104*rad);
+    if(y>222&&Math.abs(x-320)<105)continue; // keep the jetty approach readable
+    const gx=(x-320)/ISLAND_ART.tile,gy=(y-180)/ISLAND_ART.tile;
+    if(!islandTileIsLand(isl,gx,gy,ISLAND_ART.shape))continue;
+    if(pts.some(p=>Math.hypot(p.x-x,p.y-y)<35))continue;
+    pts.push({x,y,roll:rr()});
+  }
+  return pts;
 }
-function drawTopTree(x,y,s=1){shadow(x-8*s,y+10*s,16*s,3*s,.16);rect(x-2*s,y+2*s,4*s,6*s,'#704630');circle(x,y,10*s,'#4f8b56','#315f54',2);circle(x-5*s,y-4*s,6*s,'#7cc46a');circle(x+5*s,y-3*s,5*s,'#69b765')}
-function drawTopRock(x,y,s=1){shadow(x-7*s,y+7*s,14*s,3*s,.16);poly([[x-8*s,y+1*s],[x-3*s,y-6*s],[x+6*s,y-4*s],[x+9*s,y+2*s],[x+4*s,y+8*s],[x-6*s,y+7*s]],'#758682','#2f4c53',2);rect(x-1*s,y-2*s,3*s,2*s,'rgba(255,255,255,.18)')}
-function drawFlowerPatch(x,y){for(let i=0;i<6;i++){const ox=(i%3)*5,oy=Math.floor(i/3)*5;rect(x+ox,y+oy,2,2,i%2?'#df7c68':'#e5b54e');rect(x+ox,y+oy+2,1,2,'#4f8b56')}}
-function drawTopHouse(x,y,kind='house',s=1){
-  shadow(x-13*s,y+12*s,28*s,4*s,.16);
-  if(kind==='lighthouse'){rect(x-5*s,y-18*s,10*s,22*s,'#fff7de');rect(x-5*s,y-9*s,10*s,4*s,'#df7c68');rect(x-6*s,y-22*s,12*s,4*s,'#18313a');rect(x-4*s,y-26*s,8*s,4*s,'#e5b54e');return}
-  if(kind==='windmill'){rect(x-8*s,y-8*s,16*s,14*s,'#ead9b5');poly([[x-10*s,y-8*s],[x,y-16*s],[x+10*s,y-8*s]],'#8e5a3c','#18313a',2);rect(x-1*s,y-25*s,2*s,18*s,'#18313a');for(let a=0;a<4;a++){ctx.save();ctx.translate(x,y-24*s);ctx.rotate(a*Math.PI/2+frame*.0012);rect(0,-1*s,14*s,2*s,'#fff7de');ctx.restore()}return}
-  if(kind==='market'){roundedRect(x-14*s,y-7*s,28*s,13*s,3,'#f4e6c4','#18313a',2);for(let i=0;i<4;i++)rect(x-14*s+i*7*s,y-12*s,7*s,5*s,i%2?'#fff7de':'#df7c68');return}
-  if(kind==='tea'){roundedRect(x-12*s,y-7*s,24*s,13*s,3,'#ead8ae','#18313a',2);poly([[x-14*s,y-7*s],[x,y-16*s],[x+14*s,y-7*s]],'#df7c68','#18313a',2);rect(x-3*s,y-2*s,6*s,5*s,'#7d553b');return}
-  if(kind==='garden'){roundedRect(x-14*s,y-7*s,28*s,14*s,2,'#6ea65a','#315f54',2);for(let r=0;r<2;r++)for(let c=0;c<4;c++){rect(x-11*s+c*6*s,y-4*s+r*5*s,3*s,3*s,(r+c)%2?'#df7c68':'#e5b54e')}return}
-  roundedRect(x-12*s,y-7*s,24*s,14*s,3,'#f0dfb6','#18313a',2);poly([[x-14*s,y-7*s],[x,y-17*s],[x+14*s,y-7*s]],'#a86d45','#18313a',2);rect(x-3*s,y-1*s,6*s,6*s,'#704630');rect(x-9*s,y-3*s,4*s,3*s,'#70b9d4');rect(x+5*s,y-3*s,4*s,3*s,'#70b9d4');
+const worldSpriteCache=new Map();
+function pixelCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.imageSmoothingEnabled=false;return[c,g]}
+function drawPixelSprite(spr,x,y,s=1,anchorX=.5,anchorY=.82){const w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x-w*anchorX),Math.round(y-h*anchorY),Math.round(w),Math.round(h));ctx.restore()}
+function spriteShadow(g,x,y,w,h,a=.22){g.fillStyle=`rgba(18,46,55,${a})`;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function spriteLit(){return ['night','dusk','dawn'].includes(dayPhase())}
+function propSprite(kind='broadleaf',variant=0){const key=`prop:${kind}:${variant}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const [c,g]=pixelCanvas(28,30),ink='#17313a',leaf1='#416f56',leaf2='#5f9c5c',leaf3='#83be68',wood='#74472f',wood2='#a46a3f';
+  if(kind==='rock'){spriteShadow(g,5,22,18,3,.2);psOutlinePoly(g,[[5,20],[7,13],[13,9],[21,11],[24,17],[20,23],[9,24]],'#647b7c',ink,1);psPoly(g,[[8,14],[13,11],[20,13],[18,16],[10,17]],'#91a29b');psRect(g,9,18,3,1,'#aeb8aa')}
+  else if(kind==='flowers'){for(let i=0;i<7;i++){const x=5+(i%4)*5,y=17+Math.floor(i/4)*5;psRect(g,x,y+2,1,5,'#397255');psRect(g,x-1,y,3,3,i%3===0?'#e7b653':i%3===1?'#d66e69':'#efe4b9');psRect(g,x,y+1,1,1,'#fff2c9')}}
+  else if(kind==='pine'){spriteShadow(g,6,24,17,3,.2);psRect(g,13,14,3,11,wood);psOutlinePoly(g,[[14,2],[4,13],[9,13],[3,20],[24,20],[18,13],[23,13]],leaf1,ink,1);psPoly(g,[[14,5],[7,13],[20,13]],leaf3);psRect(g,8,18,11,2,leaf2)}
+  else if(kind==='willow'){spriteShadow(g,4,24,20,3,.2);psRect(g,13,11,3,13,wood);psCircle(g,14,8,8,ink);psCircle(g,14,8,7,leaf2);for(const x of [7,10,17,20]){psRect(g,x,10,2,10,leaf1);psRect(g,x,18,1,5,leaf3)}psRect(g,10,5,8,3,leaf3)}
+  else if(kind==='scrub'){spriteShadow(g,5,23,19,3,.16);psCircle(g,9,17,6,ink);psCircle(g,18,16,7,ink);psCircle(g,9,17,5,leaf1);psCircle(g,18,16,6,leaf2);psRect(g,7,13,4,2,leaf3);psRect(g,17,11,4,2,leaf3)}
+  else {spriteShadow(g,4,24,20,3,.2);psRect(g,13,13,3,11,wood);psRect(g,14,14,1,10,wood2);psCircle(g,9,10,7,ink);psCircle(g,18,10,8,ink);psCircle(g,14,6,8,ink);psCircle(g,9,10,6,leaf1);psCircle(g,18,10,7,leaf2);psCircle(g,14,6,7,leaf3);psRect(g,9,7,5,2,'#9fd27b');if(kind==='fruit'){for(const [x,y] of [[9,9],[17,7],[14,4],[20,12]])psRect(g,x,y,2,2,variant%2?'#e5b54e':'#d9635b')}}
+  worldSpriteCache.set(key,c);return c}
+function drawTopTree(x,y,s=1,kind='broadleaf'){drawPixelSprite(propSprite(kind,hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x,y,s,0.5,.86)}
+function drawTopRock(x,y,s=1){drawPixelSprite(propSprite('rock',hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x,y,s,0.5,.84)}
+function drawFlowerPatch(x,y){drawPixelSprite(propSprite('flowers',hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x+6,y+7,1,0.5,.78)}
+function buildingPalette(kind,variant=0){const roofs=['#a65443','#486d72','#92704b','#526f58'],walls=['#ead9b5','#f0e3c1','#d9cfaa','#e8d6b0'];return{ink:'#17313a',ink2:'#294950',wall:walls[variant%walls.length],wallShade:shadeHex(walls[variant%walls.length],-28),roof:roofs[(variant+(kind==='map_room'?1:0))%roofs.length],roofShade:shadeHex(roofs[(variant+(kind==='map_room'?1:0))%roofs.length],-36),wood:'#805334',woodHi:'#b97d49',cream:'#fff0c8',glass:spriteLit()?'#ffd978':'#79b7c8',grass:'#619a5e',grassHi:'#86bd69',stone:'#89958d',cloth:'#f1dfb2',red:'#c85f52',blue:'#527da0',gold:'#e0b04e'}}
+function buildingSprite(kind='house',variant=0){const lit=spriteLit(),key=`building:${kind}:${variant}:${lit?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const [c,g]=pixelCanvas(64,60),p=buildingPalette(kind,variant);spriteShadow(g,10,48,44,5,.22);
+  const win=(x,y,w=5,h=5)=>{psRect(g,x-1,y-1,w+2,h+2,p.ink);psRect(g,x,y,w,h,p.glass);psRect(g,x+Math.floor(w/2),y,1,h,p.cream);psRect(g,x,y+Math.floor(h/2),w,1,p.cream)};
+  const crate=(x,y)=>{psRect(g,x,y,7,6,p.ink);psRect(g,x+1,y+1,5,4,p.woodHi);psLine(g,x+1,y+1,x+5,y+4,p.wood,1);psLine(g,x+5,y+1,x+1,y+4,p.wood,1)};
+  if(kind==='lighthouse'){
+    psOutlinePoly(g,[[22,48],[25,20],[39,20],[43,48],[35,53],[27,52]],p.cream,p.ink,1);psPoly(g,[[33,21],[39,21],[42,47],[35,51]],'#d8c69f');psRect(g,24,33,17,4,p.red);psRect(g,23,17,19,4,p.ink);psRect(g,25,13,15,5,p.wood);psRect(g,27,8,11,7,p.ink);psRect(g,28,9,9,5,p.glass);psRect(g,25,7,15,2,p.gold);psRect(g,31,4,3,4,p.ink);psRect(g,30,45,5,8,p.wood);win(27,26,4,4);win(34,37,4,4)
+  }else if(kind==='windmill'){
+    psOutlinePoly(g,[[17,49],[20,27],[40,25],[47,47],[38,53],[24,53]],p.wall,p.ink,1);psPoly(g,[[34,27],[40,26],[45,46],[38,50]],p.wallShade);psOutlinePoly(g,[[17,28],[29,17],[43,25],[40,29],[27,23]],p.roof,p.ink,1);psRect(g,28,39,6,14,p.wood);win(21,33,5,5);const cx=31,cy=17;psCircle(g,cx,cy,3,p.ink);psCircle(g,cx,cy,2,p.gold);for(const [dx,dy] of [[0,-15],[15,0],[0,15],[-15,0]]){psLine(g,cx,cy,cx+dx,cy+dy,p.ink,2);if(dx===0)psRect(g,cx-3,cy+(dy<0?-14:5),6,9,p.cloth);else psRect(g,cx+(dx<0?-14:5),cy-3,9,6,p.cloth)}
+  }else if(kind==='market'||kind==='market_hall'){
+    const hall=kind==='market_hall';psRect(g,12,29,hall?43:38,5,p.ink);for(let i=0;i<(hall?6:5);i++)psRect(g,13+i*7,30,6,4,i%2?p.cream:p.red);psRect(g,15,35,hall?38:33,13,p.wood);psRect(g,17,37,hall?34:29,9,'#c89459');for(let x=18;x<(hall?48:43);x+=8)crate(x,41);psRect(g,17,48,hall?34:29,3,p.ink);psRect(g,18,49,hall?32:27,2,p.woodHi);if(hall){psRect(g,18,24,32,5,p.roof);psRect(g,21,20,26,4,p.roofShade);psRect(g,23,18,22,3,p.ink)}
+  }else if(kind==='tea'){
+    psOutlinePoly(g,[[13,47],[14,31],[49,31],[50,47],[38,53],[22,52]],p.wall,p.ink,1);psPoly(g,[[37,32],[49,32],[49,46],[38,50]],p.wallShade);psOutlinePoly(g,[[9,31],[31,17],[54,29],[35,38],[17,36]],p.roof,p.ink,1);psRect(g,28,41,7,11,p.wood);win(18,36);win(39,35);psRect(g,11,40,8,2,p.red);psRect(g,13,42,4,4,p.cream);psRect(g,47,39,7,2,p.wood);psRect(g,49,41,3,4,p.gold)
+  }else if(kind==='garden'){
+    psOutlinePoly(g,[[10,31],[50,31],[55,47],[15,51]],'#7db260',p.ink,1);for(let r=0;r<3;r++){psLine(g,16,35+r*5,48,33+r*5,'#416f43',2);for(let x=18;x<48;x+=8){const col=(x+r*3)%2?p.red:p.gold;psRect(g,x,33+r*5,2,2,col);psRect(g,x+1,35+r*5,1,2,p.grass)}}psRect(g,10,29,42,2,p.wood);psRect(g,13,29,2,19,p.wood);psRect(g,49,29,2,17,p.wood);psCircle(g,48,22,6,p.ink);psCircle(g,48,22,5,p.grassHi);psRect(g,47,21,2,2,p.red)
+  }else if(kind==='ferry'){
+    psRect(g,7,39,50,5,p.ink);psRect(g,8,40,48,3,p.woodHi);for(let x=10;x<56;x+=8){psRect(g,x,44,2,9,p.wood);psRect(g,x+1,41,1,2,p.cream)}psOutlinePoly(g,[[29,37],[30,25],[49,25],[51,37]],p.wall,p.ink,1);psOutlinePoly(g,[[27,25],[39,18],[53,24],[50,28],[39,22]],p.roof,p.ink,1);win(34,29,5,4);psRect(g,44,31,4,6,p.wood);psRect(g,12,35,4,4,p.gold);psRect(g,17,34,1,6,p.ink)
+  }else if(kind==='boatyard'){
+    psRect(g,8,45,50,5,p.ink);psRect(g,9,46,48,3,p.woodHi);psOutlinePoly(g,[[12,42],[14,27],[40,25],[43,42]],'#caa06a',p.ink,1);psOutlinePoly(g,[[10,27],[26,17],[45,24],[40,29],[25,22]],p.roof,p.ink,1);psRect(g,17,31,3,12,p.wood);psRect(g,34,30,3,13,p.wood);psLine(g,48,18,48,45,p.ink,2);psLine(g,48,19,59,24,p.wood,2);psLine(g,58,24,58,38,p.ink,1);psRect(g,56,37,5,4,p.gold);psLine(g,18,48,31,39,p.cream,2);psLine(g,30,48,39,40,p.cream,2);crate(10,39)
+  }else if(kind==='map_room'){
+    psOutlinePoly(g,[[13,48],[14,31],[49,31],[50,48],[38,53],[22,52]],p.wall,p.ink,1);psPoly(g,[[38,32],[49,32],[49,47],[38,50]],p.wallShade);psOutlinePoly(g,[[10,31],[31,17],[54,29],[35,38],[16,36]],p.blue,p.ink,1);psRect(g,29,41,7,11,p.wood);win(18,36);win(40,35);psLine(g,47,22,54,14,p.ink,2);psCircle(g,55,13,3,p.ink);psRect(g,54,12,4,2,p.glass);psRect(g,19,23,7,4,p.cream);psLine(g,20,24,25,25,p.red,1)
+  }else if(kind==='observatory'){
+    psRect(g,20,47,25,4,p.ink);psRect(g,22,42,21,5,p.woodHi);for(const x of [23,40])psRect(g,x,24,3,20,p.wood);psRect(g,20,22,25,4,p.ink);psRect(g,22,23,21,3,p.woodHi);psOutlinePoly(g,[[18,22],[31,13],[47,21],[42,26],[30,18]],p.roof,p.ink,1);psLine(g,37,14,48,7,p.ink,2);psCircle(g,49,6,3,p.ink);psRect(g,48,5,4,2,p.glass);psLine(g,29,28,20,43,p.cream,2);psLine(g,34,29,25,44,p.cream,2)
+  }else{
+    psOutlinePoly(g,[[13,48],[14,31],[49,31],[50,48],[38,53],[22,52]],p.wall,p.ink,1);psPoly(g,[[37,32],[49,32],[49,47],[38,50]],p.wallShade);psOutlinePoly(g,[[9,31],[31,17],[54,29],[35,38],[17,36]],p.roof,p.ink,1);psPoly(g,[[31,18],[53,29],[35,36]],p.roofShade);psRect(g,28,41,7,11,p.wood);psRect(g,29,43,1,1,p.gold);win(18,36);win(40,35);psRect(g,18,21,5,9,p.ink);psRect(g,19,20,4,8,p.wood);if(variant%2===0){psRect(g,15,45,8,2,p.red);psRect(g,16,47,2,2,p.grass)}
+  }
+  worldSpriteCache.set(key,c);return c}
+function drawTopHouse(x,y,kind='house',s=1){const variant=Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4;drawPixelSprite(buildingSprite(kind,variant),x,y,s,0.5,.86)}
+function residentLook(seed){const h=Math.abs(hashString(seed||'resident'));const skins=['#f1c69c','#deb081','#b97f58','#8f5d43'],hair=['#4b3025','#6d4a30','#9a6a39','#c7a465','#2e3435'];return{skin:skins[h%skins.length],hair:hair[(h>>3)%hair.length]}}
+function residentSprite(seed,shirt='#df7c68',accent='#e5b54e',archetype='maker',style=0,walkFrame=0,mirror=false){const look=residentLook(seed),key=`resident:${seed}:${shirt}:${accent}:${archetype}:${style}:${walkFrame}:${mirror?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const [c,g]=pixelCanvas(20,28),ink='#17313a';g.save();if(mirror){g.translate(20,0);g.scale(-1,1)}spriteShadow(g,5,25,10,2,.2);const legA=walkFrame?1:0,legB=walkFrame?0:1;psRect(g,7,20+legA,3,6-legA,ink);psRect(g,11,20+legB,3,6-legB,ink);psRect(g,6,11,9,10,ink);psRect(g,7,12,7,8,shirt);psRect(g,7,15,7,2,accent);psRect(g,4,13+(walkFrame?1:0),3,7,ink);psRect(g,5,14+(walkFrame?1:0),2,5,look.skin);psRect(g,15,13+(walkFrame?0:1),2,7,ink);psRect(g,15,14+(walkFrame?0:1),1,5,look.skin);psCircle(g,10,7,5,ink);psRect(g,7,5,7,6,look.skin);psRect(g,7,4,7,3,look.hair);psRect(g,7,6,2,3,look.hair);psRect(g,12,6,2,2,look.hair);psRect(g,9,8,1,1,'#4b3b31');psRect(g,12,8,1,1,'#4b3b31');
+  if(archetype==='fisher'){psRect(g,6,3,9,2,accent);psRect(g,8,1,6,3,shirt);psLine(g,16,13,19,4,'#6a4b35',1)}
+  else if(archetype==='gardener'){psRect(g,4,3,13,2,'#d6b85f');psRect(g,7,1,7,3,'#e3c86e');psRect(g,15,17,4,4,'#a57443')}
+  else if(archetype==='carpenter'){psRect(g,8,13,5,7,'#d7bb83');psRect(g,14,18,4,2,'#855a37');psRect(g,16,17,1,5,'#855a37')}
+  else if(archetype==='trader'){psLine(g,7,12,14,20,'#6b4932',1);psRect(g,14,17,4,5,'#9b683f')}
+  else if(archetype==='navigator'){psRect(g,6,3,9,2,'#f2e6c5');psRect(g,8,1,6,3,'#537b98');psRect(g,6,12,3,2,'#f2e6c5')}
+  else if(archetype==='naturalist'){psRect(g,6,3,9,2,'#6d8251');psRect(g,8,1,6,3,'#7d9360');psRect(g,5,14,2,6,'#7c5f3c');psRect(g,14,14,2,6,'#7c5f3c')}
+  else {psRect(g,8,13,5,7,shadeHex(accent,-16));psRect(g,15,17,3,2,'#c7a35f')}
+  if(style===2)psRect(g,13,4,2,5,accent);if(style===3)psRect(g,6,12,2,8,accent);g.restore();worldSpriteCache.set(key,c);return c}
+function drawResidentPerson(x,y,person,walking=false,facing=1){const wf=walking?(Math.floor(frame/220+Math.abs(hashString(person.id||person.name)))%2):0,spr=residentSprite(person.id||person.name,person.outfit,person.accent||'#e5b54e',person.archetype||'maker',person.style||0,wf,facing<0);drawPixelSprite(spr,x,y,1.35,0.5,.88)}
+function drawTopVillager(x,y,shirt='#df7c68',accent='#e5b54e',style=0){const spr=residentSprite(`generic:${shirt}:${accent}:${style}`,shirt,accent,'maker',style,Math.floor(frame/240)%2,false);drawPixelSprite(spr,x,y,1.2,0.5,.88)}
+function seaSprite(kind='dolphin',variant=0){const key=`sea:${kind}:${variant}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);let w=32,h=24;if(kind==='wreck')w=58,h=38;if(kind==='gull')w=18,h=12;const [c,g]=pixelCanvas(w,h),ink='#17313a';
+  if(kind==='dolphin'){psPoly(g,[[3,14],[9,9],[21,8],[28,11],[23,14],[16,14],[10,17]],'#3a7186');psLine(g,4,14,22,13,ink,1);psPoly(g,[[13,9],[17,3],[20,9]],'#2e6075');psPoly(g,[[22,11],[30,7],[27,13]],'#2e6075');psRect(g,21,10,1,1,'#dff5f4')}
+  else if(kind==='gull'){psLine(g,1,7,8,3,'#f8f0d5',2);psLine(g,9,3,17,7,'#f8f0d5',2);psRect(g,8,4,2,2,'#284650')}
+  else if(kind==='bottle'){psRect(g,12,2,5,3,ink);psRect(g,13,1,3,2,'#d9c68c');psOutlinePoly(g,[[10,5],[18,5],[20,18],[16,22],[11,20],[8,10]],'#86b9a7',ink,1);psRect(g,11,10,6,6,'#f1e5c7');psLine(g,12,12,16,14,'#a57549',1)}
+  else if(kind==='wreck'){psLine(g,8,28,45,8,'#5e3d2c',4);psLine(g,24,19,52,28,'#5e3d2c',3);psRect(g,34,7,17,4,'#d5c28f');psPoly(g,[[4,29],[16,22],[23,30],[18,35],[7,34]],'#758682');psLine(g,6,28,19,32,ink,1);psRect(g,42,25,10,6,'#9b683f');psLine(g,43,26,50,30,'#d1a466',1)}
+  else if(kind==='seaglass'){for(const [x,y,col] of [[6,15,'#9ad9c8'],[13,9,'#75bfd4'],[20,14,'#e3d49b'],[25,8,'#a7d8bd'],[16,18,'#d6efdf']]){psPoly(g,[[x,y-3],[x+3,y],[x+1,y+3],[x-2,y+2]],col,ink,1);psRect(g,x,y-1,1,1,'#fff7de')}}
+  else if(kind==='crate'){psRect(g,7,8,18,14,ink);psRect(g,8,9,16,12,'#a66e40');psLine(g,8,9,23,20,'#d6a15e',1);psLine(g,23,9,8,20,'#765033',1);psRect(g,14,9,2,12,'#d6a15e')}
+  else if(kind==='kelp'){for(let i=0;i<3;i++){const x=8+i*7;psLine(g,x,22,x+(i%2?3:-2),5,'#376f55',2);psRect(g,x+(i%2?1:-4),9+i*3,5,2,'#5a9a66');psRect(g,x-2,15-i*2,5,2,'#6aad6d')}}
+  worldSpriteCache.set(key,c);return c}
+function drawSeaSprite(kind,x,y,s=1,mirror=false,variant=0){const spr=seaSprite(kind,variant),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;if(mirror){ctx.translate(Math.round(x),0);ctx.scale(-1,1);ctx.drawImage(spr,Math.round(-w/2),Math.round(y-h/2),Math.round(w),Math.round(h))}else ctx.drawImage(spr,Math.round(x-w/2),Math.round(y-h/2),Math.round(w),Math.round(h));ctx.restore()}
+function residentWaypoints(isl,person,index){
+  const P=(x,y)=>islandLayoutPoint(x,y),pts=[P(320,178),P(300,214),P(348,205),P(332,244),P(276,178),P(382,188)],active=isl.projects.filter(p=>!p.complete),done=isl.projects.filter(p=>p.complete);
+  if(active.length){const q=projectSitePos(active[index%active.length],index%active.length);pts.push({x:q.x,y:q.y+15})}if(done.length){const q=projectSitePos(done[index%done.length],index%done.length);pts.push({x:q.x,y:q.y+16})}
+  if(person.archetype==='fisher')pts.push(P(350,255),P(383,236));if(person.archetype==='gardener')pts.push(P(268,205),P(286,194));if(person.archetype==='trader')pts.push(P(395,207),P(354,220));if(person.archetype==='carpenter')pts.push(P(302,198),P(376,215));if(person.archetype==='navigator')pts.push(P(315,122),P(410,155));if(person.archetype==='naturalist')pts.push(P(238,160),P(398,164));if(person.archetype==='maker')pts.push(P(340,190),P(370,205));return pts
 }
-function drawTopVillager(x,y,shirt='#df7c68',accent='#e5b54e',style=0){const bob=Math.sin((frame+x)*.03)>0?1:0;shadow(x-4,y+8,8,2,.14);circle(x,y-2,4,'#e8bd91');rect(x-4,y+2,8,7,shirt);if(style===0)rect(x-4,y+4,8,2,accent);else if(style===1){rect(x-5,y-6,10,2,accent);rect(x-3,y-8,6,2,accent)}else if(style===2)rect(x+2,y+2,2,7,accent);else{rect(x-4,y+2,3,7,accent);rect(x+1,y+2,3,7,shirt)}rect(x-4,y+9,3,4+bob,'#18313a');rect(x+1,y+9-bob,3,4+bob,'#18313a')}
+function residentPose(isl,person,index,ts=frame){const pts=residentWaypoints(isl,person,index),seed=hashString(person.id||person.name),legMs=9000+(Math.abs(seed)%5000),clock=ts+Math.abs(seed)%17000,leg=Math.floor(clock/legMs),u=(clock%legMs)/legMs,a=pts[leg%pts.length],b=pts[(leg+1)%pts.length],move=clamp(u/.68,0,1),smooth=move*move*(3-2*move),lane=((seed>>>5)%5)-2,laneY=((seed>>>9)%3)-1,ang=(seed%628)/100,personal=4+((seed>>>12)%8);return{x:lerp(a.x,b.x,smooth)+lane*2.6+Math.cos(ang)*personal,y:lerp(a.y,b.y,smooth)+laneY*2+Math.sin(ang)*personal*.62,walking:u<.68,chat:u>=.68&&((leg+index)%5===0),facing:b.x<a.x?-1:1}}
 function worldWeather(ts=gameNow()){const z=zonedParts(ts),key=`${z.key}-${state.worldSeed}`;const r=rng(hashString(key))();return r<.13?'rain':r<.22?'mist':r<.31?'breezy':'clear'}
 function drawWeather(){const W=canvas.width,H=canvas.height,w=worldWeather();if(w==='rain'){for(let i=0;i<Math.min(80,Math.ceil(W*H/6000));i++){const x=(i*83+frame*.18)%(W+40)-20,y=(i*47+frame*.31)%(H+40)-20;rect(x,y,1,8,'rgba(240,252,255,.42)')}}else if(w==='mist'){rect(0,0,W,H,'rgba(240,247,235,.08)')}else if(w==='breezy'){for(let i=0;i<Math.max(6,Math.floor(H/70));i++){const x=((i*150+frame*.04)%(W+120))-60;rect(x,72+i*55,38,1,'rgba(255,255,255,.22)')}}}
 function biomeColor(b){return biomeDef(b).color}
@@ -1268,7 +1424,7 @@ function islandTileIsLand(isl,gx,gy,scale=1){const s=ensureIslandData(isl).shape
 function renderIslandTiles(isl,cx=320,cy=180,tile=16,scale=1,withJetty=true,alpha=1){
   ensureIslandData(isl);ctx.save();ctx.globalAlpha=alpha;const base=biomeColor(isl.biome),sand='#e7ce82',limitX=Math.ceil(13*scale),limitY=Math.ceil(10*scale);
   for(let gy=-limitY;gy<=limitY;gy++)for(let gx=-limitX;gx<=limitX;gx++){if(!islandTileIsLand(isl,gx,gy,scale))continue;const edge=!islandTileIsLand(isl,gx+1,gy,scale)||!islandTileIsLand(isl,gx-1,gy,scale)||!islandTileIsLand(isl,gx,gy+1,scale)||!islandTileIsLand(isl,gx,gy-1,scale),px=cx+gx*tile,py=cy+gy*tile;shadow(px-tile/2,py+tile*.38,tile,tile*.14,.07);rect(px-tile/2,py-tile/2,tile,tile,edge?sand:base);rect(px-tile/2,py-tile/2,tile,1,edge?'#f3dfa3':'#94d177');rect(px-tile/2,py+tile/2-1,tile,1,edge?'#c9b168':'#5e9754')}
-  if(withJetty){for(let i=0;i<5;i++){rect(cx-20,cy+56+i*8,40,8,'#a86d45');rect(cx-20,cy+56+i*8,40,1,'#c98d61')}for(let i=0;i<5;i++)rect(cx-15+i*8,cy+64,2,34,'#704630');for(let i=0;i<7;i++){rect(cx-6,cy+40-i*12,12,8,'#cfba8a');rect(cx-6,cy+40-i*12,12,1,'#e7d6a8')}}ctx.restore();
+  if(withJetty){const j=tile/16,deckW=48*j,plankH=8*j,startY=cy+58*j;for(let i=0;i<5;i++){rect(cx-deckW/2,startY+i*plankH,deckW,plankH,'#a86d45');rect(cx-deckW/2,startY+i*plankH,deckW,1,'#c98d61')}for(let i=0;i<6;i++)rect(cx-deckW*.39+i*(deckW*.78/5),startY+plankH,2*j,38*j,'#704630');for(let i=0;i<7;i++){rect(cx-7*j,cy+43*j-i*13*j,14*j,8*j,'#cfba8a');rect(cx-7*j,cy+43*j-i*13*j,14*j,1,'#e7d6a8')}}ctx.restore();
 }
 function approachSprite(isl){
   ensureIslandData(isl);const key=`${isl.id}-${JSON.stringify(isl.shape)}`;if(approachSpriteCache.has(key))return approachSpriteCache.get(key);
@@ -1290,12 +1446,12 @@ function updateVoyageMicroEvent(ts){
 }
 function drawVoyageMicroEvent(ts,bx,by){
   const e=voyageMicroEvent;if(!e)return;const W=canvas.width,H=canvas.height,t=clamp((ts-e.started)/e.duration,0,1),ease=Math.sin(t*Math.PI),top=visibleSceneRect().y,bottom=visibleSceneRect().y+visibleSceneRect().h;
-  if(e.type==='porpoise'){for(let i=0;i<3;i++){const x=-40+t*(W+120)-i*32,y=lerp(top+H*.45,bottom-70,.45)-i*18+Math.sin(t*15+i)*10;poly([[x-10,y],[x+3,y-2],[x+9,y+1],[x+2,y+4],[x-7,y+3]],'#2f6f85','#173a4a',1)}}
-  else if(e.type==='gulls'){for(let i=0;i<5;i++){const x=20+t*(W-40)+i*18,y=top+45+(i%3)*12;line(x-5,y,x,y-3,'rgba(255,247,222,.8)',2);line(x,y-3,x+5,y,'rgba(255,247,222,.8)',2)}}
+  if(e.type==='porpoise'){for(let i=0;i<3;i++){const x=-40+t*(W+120)-i*34,y=lerp(top+H*.45,bottom-70,.45)-i*18+Math.sin(t*15+i)*10;drawSeaSprite('dolphin',x,y,.72,(i%2)===0,i)}}
+  else if(e.type==='gulls'){for(let i=0;i<5;i++){const x=20+t*(W-40)+i*20,y=top+45+(i%3)*12;drawSeaSprite('gull',x,y,.72,(i%2)===0,i)}}
   else if(e.type==='flyingfish'){for(let i=0;i<4;i++){const tt=clamp(t-i*.06,0,1),x=50+tt*(W-100),y=by+65-Math.sin(tt*Math.PI)*55-i*4;rect(x,y,5,2,'#dff5f4');rect(x+4,y-1,3,1,'#dff5f4')}}
-  else if(e.type==='kelp'){for(let i=0;i<5;i++){const x=W+20-t*(W+100)+i*32,y=top+80+i*46;rect(x,y,3,10,'rgba(47,103,76,.55)');rect(x+4,y+2,2,7,'rgba(47,103,76,.4)')}}
+  else if(e.type==='kelp'){for(let i=0;i<5;i++){const x=W+20-t*(W+100)+i*34,y=top+80+i*46;ctx.globalAlpha=.72;drawSeaSprite('kelp',x,y,.72,false,i);ctx.globalAlpha=1}}
   else if(e.type==='whalepuff'){const x=W*.78-t*W*.25,y=top+70;ctx.globalAlpha=ease;circle(x,y,12,'rgba(38,77,91,.38)');for(let i=0;i<4;i++)rect(x-5+i*4,y-12-i*5,2,7,'rgba(255,255,255,.32)');ctx.globalAlpha=1}
-  else if(e.type==='distantSail'){const x=W+20-t*(W+80),y=top+75;drawTopBoat(x,y,.42,-.35,'sailer')}
+  else if(e.type==='distantSail'){const x=W+20-t*(W+80),y=top+75;drawTopBoat(x,y,.42,-.35,'sailer',defaultBoatAppearance('sailer'))}
   else if(e.type==='sparkles'){for(let i=0;i<18;i++){const rr=rng(hashString(`${e.seed}-${i}`)),x=rr()*W,y=top+20+rr()*Math.max(40,bottom-top-40);ctx.globalAlpha=ease*.5;drawSparkle(x,y,timePalette().light);ctx.globalAlpha=1}}
 }
 
@@ -1307,19 +1463,50 @@ function renderScene(ts){
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
 }
-function projectSitePos(p,index=0){const base=BUILD_SITES[p.site]||BUILD_SITES.village,rr=rng(hashString(p.id||`${p.templateId}${index}`));return{x:base.x+(rr()-.5)*28,y:base.y+(rr()-.5)*20}}
-function drawProjectOnIsland(isl,p,index){const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index),prog=projectProgress(p),s=.9;if(!p.complete){shadow(pos.x-17,pos.y+9,34,5,.18);rect(pos.x-15,pos.y+5,30,4,'#a86d45');const posts=1+Math.floor(prog*4);for(let i=0;i<posts;i++)rect(pos.x-13+i*8,pos.y-12,3,18,'#704630');if(prog>.35)rect(pos.x-14,pos.y-10,28,3,'#c98d61');if(prog>.7)poly([[pos.x-15,pos.y-10],[pos.x,pos.y-20],[pos.x+15,pos.y-10]],'#e7ce82','#18313a',2);return}
-  if(t.draw==='market_square'){drawTopHouse(pos.x-9,pos.y,'market',.8);drawTopHouse(pos.x+13,pos.y+7,'market',.75);return}if(t.draw==='market_hall'){drawTopHouse(pos.x,pos.y,'market',1.25);return}if(t.draw==='cottages'){drawTopHouse(pos.x-10,pos.y,'house',.78);drawTopHouse(pos.x+12,pos.y+8,'house',.72);return}if(t.draw==='ferry'){rect(pos.x-20,pos.y,42,7,'#a86d45');for(let x=pos.x-18;x<pos.x+20;x+=8)rect(x,pos.y+7,2,14,'#704630');return}if(t.draw==='boatyard'){drawTopHouse(pos.x-9,pos.y-2,'house',.82);rect(pos.x+4,pos.y+4,30,6,'#a86d45');for(let x=pos.x+6;x<pos.x+32;x+=7)rect(x,pos.y+10,2,10,'#704630');drawTopBoat(pos.x+23,pos.y+22,.55,.25,'shallow');return}if(t.draw==='map_room')drawTopHouse(pos.x,pos.y,'house',1.05);else if(t.draw==='observatory')drawTopHouse(pos.x,pos.y,'lighthouse',.78);else drawTopHouse(pos.x,pos.y,t.draw||'house',s)}
+function projectSitePos(p,index=0){
+  const base=BUILD_SITES[p.site]||BUILD_SITES.village,slots={
+    harbour:[[-28,-9],[27,2],[-8,-27],[35,-24],[-36,18],[9,24]],
+    village:[[0,0],[-31,-13],[31,10],[-16,25],[19,-27],[39,-10]],
+    hill:[[-12,14],[22,12],[-2,-25],[35,-16],[14,26],[-25,-6]],
+    meadow:[[0,0],[34,-8],[-31,10],[18,24],[-15,-25],[-41,-6]]
+  },pool=slots[p.site]||slots.village,h=hashString(p.id||`${p.templateId}`),slot=pool[h%pool.length],rr=rng(h^0x51f15e);
+  const bx=base.x+(p.site==='hill'?42:0);return islandLayoutPoint(bx+slot[0]+(rr()-.5)*8,base.y+slot[1]+(rr()-.5)*7)
+}
+function drawProjectOnIsland(isl,p,index){
+  const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index),prog=projectProgress(p);
+  if(!p.complete){const sc=1.22,w=42*sc,h=26*sc;shadow(pos.x-w*.5,pos.y+10,w,7,.18);rect(pos.x-w*.46,pos.y+5,w*.92,5,'#a86d45');const posts=1+Math.floor(prog*4);for(let i=0;i<posts;i++)rect(pos.x-w*.4+i*(w*.8/4),pos.y-h*.55,4,h*.72,'#704630');if(prog>.35)rect(pos.x-w*.42,pos.y-h*.48,w*.84,4,'#c98d61');if(prog>.7)poly([[pos.x-w*.44,pos.y-h*.46],[pos.x,pos.y-h],[pos.x+w*.44,pos.y-h*.46]],'#e7ce82','#18313a',2);return}
+  if(t.draw==='market_square'){drawTopHouse(pos.x-18,pos.y,'market',islandBuildingScale('market',.82));drawTopHouse(pos.x+23,pos.y+10,'market',islandBuildingScale('market',.76));return}
+  if(t.draw==='market_hall'){drawTopHouse(pos.x,pos.y,'market_hall',islandBuildingScale('market_hall',1.02));return}
+  if(t.draw==='cottages'){drawTopHouse(pos.x-18,pos.y,'house',islandBuildingScale('house',.82));drawTopHouse(pos.x+20,pos.y+12,'house',islandBuildingScale('house',.76));return}
+  if(t.draw==='ferry'){drawTopHouse(pos.x,pos.y,'ferry',islandBuildingScale('ferry',.96));return}
+  if(t.draw==='boatyard'){drawTopHouse(pos.x,pos.y,'boatyard',islandBuildingScale('boatyard',1));drawTopBoat(pos.x+37,pos.y+27,.67,.25,'shallow',defaultBoatAppearance('shallow'));return}
+  const kind=t.draw||'house';drawTopHouse(pos.x,pos.y,kind,islandBuildingScale(kind,.92))
+}
 function drawIslandScene(isl){
-  ensureIslandData(isl);drawSeaBackground();const off=legacySceneOffset();ctx.save();ctx.translate(off.x,off.y);renderIslandTiles(isl);
-  for(let i=0;i<12;i++){const rr=rng(hashString(isl.id)+i*91),x=205+rr()*225,y=76+rr()*140;if(i%3===0)drawTopTree(x,y,.9);else if(i%4===0)drawTopRock(x,y,.8);else if(i%5===0)drawFlowerPatch(x-4,y-4)}
-  drawTopHouse(320,156,'house',1);if(isl.features.includes('cottage'))drawTopHouse(374,145,'house',.95);if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill'))drawTopHouse(252,132,'windmill',.85);
-  const projectFeatures=new Set(isl.projects.map(p=>projectTemplate(p.templateId)?.feature));if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse'))drawTopHouse(415,138,'lighthouse',1);if(isl.features.includes('market')&&!projectFeatures.has('market_stall'))drawTopHouse(388,198,'market',1);if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house'))drawTopHouse(340,210,'tea',.95);if(isl.features.includes('orchard')&&!projectFeatures.has('orchard'))drawTopHouse(260,204,'garden',1);
-  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature;const superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded)drawProjectOnIsland(isl,p,i)});
-  const extraHomes=Math.min(4,Math.floor(Math.max(0,population(isl)-2)/2));for(let i=0;i<extraHomes;i++)drawTopHouse(290+i*32,116+(i%2)*22,'house',.68);
-  isl.residents.slice(0,9).forEach((person,i)=>{const rr=rng(hashString(person.id)),x=245+rr()*170,y=150+rr()*82;drawTopVillager(x,y,person.outfit,person.accent||'#e5b54e',person.style||0);if(i<3&&population(isl)<5)pxText(person.name.split(' ')[0],x,y+19,'#18313a',6,'center')});
-  drawTopBoat(355,292,1.05,-.2);vesselsAtIsland(isl.id).slice(0,4).forEach((v,i)=>{const t=vesselType(v.typeId);drawTopBoat(385+i*22,284+(i%2)*14,.55,-.15,t.sprite);if(['night','dusk'].includes(dayPhase()))drawLamp(385+i*22,282+(i%2)*14)});
-  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(320,156);drawLamp(374,145);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i);drawLamp(q.x,q.y)})}ctx.restore();drawWeather();drawTimeLighting();
+  ensureIslandData(isl);drawSeaBackground();const off=legacySceneOffset();ctx.save();ctx.translate(off.x,off.y);
+  renderIslandTiles(isl,320,180,ISLAND_ART.tile,ISLAND_ART.shape,true,1);
+  const actors=[];
+  const queue=(y,draw)=>actors.push({y,draw});
+  // Development gradually replaces central wilderness; remaining trees sit mainly around the island edge.
+  islandDecorPoints(isl).forEach((p,i)=>{const tree=biomeDef(isl.biome).tree||'broadleaf';if(p.roll<.68)queue(p.y,()=>drawTopTree(p.x,p.y,ISLAND_ART.tree*(.9+(i%3)*.06),tree));else if(p.roll<.88)queue(p.y,()=>drawTopRock(p.x,p.y,1.0));else queue(p.y,()=>drawFlowerPatch(p.x-4,p.y-4))});
+  const core=islandLayoutPoint(320,156);queue(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)));
+  if(isl.features.includes('cottage')){const q=islandLayoutPoint(374,145);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.96)))}
+  const projectFeatures=new Set(isl.projects.map(p=>projectTemplate(p.templateId)?.feature));
+  if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill')){const q=islandLayoutPoint(252,132);queue(q.y,()=>drawTopHouse(q.x,q.y,'windmill',islandBuildingScale('windmill',.82)))}
+  if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse')){const q=islandLayoutPoint(415,138);queue(q.y,()=>drawTopHouse(q.x,q.y,'lighthouse',islandBuildingScale('lighthouse',.96)))}
+  if(isl.features.includes('market')&&!projectFeatures.has('market_stall')){const q=islandLayoutPoint(388,198);queue(q.y,()=>drawTopHouse(q.x,q.y,'market',islandBuildingScale('market',.96)))}
+  if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house')){const q=islandLayoutPoint(340,210);queue(q.y,()=>drawTopHouse(q.x,q.y,'tea',islandBuildingScale('tea',.92)))}
+  if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandLayoutPoint(260,204);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
+  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
+  // One cottage sprite represents several homes, keeping large populations bustling without filling every tile with roofs.
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
+  for(let i=0;i<extraHomes;i++){const q=islandLayoutPoint(...homeSlots[i]);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
+  const limit=visibleResidentLimit(isl),residentPoses=rotatingSubset(isl.residents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
+  residentPoses.forEach(r=>queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')}));
+  actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
+  const playerDock=islandLayoutPoint(340,290);drawTopBoat(playerDock.x,playerDock.y,ISLAND_ART.playerBoat,-.2,state.boat.type,playerBoatAppearance());
+  const trafficSpots=[[414,290,1],[226,292,.96],[456,250,.90],[177,252,.88]];rotatingSubset(vesselsAtIsland(isl.id),4,`${isl.id}:harbour-boats`,20*60000).forEach((v,i)=>{const q=islandLayoutPoint(trafficSpots[i][0],trafficSpots[i][1]),t=vesselType(v.typeId),sc=ISLAND_ART.npcBoat*trafficSpots[i][2];drawTopBoat(q.x,q.y,sc,-.15,t.sprite,npcBoatAppearance(v));if(['night','dusk'].includes(dayPhase()))drawLamp(q.x,q.y-4)});
+  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(core.x,core.y);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i);drawLamp(q.x,q.y)})}ctx.restore();drawWeather();drawTimeLighting();
 }
 
 function drawVoyage(){
@@ -1333,7 +1520,7 @@ function drawVoyage(){
   const vis=clamp((p-.60)/.40,0,1);if(vis>0){const eased=vis*vis*(3-2*vis),scale=.12+eased*1.48,y=vr.y-80+eased*(vr.h*.20+200);ctx.globalAlpha=clamp(.16+eased,.16,1);drawApproachIsland(dest,W/2,y,scale);ctx.globalAlpha=1;if(vis>.36){for(let i=0;i<Math.floor(2+vis*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(vis>.63&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(W/2,vr.y+vr.h*.20);ctx.globalAlpha=1}}
   updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);
   const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);
-  drawWake(bx,by,1);drawTopBoat(bx,by,1.35,0);
+  drawWake(bx,by,1);drawTopBoat(bx,by,1.35,0,state.boat.type,playerBoatAppearance());
   drawWeather();drawTimeLighting();
 }
 function drawChart(){
@@ -1346,8 +1533,8 @@ function drawChart(){
   ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
   ctx.strokeStyle='#8d6b3f';ctx.lineWidth=Math.max(2,2*iconZoom*.8);state.routes.forEach(r=>{const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y);ctx.setLineDash([7,7]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
   known.forEach(i=>{const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,tile=Math.max(2,Math.round(r/5));renderIslandTiles(i,q.x,q.y,tile,.42,false,1);const labelFont=mobile?Math.max(10,Math.round(10*iconZoom)):Math.max(8,Math.round(9*iconZoom)),label=i.home?'HOME':i.name.split(' ')[0].toUpperCase(),labelW=Math.max(58,label.length*labelFont*.62+12),labelH=labelFont+9;roundedRect(q.x-labelW/2,q.y+r+5,labelW,labelH,3,'rgba(248,239,208,.95)');pxText(label,q.x,q.y+r+labelFont+4,'#5e4c2a',labelFont,'center');chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+7)})});
-  activeWorldVessels().slice(0,42).forEach(v=>{const wp=vesselWorldPosition(v,gameNow()),q=mapXY(wp.x,wp.y),t=vesselType(v.typeId),s=.48*iconZoom;drawTopBoat(q.x,q.y,s,0,t.sprite);if(['night','dusk'].includes(dayPhase()))circle(q.x+4,q.y-5,1.4,'#ffd978');chartView.hitAreas.push({kind:'vessel',id:v.id,x:q.x,y:q.y,r:Math.max(15,16*iconZoom)})});
-  if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b&&a.known){const A=mapXY(a.x,a.y),B=b.known?mapXY(b.x,b.y):{x:A.x+120,y:A.y-60},p=voyageProgress(),q={x:lerp(A.x,B.x,p),y:lerp(A.y,B.y,p)};drawTopBoat(q.x,q.y,.82*iconZoom,Math.atan2(B.y-A.y,B.x-A.x)+Math.PI/2);chartView.hitAreas.push({kind:'player',id:'player',x:q.x,y:q.y,r:Math.max(18,20*iconZoom)})}}
+  activeWorldVessels().slice(0,42).forEach(v=>{const wp=vesselWorldPosition(v,gameNow()),q=mapXY(wp.x,wp.y),t=vesselType(v.typeId),s=.48*iconZoom;drawTopBoat(q.x,q.y,s,0,t.sprite,npcBoatAppearance(v));if(['night','dusk'].includes(dayPhase()))circle(q.x+4,q.y-5,1.4,'#ffd978');chartView.hitAreas.push({kind:'vessel',id:v.id,x:q.x,y:q.y,r:Math.max(15,16*iconZoom)})});
+  if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b&&a.known){const A=mapXY(a.x,a.y),B=b.known?mapXY(b.x,b.y):{x:A.x+120,y:A.y-60},p=voyageProgress(),q={x:lerp(A.x,B.x,p),y:lerp(A.y,B.y,p)};drawTopBoat(q.x,q.y,.82*iconZoom,Math.atan2(B.y-A.y,B.x-A.x)+Math.PI/2,state.boat.type,playerBoatAppearance());chartView.hitAreas.push({kind:'player',id:'player',x:q.x,y:q.y,r:Math.max(18,20*iconZoom)})}}
   ctx.restore();chartView.needsFit=false;
 }
 function renderMinigame(ts){
@@ -1357,7 +1544,7 @@ function renderMinigame(ts){
 function renderReef(g,ts){
   drawSeaBackground();if(ts-g.spawn>520){g.spawn=ts;g.rocks.push({x:35+Math.random()*570,y:-20,s:8+Math.random()*14});if(Math.random()<.48)g.drops.push({x:35+Math.random()*570,y:-20})}
   const speed=1.4;g.rocks.forEach(o=>o.y+=speed);g.drops.forEach(o=>o.y+=speed*1.15);g.rocks=g.rocks.filter(o=>o.y<390);g.drops=g.drops.filter(o=>o.y<390);g.boatX=clamp(g.boatX,28,612);
-  drawTopBoat(g.boatX,g.boatY,1.1,0);g.rocks.forEach(o=>drawTopRock(o.x,o.y,o.s/12));g.drops.forEach(o=>{roundedRect(o.x-5,o.y-8,10,13,2,'#e5b54e','#704630',2);drawSparkle(o.x+5,o.y-6,'#fff7de')});
+  drawTopBoat(g.boatX,g.boatY,1.1,0,state.boat.type,playerBoatAppearance());g.rocks.forEach(o=>drawTopRock(o.x,o.y,o.s/12));g.drops.forEach(o=>{roundedRect(o.x-5,o.y-8,10,13,2,'#e5b54e','#704630',2);drawSparkle(o.x+5,o.y-6,'#fff7de')});
   for(let i=g.drops.length-1;i>=0;i--){const o=g.drops[i];if(Math.hypot(o.x-g.boatX,o.y-g.boatY)<24){g.drops.splice(i,1);g.score++;beep('soft')}}
   for(let i=g.rocks.length-1;i>=0;i--){const o=g.rocks[i];if(Math.hypot(o.x-g.boatX,o.y-g.boatY)<20){g.rocks.splice(i,1);g.bumpUntil=ts+260;g.boatX=clamp(g.boatX+(Math.random()<.5?-18:18),28,612)}}
   if(ts<g.bumpUntil)rect(0,0,640,360,'rgba(255,247,222,.07)');pxText(MINIGAME_META.reef.title,22,28,'#fff7de',12);pxText(MINIGAME_META.reef.instruction,320,340,'#fff7de',8,'center');
@@ -1369,10 +1556,10 @@ function renderSignal(g,ts){
 }
 function renderWind(g,ts){
   drawSeaBackground();if(ts>g.nextShift){g.target=.15+Math.random()*.7;g.nextShift=ts+3900}if(pointer.down)g.angle=clamp(pointer.x/640,0,1);const diff=Math.abs(g.angle-g.target);if(diff<.07){g.hold+=16;if(g.hold>850){g.score++;g.hold=0;g.target=.15+Math.random()*.7;beep('soft')}}else g.hold=Math.max(0,g.hold-11);
-  drawTopBoat(320,225,1.25,0);const x=70+g.angle*500,tx=70+g.target*500;roundedRect(70,92,500,14,4,'#fff','#18313a',2);rect(tx-20,88,40,22,'#83bf6a');rect(x-4,80,8,38,'#18313a');rect(525,120,4,40,'#18313a');poly([[529,124],[560,132],[529,138]],'#df7c68','#18313a',1);pxText(MINIGAME_META.wind.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wind.instruction,320,340,'#fff7de',8,'center');
+  drawTopBoat(320,225,1.25,0,state.boat.type,playerBoatAppearance());const x=70+g.angle*500,tx=70+g.target*500;roundedRect(70,92,500,14,4,'#fff','#18313a',2);rect(tx-20,88,40,22,'#83bf6a');rect(x-4,80,8,38,'#18313a');rect(525,120,4,40,'#18313a');poly([[529,124],[560,132],[529,138]],'#df7c68','#18313a',1);pxText(MINIGAME_META.wind.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wind.instruction,320,340,'#fff7de',8,'center');
 }
 function renderWildlife(g,ts){
-  drawSeaBackground();if(ts-g.spawn>720){g.spawn=ts;if(g.animals.length<6)g.animals.push({x:45+Math.random()*550,y:75+Math.random()*205,born:ts,kind:Math.random()<.62?'dolphin':'bird'})}g.animals=g.animals.filter(a=>ts-a.born<2500);g.animals.forEach(a=>{const bob=Math.sin(ts*.01+a.x)*4;if(a.kind==='dolphin'){poly([[a.x-13,a.y+bob],[a.x+4,a.y+bob-2],[a.x+12,a.y+bob+1],[a.x+4,a.y+bob+4],[a.x-8,a.y+bob+4]],'#2f6f85','#173a4a',1);rect(a.x+8,a.y-4+bob,8,4,'#2f6f85')}else{rect(a.x-9,a.y+bob,8,2,'#fff7de');rect(a.x+1,a.y+bob,8,2,'#fff7de');rect(a.x-1,a.y+bob-2,2,4,'#fff7de')}});drawTopBoat(320,295,1,0);rect(0,0,56,360,'rgba(16,37,48,.3)');rect(584,0,56,360,'rgba(16,37,48,.3)');pxText(MINIGAME_META.wildlife.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wildlife.instruction,320,340,'#fff7de',8,'center');
+  drawSeaBackground();if(ts-g.spawn>720){g.spawn=ts;if(g.animals.length<6)g.animals.push({x:45+Math.random()*550,y:75+Math.random()*205,born:ts,kind:Math.random()<.62?'dolphin':'bird'})}g.animals=g.animals.filter(a=>ts-a.born<2500);g.animals.forEach(a=>{const bob=Math.sin(ts*.01+a.x)*4;if(a.kind==='dolphin'){poly([[a.x-13,a.y+bob],[a.x+4,a.y+bob-2],[a.x+12,a.y+bob+1],[a.x+4,a.y+bob+4],[a.x-8,a.y+bob+4]],'#2f6f85','#173a4a',1);rect(a.x+8,a.y-4+bob,8,4,'#2f6f85')}else{rect(a.x-9,a.y+bob,8,2,'#fff7de');rect(a.x+1,a.y+bob,8,2,'#fff7de');rect(a.x-1,a.y+bob-2,2,4,'#fff7de')}});drawTopBoat(320,295,1,0,state.boat.type,playerBoatAppearance());rect(0,0,56,360,'rgba(16,37,48,.3)');rect(584,0,56,360,'rgba(16,37,48,.3)');pxText(MINIGAME_META.wildlife.title,22,28,'#fff7de',12);pxText(MINIGAME_META.wildlife.instruction,320,340,'#fff7de',8,'center');
 }
 function renderSoundings(g,ts){
   rect(0,0,640,360,'#214f67');roundedRect(96,58,448,260,8,'#f5e8c7','#18313a',3);const left=128,top=88,cw=64,ch=58;for(let y=0;y<4;y++)for(let x=0;x<6;x++){rect(left+x*cw,top+y*ch,cw-2,ch-2,(x+y)%2?'#d8e3c5':'#e7edd0');pxText(`${x+1}${String.fromCharCode(65+y)}`,left+x*cw+6,top+y*ch+14,'#6e795e',7)}
@@ -1384,20 +1571,20 @@ function renderRepair(g,ts){
   g.leaks=g.leaks.filter(l=>ts-l.born<5000);g.leaks.forEach(l=>{const age=(ts-l.born)/5000;circle(l.x,l.y,9,'#65bdd1','#18313a',2);circle(l.x,l.y,3,'#dff5f4');if(age>.7)drawSparkle(l.x+10,l.y-8,'#dff5f4')});pxText(MINIGAME_META.repair.title,22,28,'#fff7de',12);pxText(MINIGAME_META.repair.instruction,320,340,'#fff7de',8,'center');
 }
 const VOYAGE_SCENE_RENDERERS={
-  npcboat(e,ts,bx,by,t){const v=worldState().vessels.find(x=>x.id===e.vesselId);if(!v)return;const W=canvas.width,vr=visibleSceneRect(),type=vesselType(v.typeId),fromLeft=(hashString(v.id)%2)===0,x=fromLeft?(-70+t*(W+140)):(W+70-t*(W+140)),y=vr.y+vr.h*.22+Math.sin(t*Math.PI)*28;drawTopBoat(x,y,.68,fromLeft?.25:-.25,type.sprite);},
-  dolphins(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx+80+i*26-(t*150),y=by-30+Math.sin(t*12+i)*14;poly([[x-10,y],[x+3,y-2],[x+9,y+1],[x+2,y+4],[x-7,y+3]],'#2f6f85','#173a4a',1)}},
+  npcboat(e,ts,bx,by,t){const v=worldState().vessels.find(x=>x.id===e.vesselId);if(!v)return;const W=canvas.width,vr=visibleSceneRect(),type=vesselType(v.typeId),fromLeft=(hashString(v.id)%2)===0,x=fromLeft?(-70+t*(W+140)):(W+70-t*(W+140)),y=vr.y+vr.h*.22+Math.sin(t*Math.PI)*28;drawTopBoat(x,y,.68,fromLeft?.25:-.25,type.sprite,npcBoatAppearance(v));},
+  dolphins(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx+85+i*30-(t*165),y=by-34+Math.sin(t*12+i)*14;drawSeaSprite('dolphin',x,y,.78,(i%2)===0,i)}},
   wildlife(e,ts,bx,by,t){VOYAGE_SCENE_RENDERERS.dolphins(e,ts,bx,by,t)},
-  seabirds(e,ts,bx,by,t){for(let i=0;i<6;i++){const x=20+t*(canvas.width-40)+i*16,y=visibleSceneRect().y+45+i%3*10;line(x-5,y,x,y-3,'#fff7de',2);line(x,y-3,x+5,y,'#fff7de',2)}},
-  trader(e,ts,bx,by,t){drawTopBoat(canvas.width+20-t*(canvas.width+100),visibleSceneRect().y+70,.55,-.35,'sailer')},
+  seabirds(e,ts,bx,by,t){for(let i=0;i<6;i++){const x=20+t*(canvas.width-40)+i*18,y=visibleSceneRect().y+45+i%3*11;drawSeaSprite('gull',x,y,.8,(i%2)===0,i)}},
+  trader(e,ts,bx,by,t){drawTopBoat(canvas.width+20-t*(canvas.width+100),visibleSceneRect().y+70,.55,-.35,'sailer',defaultBoatAppearance('sailer'))},
   squall(e,ts,bx,by,t){const x=canvas.width-t*(canvas.width+180);rect(x,0,180,canvas.height,'rgba(38,71,83,.28)');for(let i=0;i<28;i++)rect(x+10+(i*31)%170,40+(i*47)%Math.max(100,canvas.height-50),1,8,'rgba(240,252,255,.48)')},
-  bottle(e,ts,bx,by,t){roundedRect(bx+70,by-42,10,15,2,'#e5b54e','#704630',2);drawSparkle(bx+83,by-48,'#fff7de')},
+  bottle(e,ts,bx,by,t){drawSeaSprite('bottle',bx+76,by-40,.9,false,0);drawSparkle(bx+89,by-50,'#fff7de')},
   signal(e,ts,bx,by,t){const pulse=(Math.sin(ts*.008)>0)?1:0,x=canvas.width*.84,y=visibleSceneRect().y+55;circle(x,y,5,pulse?'#fff7de':'#df7c68');if(pulse)circle(x,y,14,'rgba(255,247,222,.12)')},
   shoal(e,ts,bx,by,t){for(let i=0;i<8;i++){const x=bx+80+(i%4)*16,y=by+60+Math.floor(i/4)*13;rect(x,y,9,3,'rgba(32,91,112,.65)')}},
-  shipwreck(e,ts,bx,by,t){const vr=visibleSceneRect(),x=canvas.width*.72,y=clamp(by-70,vr.y+80,vr.y+vr.h-90);drawTopRock(x-18,y+18,.9);drawTopRock(x+24,y+25,.65);line(x-22,y+10,x+28,y-20,'#704630',5);line(x+2,y-12,x+35,y-34,'#704630',3);rect(x+28,y-39,18,3,'#fff7de');if(Math.sin(ts*.006)>0)drawSparkle(x+44,y-27,'#fff7de')},
-  seaglass(e,ts,bx,by,t){const vr=visibleSceneRect(),x=canvas.width*.68,y=clamp(by+62,vr.y+90,vr.y+vr.h-60);for(let i=0;i<7;i++){const a=i/7*Math.PI*2,r=12+(i%2)*7;drawSparkle(x+Math.cos(a)*r,y+Math.sin(a)*r,['#b8f0df','#8dd4e7','#fff7de'][i%3])}},
+  shipwreck(e,ts,bx,by,t){const vr=visibleSceneRect(),x=canvas.width*.72,y=clamp(by-70,vr.y+80,vr.y+vr.h-90);drawSeaSprite('wreck',x,y,1.05,false,0);if(Math.sin(ts*.006)>0)drawSparkle(x+29,y-23,'#fff7de')},
+  seaglass(e,ts,bx,by,t){const vr=visibleSceneRect(),x=canvas.width*.68,y=clamp(by+62,vr.y+90,vr.y+vr.h-60);drawSeaSprite('seaglass',x,y,1.05,false,0);if(Math.sin(ts*.01)>0)drawSparkle(x+18,y-12,'#fff7de')},
   rigging(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx-22+i*14,y=by-30+Math.sin(ts*.02+i)*6;rect(x,y,10,2,'#fff7de')}},
   breeze(e,ts,bx,by,t){const vr=visibleSceneRect();for(let i=0;i<Math.max(6,Math.floor(canvas.height/80));i++){const x=((i*120+ts*.08)%(canvas.width+120))-60;rect(x,vr.y+35+i*50,42,2,'rgba(255,255,255,.45)')}},
-  castaway(e,ts,bx,by,t){drawTopBoat(bx+78,by-48,.62,.15,'shallow');drawTopVillager(bx+78,by-55,'#b48cc7','#e5b54e',1)},
+  castaway(e,ts,bx,by,t){drawTopBoat(bx+78,by-48,.62,.15,'shallow',defaultBoatAppearance('shallow'));drawTopVillager(bx+78,by-55,'#b48cc7','#e5b54e',1)},
   stonecargo(e,ts,bx,by,t){for(let i=0;i<4;i++)drawTopRock(bx+62+i*12,by+48+(i%2)*8,.55)},
   canvas(e,ts,bx,by,t){VOYAGE_SCENE_RENDERERS.breeze(e,ts,bx,by,t);rect(bx+74,by-35,22,12,'#fff7de');rect(bx+77,by-32,16,2,'#df7c68')}
 };
@@ -1415,6 +1602,9 @@ window.addEventListener('resize',()=>{fitResponsiveStage();syncMobilePanel()});
 window.addEventListener('beforeunload',()=>{simulateWorldTo(nowReal(),false);save()});
 setInterval(()=>{simulateWorldTo(nowReal(),false);save();if(['harbour','chart','log','voyage'].includes(state.activeView))renderUI()},60000);
 setInterval(()=>{if(state.sim?.active&&state.phase!=='ashore'){/* preview uses real time */}},1000);
+
+window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES};
+window.__MakeFastArt={buildingSprite,residentSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit};
 
 // Start
 const startupWorldGap=Math.max(0,nowReal()-(worldState().lastSimAt||nowReal()));simulateWorldTo(nowReal(),startupWorldGap>10*60000);save();fitResponsiveStage();syncMobilePanel();renderUI();requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if(startupWorldGap>10*60000&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
