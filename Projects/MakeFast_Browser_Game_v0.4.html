@@ -97,6 +97,7 @@
   .scene-caption{position:absolute;left:10px;bottom:10px;display:none;min-width:190px;max-width:min(70%,340px);background:rgba(255,247,222,.94);border:3px solid var(--ink);padding:7px 9px;border-radius:7px;box-shadow:3px 3px 0 rgba(22,49,58,.18);font-size:9px;pointer-events:none}.scene-caption.show{display:block}.scene-caption b{display:block;font-size:11px;margin-bottom:2px}.scene-caption span{color:var(--ink-soft);line-height:1.35}
   .map-controls{position:absolute;right:10px;top:10px;display:none;gap:5px;z-index:6}.map-controls.show{display:flex}.map-controls button{width:34px;height:34px;border:3px solid var(--ink);background:var(--paper);border-radius:7px;box-shadow:3px 3px 0 var(--shadow);font-weight:1000;cursor:pointer;color:var(--ink)}.map-controls button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
   .map-info,.world-info{position:absolute;left:10px;bottom:10px;display:none;z-index:18;width:min(330px,calc(100% - 20px));max-height:min(38vh,270px);overflow:auto;background:rgba(255,247,222,.98);border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 rgba(22,49,58,.18);padding:8px 9px}.map-info.show,.world-info.show{display:block}.map-info b,.world-info b{display:block;font-size:10px;line-height:1.25;padding-right:22px}.map-info span,.world-info span{display:block;font-size:8px;color:var(--ink-soft);line-height:1.4;margin-top:3px}.map-info-close,.world-info-close{position:absolute;right:5px;top:4px;width:24px;height:24px;border:0;background:transparent;color:var(--ink);font-weight:1000;cursor:pointer}.map-info-actions,.world-info-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.map-info-actions button,.world-info-actions button{border:2px solid var(--ink);background:var(--cream);border-radius:5px;padding:5px 7px;font-size:8px;font-weight:900;cursor:pointer}.traffic[data-vessel-id],.resident[data-resident-id]{cursor:pointer}.traffic[data-vessel-id]:active,.resident[data-resident-id]:active{transform:translate(1px,1px)}
+  .chart-label-layer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;display:none}.chart-label-layer.show{display:block}.chart-label-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.chart-label-layer line{stroke:rgba(94,76,42,.55);stroke-width:1.25;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}.chart-place-label,.chart-you-label{position:absolute;box-sizing:border-box;background:rgba(255,247,222,.96);border:2px solid rgba(94,76,42,.82);border-radius:5px;box-shadow:2px 2px 0 rgba(24,49,58,.12);color:#5e4c2a;font-weight:1000;line-height:1;letter-spacing:.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:3px 5px;font-size:11px;transform:translate(-50%,0);text-align:center}.chart-place-label.compact{font-size:10px;padding:2px 4px}.chart-place-label.overview{font-size:10px;max-width:118px;text-align:left;transform:none;padding:3px 5px}.chart-place-label.overview.right{text-align:right;transform:translateX(-100%)}.chart-place-label.home{background:#e8f0d7;border-color:#58735c}.chart-place-label.current{background:#fff0ce;border-color:#c56c58}.chart-place-label.destination{background:#d8eef3;border-color:#2d7e9a}.chart-you-label{font-size:10px;background:#f7ddd3;border-color:#b85f51;color:#8b4b3f;padding:2px 5px;transform:translate(-50%,-100%)}
   .passage-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px}.passage-tabs button{border:3px solid var(--ink);background:#fff;border-radius:7px;padding:7px;font-size:8px;font-weight:1000;color:var(--ink);cursor:pointer}.passage-tabs button.active{background:#dff1cf;box-shadow:inset 0 -3px 0 rgba(59,128,100,.25)}
   .chart-legend{display:flex;flex-wrap:wrap;gap:5px;font-size:7px;color:var(--ink-soft)}.chart-legend span{display:inline-flex;gap:4px;align-items:center}.chart-legend i{width:8px;height:8px;border:2px solid var(--ink);border-radius:50%;background:#fff}.chart-legend i.rumour{border-style:dashed;background:#dbe4d0}.chart-legend i.traffic{width:6px;height:6px;background:#527da0;border-width:1px}.chart-legend i.you{border-radius:2px;transform:rotate(45deg);background:#df7c68}
   .panel.dragging{transition:none!important}.panel-head{touch-action:none}.panel-head:active{cursor:grabbing}
@@ -158,6 +159,7 @@
       <div class="voyage-note" id="voyageNote" role="button" aria-live="polite"><b id="voyageNoteTitle">Something ahead</b><span id="voyageNoteText">Tap to open Voyage.</span></div>
       <div class="voyage-peek" id="voyagePeek" role="button" aria-label="Open voyage progress"><div class="peek-row"><span id="voyagePeekTitle">UNDER WAY</span><span id="voyagePeekTime"></span></div><div class="peek-meter"><i id="voyagePeekFill"></i></div></div>
       <div class="map-controls" id="mapControls" aria-label="Chart controls"><button id="mapZoomOut" title="Zoom out">−</button><button id="mapReset" title="Reset chart">⌂</button><button id="mapZoomIn" title="Zoom in">+</button></div>
+      <div class="chart-label-layer" id="chartLabels" aria-hidden="true"></div>
       <div class="map-info" id="mapInfo" aria-live="polite"></div>
       <div class="world-info" id="worldInfo" aria-live="polite"></div>
       <div class="game-hud" id="gameHud"><b id="gameHudTitle">REEF RUN</b><div id="gameHudText">0 pts</div><div class="gamebar"><i id="gameHudBar"></i></div></div>
@@ -186,7 +188,7 @@
 'use strict';
 
 const SAVE_KEY='makefast_save_v1';
-const VERSION=15;
+const VERSION=16.1;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -697,7 +699,7 @@ const canvas=$('#game'), ctx=canvas.getContext('2d'); ctx.imageSmoothingEnabled=
 let DPR=1, frame=0, lastTs=0, toastTimer=null, minigame=null, particles=[], sceneEvent=null, lastVoyageEventCheck=0;
 let mobilePanelCollapsed=false,lastPanelView=null;const passageUI={tab:'clock'};const chartView={zoom:1,panX:0,panY:0,dragging:false,lastX:0,lastY:0,downX:0,downY:0,moved:false,selection:null,hitAreas:[],needsFit:true,pointers:new Map(),pinch:null};
 const pointer={x:0,y:0,down:false,startX:0,startY:0};const canvasPointerIds=new Set();const panelDrag={active:false,startY:0,startOffset:0,moved:false,pointerId:null,startedOnToggle:false,suppressToggleClick:false};let worldSelection=null,worldHitAreas=[];
-let voyageMicroEvent=null,voyageMicroNext=0,lastTrafficVisualReal=0,lastPaintAt=0;const approachSpriteCache=new Map();
+let voyageMicroEvent=null,voyageMicroNext=0,lastTrafficVisualReal=0,lastPaintAt=0;const approachSpriteCache=new Map(),terrainSpriteCache=new Map();
 
 function toast(msg){const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2400)}
 const audioEngine={ctx:null,master:null,delay:null,feedback:null,noise:null};
@@ -912,7 +914,7 @@ function worldSupplyProject(isl,vessel,at,maxUnits=1){
   if(moved){logWorld(contentLine('copy.world.projectHelp',{vessel:vessel.name,project:t.name,destination:isl.name}),at,true,'✚');if(projectProgress(p)>=.999)completeIslandProject(isl,p);return true}return false;
 }
 function revealSurveyRoute(from,at,vessel){
-  if(state.islands.length>=28)return false;const n=createChartRumour(from,`${vessel.name}’s sounding notes`);if(!n)return false;const txt=contentLine('copy.world.survey',{vessel:vessel.name,destination:from.name});logWorld(`${txt} A possible shore called ${n.name} was pencilled onto the chart.`,at,true,'⌁');return true;
+  if(state.islands.length>=28)return false;const n=createChartRumour(from,`${vessel.name}’s sounding notes`);if(!n)return false;const txt=contentLine('copy.world.survey',{vessel:vessel.name,destination:from.name});logWorld(`${txt} An unnamed coastline was pencilled onto the chart.`,at,true,'⌁');return true;
 }
 function resolveNpcArrival(v,at){
   const dest=getIsland(v.destinationId),type=vesselType(v.typeId);if(!dest)return;ensureIslandData(dest);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=nextNpcActionAt(v,dest,at,Math.random);
@@ -1183,7 +1185,7 @@ function ensureChartRumours(target=3){
 }
 function revealChartRumour(from=currentIsland(),source='a scrap of chart'){
   if(chartRumours().length>=5){const r=chartRumours().sort((a,b)=>(a.rumourAt||0)-(b.rumourAt||0))[0];if(r){r.rumourSource=source;r.rumourAt=gameNow();return r}return null}
-  const n=createChartRumour(from,source);if(n){state.journal.unshift(`A possible shoreline was marked on the chart: ${n.name}.`);save();toast(`New rumour added to the chart: ${n.name}.`)}return n;
+  const n=createChartRumour(from,source);if(n){state.journal.unshift('A possible shoreline was added to the chart. Its name is still unknown.');save();toast('A new unnamed shoreline has been pencilled onto the chart.')}return n;
 }
 function setCourseTo(id){
   if(state.phase!=='ashore'){toast('Finish this crossing before changing course.');return false}const i=getIsland(id);if(!i||i.id===state.currentIslandId)return false;state.selectedDestinationId=i.id;save();renderUI();toast(`Course marked for ${i.known?i.name:'the rumoured shore'}.`);return true;
@@ -1205,7 +1207,7 @@ function chartSelectionHTML(sel){
   if(!sel)return'';
   if(sel.kind==='island'){
     const i=getIsland(sel.id);if(!i)return'';const course=state.selectedDestinationId===i.id;
-    if(!i.known){return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>? ${i.name}</b><span>Rumoured shoreline · ${i.rumourSource||'the details are still uncertain'}<br>The coastline is only lightly pencilled in until you make the crossing.</span><div class="map-info-actions">${state.phase==='ashore'&&i.id!==state.currentIslandId?`<button data-map-course="${i.id}">${course?'COURSE MARKED':'SET COURSE'}</button>`:''}</div>`}
+    if(!i.known){return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>? Unknown shore</b><span>Unconfirmed coastline · ${i.rumourSource||'the details are still uncertain'}<br>Only the shape of the coast is pencilled in. Its name and character remain unknown until landfall.</span><div class="map-info-actions">${state.phase==='ashore'&&i.id!==state.currentIslandId?`<button data-map-course="${i.id}">${course?'COURSE MARKED':'SET COURSE'}</button>`:''}</div>`}
     const fleet=vesselsAtIsland(i.id),active=i.projects.filter(p=>!p.complete),stock=Object.values(i.stock||{}).reduce((a,b)=>a+b,0);
     return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>${i.home?'⌂ ':''}${i.name}</b><span>${biomeDef(i.biome).label} · ${population(i)} resident${population(i)===1?'':'s'} · ${active.length} project${active.length===1?'':'s'} underway · ${fleet.length} boat${fleet.length===1?'':'s'} alongside${stock?` · ${stock} stores`:''}</span><div class="map-info-actions"><button data-map-inspect="${i.id}">ISLAND DETAILS</button>${state.phase==='ashore'&&i.id!==state.currentIslandId?`<button data-map-course="${i.id}">${course?'COURSE MARKED':'SET DESTINATION'}</button>`:''}</div>`;
   }
@@ -1510,8 +1512,8 @@ function residentLore(p,isl){
 }
 function residentWaitingRequest(p,isl=residentHomeIsland(p.id)){return state.liftRequests.find(r=>r.personId===p.id&&r.originId===isl?.id&&r.status==='waiting')||null}
 function residentCanShareRumour(p){return !p.rumourShared&&['navigator','trader','fisher','naturalist'].includes(p.archetype)}
-function shareResidentRumour(id){const p=residentById(id),isl=residentHomeIsland(id)||currentIsland();if(!p)return;const n=revealChartRumour(isl,`${p.name}’s harbour story`);p.rumourShared=true;p.note=n?`${p.name} mentioned a possible shore called ${n.name}.`:p.note;save();updateWorldInfoOverlay();openResidentDetails(id)}
-function shareVesselRumour(id){const v=worldState().vessels.find(x=>x.id===id);if(!v)return;const from=getIsland(v.locationId)||getIsland(v.homeId)||currentIsland(),n=revealChartRumour(from,`${v.name}’s crew`);v.rumourShared=true;save();updateMapInfoOverlay();updateWorldInfoOverlay();if(n)toast(`${v.name}’s crew marked ${n.name} on your chart.`)}
+function shareResidentRumour(id){const p=residentById(id),isl=residentHomeIsland(id)||currentIsland();if(!p)return;const n=revealChartRumour(isl,`${p.name}’s harbour story`);p.rumourShared=true;p.note=n?`${p.name} sketched the outline of a possible shore, but could not put a reliable name to it.`:p.note;save();updateWorldInfoOverlay();openResidentDetails(id)}
+function shareVesselRumour(id){const v=worldState().vessels.find(x=>x.id===id);if(!v)return;const from=getIsland(v.locationId)||getIsland(v.homeId)||currentIsland(),n=revealChartRumour(from,`${v.name}’s crew`);v.rumourShared=true;save();updateMapInfoOverlay();updateWorldInfoOverlay();if(n)toast(`${v.name}’s crew pencilled an unnamed shoreline onto your chart.`)}
 function openResidentDetails(id){
   const p=residentById(id),isl=residentHomeIsland(id);if(!p)return;const req=residentWaitingRequest(p,isl),cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id);p.chatIndex=(p.chatIndex||0)+1;save();
   showModal(`<h2>${p.name}</h2><p>${p.occupation||'Island resident'}${isl?` · ${isl.name}`:''}</p><div class="notice">${residentLore(p,isl)}</div><p>${p.note||''}${cap?`<br><b>Boat:</b> Captain of ${cap.name}`:''}${away?.kind==='passenger'?'<br><b>At the moment:</b> travelling between islands.':''}</p>${req?`<div class="card"><h3>Small request</h3><p>${p.name} is hoping to reach ${getIsland(req.targetId)?.name||'another island'}.</p><button class="big-btn ghost" data-person-course="${req.targetId}">MARK THE ROUTE</button></div>`:''}<div class="modal-actions">${residentCanShareRumour(p)?`<button class="big-btn secondary" data-person-rumour="${p.id}">ASK ABOUT THE WATER</button>`:''}<button class="big-btn ghost" data-close>CLOSE</button></div>`);
@@ -1539,7 +1541,7 @@ function renderHarbourPanel(){
   if(state.phase!=='ashore'){
     const v=state.voyage,dest=getIsland(v.destinationId),known=dest.known,needs=known?islandProjectNeeds(dest):{},needBits=Object.entries(needs).filter(([,n])=>n>0).slice(0,6),fleet=known?vesselsAtIsland(dest.id):[];
     $('#panelTitle').textContent=known?`Shore · ${dest.name}`:'Shore · Uncharted';$('#panelSubtitle').textContent=state.phase==='arrived'?'The harbour is close enough to read now.':'A quiet look at the place you are sailing toward.';
-    body.innerHTML=`<div class="section"><div class="section-title">The shore ahead</div><div class="card"><h3>${known?`${biomeDef(dest.biome).label} · ${population(dest)} resident${population(dest)===1?'':'s'}`:'A pencilled-in coastline'}</h3><p>${known?islandSummary(dest):dest.rumoured?`You heard of this shore from ${dest.rumourSource||'another sailor'}. The harbour itself is still unknown.`:'The coastline is still taking shape beyond the horizon.'}</p></div></div>${known&&needBits.length?`<div class="section"><div class="section-title">Projects waiting ashore</div><div class="materials">${needBits.map(([m,n])=>`<span class="material">${MATERIALS[m].icon} ${materialName(m)} ${n}</span>`).join('')}</div></div>`:''}${known?`<div class="section"><div class="section-title">People & harbour</div>${dest.residents.length?`<div class="resident-list">${dest.residents.slice(0,6).map(residentHTML).join('')}</div>`:''}${fleet.length?`<div class="traffic-list" style="margin-top:7px">${fleet.slice(0,4).map(vesselCardHTML).join('')}</div>`:''}</div>`:''}<div class="row"><button class="big-btn secondary" id="shoreChartBtn">SHOW ON CHART</button><button class="big-btn ghost" id="shorePassageBtn">OPEN PASSAGE</button></div>`;
+    body.innerHTML=`<div class="section"><div class="section-title">The shore ahead</div><div class="card"><h3>${known?`${biomeDef(dest.biome).label} · ${population(dest)} resident${population(dest)===1?'':'s'}`:'A pencilled-in coastline'}</h3><p>${known?islandSummary(dest):dest.rumoured?`You heard of an unnamed shore from ${dest.rumourSource||'another sailor'}. The harbour, name and landscape are still unknown.`:'The coastline is still taking shape beyond the horizon.'}</p></div></div>${known&&needBits.length?`<div class="section"><div class="section-title">Projects waiting ashore</div><div class="materials">${needBits.map(([m,n])=>`<span class="material">${MATERIALS[m].icon} ${materialName(m)} ${n}</span>`).join('')}</div></div>`:''}${known?`<div class="section"><div class="section-title">People & harbour</div>${dest.residents.length?`<div class="resident-list">${dest.residents.slice(0,6).map(residentHTML).join('')}</div>`:''}${fleet.length?`<div class="traffic-list" style="margin-top:7px">${fleet.slice(0,4).map(vesselCardHTML).join('')}</div>`:''}</div>`:''}<div class="row"><button class="big-btn secondary" id="shoreChartBtn">SHOW ON CHART</button><button class="big-btn ghost" id="shorePassageBtn">OPEN PASSAGE</button></div>`;
     $('#shoreChartBtn').onclick=()=>{setView('chart');chartView.selection={kind:'island',id:dest.id};requestAnimationFrame(updateMapInfoOverlay)};$('#shorePassageBtn').onclick=()=>setView('voyage');return;
   }
   const requests=state.liftRequests.filter(x=>x.status==='waiting'&&x.originId===isl.id),active=isl.projects.filter(p=>!p.complete),localFleet=vesselsAtIsland(isl.id),present=isl.residents.filter(p=>!residentAwayAssignment(p.id));
@@ -1556,7 +1558,7 @@ function renderVoyagePanel(){
   if(state.phase==='ashore'){
     const isl=currentIsland(),dest=state.selectedDestinationId==='uncharted'?null:selectedDest(),r=currentRatio();ensureIslandData(isl);
     if(passageUI.tab==='clock'){
-      body.innerHTML=`${passageTabsHTML()}<div class="section">${harbourClockHTML()}</div><div class="section"><div class="section-title">Marked course</div><div class="card"><h3>${dest?(dest.known?dest.name:`? ${dest.name}`):'Open water'}</h3><p>${dest?(dest.known?islandSummary(dest):`A rumoured shore from ${dest.rumourSource||'the chart'}.`):'No fixed harbour — let a new coastline emerge from open water.'}</p></div><div class="row"><button class="big-btn secondary" id="passageChart">OPEN CHART</button><button class="big-btn" id="setSail">SET SAIL</button></div></div><div class="section"><div class="card"><h3>${r.name} · ${r.label}</h3><p>Leaving now would put the planned landfall around <b>${fmtClock(gameNow()+r.fast*3600000)}</b> on your island clock.</p></div></div>`;
+      body.innerHTML=`${passageTabsHTML()}<div class="section">${harbourClockHTML()}</div><div class="section"><div class="section-title">Marked course</div><div class="card"><h3>${dest?(dest.known?dest.name:'Unknown shore'):'Open water'}</h3><p>${dest?(dest.known?islandSummary(dest):`A rumoured shore from ${dest.rumourSource||'the chart'}.`):'No fixed harbour — let a new coastline emerge from open water.'}</p></div><div class="row"><button class="big-btn secondary" id="passageChart">OPEN CHART</button><button class="big-btn" id="setSail">SET SAIL</button></div></div><div class="section"><div class="card"><h3>${r.name} · ${r.label}</h3><p>Leaving now would put the planned landfall around <b>${fmtClock(gameNow()+r.fast*3600000)}</b> on your island clock.</p></div></div>`;
       bindPassageTabs();$('#passageChart').onclick=()=>setView('chart');$('#setSail').onclick=startVoyage;return;
     }
     const home=isl.home,localFleet=vesselsAtIsland(isl.id),homeFleet=worldState().vessels.filter(v=>v.homeId===isl.id),builds=isl.vesselBuilds.filter(b=>!b.complete);
@@ -1578,9 +1580,9 @@ function renderVoyagePanel(){
 
 function renderChartPanel(){
   ensureChartRumours(3);const body=$('#panelBody');$('#panelTitle').textContent='Chart';$('#panelSubtitle').textContent='Tap places and traffic. Drag to pan; pinch or use +/− to zoom.';const known=state.islands.filter(i=>i.known),rumours=chartRumours(),course=state.selectedDestinationId==='uncharted'?null:selectedDest();
-  body.innerHTML=`<div class="section"><div class="card"><h3>${state.phase==='ashore'?'Marked course':'Current crossing'} · ${state.phase==='ashore'?(course?(course.known?course.name:`? ${course.name}`):'Open water'):(getIsland(state.voyage?.destinationId)?.known?getIsland(state.voyage?.destinationId)?.name:'Uncharted shore')}</h3><p>Use the map itself to inspect an island or boat. Rumoured shores are lightly pencilled until you visit them.</p></div><div class="chart-legend"><span><i></i>known island</span><span><i class="rumour"></i>rumour</span><span><i class="traffic"></i>working boat</span><span><i class="you"></i>you are here</span></div></div>
+  body.innerHTML=`<div class="section"><div class="card"><h3>${state.phase==='ashore'?'Marked course':'Current crossing'} · ${state.phase==='ashore'?(course?(course.known?course.name:'Unknown shore'):'Open water'):(getIsland(state.voyage?.destinationId)?.known?getIsland(state.voyage?.destinationId)?.name:'Uncharted shore')}</h3><p>Use the map itself to inspect an island or boat. Unvisited rumours show only an uncertain coastline; names and terrain are learned at landfall.</p></div><div class="chart-legend"><span><i></i>known island</span><span><i class="rumour"></i>unconfirmed coast</span><span><i class="traffic"></i>working boat</span><span><i class="you"></i>you are here</span></div></div>
     <div class="section"><div class="stat-grid"><div class="stat"><b>${known.length}</b><span>known places</span></div><div class="stat"><b>${rumours.length}</b><span>rumoured shores</span></div><div class="stat"><b>${state.routes.length}</b><span>sailed routes</span></div><div class="stat"><b>${activeWorldVessels().length}</b><span>boats under way</span></div></div></div>
-    ${rumours.length?`<div class="section"><div class="section-title">Pencil marks <span>not yet visited</span></div>${rumours.map(i=>`<div class="card" data-chart-rumour="${i.id}" style="cursor:pointer"><h3>? ${i.name}</h3><p>${i.rumourSource||'A possible coastline mentioned around the harbour.'}</p></div>`).join('')}</div>`:''}
+    ${rumours.length?`<div class="section"><div class="section-title">Pencil marks <span>not yet visited</span></div>${rumours.map((i,n)=>`<div class="card" data-chart-rumour="${i.id}" style="cursor:pointer"><h3>? Unknown shore ${rumours.length>1?n+1:''}</h3><p>${i.rumourSource||'A possible coastline mentioned around the harbour.'}</p></div>`).join('')}</div>`:''}
     ${state.phase==='ashore'?`<div class="section"><button class="big-btn ghost" id="openWaterCourse">MARK OPEN WATER INSTEAD</button><div class="muted" style="margin-top:7px">New chart marks can also come from damaged charts, survey boats and conversations with experienced islanders or crews.</div></div>`:''}`;
   $$('[data-chart-rumour]').forEach(b=>b.onclick=()=>{chartView.selection={kind:'island',id:b.dataset.chartRumour};updateMapInfoOverlay()});if($('#openWaterCourse'))$('#openWaterCourse').onclick=()=>{state.selectedDestinationId='uncharted';save();renderChartPanel();toast('Open water marked as the next course.')};
 }
@@ -1867,18 +1869,56 @@ function drawWeather(){
 }
 function biomeColor(b){return biomeDef(b).color}
 function shapeRadius(isl,theta){const s=ensureIslandData(isl).shape;const dtheta=Math.atan2(Math.sin(theta-s.coveAngle),Math.cos(theta-s.coveAngle));const cove=s.coveDepth*Math.exp(-(dtheta*dtheta)/(s.coveWidth*s.coveWidth));return 1+s.a1*Math.sin(s.k1*theta+s.p1)+s.a2*Math.cos(s.k2*theta+s.p2)-cove}
-function islandTileIsLand(isl,gx,gy,scale=1){const s=ensureIslandData(isl).shape,c=Math.cos(s.rotation),sn=Math.sin(s.rotation),rx=(gx*c-gy*sn)/(s.rx*scale),ry=(gx*sn+gy*c)/(s.ry*scale),theta=Math.atan2(ry,rx),dist=Math.hypot(rx,ry);return dist<shapeRadius(isl,theta)}
+function islandShapeMetric(isl,gx,gy,scale=1){const s=ensureIslandData(isl).shape,c=Math.cos(s.rotation),sn=Math.sin(s.rotation),rx=(gx*c-gy*sn)/(s.rx*scale),ry=(gx*sn+gy*c)/(s.ry*scale),theta=Math.atan2(ry,rx),dist=Math.hypot(rx,ry);return dist/Math.max(.001,shapeRadius(isl,theta))}
+function islandTileIsLand(isl,gx,gy,scale=1){return islandShapeMetric(isl,gx,gy,scale)<1}
+function terrainPalette(b){
+  const palettes={
+    meadow:{base:'#78b861',light:'#94cb73',dark:'#4f8850',accent:'#b6d982',sand:'#e6cd82',sandHi:'#f2dda0',wet:'#bf9d5f'},
+    pine:{base:'#5b9660',light:'#74aa68',dark:'#3f7250',accent:'#8ab77a',sand:'#ddc781',sandHi:'#eedb9b',wet:'#ae915c'},
+    marsh:{base:'#719f74',light:'#8ab383',dark:'#4d765d',accent:'#9bc093',sand:'#d8c487',sandHi:'#e9d8a1',wet:'#9a8d64'},
+    cliff:{base:'#8da083',light:'#a7b298',dark:'#667568',accent:'#bdc1a8',sand:'#d3c190',sandHi:'#e5d7ad',wet:'#91856e'},
+    orchard:{base:'#80b966',light:'#9dcc78',dark:'#57884f',accent:'#c1dd8b',sand:'#e4ca83',sandHi:'#f0dda1',wet:'#b99b5d'},
+    dune:{base:'#cdb674',light:'#e0ca8c',dark:'#a58e58',accent:'#ecd9a2',sand:'#d9be72',sandHi:'#efda9a',wet:'#a88953'}
+  };return palettes[b]||palettes.meadow
+}
+function terrainNoise(isl,x,y,salt=''){const h=hashString(`${isl.id}:${salt}:${Math.floor(x)}:${Math.floor(y)}`);return((h>>>0)%10000)/10000}
+function islandTerrainSprite(isl){
+  ensureIslandData(isl);const key=`terrain-v16b:${isl.id}:${isl.biome}:${JSON.stringify(isl.shape)}`;if(terrainSpriteCache.has(key))return terrainSpriteCache.get(key);
+  const W=192,H=144,CX=96,CY=72,U=6,[c,g]=pixelCanvas(W,H),p=terrainPalette(isl.biome),seed=(hashString(`${isl.id}:surface`)>>>0)/4294967295;g.imageSmoothingEnabled=false;
+  const field=(gx,gy)=>Math.sin(gx*.57+seed*11)*.52+Math.cos(gy*.71+seed*17)*.42+Math.sin((gx+gy)*.31+seed*23)*.28+Math.cos((gx-gy)*.22+seed*31)*.18;
+  // A soft under-shore edge is generated from the actual coastline, never from square tile neighbours.
+  for(let y=3;y<H-3;y++)for(let x=3;x<W-3;x++){const gx=(x-CX)/U,gy=(y-CY)/U,m=islandShapeMetric(isl,gx,gy,1);if(m>=1&&m<1.055&&terrainNoise(isl,Math.floor(x/3),Math.floor(y/3),'shadow')>.58){g.fillStyle='rgba(19,51,59,.14)';g.fillRect(x,y+2,1,1)}}
+  for(let y=3;y<H-3;y++)for(let x=3;x<W-3;x++){
+    const gx=(x-CX)/U,gy=(y-CY)/U,m=islandShapeMetric(isl,gx,gy,1);if(m>=1)continue;const f=field(gx,gy),speck=terrainNoise(isl,Math.floor(x/4),Math.floor(y/4),'speck');let col=p.base;
+    if(m>.91)col=(f>.25||speck>.68)?p.sandHi:p.sand;
+    else if(m>.84)col=f<-.48?p.sand:f>.68?p.accent:p.base;
+    else if(f>.86)col=p.light;else if(f<-.92)col=p.dark;else if(f>.58&&speck>.55)col=p.accent;
+    g.fillStyle=col;g.fillRect(x,y,1,1);
+    if(m>.935&&speck>.72){g.fillStyle=p.wet;g.fillRect(x,y+1,1,1)}
+  }
+  // Biome accents are clustered and sparse: texture, not a repeated floor pattern.
+  const rr=rng(hashString(`${isl.id}:terrain-details-v16b`));
+  for(let i=0;i<58;i++){
+    const gx=(rr()-.5)*21,gy=(rr()-.5)*14,m=islandShapeMetric(isl,gx,gy,1);if(m>.78)continue;const x=Math.round(CX+gx*U),y=Math.round(CY+gy*U),roll=rr();
+    if(isl.biome==='cliff'&&roll<.48){g.fillStyle=roll<.22?'#737f77':'#aab09f';g.fillRect(x,y,4,2);g.fillStyle='#596860';g.fillRect(x,y+2,3,1);if(roll>.3)g.fillRect(x+3,y-1,2,1)}
+    else if(isl.biome==='marsh'&&roll<.54){g.fillStyle='rgba(67,121,116,.72)';g.fillRect(x,y,5,2);g.fillStyle='#527b59';g.fillRect(x+1,y-3,1,4);g.fillRect(x+4,y-2,1,3)}
+    else if(isl.biome==='dune'&&roll<.68){g.fillStyle=roll<.34?'#efdda4':'#bca260';g.fillRect(x,y,7,1);if(roll>.44)g.fillRect(x+3,y+3,5,1)}
+    else if(isl.biome==='pine'&&roll<.54){g.fillStyle=roll<.25?'#3e7651':'#77a66b';g.fillRect(x,y,3,1);g.fillRect(x+2,y-2,1,3);if(roll>.34)g.fillRect(x-2,y+2,2,1)}
+    else if(isl.biome==='orchard'&&roll<.56){g.fillStyle=roll<.18?'#d86f68':roll<.37?'#e7b653':'#dfeab2';g.fillRect(x,y,1,1);g.fillRect(x+3,y+2,1,1);if(roll>.38)g.fillRect(x-2,y+1,1,1)}
+    else if(roll<.48){g.fillStyle=roll<.20?p.dark:p.light;g.fillRect(x,y,1,4);g.fillRect(x+3,y+1,1,3);if(roll>.32)g.fillRect(x+1,y+3,1,1)}
+  }
+  // A broken, curved footpath ties the landing to the village without becoming a rigid stripe.
+  const path='#c9b37b',pathHi='#dfcb95';for(let t=0;t<1;t+=.018){const wob=Math.sin(t*8+seed*9)*2.5+Math.sin(t*19+seed*4)*.7,x=Math.round(CX+wob),y=Math.round(CY+11+t*37);if(islandShapeMetric(isl,(x-CX)/U,(y-CY)/U,1)<.92){g.fillStyle=path;g.fillRect(x-2,y,4,1);if((Math.round(t*1000)%5)<2){g.fillStyle=pathHi;g.fillRect(x-1,y,2,1)}}}
+  // Small foam flecks trace the procedural coastline and help disguise the underlying mathematical mask.
+  g.fillStyle='rgba(246,244,215,.80)';for(let a=0;a<Math.PI*2;a+=Math.PI/42){const sh=isl.shape,rad=shapeRadius(isl,a),lx=Math.cos(a)*sh.rx*rad,ly=Math.sin(a)*sh.ry*rad,c0=Math.cos(sh.rotation),sn=Math.sin(sh.rotation),gx=lx*c0+ly*sn,gy=-lx*sn+ly*c0,x=Math.round(CX+gx*U),y=Math.round(CY+gy*U),n=terrainNoise(isl,Math.floor(x/2),Math.floor(y/2),'foam');if(n>.48){g.fillRect(x+(gx>0?1:-2),y+(gy>0?2:-1),n>.78?4:2,1);if(n>.88)g.fillRect(x+(gx>0?3:-3),y+(gy>0?3:-2),1,1)}}
+  terrainSpriteCache.set(key,c);return c
+}
 function renderIslandTiles(isl,cx=320,cy=180,tile=16,scale=1,withJetty=true,alpha=1){
-  ensureIslandData(isl);ctx.save();ctx.globalAlpha=alpha;const base=biomeColor(isl.biome),sand='#e7ce82',limitX=Math.ceil(13*scale),limitY=Math.ceil(10*scale);
-  for(let gy=-limitY;gy<=limitY;gy++)for(let gx=-limitX;gx<=limitX;gx++){if(!islandTileIsLand(isl,gx,gy,scale))continue;const edge=!islandTileIsLand(isl,gx+1,gy,scale)||!islandTileIsLand(isl,gx-1,gy,scale)||!islandTileIsLand(isl,gx,gy+1,scale)||!islandTileIsLand(isl,gx,gy-1,scale),px=cx+gx*tile,py=cy+gy*tile;shadow(px-tile/2,py+tile*.38,tile,tile*.14,.07);rect(px-tile/2,py-tile/2,tile,tile,edge?sand:base);rect(px-tile/2,py-tile/2,tile,1,edge?'#f3dfa3':'#94d177');rect(px-tile/2,py+tile/2-1,tile,1,edge?'#c9b168':'#5e9754')}
-  if(withJetty){const j=tile/16,deckW=48*j,plankH=8*j,startY=cy+58*j;for(let i=0;i<5;i++){rect(cx-deckW/2,startY+i*plankH,deckW,plankH,'#a86d45');rect(cx-deckW/2,startY+i*plankH,deckW,1,'#c98d61')}for(let i=0;i<6;i++)rect(cx-deckW*.39+i*(deckW*.78/5),startY+plankH,2*j,38*j,'#704630');for(let i=0;i<7;i++){rect(cx-7*j,cy+43*j-i*13*j,14*j,8*j,'#cfba8a');rect(cx-7*j,cy+43*j-i*13*j,14*j,1,'#e7d6a8')}}ctx.restore();
+  ensureIslandData(isl);const spr=islandTerrainSprite(isl),drawScale=(tile*scale)/6,w=spr.width*drawScale,h=spr.height*drawScale;ctx.save();ctx.globalAlpha=alpha;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(cx-96*drawScale),Math.round(cy-72*drawScale),Math.round(w),Math.round(h));
+  if(withJetty){const j=tile/16,deckW=48*j,plankH=8*j,startY=cy+58*j;for(let i=0;i<5;i++){rect(cx-deckW/2,startY+i*plankH,deckW,plankH,'#a86d45');rect(cx-deckW/2,startY+i*plankH,deckW,1,'#c98d61')}for(let i=0;i<6;i++)rect(cx-deckW*.39+i*(deckW*.78/5),startY+plankH,2*j,38*j,'#704630');for(let i=0;i<7;i++){rect(cx-7*j,cy+43*j-i*13*j,14*j,8*j,'#cfba8a');rect(cx-7*j,cy+43*j-i*13*j,14*j,1,'#e7d6a8')}}ctx.restore()
 }
 function approachSprite(isl){
-  ensureIslandData(isl);const key=`${isl.id}-${JSON.stringify(isl.shape)}`;if(approachSpriteCache.has(key))return approachSpriteCache.get(key);
-  const off=document.createElement('canvas');off.width=280;off.height=220;const g=off.getContext('2d');g.imageSmoothingEnabled=false;const base=biomeColor(isl.biome),sand='#e7ce82',tile=8,cx=140,cy=104;
-  const land=[];for(let gy=-13;gy<=13;gy++)for(let gx=-17;gx<=17;gx++)if(islandTileIsLand(isl,gx,gy,1))land.push([gx,gy]);
-  for(const [gx,gy] of land){const edge=!islandTileIsLand(isl,gx+1,gy,1)||!islandTileIsLand(isl,gx-1,gy,1)||!islandTileIsLand(isl,gx,gy+1,1)||!islandTileIsLand(isl,gx,gy-1,1),x=cx+gx*tile-tile/2,y=cy+gy*tile-tile/2;g.fillStyle=edge?sand:base;g.fillRect(x,y,tile,tile);g.fillStyle=edge?'#f3dfa3':'#94d177';g.fillRect(x,y,tile,1)}
-  approachSpriteCache.set(key,off);return off;
+  ensureIslandData(isl);const key=`approach-v16:${isl.id}:${isl.biome}:${JSON.stringify(isl.shape)}`;if(approachSpriteCache.has(key))return approachSpriteCache.get(key);const off=document.createElement('canvas');off.width=280;off.height=220;const g=off.getContext('2d');g.imageSmoothingEnabled=false;const spr=islandTerrainSprite(isl);g.drawImage(spr,12,10,256,200);approachSpriteCache.set(key,off);return off
 }
 function drawApproachIsland(isl,cx,cy,scale){const spr=approachSprite(isl),s=clamp(scale,.12,2.2),w=spr.width*s,h=spr.height*s;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(cx-w/2),Math.round(cy-h/2),Math.round(w),Math.round(h));if(scale>.68)drawTopHouse(cx,cy-8*s,'house',.38*s+0.18)}
 function parseHexColor(hex){const h=String(hex||'#000000').replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
@@ -1914,8 +1954,8 @@ function drawVoyageMicroEvent(ts,bx,by){
 
 function drawSeaBackground(){drawWaterField();}
 function renderScene(ts){
-  frame=ts;ctx.clearRect(0,0,canvas.width,canvas.height);worldHitAreas=[];
-  if(minigame){renderMinigame(ts);return}
+  frame=ts;ctx.clearRect(0,0,canvas.width,canvas.height);worldHitAreas=[];const chartLabels=$('#chartLabels');if(chartLabels&&state.activeView!=='chart')chartLabels.classList.remove('show');
+  if(minigame){if(chartLabels)chartLabels.classList.remove('show');renderMinigame(ts);return}
   if(state.activeView==='chart'){drawChart();return}
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
@@ -1977,26 +2017,54 @@ function drawVoyage(){
   const vis=clamp((p-.58)/.42,0,1);if(vis>0){const eased=vis*vis*(3-2*vis),scale=.10+eased*1.28,farY=vr.y+Math.max(58,vr.h*.10),nearY=by-Math.min(155,Math.max(105,vr.h*.18)),y=lerp(farY,nearY,eased);ctx.globalAlpha=clamp(.14+eased*.92,.14,1);drawApproachIsland(dest,bx,y,scale);ctx.globalAlpha=1;if(vis>.33){for(let i=0;i<Math.floor(2+vis*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(vis>.63&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,lerp(farY,nearY,eased)-20);ctx.globalAlpha=1}}
   updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,1);drawTopBoat(bx,by,1.35,0,state.boat.type,playerBoatAppearance());drawWeather();drawTimeLighting();
 }
+function chartIslandOutlinePoints(isl,q,r){const sh=ensureIslandData(isl).shape,c=Math.cos(sh.rotation),sn=Math.sin(sh.rotation),norm=Math.max(sh.rx,sh.ry),pts=[];for(let a=0;a<Math.PI*2;a+=Math.PI/24){const rad=shapeRadius(isl,a),lx=Math.cos(a)*sh.rx*rad,ly=Math.sin(a)*sh.ry*rad,gx=lx*c+ly*sn,gy=-lx*sn+ly*c;pts.push([q.x+(gx/norm)*r,q.y+(gy/norm)*r])}return pts}
+function drawRumourCoastline(isl,q,r,iconZoom){const pts=chartIslandOutlinePoints(isl,q,r);ctx.save();ctx.globalAlpha=.76;ctx.setLineDash([Math.max(2,3*iconZoom),Math.max(3,5*iconZoom)]);ctx.strokeStyle='#806b49';ctx.lineWidth=Math.max(1,1.25*iconZoom);ctx.beginPath();pts.forEach((p,n)=>n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=.24;ctx.strokeStyle='#aa9060';ctx.lineWidth=1;ctx.beginPath();pts.filter((_,n)=>n%3===0).forEach((p,n)=>n?ctx.lineTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004):ctx.moveTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004));ctx.stroke();ctx.restore();pxText('?',q.x,q.y+4,'#6e5d40',Math.max(10,Math.round(10*iconZoom)),'center')}
+function chartCleanName(i){return(i.home?'HOME':String(i.name||'').replace(/\s+Island$/i,'')).toUpperCase()}
+function chartLabelPriority(i){let p=(i.visits||0)*2;if(i.home)p+=100;if(i.id===state.currentIslandId)p+=120;if(i.id===state.selectedDestinationId)p+=95;if(i.id===state.voyage?.destinationId)p+=90;return p}
+function chartEscape(s){return String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+function chartCssGeometry(vr){
+  const cr=canvas.getBoundingClientRect(),sr=$('#stageWrap').getBoundingClientRect(),sx=cr.width/Math.max(1,canvas.width),sy=cr.height/Math.max(1,canvas.height),ox=cr.left-sr.left,oy=cr.top-sr.top;
+  return{sx,sy,ox,oy,toX:x=>ox+x*sx,toY:y=>oy+y*sy,vr:{left:ox+vr.x*sx,top:oy+vr.y*sy,right:ox+(vr.x+vr.w)*sx,bottom:oy+(vr.y+vr.h)*sy}};
+}
+function labelRectsOverlap(a,b,pad=3){return!(a.r+pad<=b.l||b.r+pad<=a.l||a.b+pad<=b.t||b.b+pad<=a.t)}
+function distributeChartRail(items,top,bottom){
+  if(!items.length)return[];items=[...items].sort((a,b)=>a.cy-b.cy);const room=Math.max(1,bottom-top),gap=items.length>1?clamp(room/(items.length-1),16,22):0,ys=items.map(x=>clamp(x.cy,top,bottom));
+  for(let i=1;i<ys.length;i++)ys[i]=Math.max(ys[i],ys[i-1]+gap);if(ys[ys.length-1]>bottom){ys[ys.length-1]=bottom;for(let i=ys.length-2;i>=0;i--)ys[i]=Math.min(ys[i],ys[i+1]-gap)}
+  if(ys[0]<top){const d=top-ys[0];for(let i=0;i<ys.length;i++)ys[i]+=d}return items.map((item,i)=>({...item,labelY:ys[i]}));
+}
+let chartLabelSignature='';
+function updateChartLabelOverlay(nodes,you,vr){
+  const layer=$('#chartLabels');if(!layer)return;if(state.activeView!=='chart'||minigame){layer.classList.remove('show');return}layer.classList.add('show');const cg=chartCssGeometry(vr),v=cg.vr,mobile=window.matchMedia('(max-width:900px)').matches,overview=chartView.zoom<.72;
+  const items=nodes.map(n=>({i:n.i,cx:cg.toX(n.q.x),cy:cg.toY(n.q.y),r:Math.max(5,n.r*Math.min(cg.sx,cg.sy)),name:chartCleanName(n.i),priority:chartLabelPriority(n.i)}));let labels=[],lines=[];
+  if(overview){
+    const top=v.top+54,bottom=Math.max(top+20,v.bottom-20),centre=(v.left+v.right)/2,left=distributeChartRail(items.filter(x=>x.cx<centre),top,bottom),right=distributeChartRail(items.filter(x=>x.cx>=centre),top,bottom),lx=v.left+8,rx=v.right-8;
+    for(const sideItems of [left,right])for(const it of sideItems){const side=sideItems===left?'left':'right',x=side==='left'?lx:rx,klass=['chart-place-label','overview',side,it.i.home?'home':'',it.i.id===state.currentIslandId?'current':'',it.i.id===state.selectedDestinationId?'destination':''].filter(Boolean).join(' ');labels.push(`<div class="${klass}" style="left:${x.toFixed(1)}px;top:${(it.labelY-8).toFixed(1)}px">${chartEscape(it.name)}</div>`);const endX=side==='left'?Math.min(it.cx-6,lx+92):Math.max(it.cx+6,rx-92);lines.push(`<line x1="${it.cx.toFixed(1)}" y1="${it.cy.toFixed(1)}" x2="${endX.toFixed(1)}" y2="${it.labelY.toFixed(1)}"/>`)}
+  }else{
+    const occupied=[],sorted=[...items].sort((a,b)=>b.priority-a.priority),font=chartView.zoom>1.6?(mobile?12:11):(mobile?11:10),compact=chartView.zoom<1.02,top=v.top+44,bottom=v.bottom-12,left=v.left+9,right=v.right-9;
+    for(const it of sorted){const w=clamp(it.name.length*font*.62+14,46,mobile?136:154),h=compact?18:20,rr=it.r,candidates=[[it.cx-w/2,it.cy+rr+6],[it.cx-w/2,it.cy-rr-h-6],[it.cx+rr+7,it.cy-h/2],[it.cx-rr-w-7,it.cy-h/2],[it.cx+rr*.55,it.cy+rr*.55],[it.cx-w-rr*.55,it.cy+rr*.55]];let box=null;
+      for(const [x0,y0] of candidates){const x=clamp(x0,left,right-w),y=clamp(y0,top,bottom-h),r={l:x,t:y,r:x+w,b:y+h};if(!occupied.some(o=>labelRectsOverlap(r,o,2))){box=r;break}}
+      if(!box){if(it.priority<50&&chartView.zoom<.92)continue;const x=clamp(it.cx-w/2,left,right-w),y=clamp(it.cy+rr+6,top,bottom-h);box={l:x,t:y,r:x+w,b:y+h}}
+      occupied.push(box);const klass=['chart-place-label',compact?'compact':'',it.i.home?'home':'',it.i.id===state.currentIslandId?'current':'',it.i.id===state.selectedDestinationId?'destination':''].filter(Boolean).join(' '),cx=(box.l+box.r)/2;labels.push(`<div class="${klass}" style="left:${cx.toFixed(1)}px;top:${box.t.toFixed(1)}px;max-width:${w.toFixed(0)}px">${chartEscape(it.name)}</div>`);if(Math.abs(cx-it.cx)>rr*.8||Math.abs(box.t-it.cy)>rr+10)lines.push(`<line x1="${it.cx.toFixed(1)}" y1="${it.cy.toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(box.t+h/2).toFixed(1)}"/>`)
+    }
+  }
+  if(you){const x=cg.toX(you.x),y=cg.toY(you.y),safeY=Math.max(v.top+42,y-10);labels.push(`<div class="chart-you-label" style="left:${x.toFixed(1)}px;top:${safeY.toFixed(1)}px">YOU</div>`)}
+  const sig=[Math.round(chartView.zoom*100),Math.round(chartView.panX),Math.round(chartView.panY),Math.round(v.bottom),labels.join('|'),lines.join('|')].join('~');if(sig===chartLabelSignature)return;chartLabelSignature=sig;layer.innerHTML=`<svg viewBox="0 0 ${Math.max(1,$('#stageWrap').clientWidth)} ${Math.max(1,$('#stageWrap').clientHeight)}" preserveAspectRatio="none" aria-hidden="true">${lines.join('')}</svg>${labels.join('')}`;
+}
 function drawChart(){
   ensureChartRumours(3);const W=canvas.width,H=canvas.height,g=chartMapGeometry(),vr=g.vr,mobile=window.matchMedia('(max-width:900px)').matches;
   rect(0,0,W,H,'#eadbae');rect(vr.x+12,vr.y+12,Math.max(10,vr.w-24),Math.max(10,vr.h-24),'#f8efd0');
   for(let x=vr.x+28;x<vr.x+vr.w-18;x+=40)rect(x,vr.y+20,1,Math.max(0,vr.h-40),'rgba(115,88,48,.09)');for(let y=vr.y+30;y<vr.y+vr.h-18;y+=34)rect(vr.x+20,y,Math.max(0,vr.w-40),1,'rgba(115,88,48,.09)');
   const roseX=vr.x+vr.w-50,roseY=vr.y+62;circle(roseX,roseY,22,'#f3e6c6','#8d6b3f',2);line(roseX,roseY-20,roseX,roseY+20,'#8d6b3f',2);line(roseX-20,roseY,roseX+20,roseY,'#8d6b3f',2);poly([[roseX,roseY-25],[roseX+5,roseY-7],[roseX,roseY-12],[roseX-5,roseY-7]],'#df7c68','#8d6b3f',1);pxText('N',roseX,roseY-30,'#8d6b3f',8,'center');
-  const visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured);chartView.hitAreas=[];if(!visible.length)return;const mapXY=g.mapXY,densityBoost=visible.length<=6?1.42:visible.length<=12?1.2:1,iconZoom=clamp(chartView.zoom*densityBoost,.72,2.3);
+  const visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured);chartView.hitAreas=[];if(!visible.length){updateChartLabelOverlay([],null,vr);return}const mapXY=g.mapXY,densityBoost=visible.length<=6?1.42:visible.length<=12?1.2:1,iconZoom=clamp(chartView.zoom*densityBoost,.72,2.3),labelNodes=[];
   ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
-  // sailed routes
   ctx.strokeStyle='#8d6b3f';ctx.lineWidth=Math.max(1.5,1.8*iconZoom*.8);state.routes.forEach(r=>{const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y);ctx.setLineDash([7,7]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
-  // rumour threads are lighter pencil marks, not claimed routes
   ctx.strokeStyle='rgba(110,91,56,.32)';rumours.forEach(i=>{const a=getIsland(i.rumourFromId);if(!a)return;const A=mapXY(a.x,a.y),B=mapXY(i.x,i.y);ctx.setLineDash([3,9]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
-  // marked course
   if(state.phase==='ashore'&&state.selectedDestinationId!=='uncharted'){const d=selectedDest(),a=currentIsland();if(d&&a&&d.id!==a.id){const A=mapXY(a.x,a.y),B=mapXY(d.x,d.y);ctx.strokeStyle='rgba(45,126,154,.8)';ctx.lineWidth=2;ctx.setLineDash([2,5]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])}}
-  known.forEach(i=>{const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,tile=Math.max(2,Math.round(r/5));renderIslandTiles(i,q.x,q.y,tile,.42,false,1);if(state.selectedDestinationId===i.id&&state.phase==='ashore')circle(q.x,q.y,r+8,'rgba(0,0,0,0)','#2d7e9a',2);const labelFont=mobile?Math.max(9,Math.round(9.5*iconZoom)):Math.max(8,Math.round(8.5*iconZoom)),label=i.home?'HOME':i.name.split(' ')[0].toUpperCase(),labelW=Math.max(54,label.length*labelFont*.62+12),labelH=labelFont+9;roundedRect(q.x-labelW/2,q.y+r+5,labelW,labelH,3,'rgba(248,239,208,.94)');pxText(label,q.x,q.y+r+labelFont+4,'#5e4c2a',labelFont,'center');chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+7)})});
-  rumours.forEach(i=>{const q=mapXY(i.x,i.y),r=12*iconZoom,tile=Math.max(2,Math.round(r/5));ctx.globalAlpha=.28;renderIslandTiles(i,q.x,q.y,tile,.40,false,.8);ctx.globalAlpha=1;ctx.save();ctx.setLineDash([3,4]);circle(q.x,q.y,r+8,'rgba(0,0,0,0)','#8d6b3f',1.5);ctx.restore();pxText('?',q.x,q.y+4,'#5e4c2a',Math.max(10,Math.round(10*iconZoom)),'center');const label=(i.name.split(' ')[0]+' ?').toUpperCase(),font=mobile?Math.max(8,Math.round(8.5*iconZoom)):8;roundedRect(q.x-32,q.y+r+7,64,font+8,3,'rgba(248,239,208,.82)');pxText(label,q.x,q.y+r+font+5,'#7a6845',font,'center');chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+8)})});
-  // working traffic is deliberately map-scale: dots with tiny headings, not oversized boat sprites
+  known.forEach(i=>{const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,tile=Math.max(2,Math.round(r/5));renderIslandTiles(i,q.x,q.y,tile,.42,false,1);if(state.selectedDestinationId===i.id&&state.phase==='ashore')circle(q.x,q.y,r+8,'rgba(0,0,0,0)','#2d7e9a',2);labelNodes.push({i,q,r});chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+7)})});
+  rumours.forEach(i=>{const q=mapXY(i.x,i.y),r=15*iconZoom;drawRumourCoastline(i,q,r,iconZoom);chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(24,r+9)})});
   activeWorldVessels().slice(0,48).forEach(v=>{const wp=vesselWorldPosition(v,gameNow()),q=mapXY(wp.x,wp.y),dest=getIsland(v.destinationId),origin=getIsland(v.originId||v.locationId),ang=dest&&origin?Math.atan2(dest.y-origin.y,dest.x-origin.x):0,rr=Math.max(3,3.2*iconZoom);circle(q.x,q.y,rr,'#527da0','#5e4c2a',1);line(q.x,q.y,q.x+Math.cos(ang)*7*iconZoom,q.y+Math.sin(ang)*5*iconZoom,'#527da0',1);chartView.hitAreas.push({kind:'vessel',id:v.id,x:q.x,y:q.y,r:Math.max(13,12*iconZoom)})});
-  // You are here: a small diamond and halo, whether ashore or under way.
-  let you=null;if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b){const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y),pp=voyageProgress();you={x:lerp(A.x,B.x,pp),y:lerp(A.y,B.y,pp)}}}else{const a=currentIsland();if(a)you=mapXY(a.x,a.y)}if(you){circle(you.x,you.y,10*iconZoom,'rgba(223,124,104,.12)','#df7c68',1);poly([[you.x,you.y-5*iconZoom],[you.x+5*iconZoom,you.y],[you.x,you.y+5*iconZoom],[you.x-5*iconZoom,you.y]],'#df7c68','#5e4c2a',1);pxText('YOU',you.x,you.y-10*iconZoom,'#8b4b3f',Math.max(7,Math.round(7*iconZoom)),'center');chartView.hitAreas.push({kind:'player',id:'player',x:you.x,y:you.y,r:Math.max(16,15*iconZoom)})}
-  ctx.restore();chartView.needsFit=false;
+  let you=null;if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b){const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y),pp=voyageProgress();you={x:lerp(A.x,B.x,pp),y:lerp(A.y,B.y,pp)}}}else{const a=currentIsland();if(a)you=mapXY(a.x,a.y)}if(you){circle(you.x,you.y,10*iconZoom,'rgba(223,124,104,.12)','#df7c68',1);poly([[you.x,you.y-5*iconZoom],[you.x+5*iconZoom,you.y],[you.x,you.y+5*iconZoom],[you.x-5*iconZoom,you.y]],'#df7c68','#5e4c2a',1);chartView.hitAreas.push({kind:'player',id:'player',x:you.x,y:you.y,r:Math.max(16,15*iconZoom)})}
+  ctx.restore();updateChartLabelOverlay(labelNodes,you,vr);chartView.needsFit=false;
 }
 
 function renderMinigame(ts){
