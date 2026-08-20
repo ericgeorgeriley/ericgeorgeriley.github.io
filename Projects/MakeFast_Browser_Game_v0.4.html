@@ -36,7 +36,7 @@
   .brandmark{width:43px;height:43px;position:relative;background:var(--sea);border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 var(--wood-dark);overflow:hidden}
   .brandmark:before{content:"";position:absolute;left:6px;right:6px;bottom:7px;height:8px;background:#fff;border:3px solid var(--ink);clip-path:polygon(0 0,100% 0,78% 100%,20% 100%)}
   .brandmark:after{content:"";position:absolute;left:19px;top:6px;width:3px;height:19px;background:var(--ink);box-shadow:7px 6px 0 -1px var(--cream)}
-  .brand h1{font-size:18px;line-height:1;margin:0;letter-spacing:-1px}.brand small{display:block;color:var(--ink-soft);font-size:9px;margin-top:4px}
+  .brand h1{font-size:18px;line-height:1;margin:0;letter-spacing:-1px;display:flex;align-items:baseline;gap:6px}.version-tag{font-size:7px;letter-spacing:0;color:var(--ink-soft);font-weight:900;border:1px solid rgba(24,49,58,.35);border-radius:4px;padding:2px 4px;background:rgba(255,255,255,.48);vertical-align:middle}.brand small{display:block;color:var(--ink-soft);font-size:9px;margin-top:4px}
   .phase-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 var(--shadow);min-width:145px}
   .phase-dot{width:11px;height:11px;border:2px solid var(--ink);background:var(--grass);box-shadow:2px 2px 0 var(--shadow)}
   .phase-chip.sea .phase-dot{background:var(--sea)}
@@ -134,7 +134,7 @@
   .trend-card{background:#fff;border:3px solid var(--ink);border-radius:8px;padding:8px;box-shadow:3px 3px 0 var(--shadow);margin-bottom:8px}.trend-card h3{font-size:10px;margin:0 0 2px}.trend-card p{font-size:7px;color:var(--ink-soft);margin:0 0 7px;line-height:1.4}.trend-card svg{width:100%;height:auto;display:block;overflow:visible}.chart-axis{stroke:#9aa8a2;stroke-width:1}.chart-grid{stroke:#d7d8ca;stroke-width:1;stroke-dasharray:2 3}.chart-line{fill:none;stroke:#2d7e9a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.chart-target{fill:none;stroke:#e5b54e;stroke-width:2;stroke-dasharray:5 4}.chart-dot{fill:#fff7de;stroke:#18313a;stroke-width:2}.chart-label{font-size:8px;fill:#42616a;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace}.chart-bar{fill:#65bdd1;stroke:#18313a;stroke-width:1.5}
   .rhythm-chart{display:grid;gap:5px}.rhythm-head,.rhythm-row{display:grid;grid-template-columns:48px 1fr;gap:6px;align-items:center}.rhythm-head{font-size:6px;color:var(--ink-soft)}.rhythm-track{height:13px;position:relative;background:linear-gradient(90deg,#d8eef3 0 25%,#fff6d8 25% 75%,#d8eef3 75% 100%);border:2px solid var(--ink);border-radius:5px;overflow:hidden}.rhythm-track i{position:absolute;top:0;bottom:0;background:#2d7e9a}.rhythm-row>b{font-size:7px;font-weight:900}.rhythm-times{display:flex;justify-content:space-between;margin-top:3px;font-size:6px;color:var(--ink-soft)}
   .weekly-bars{display:flex;align-items:flex-end;gap:4px;height:108px;padding:6px 2px 18px;border-left:2px solid #a4afa7;border-bottom:2px solid #a4afa7;position:relative}.weekbar{flex:1;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;position:relative}.weekbar i{display:block;width:min(24px,72%);min-height:2px;background:var(--sea);border:2px solid var(--ink);border-bottom:0}.weekbar span{position:absolute;bottom:-16px;font-size:6px;color:var(--ink-soft);white-space:nowrap}.weekbar b{position:absolute;bottom:calc(var(--bar-h) + 3px);font-size:6px}
-  .fast-history{display:grid;gap:5px}.fast-history-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:6px;align-items:center;border:2px solid var(--ink);background:#fff;border-radius:6px;padding:7px;cursor:pointer;color:var(--ink);text-align:left;width:100%}.fast-history-item>span{font-size:7px;color:var(--ink-soft)}.fast-history-item div b{font-size:8px;display:block}.fast-history-item div small{font-size:7px;color:var(--ink-soft);display:block;margin-top:2px}.fast-history-item>strong{font-size:9px}
+  .fast-history{display:grid;gap:5px}.fast-history-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:6px;align-items:center;border:2px solid var(--ink);background:#fff;border-radius:6px;padding:7px;cursor:pointer;color:var(--ink);text-align:left;width:100%}.fast-history-item>span{font-size:7px;color:var(--ink-soft)}.fast-history-item div b{font-size:8px;display:block}.fast-history-item div small{font-size:7px;color:var(--ink-soft);display:block;margin-top:2px}.fast-history-item>strong{font-size:9px}.fast-history-item.assumed{background:#f5f1df;border-style:dashed}.fast-history-item .assumed-badge{display:inline-block;margin-left:4px;padding:1px 3px;border:1px solid var(--ink-soft);border-radius:3px;font-size:6px;color:var(--ink-soft);vertical-align:1px}.fast-day.has-assumed{background:#f5f1df;border-style:dashed}.chart-dot.assumed{fill:#f5f1df;stroke-dasharray:1 1}.assumed-note{background:#f5f1df;border:2px dashed var(--ink-soft);border-radius:7px;padding:7px;font-size:7px;line-height:1.45;color:var(--ink-soft);margin-bottom:8px}
   .fast-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:7px;color:var(--ink-soft);margin-top:6px}.fast-legend i{display:inline-block;width:10px;height:5px;border:1px solid var(--ink);vertical-align:middle;margin-right:3px}.fast-legend .actual{background:var(--sea)}.fast-legend .target{background:var(--gold)}
   @media (max-width:520px){.fast-dial{width:min(166px,58vw)}.fast-calendar{gap:2px}.fast-day{min-height:47px;padding:3px}.log-tabs button{font-size:6px;padding:6px 2px}.harbour-clock{grid-template-columns:66px 1fr}.harbour-clock-face{width:64px;height:64px}.rhythm-head,.rhythm-row{grid-template-columns:42px 1fr}}
 
@@ -143,7 +143,7 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="brandmark" aria-hidden="true"></div><div><h1>MAKEFAST</h1><small>EVERY FAST GOES SOMEWHERE</small></div></div>
+    <div class="brand"><div class="brandmark" aria-hidden="true"></div><div><h1>MAKEFAST <span class="version-tag" id="versionTag"></span></h1><small>EVERY FAST GOES SOMEWHERE</small></div></div>
     <div class="phase-chip" id="phaseChip"><div class="phase-dot"></div><div><b id="phaseName">IN HARBOUR</b><span id="phaseHint">Choose your next voyage</span></div></div>
     <div class="timerbox"><div class="timer" id="headerTimer">00:00:00</div><div class="sub" id="headerSub">time ashore</div></div>
     <button class="tiny-btn quick-action" id="quickPhaseBtn" title="Quick fasting action">SET SAIL</button>
@@ -188,9 +188,11 @@
 'use strict';
 
 const SAVE_KEY='makefast_save_v1';
-const VERSION=16.1;
+const VERSION=17;
+const VERSION_LABEL='0.17';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
+const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const nowReal=()=>Date.now();
@@ -662,9 +664,9 @@ function defaultState(){
     islands:[home,moss], routes:[['home',moss.id]], sessions:[], currentIslandId:'home', pendingResolutions:[],
     totalMinigames:0, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
     journal:[contentLine('copy.journal.inherited')],
-    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, boatStyles:{}, settings:{prototypeTools:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34,weatherMode:'island'},
+    boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, boatStyles:{}, settings:{prototypeTools:false,demoMode:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34,weatherMode:'island'},
     weather:{lat:null,lon:null,updatedAt:0,current:null,hourly:[],error:null,manual:{kind:'clear',temp:18,wind:12}},
-    liftRequests:[],boatPassengers:[],boatCargo:{},
+    liftRequests:[],boatPassengers:[],boatCargo:{},backgroundPassages:[],idle:{lastPassageAt:nowReal()},
     world:{lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0},
     sim:{active:false,offsetMs:0}, achievements:{}, lastSavedAt:nowReal()
   }
@@ -685,7 +687,7 @@ function migrate(s){
   if(!hadDefaultFastHours)s.settings.defaultFastHours=Number.isFinite(+s.selectedRatio)?+s.selectedRatio:16;s.settings.defaultFastHours=clamp(Math.round(+s.settings.defaultFastHours*2)/2,12,20);s.selectedRatio=s.settings.defaultFastHours;
   if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;s.islands.forEach(ensureIslandData);
   if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!Array.isArray(s.journal))s.journal=[];
-  if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};if(!s.boatStyles||typeof s.boatStyles!=='object'||Array.isArray(s.boatStyles))s.boatStyles={};
+  if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};if(!s.boatStyles||typeof s.boatStyles!=='object'||Array.isArray(s.boatStyles))s.boatStyles={};if(!Array.isArray(s.backgroundPassages))s.backgroundPassages=[];s.idle={...d.idle,...(s.idle||{})};if(!Number.isFinite(+s.idle.lastPassageAt))s.idle.lastPassageAt=priorLastSaved||nowReal();s.settings.demoMode=!!s.settings.demoMode;
   if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
   s.version=VERSION;
   if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
@@ -745,9 +747,13 @@ function rhythmPickerHTML(prefix='rhythm'){const r=currentRatio();return `<div c
 function bindRhythmPicker(prefix='rhythm',onCommit=null){const slider=$('#'+prefix+'Slider'),ratio=$('#'+prefix+'Ratio'),name=$('#'+prefix+'Name');if(!slider)return;const update=commit=>{const fast=clamp(Math.round(+slider.value*2)/2,12,20),eat=24-fast,exact=RATIO_OPTIONS.find(r=>r.fast===fast);ratio.textContent=`${fmtRatioHours(fast)}:${fmtRatioHours(eat)}`;name.textContent=`${exact?.name||rhythmName(fast)} rhythm · ${fmtRatioHours(fast)}h at sea / ${fmtRatioHours(eat)}h ashore`;if(commit){setDefaultFastHours(fast);save();onCommit?.(currentRatio())}};slider.oninput=()=>update(false);slider.onchange=()=>update(true)}
 function getIsland(id){return state.islands.find(i=>i.id===id)||state.islands[0]}
 function currentIsland(){return getIsland(state.currentIslandId)}
-function voyageProgress(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed){const u=clamp((gameNow()-v.prototypeStartedAt)/(v.prototypeDurationMs||180000),0,1);return clamp(v.prototypeStartProgress+(1-v.prototypeStartProgress)*u,0,1)}return clamp((gameNow()-v.startedAt)/v.targetMs,0,1)}
-function actualFastMs(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed)return Math.max(0,(v.prototypeOriginalElapsedMs||0)+(gameNow()-v.prototypeStartedAt));return Math.max(0,gameNow()-v.startedAt)}
-function voyageRemainingMs(){if(!state.voyage)return 0;const v=state.voyage;if(v.prototypeCompressed)return Math.max(0,(v.prototypeDurationMs||180000)-(gameNow()-v.prototypeStartedAt));return Math.max(0,v.targetMs-actualFastMs())}
+function voyageIsDemo(v=state.voyage){return !!(v&&(v.demoMode||v.prototypeCompressed))}
+function voyageDemoStartedAt(v){return v.demoStartedAt||v.prototypeStartedAt||v.startedAt}
+function voyageDemoDuration(v){return v.demoDurationMs||v.prototypeDurationMs||180000}
+function voyageDemoStartProgress(v){return Number.isFinite(+v.demoStartProgress)?+v.demoStartProgress:(Number.isFinite(+v.prototypeStartProgress)?+v.prototypeStartProgress:0)}
+function voyageProgress(){if(!state.voyage)return 0;const v=state.voyage;if(voyageIsDemo(v)){const u=clamp((gameNow()-voyageDemoStartedAt(v))/voyageDemoDuration(v),0,1);return clamp(voyageDemoStartProgress(v)+(1-voyageDemoStartProgress(v))*u,0,1)}return clamp((gameNow()-v.startedAt)/v.targetMs,0,1)}
+function actualFastMs(){if(!state.voyage)return 0;const v=state.voyage;if(voyageIsDemo(v)){const u=clamp((gameNow()-voyageDemoStartedAt(v))/voyageDemoDuration(v),0,1),startP=voyageDemoStartProgress(v),base=Number.isFinite(+v.demoOriginalElapsedMs)?+v.demoOriginalElapsedMs:(Number.isFinite(+v.prototypeOriginalElapsedMs)?+v.prototypeOriginalElapsedMs:v.targetMs*startP);return Math.max(0,lerp(base,v.targetMs,u))}return Math.max(0,gameNow()-v.startedAt)}
+function voyageRemainingMs(){if(!state.voyage)return 0;const v=state.voyage;if(voyageIsDemo(v))return Math.max(0,voyageDemoDuration(v)-(gameNow()-voyageDemoStartedAt(v)));return Math.max(0,v.targetMs-actualFastMs())}
 function shoreElapsed(){return Math.max(0,gameNow()-state.phaseStartedAt)}
 function selectedDest(){return state.selectedDestinationId==='uncharted'?null:getIsland(state.selectedDestinationId)}
 
@@ -805,8 +811,8 @@ function boatNameTaken(name,exceptType=state.boat.type){const key=nameKey(name);
 // ============================================================
 // LIVING ARCHIPELAGO SIMULATION
 // Persistent NPC vessels move residents and stock whether or not the player
-// is currently looking at the chart. Health/fasting history is never invented;
-// this simulation advances only the game world.
+// is currently looking at the chart. Verified fasting history is never invented;
+// background captain passages live in a separate, explicitly assumed Tidebook layer.
 // ============================================================
 let worldSimulating=false;
 function worldState(){if(!state.world)state.world={lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0};return state.world}
@@ -942,8 +948,8 @@ function dispatchNpcVessel(v,at){
   else if(type.role==='visitor'){const waiting=state.liftRequests.filter(r=>r.status==='waiting'&&r.originId===origin.id),first=waiting[0];dest=first?getIsland(first.targetId):(neighbors[Math.floor(rr()*neighbors.length)]||known[Math.floor(rr()*known.length)]);if(dest){for(const req of waiting.filter(r=>r.targetId===dest.id).slice(0,type.passengers||1)){const ps=takeResidentForNpc(origin,dest,v,req);if(ps)passengers.push(ps)}}mission=passengers.length?'Taking neighbours on an island visit':'Making a leisurely island call'}
   if(!dest)dest=known[Math.floor(rr()*known.length)];beginNpcTrip(v,dest,at,{cargo,passengers,mission});
 }
-function simulateWorldTo(target=nowReal(),summarize=false){
-  const w=worldState(),start=w.lastSimAt||target;if(target<=start){ensureWorldFleet();return 0}const gap=target-start,from=Math.max(start,target-30*86400000),step=30*60000;worldSimulating=true;w.collectingSummary=!!summarize;if(summarize)w.pendingSummary=[];let t=from;
+function simulateWorldTo(target=nowReal(),summarize=false,opts={}){
+  const w=worldState(),start=w.lastSimAt||target;if(target<=start){ensureWorldFleet();return 0}const gap=target-start,capDays=opts.maxDays||30,from=Math.max(start,target-capDays*86400000),step=opts.stepMs||30*60000;worldSimulating=true;w.collectingSummary=!!summarize;if(summarize)w.pendingSummary=[];let t=from;
   ensureWorldFleet();
   while(t<target){const next=Math.min(target,t+step),hours=(next-t)/3600000;state.islands.filter(i=>i.known).forEach(i=>produceIslandResources(i,hours,next));ensureWorldFleet();
     for(const v of w.vessels){if(v.status==='sailing'&&v.arrivalAt<=next)resolveNpcArrival(v,v.arrivalAt);if(v.status==='docked'&&(v.nextActionAt||0)<=next)dispatchNpcVessel(v,next)}
@@ -957,15 +963,35 @@ function worldTrialSnapshot(){
   const assigned=state.islands.reduce((sum,i)=>sum+(i.projects||[]).reduce((a,p)=>a+Object.values(p.assigned||{}).reduce((m,n)=>m+(+n||0),0),0),0);
   return {log:w.log.length,known:state.islands.filter(i=>i.known).length,stock,assigned,travellers:state.liftRequests.filter(r=>r.status==='waiting').length,sailing:w.vessels.filter(v=>v.status==='sailing').length};
 }
-function fastForwardWorld(hours=12){
-  const w=worldState(),real=nowReal(),base=Math.max(w.lastSimAt||real,real),delta=hours*3600000,before=worldTrialSnapshot();
-  simulateWorldTo(base+delta,false);
-  const reportEntries=w.log.slice(before.log),after=worldTrialSnapshot();
-  w.vessels.forEach(v=>{['departAt','arrivalAt','nextActionAt','createdAt'].forEach(k=>{if(v[k]>real)v[k]-=delta})});
-  w.log.forEach(e=>{if(e.at>real)e.at-=delta});state.liftRequests.forEach(r=>{if(r.createdAt>real)r.createdAt-=delta});w.lastSimAt=real;save();renderUI();
-  const changedStock=after.stock-before.stock,changedAssigned=after.assigned-before.assigned;
-  showModal(`<h2>12-hour sea trial</h2><p>The archipelago was advanced ${hours} hours for testing.</p><div class="stat-grid"><div class="stat"><b>${reportEntries.length}</b><span>world log events</span></div><div class="stat"><b>${changedStock>=0?'+':''}${changedStock}</b><span>net stock units</span></div><div class="stat"><b>${changedAssigned>=0?'+':''}${changedAssigned}</b><span>materials assigned</span></div><div class="stat"><b>${after.sailing}</b><span>boats under way</span></div></div>${reportEntries.length?`<div class="section" style="margin-top:10px"><div class="section-title">What happened</div>${reportEntries.slice(-8).reverse().map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${e.text}</b></div>`).join('')}</div>`:`<div class="card" style="margin-top:10px"><p>No large visible event completed in this particular 12-hour slice. Production clocks and vessel schedules still advanced.</p></div>`}<div class="modal-actions"><button class="big-btn" data-close>BACK TO THE ARCHIPELAGO</button></div>`);
+function backgroundFastingSessions(){return(state.backgroundPassages||[]).filter(s=>Number.isFinite(+s.endedAt)&&Number.isFinite(+s.startedAt)&&Number.isFinite(+s.durationMs)).slice().sort((a,b)=>a.endedAt-b.endedAt)}
+function tidebookSessions(){return[...realFastingSessions(),...backgroundFastingSessions()].sort((a,b)=>a.endedAt-b.endedAt)}
+function chooseBackgroundDestination(from,rr){
+  ensureChartRumours(3);const rumours=chartRumours(),known=state.islands.filter(i=>i.known&&i.id!==from.id);if(rumours.length&&rr()<.13)return rumours[Math.floor(rr()*rumours.length)];if(!known.length)return rumours[0]||null;
+  const scored=known.map(i=>{ensureIslandData(i);const active=(i.projects||[]).filter(p=>!p.complete).length,quiet=Math.max(0,4-(i.visits||0));return{i,w:1+active*2+quiet*.35+(i.home ? .15 : 0)}}),total=scored.reduce((n,x)=>n+x.w,0);let r=rr()*total;for(const x of scored){r-=x.w;if(r<=0)return x.i}return scored[scored.length-1].i
 }
+function backgroundPassageFind(dest,at,rr){
+  const bias=CONTENT.biomes[dest.biome]?.findBias||[],pool=DISCOVERIES.filter(d=>d.kind!=='traveller'),weighted=[...pool,...pool.filter(d=>bias.includes(d.kind)),...pool.filter(d=>bias.includes(d.kind))],d=weighted[Math.floor(rr()*weighted.length)]||pool[0];Object.entries(d.stock||{}).forEach(([m,n])=>addStock(dest,m,n));if(d.kind==='chart')createChartRumour(dest,`a chart fragment found aboard ${state.boat.name}`);logWorld(`${state.boat.name} brought ${d.name.toLowerCase()} into ${dest.name}.`,at,true,d.icon);return d
+}
+function runBackgroundPassage(at,{demo=false}={}){
+  const from=getIsland(state.currentIslandId)||state.islands.find(i=>i.known);if(!from)return null;const rr=rng(hashString(`idle:${state.worldSeed}:${Math.floor(at/86400000)}:${from.id}`)),dest=chooseBackgroundDestination(from,rr);if(!dest)return null;const wasUnknown=!dest.known;
+  if(wasUnknown){dest.known=true;dest.rumoured=false;logWorld(`${state.boat.name} followed a pencilled shoreline and made first landfall at ${dest.name}.`,at,true,'⌁')}
+  ensureRoute(from.id,dest.id);ensureIslandData(dest);dest.visits=(dest.visits||0)+1;const finds=[],findCount=1+(rr()>.62?1:0);for(let i=0;i<findCount;i++)finds.push(backgroundPassageFind(dest,at,rr));
+  let met=null;if(rr()<.075&&population(dest)<18){met=makeWorldResident(`idle-${dest.id}-${at}`,null,dest.biome);dest.residents.push(met);met.note=`Met during one of ${state.playerName||'the captain'}’s quiet background passages.`;logWorld(`${met.name} met ${state.playerName||'the captain'} at ${dest.name} and decided to stay awhile.`,at,true,'☻')}
+  const helper={name:state.boat.name||'Mackerel'};worldSupplyProject(dest,helper,at,rr()>.72?2:1);state.currentIslandId=dest.id;
+  const targetHours=clamp(+state.settings.defaultFastHours||16,12,20),durationMs=targetHours*3600000,record={id:uid(demo?'demo_bg':'assumed_bg'),startedAt:at-durationMs,endedAt:at,durationMs,targetHours,completed:true,progress:1,destinationId:dest.id,assumed:true,demo:!!demo,simulated:!!demo,originId:from.id,finds:finds.map(d=>d.kind)};(state.backgroundPassages||(state.backgroundPassages=[])).push(record);if(state.backgroundPassages.length>420)state.backgroundPassages.splice(0,state.backgroundPassages.length-420);return record
+}
+function simulateBackgroundPassages(from,to,{demo=false,force=false,summarize=false}={}){
+  if(!force&&(state.phase!=='ashore'||state.voyage))return[];const day=86400000,last=Math.max(from,+state.idle?.lastPassageAt||from),first=last+day,out=[];if(to-first<0)return out;const w=worldState(),priorWorldSim=worldSimulating,priorCollect=w.collectingSummary;worldSimulating=true;if(summarize)w.collectingSummary=true;for(let at=first;at<=to;at+=day){const rec=runBackgroundPassage(at,{demo});if(rec)out.push(rec)}state.idle.lastPassageAt=to;if(out.length)state.phaseStartedAt=out[out.length-1].endedAt;worldSimulating=priorWorldSim;w.collectingSummary=priorCollect;return out
+}
+function shiftFutureWorldBack(real,delta){
+  const w=worldState();w.vessels.forEach(v=>{['departAt','arrivalAt','nextActionAt','createdAt'].forEach(k=>{if(v[k]>real)v[k]-=delta})});w.log.forEach(e=>{if(e.at>real)e.at-=delta});state.liftRequests.forEach(r=>{if(r.createdAt>real)r.createdAt-=delta});state.backgroundPassages.forEach(r=>{if(r.endedAt>real){r.endedAt-=delta;r.startedAt-=delta}});w.lastSimAt=real;state.idle.lastPassageAt=real;if(state.phaseStartedAt>real)state.phaseStartedAt-=delta
+}
+function simulateTwelveWeeks(){
+  if(state.phase!=='ashore'||state.voyage){toast('Dock first so the long demo can begin from harbour.');return}const weeks=12,delta=weeks*7*86400000,real=nowReal(),w=worldState(),base=Math.max(w.lastSimAt||real,real),before=worldTrialSnapshot(),knownBefore=state.islands.filter(i=>i.known).length,popBefore=state.islands.reduce((n,i)=>n+population(i),0),projectsBefore=state.islands.reduce((n,i)=>n+(i.projects||[]).filter(p=>p.complete).length,0);
+  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);simulateWorldTo(base+delta,false,{maxDays:90,stepMs:12*3600000});state.idle.lastPassageAt=base;const passages=simulateBackgroundPassages(base,base+delta,{demo:true,force:true}),reportEntries=w.log.slice(before.log),after=worldTrialSnapshot(),knownAfter=state.islands.filter(i=>i.known).length,popAfter=state.islands.reduce((n,i)=>n+population(i),0),projectsAfter=state.islands.reduce((n,i)=>n+(i.projects||[]).filter(p=>p.complete).length,0);shiftFutureWorldBack(real,delta);save();renderUI();
+  showModal(`<h2>12-week archipelago demo</h2><p>The world lived through twelve simulated weeks. The captain made background passages at roughly the usual rhythm; those Tidebook entries are marked <b>DEMO / ASSUMED</b> and are not treated as manually recorded fasts.</p><div class="stat-grid"><div class="stat"><b>${passages.length}</b><span>background passages</span></div><div class="stat"><b>+${Math.max(0,knownAfter-knownBefore)}</b><span>shores discovered</span></div><div class="stat"><b>+${Math.max(0,popAfter-popBefore)}</b><span>new residents</span></div><div class="stat"><b>+${Math.max(0,projectsAfter-projectsBefore)}</b><span>projects completed</span></div></div><div class="section" style="margin-top:10px"><div class="section-title">Archipelago activity <span>${reportEntries.length} log events</span></div>${reportEntries.slice(-10).reverse().map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${e.text}</b></div>`).join('')||'<div class="card"><p>The boats kept their quieter routines this time.</p></div>'}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO MAKEFAST</button></div>`)
+}
+
 
 function activeWorldVessels(){return worldState().vessels.filter(v=>v.status==='sailing')}
 function vesselsAtIsland(id){return worldState().vessels.filter(v=>v.status==='docked'&&v.locationId===id)}
@@ -1016,19 +1042,19 @@ function circularMeanMinute(values){
 function fmtMinuteClock(m){if(m==null)return'—';const h=Math.floor(m/60)%24,mm=m%60;const d=new Date(2000,0,1,h,mm);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
 function fmtFastHours(ms,digits=1){return `${(Math.max(0,ms)/3600000).toFixed(digits)}h`}
 function sessionTargetMs(s){return Math.max(0,Number(s.targetHours||16)*3600000)}
-function fastingSessionsInRange(days=30){const all=realFastingSessions();if(!days)return all;const from=nowReal()-days*86400000;return all.filter(s=>s.endedAt>=from)}
+function fastingSessionsInRange(days=30){const all=tidebookSessions();if(!days)return all;const from=nowReal()-days*86400000;return all.filter(s=>s.endedAt>=from)}
 function fastingInsights(days=30){
   const sessions=fastingSessionsInRange(days),total=sessions.reduce((n,s)=>n+s.durationMs,0),avg=sessions.length?total/sessions.length:0,targetAvg=sessions.length?sessions.reduce((n,s)=>n+sessionTargetMs(s),0)/sessions.length:0;
   const depart=circularMeanMinute(sessions.map(s=>minuteOfDayInZone(s.startedAt))),dock=circularMeanMinute(sessions.map(s=>minuteOfDayInZone(s.endedAt)));
   const planned=sessions.filter(s=>s.completed).length;
-  return {sessions,total,avg,targetAvg,depart,dock,planned,plannedRate:sessions.length?planned/sessions.length:0}
+  return {sessions,total,avg,targetAvg,depart,dock,planned,assumed:sessions.filter(s=>s.assumed).length,demo:sessions.filter(s=>s.demo).length,plannedRate:sessions.length?planned/sessions.length:0}
 }
 function passageClockHTML(v,p,remaining,dest){
-  const elapsed=actualFastMs(),start=v.startedAtReal||v.startedAt,landfall=v.prototypeCompressed?gameNow()+remaining:start+(v.targetMs||v.targetHours*3600000),arrived=state.phase==='arrived';
+  const elapsed=actualFastMs(),start=v.startedAtReal||v.startedAt,landfall=voyageIsDemo(v)?gameNow()+remaining:start+(v.targetMs||v.targetHours*3600000),arrived=state.phase==='arrived';
   return `<div class="fast-clock-card">
     <div class="fast-clock-top"><b>PASSAGE CLOCK</b><span>${v.targetHours}h fast · ${v.eatingHours}h harbour</span></div>
     <div class="fast-dial-wrap"><div class="fast-dial" id="fastDial" style="--p:${Math.round(p*100)}"><div class="fast-dial-center"><small>${arrived?'LAND SIGHTED':'TIME AT SEA'}</small><strong id="fastDialElapsed">${fmtDuration(elapsed)}</strong><span id="fastDialRemaining">${arrived?`${dest.name} just ahead`:`${fmtDuration(remaining,true)} to land`}</span></div></div></div>
-    <div class="fast-route-times"><div><b>${formatClockInZone(start,state.settings.timezone)}</b><span>set sail</span></div><div class="fast-route-arrow">→</div><div><b>${formatClockInZone(landfall,state.settings.timezone)}</b><span>${v.prototypeCompressed?'sea trial landfall':'planned landfall'}</span></div></div>
+    <div class="fast-route-times"><div><b>${formatClockInZone(start,state.settings.timezone)}</b><span>set sail</span></div><div class="fast-route-arrow">→</div><div><b>${formatClockInZone(landfall,state.settings.timezone)}</b><span>${voyageIsDemo(v)?'demo landfall':'planned landfall'}</span></div></div>
     <div class="fast-blue-meter"><i id="fastDialMeter" style="width:${p*100}%"></i><em id="fastDialProgress">${Math.round(p*100)}% charted</em></div>
   </div>`
 }
@@ -1049,14 +1075,14 @@ function updateFastingLiveUI(){
 }
 function fastingLogTabsHTML(){return `<div class="log-tabs">${[['overview','OVERVIEW'],['calendar','CALENDAR'],['trends','TRENDS'],['world','WORLD']].map(([id,label])=>`<button data-fast-tab="${id}" class="${fastingLogUI.tab===id?'active':''}">${label}</button>`).join('')}</div>`}
 function fastHistoryItemHTML(s){
-  const dest=getIsland(s.destinationId),pct=clamp((s.durationMs/Math.max(1,sessionTargetMs(s)))*100,0,100);
-  return `<button class="fast-history-item" data-session-id="${s.id}"><span>${fmtDate(s.endedAt)}</span><div><b>${dest?.name||'Voyage'}</b><small>${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)} · ${Math.round(pct)}% of planned crossing</small></div><strong>${fmtDuration(s.durationMs,true)}</strong></button>`
+  const dest=getIsland(s.destinationId),pct=clamp((s.durationMs/Math.max(1,sessionTargetMs(s)))*100,0,100),badge=s.assumed?`<i class="assumed-badge">${s.demo?'DEMO':'ASSUMED'}</i>`:'';
+  return `<button class="fast-history-item ${s.assumed?'assumed':''}" data-session-id="${s.id}"><span>${fmtDate(s.endedAt)}</span><div><b>${dest?.name||'Voyage'} ${badge}</b><small>${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)} · ${s.assumed?'planned background passage':`${Math.round(pct)}% of planned crossing`}</small></div><strong>${fmtDuration(s.durationMs,true)}</strong></button>`
 }
 function fastingOverviewHTML(){
   const ins=fastingInsights(30),r=currentRatio(),recent=ins.sessions.slice(-8).reverse(),current=state.phase==='ashore'
     ?`<div class="insight-hero"><div class="eyebrow">In harbour now</div><strong>${fmtDuration(shoreElapsed(),true)} ashore</strong><p>Your usual rhythm is ${r.label}. The next familiar tide falls around ${formatClockInZone(state.phaseStartedAt+r.eat*3600000,state.settings.timezone)}.</p></div>`
     :`<div class="insight-hero"><div class="eyebrow">${state.phase==='arrived'?'Land sighted':'Voyage under way'}</div><strong>${fmtDuration(actualFastMs(),true)} at sea</strong><p>${state.phase==='arrived'?'Your planned landfall has been reached.':`${fmtDuration(voyageRemainingMs(),true)} remains to the planned landfall.`}</p></div>`;
-  return `${current}
+  return `${current}${ins.assumed?`<div class="assumed-note"><b>≈ ${ins.assumed} background passage${ins.assumed===1?'':'s'} shown.</b> These are game-world assumptions based on your usual rhythm, not manually recorded fasts.${ins.demo?' Demo-mode passages are included for testing.':''}</div>`:''}
     <div class="section"><div class="section-title">Last 30 days <span>${ins.sessions.length} voyage${ins.sessions.length===1?'':'s'}</span></div><div class="stat-grid">
       <div class="stat"><b>${ins.sessions.length?fmtDuration(ins.avg,true):'—'}</b><span>average fast</span></div>
       <div class="stat"><b>${fmtFastHours(ins.total,1)}</b><span>total fasting time</span></div>
@@ -1069,21 +1095,21 @@ function fastingOverviewHTML(){
 function ensureCalendarCursor(){if(fastingLogUI.year==null){const d=zonedYMD(nowReal());fastingLogUI.year=d.year;fastingLogUI.month=d.month-1}}
 function monthName(y,m){return new Intl.DateTimeFormat([],{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(y,m,1)))}
 function fastingCalendarHTML(){
-  ensureCalendarCursor();const y=fastingLogUI.year,m=fastingLogUI.month,days=new Date(Date.UTC(y,m+1,0)).getUTCDate(),first=new Date(Date.UTC(y,m,1)).getUTCDay(),sessions=realFastingSessions(),byDay={};
+  ensureCalendarCursor();const y=fastingLogUI.year,m=fastingLogUI.month,days=new Date(Date.UTC(y,m+1,0)).getUTCDate(),first=new Date(Date.UTC(y,m,1)).getUTCDay(),sessions=tidebookSessions(),byDay={};
   sessions.forEach(s=>{const k=zonedYMD(s.endedAt).key;(byDay[k]||(byDay[k]=[])).push(s)});
   const today=zonedYMD(nowReal()).key,cells=[];for(let i=0;i<first;i++)cells.push(`<div class="fast-day blank"></div>`);
-  let monthTotal=0,monthCount=0;for(let d=1;d<=days;d++){const key=`${y}-${fmt2(m+1)}-${fmt2(d)}`,list=byDay[key]||[],total=list.reduce((n,s)=>n+s.durationMs,0);monthTotal+=total;monthCount+=list.length;cells.push(`<button class="fast-day ${list.length?'has-fast':''} ${today===key?'today':''}" ${list.length?`data-fast-day="${key}"`:''}><span>${d}</span>${list.length?`<i>⚑</i><b>${fmtFastHours(total,1)}</b><small>${list.length} voyage${list.length===1?'':'s'}</small>`:''}</button>`)}
+  let monthTotal=0,monthCount=0;for(let d=1;d<=days;d++){const key=`${y}-${fmt2(m+1)}-${fmt2(d)}`,list=byDay[key]||[],total=list.reduce((n,s)=>n+s.durationMs,0);monthTotal+=total;monthCount+=list.length;const assumedOnly=list.length&&list.every(s=>s.assumed);cells.push(`<button class="fast-day ${list.length?'has-fast':''} ${assumedOnly?'has-assumed':''} ${today===key?'today':''}" ${list.length?`data-fast-day="${key}"`:''}><span>${d}</span>${list.length?`<i>${assumedOnly?'≈':'⚑'}</i><b>${fmtFastHours(total,1)}</b><small>${list.length} passage${list.length===1?'':'s'}</small>`:''}</button>`)}
   return `<div class="section"><div class="calendar-nav"><button id="calPrev">‹</button><b>${monthName(y,m)}</b><button id="calNext">›</button></div><div class="fast-calendar">${['SUN','MON','TUE','WED','THU','FRI','SAT'].map(x=>`<div class="weekday">${x}</div>`).join('')}${cells.join('')}</div></div>
     <div class="section"><div class="stat-grid"><div class="stat"><b>${monthCount}</b><span>voyages docked</span></div><div class="stat"><b>${fmtFastHours(monthTotal,1)}</b><span>fasting time</span></div></div></div>
-    <div class="card"><p>Calendar days use the date you docked. Tap a marked day for the departure, docking time, planned target and destination.</p></div>`
+    <div class="card"><p>Calendar days use the date of landfall. Dashed ≈ days are assumed background passages; they are kept distinct from manually recorded fasting voyages.</p></div>`
 }
 function trendRangeButtonsHTML(){return `<div class="range-tabs">${[[30,'30 DAYS'],[90,'90 DAYS'],[0,'ALL']].map(([n,l])=>`<button data-fast-range="${n}" class="${fastingLogUI.range===n?'active':''}">${l}</button>`).join('')}</div>`}
 function fastingLineChartSVG(sessions){
   const pts=sessions.slice(-32);if(!pts.length)return`<div class="card"><p>Complete a few voyages and the fasting-hours chart will grow here.</p></div>`;
   const W=300,H=132,L=30,R=8,T=10,B=24,maxH=Math.max(20,Math.ceil(Math.max(...pts.map(s=>Math.max(s.durationMs,sessionTargetMs(s))/3600000))+1)),x=i=>L+(pts.length===1?(W-L-R)/2:i*(W-L-R)/(pts.length-1)),y=h=>T+(maxH-h)/maxH*(H-T-B);
   const actual=pts.map((s,i)=>`${x(i).toFixed(1)},${y(s.durationMs/3600000).toFixed(1)}`).join(' '),target=pts.map((s,i)=>`${x(i).toFixed(1)},${y((s.targetHours||16)).toFixed(1)}`).join(' ');
-  const dots=pts.map((s,i)=>`<circle class="chart-dot" cx="${x(i).toFixed(1)}" cy="${y(s.durationMs/3600000).toFixed(1)}" r="3"/>`).join('');
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fasting hours by voyage"><line class="chart-axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/><line class="chart-grid" x1="${L}" y1="${y(maxH/2)}" x2="${W-R}" y2="${y(maxH/2)}"/><text class="chart-label" x="2" y="${y(maxH)+4}">${maxH}h</text><text class="chart-label" x="6" y="${y(maxH/2)+3}">${Math.round(maxH/2)}h</text><text class="chart-label" x="${L}" y="${H-5}">${fmtDate(pts[0].endedAt)}</text><text class="chart-label" text-anchor="end" x="${W-R}" y="${H-5}">${fmtDate(pts[pts.length-1].endedAt)}</text><polyline class="chart-target" points="${target}"/><polyline class="chart-line" points="${actual}"/>${dots}</svg><div class="fast-legend"><span><i class="actual"></i>actual fasting time</span><span><i class="target"></i>planned crossing</span></div>`
+  const dots=pts.map((s,i)=>`<circle class="chart-dot ${s.assumed?'assumed':''}" cx="${x(i).toFixed(1)}" cy="${y(s.durationMs/3600000).toFixed(1)}" r="3"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fasting hours by voyage"><line class="chart-axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/><line class="chart-grid" x1="${L}" y1="${y(maxH/2)}" x2="${W-R}" y2="${y(maxH/2)}"/><text class="chart-label" x="2" y="${y(maxH)+4}">${maxH}h</text><text class="chart-label" x="6" y="${y(maxH/2)+3}">${Math.round(maxH/2)}h</text><text class="chart-label" x="${L}" y="${H-5}">${fmtDate(pts[0].endedAt)}</text><text class="chart-label" text-anchor="end" x="${W-R}" y="${H-5}">${fmtDate(pts[pts.length-1].endedAt)}</text><polyline class="chart-target" points="${target}"/><polyline class="chart-line" points="${actual}"/>${dots}</svg><div class="fast-legend"><span><i class="actual"></i>charted passage</span><span><i class="target"></i>planned crossing</span><span>≈ assumed/demo points use a pale marker</span></div>`
 }
 function weeklyBarsHTML(sessions){
   const weeks=8,now=nowReal(),buckets=[];for(let i=weeks-1;i>=0;i--)buckets.push({from:now-(i+1)*7*86400000,to:now-i*7*86400000,total:0,label:i===0?'now':`${i}w`});
@@ -1100,7 +1126,7 @@ function fastingTrendsHTML(){
   return `${trendRangeButtonsHTML()}
     <div class="section"><div class="stat-grid"><div class="stat"><b>${sessions.length?fmtDuration(ins.avg,true):'—'}</b><span>average fast</span></div><div class="stat"><b>${fmtFastHours(ins.total,1)}</b><span>${label}</span></div><div class="stat"><b>${fmtMinuteClock(ins.depart)}</b><span>usual departure</span></div><div class="stat"><b>${fmtMinuteClock(ins.dock)}</b><span>usual dock</span></div></div></div>
     <div class="trend-card"><h3>Fasting hours</h3><p>Each point is a completed voyage. The dashed line is the target chosen for that voyage.</p>${fastingLineChartSVG(sessions)}</div>
-    <div class="trend-card"><h3>Eight-week sea time</h3><p>Total fasting hours in recent seven-day blocks.</p>${weeklyBarsHTML(realFastingSessions())}</div>
+    <div class="trend-card"><h3>Eight-week sea time</h3><p>Total fasting hours in recent seven-day blocks.</p>${weeklyBarsHTML(tidebookSessions())}</div>
     <div class="trend-card"><h3>Daily tide pattern</h3><p>Recent departure-to-docking windows across a 24-hour day.</p>${rhythmChartHTML(sessions)}</div>`
 }
 function fastingWorldLogHTML(){return `<div class="section"><div class="section-title">Archipelago log <span>${worldState().log.length}</span></div>${worldState().log.length?worldLogHTML(worldState().log,14):`<div class="card"><p>The island boats are only just beginning their rounds.</p></div>`}</div><div class="section"><div class="section-title">Journal</div>${state.journal.slice(0,14).map(j=>`<div class="card"><p>${j}</p></div>`).join('')}</div>`}
@@ -1113,11 +1139,11 @@ function bindFastingLogControls(){
   if($('#calNext'))$('#calNext').onclick=()=>{fastingLogUI.month++;if(fastingLogUI.month>11){fastingLogUI.month=0;fastingLogUI.year++}renderLogPanel()};
 }
 function openSessionDetails(id){
-  const s=realFastingSessions().find(x=>x.id===id);if(!s)return;const dest=getIsland(s.destinationId),planned=sessionTargetMs(s),pct=Math.round(clamp(s.durationMs/Math.max(1,planned),0,2)*100);
-  showModal(`<h2>${dest?.name||'Fasting voyage'}</h2><p>${fmtDate(s.endedAt)} · ${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)}</p><div class="stat-grid"><div class="stat"><b>${fmtDuration(s.durationMs,true)}</b><span>fasting time</span></div><div class="stat"><b>${fmtDuration(planned,true)}</b><span>planned crossing</span></div><div class="stat"><b>${pct}%</b><span>of planned time</span></div><div class="stat"><b>${s.completed?'⚑':'⌁'}</b><span>${s.completed?'planned landfall':'sheltered harbour'}</span></div></div><div class="notice"><b>Departure</b> ${new Date(s.startedAt).toLocaleDateString()} · ${formatClockInZone(s.startedAt,state.settings.timezone)}<br><b>Docking</b> ${new Date(s.endedAt).toLocaleDateString()} · ${formatClockInZone(s.endedAt,state.settings.timezone)}<br><b>Rhythm</b> ${s.targetHours||16}:${24-(s.targetHours||16)}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE LOG</button></div>`)
+  const s=tidebookSessions().find(x=>x.id===id);if(!s)return;const dest=getIsland(s.destinationId),planned=sessionTargetMs(s),pct=Math.round(clamp(s.durationMs/Math.max(1,planned),0,2)*100);
+  showModal(`<h2>${dest?.name||'Fasting voyage'}</h2>${s.assumed?`<div class="assumed-note"><b>${s.demo?'Demo passage':'Assumed background passage'}</b><br>This entry represents game-world continuity around your usual plan; it is not a manually recorded fast.</div>`:''}<p>${fmtDate(s.endedAt)} · ${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)}</p><div class="stat-grid"><div class="stat"><b>${fmtDuration(s.durationMs,true)}</b><span>fasting time</span></div><div class="stat"><b>${fmtDuration(planned,true)}</b><span>planned crossing</span></div><div class="stat"><b>${pct}%</b><span>of planned time</span></div><div class="stat"><b>${s.completed?'⚑':'⌁'}</b><span>${s.completed?'planned landfall':'sheltered harbour'}</span></div></div><div class="notice"><b>Departure</b> ${new Date(s.startedAt).toLocaleDateString()} · ${formatClockInZone(s.startedAt,state.settings.timezone)}<br><b>Docking</b> ${new Date(s.endedAt).toLocaleDateString()} · ${formatClockInZone(s.endedAt,state.settings.timezone)}<br><b>Rhythm</b> ${s.targetHours||16}:${24-(s.targetHours||16)}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE LOG</button></div>`)
 }
 function openFastDay(key){
-  const list=realFastingSessions().filter(s=>zonedYMD(s.endedAt).key===key),total=list.reduce((n,s)=>n+s.durationMs,0);
+  const list=tidebookSessions().filter(s=>zonedYMD(s.endedAt).key===key),total=list.reduce((n,s)=>n+s.durationMs,0);
   showModal(`<h2>${new Date(key+'T12:00:00Z').toLocaleDateString([],{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}</h2><p>${list.length} fasting voyage${list.length===1?'':'s'} · ${fmtFastHours(total,1)} total</p><div class="fast-history">${list.slice().reverse().map(fastHistoryItemHTML).join('')}</div><div class="modal-actions"><button class="big-btn ghost" data-close>CLOSE</button></div>`);
   $$('[data-session-id]').forEach(b=>b.onclick=()=>openSessionDetails(b.dataset.sessionId))
 }
@@ -1295,6 +1321,7 @@ function startVoyage(){
     discoveryIds:[], discoveries:[], minigamesPlayed:0, plannedProgress:0, simulated:!!state.sim.active, uncharted:!dest.known,
     events:buildVoyageEvents(voyageId,{phase:dayPhase(),weather:worldWeather(),destination:dest}), passengers:[...state.boatPassengers], trafficSeen:[], seaLog:[{at:gameNow(),icon:'⚑',title:'Under way',text:contentLine('copy.voyage.underway',{origin:currentIsland().name,destination:dest.known?dest.name:'open water'})},...(boarded?[{at:gameNow(),icon:'☻',title:'Passenger aboard',text:contentLine('copy.journal.passengerBoarded',{person:state.boatPassengers[state.boatPassengers.length-1]?.person?.name||'A neighbour',destination:dest.name})}]:[])],activeEventId:null
   };
+  if(state.settings.demoMode)engageVoyageDemo(state.voyage,false);
   state.phase='fasting'; state.phaseStartedAt=gameNow(); state.activeView='voyage';passageUI.tab='clock';voyageMicroEvent=null;voyageMicroNext=performance.now()+2500;lastTrafficVisualReal=0;
   state.journal.unshift(contentLine('copy.journal.departure',{origin:currentIsland().name,destination:dest.known?dest.name:'uncharted waters',boat:state.boat.name||'The boat',time:fmtClock(gameNow())}));
   save(); playCue('depart'); renderUI();
@@ -1319,7 +1346,7 @@ function dock(early=false){
   else{if(!dest.known){dest.known=true;dest.rumoured=false;state.journal.unshift(contentLine('copy.journal.discovered',{destination:dest.name}))}ensureRoute(v.originId,dest.id);state.journal.unshift(contentLine('copy.journal.docked',{destination:dest.name,duration:fmtDuration(duration,true)}))}
   ensureIslandData(dest);dest.visits=(dest.visits||0)+1;state.currentIslandId=dest.id;
   const cargoNotes=unloadVoyageCargo(dest,v.discoveries||[]),delivered=deliverPassengers(dest);maybeGenerateLiftRequest(dest);
-  const session={id:v.id,startedAt:v.startedAtReal||v.startedAt,endedAt:nowReal(),durationMs:state.sim.active?duration:Math.max(0,nowReal()-(v.startedAtReal||nowReal())),targetHours:v.targetHours,completed:progress>=.995,progress,destinationId:dest.id,simulated:!!v.simulated};state.sessions.push(session);
+  const session={id:v.id,startedAt:v.startedAtReal||v.startedAt,endedAt:nowReal(),durationMs:v.simulated?duration:Math.max(0,nowReal()-(v.startedAtReal||nowReal())),targetHours:v.targetHours,completed:progress>=.995,progress,destinationId:dest.id,simulated:!!v.simulated};state.sessions.push(session);
   state.pendingResolutions=[];sceneEvent=null;state.voyage=null;state.phase='ashore';state.phaseStartedAt=gameNow();state.activeView='harbour';
   ensureChartRumours(3);const nextHome=getIsland('home'),nextOther=state.islands.find(i=>i.known&&i.id!==dest.id),nextRumour=chartRumours()[0];state.selectedDestinationId=dest.id!=='home'?nextHome.id:(nextOther?.id||nextRumour?.id||'uncharted');
   if(state.sim.active){state.sim.active=false;state.sim.offsetMs=0;toast('Sea trial complete.')}save();playCue('arrive');renderUI();
@@ -1607,20 +1634,26 @@ function renderSettingsPanel(){
     ${weatherSettingsHTML()}
     <div class="section"><div class="section-title">Default rhythm <span>used when you set sail</span></div>${rhythmPickerHTML('settingsRhythm')}</div>
     <div class="section"><div class="section-title">Sound & comfort</div><div class="sound-controls"><div class="sound-readout"><b>Harbour sounds</b><span id="soundVolumeText">${Math.round(audioVolume()*100)}%</span></div><input id="soundVolume" type="range" min="0" max="1" step="0.05" value="${audioVolume()}" aria-label="Sound volume"><div class="row" style="margin-top:6px"><button class="big-btn ghost" id="toggleSound">${state.sound?'MUTE':'TURN SOUND ON'}</button><button class="big-btn ghost" id="sampleSound">PLAY SAMPLE</button></div><div class="muted" style="margin-top:7px">Soft bells, little discovery notes and a quiet wash of sea on departure and arrival.</div></div></div>
-    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Compress the voyage already under way</h3><p>Start any route normally, then turn its remaining crossing into a three-minute sea trial while keeping the destination, cargo, passengers and current progress.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn secondary" id="compressVoyage" ${(state.phase==='fasting'&&state.voyage)?'':'disabled'}>${state.voyage?.prototypeCompressed?'VOYAGE ALREADY COMPRESSED':'COMPRESS ACTIVE VOYAGE TO 3 MIN'}</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12H</button>${state.voyage?.prototypeCompressed?`<button class="big-btn ghost" style="margin-top:7px" id="advanceTrial">ADVANCE SEA TRIAL 30 SEC</button>`:''}</div>`:''}</div>
+    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Demo mode</h3><p>When enabled, every voyage runs as a three-minute crossing with the full encounter itinerary. Demo voyages are visually complete but remain separate from manually recorded fasting history.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn ${state.settings.demoMode?'secondary':'ghost'}" id="toggleDemoMode">DEMO MODE: ${state.settings.demoMode?'ON':'OFF'}</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12 WEEKS</button><button class="big-btn ghost" style="margin-top:7px" id="clearDemoHistory">CLEAR DEMO HISTORY</button><div class="muted" style="margin-top:7px">The 12-week demo advances the idle world, creates clearly marked assumed background passages for Tidebook testing, discovers some shores and lets boats, residents and projects continue their routines.</div></div>`:''}</div>
     <div class="section"><div class="section-title">Data</div><button class="big-btn danger" id="resetGame">RESET MAKEFAST</button><div class="muted" style="margin-top:7px">Reset permanently clears this browser save.</div></div>
     <div class="section"><div class="notice" style="background:#fff0ce;border:3px solid var(--ink);padding:9px;border-radius:7px;font-size:8px;line-height:1.45"><b>Health reminder</b><br>MakeFast is not medical advice. Fasting is not suitable for everyone; use an appropriate eating pattern for your circumstances and seek medical guidance where needed.</div></div>`;
   bindRhythmPicker('settingsRhythm',()=>{renderUI();toast('Your usual rhythm is set.')});bindWeatherSettings();
   $('#toggleSound').onclick=()=>{state.sound=!state.sound;save();if(state.sound)playCue('soft');renderUI()};
   const vol=$('#soundVolume');if(vol){vol.oninput=()=>{state.settings.soundVolume=clamp(+vol.value,0,1);$('#soundVolumeText').textContent=`${Math.round(state.settings.soundVolume*100)}%`;if(audioEngine.master&&audioEngine.ctx)audioEngine.master.gain.setTargetAtTime(.5*audioVolume(),audioEngine.ctx.currentTime,.03);save()}}
-  $('#sampleSound').onclick=()=>{if(!state.sound){state.sound=true;save();renderSettingsPanel();setTimeout(()=>playCue('arrive'),0)}else playCue('arrive')};$('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};$('#saveTimezone').onclick=()=>{const v=$('#timezoneInput').value.trim();if(!validTimeZone(v)){toast('That timezone was not recognised.');return}state.settings.timezone=v;save();renderUI();toast(contentLine('copy.harbour.timezoneAdjusted'))};$('#exportSave').onclick=exportSave;$('#importSave').onclick=()=>$('#importFile').click();$('#importFile').onchange=importSave;$('#resetGame').onclick=resetGame;if($('#compressVoyage'))$('#compressVoyage').onclick=compressActiveVoyageToThreeMinutes;if($('#advanceWorld'))$('#advanceWorld').onclick=()=>fastForwardWorld(12);if($('#advanceTrial'))$('#advanceTrial').onclick=()=>{if(state.voyage?.prototypeCompressed){state.voyage.prototypeStartedAt-=30000;save();processVoyageEvents();renderUI();toast('The sea trial moves ahead.')}};
+  $('#sampleSound').onclick=()=>{if(!state.sound){state.sound=true;save();renderSettingsPanel();setTimeout(()=>playCue('arrive'),0)}else playCue('arrive')};$('#toggleProto').onclick=()=>{state.settings.prototypeTools=!state.settings.prototypeTools;save();renderUI()};$('#saveTimezone').onclick=()=>{const v=$('#timezoneInput').value.trim();if(!validTimeZone(v)){toast('That timezone was not recognised.');return}state.settings.timezone=v;save();renderUI();toast(contentLine('copy.harbour.timezoneAdjusted'))};$('#exportSave').onclick=exportSave;$('#importSave').onclick=()=>$('#importFile').click();$('#importFile').onchange=importSave;$('#resetGame').onclick=resetGame;if($('#toggleDemoMode'))$('#toggleDemoMode').onclick=toggleDemoMode;if($('#advanceWorld'))$('#advanceWorld').onclick=simulateTwelveWeeks;if($('#clearDemoHistory'))$('#clearDemoHistory').onclick=clearDemoHistory;
 }
 
-function compressActiveVoyageToThreeMinutes(){
-  if(state.phase!=='fasting'||!state.voyage){toast('Set sail on a route first.');return}const v=state.voyage;if(v.prototypeCompressed){toast('This voyage is already running as a sea trial.');return}
-  const startP=voyageProgress(),now=gameNow(),originalElapsed=actualFastMs();v.prototypeCompressed=true;v.simulated=true;v.prototypeStartedAt=now;v.prototypeDurationMs=180000;v.prototypeStartProgress=startP;v.prototypeOriginalElapsedMs=originalElapsed;
-  const ctx={phase:dayPhase(),weather:worldWeather(),destination:getIsland(v.destinationId)};v.events=buildPreviewVoyageEvents(v.id+'-compressed',ctx).map(e=>({...e,p:startP+e.p*(1-startP)}));v.activeEventId=null;sceneEvent=null;v.seaLog.unshift({at:now,icon:'⚙',title:'Sea trial engaged',text:'The rest of this crossing is compressed into three minutes for testing.'});voyageMicroEvent=null;voyageMicroNext=performance.now()+900;lastTrafficVisualReal=0;save();renderUI();notifyVoyage('⚙ Sea trial engaged','The remaining crossing will reach land in about three minutes.','Sea trial engaged')
+function engageVoyageDemo(v=state.voyage,fromCurrent=true){
+  if(!v)return;const startP=fromCurrent?voyageProgress():0,now=gameNow(),originalElapsed=fromCurrent?actualFastMs():0;v.demoMode=true;v.simulated=true;v.demoStartedAt=now;v.demoDurationMs=180000;v.demoStartProgress=startP;v.demoOriginalElapsedMs=originalElapsed;
+  const context={phase:dayPhase(),weather:worldWeather(),destination:getIsland(v.destinationId)};v.events=buildPreviewVoyageEvents(v.id+'-demo',context).map(e=>({...e,p:startP+e.p*(1-startP)}));v.activeEventId=null;sceneEvent=null;voyageMicroEvent=null;voyageMicroNext=performance.now()+900;lastTrafficVisualReal=0;v.seaLog.unshift({at:now,icon:'⚙',title:'Demo crossing',text:'This voyage is running on the three-minute demonstration clock.'})
 }
+function toggleDemoMode(){
+  state.settings.demoMode=!state.settings.demoMode;if(state.settings.demoMode&&state.phase==='fasting'&&state.voyage&&!voyageIsDemo(state.voyage)){engageVoyageDemo(state.voyage,true);notifyVoyage('⚙ Demo mode on','The current crossing will reach land in about three minutes.','Demo mode on')}save();renderUI();toast(state.settings.demoMode?'Demo mode is on. Voyages now run in three minutes.':'Demo mode is off. Future voyages use real time.')
+}
+function clearDemoHistory(){
+  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.sessions=(state.sessions||[]).filter(s=>!s.simulated);save();renderUI();toast('Demo fasting history cleared. The living-world save remains intact.')
+}
+
 
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='makefast-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function importSave(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);state=migrate(obj);save();renderUI();toast('Save imported. Welcome back.')}catch(err){alert('That save file could not be read.')}};r.readAsText(f)}
@@ -2008,15 +2041,20 @@ function drawIslandScene(isl){
 
 function drawVoyage(){
   drawSeaBackground();const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),origin=getIsland(v.originId),ph=dayPhase(),W=canvas.width,H=canvas.height,vr=visibleSceneRect();
-  // The boat and both coastlines share one drawer-aware camera. As the sheet moves, the whole scene moves together.
-  const bx=W/2,by=vr.y+vr.h*.56+Math.sin(frame*.006)*2;
+  // v0.17 cinematic focus pull: the island is the scale reference at each coast,
+  // while the camera closes onto the boat for the open-water middle of the voyage.
+  const smooth=t=>t*t*(3-2*t),depart=smooth(clamp(p/.24,0,1)),arrive=smooth(clamp((p-.74)/.26,0,1)),focus=p<.24?depart:(p>.74?1-arrive:1);
+  const bx=W/2,cruiseY=vr.y+vr.h*.56,shoreY=vr.y+vr.h*.59,by=lerp(shoreY,cruiseY,focus)+Math.sin(frame*.006)*lerp(.7,2,focus),boatScale=lerp(.56,1.35,focus);
   const scroll=(frame*.022)%42;for(let y=-42;y<H+42;y+=34){const yy=(y+scroll)%(H+42);for(let x=18;x<W;x+=78){const sway=Math.sin((x+y+frame*.01)*.018)*5;rect(x+sway,yy,24,2,'rgba(255,255,255,.075)')}}
-  // Departure: the boat begins just clear of the harbour, while the whole island recedes behind it rather than jumping with the drawer state.
-  if(p<.24){const t=clamp(p/.24,0,1),ease=t*t*(3-2*t),gap=Math.min(205,Math.max(130,vr.h*.24)),scale=lerp(.82,.16,ease),y=by+gap+ease*Math.min(260,vr.h*.32);ctx.globalAlpha=clamp(1-ease*.94,.08,1);drawApproachIsland(origin,bx,y,scale);ctx.globalAlpha=1}
-  // Arrival: a small distant shape grows steadily into a readable coastline in the same camera space.
-  const vis=clamp((p-.58)/.42,0,1);if(vis>0){const eased=vis*vis*(3-2*vis),scale=.10+eased*1.28,farY=vr.y+Math.max(58,vr.h*.10),nearY=by-Math.min(155,Math.max(105,vr.h*.18)),y=lerp(farY,nearY,eased);ctx.globalAlpha=clamp(.14+eased*.92,.14,1);drawApproachIsland(dest,bx,y,scale);ctx.globalAlpha=1;if(vis>.33){for(let i=0;i<Math.floor(2+vis*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(vis>.63&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,lerp(farY,nearY,eased)-20);ctx.globalAlpha=1}}
-  updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,1);drawTopBoat(bx,by,1.35,0,state.boat.type,playerBoatAppearance());drawWeather();drawTimeLighting();
+  // Leaving harbour: begin with both boat and coast in the same wide shot, then
+  // grow the boat as the coast shrinks and slips below the frame.
+  if(p<.27){const t=depart,islandScale=lerp(1.02,.11,t),startGap=Math.min(150,Math.max(92,vr.h*.17)),endGap=Math.min(430,Math.max(260,vr.h*.48)),iy=by+lerp(startGap,endGap,t);ctx.globalAlpha=clamp(1-t*.96,.06,1);drawApproachIsland(origin,bx,iy,islandScale);ctx.globalAlpha=1}
+  // Landfall reverses the focus pull: the boat recedes back into a wider shot as
+  // the destination grows from a distant shoreline into the dominant scene.
+  if(arrive>0){const islandScale=lerp(.10,1.12,arrive),farY=vr.y+Math.max(54,vr.h*.08),nearY=by-Math.min(150,Math.max(92,vr.h*.16)),iy=lerp(farY,nearY,arrive);ctx.globalAlpha=clamp(.12+arrive*.9,.12,1);drawApproachIsland(dest,bx,iy,islandScale);ctx.globalAlpha=1;if(arrive>.28){for(let i=0;i<Math.floor(2+arrive*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(arrive>.62&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,iy-20);ctx.globalAlpha=1}}
+  updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,clamp(boatScale/1.35,.45,1));drawTopBoat(bx,by,boatScale,0,state.boat.type,playerBoatAppearance());drawWeather();drawTimeLighting();
 }
+
 function chartIslandOutlinePoints(isl,q,r){const sh=ensureIslandData(isl).shape,c=Math.cos(sh.rotation),sn=Math.sin(sh.rotation),norm=Math.max(sh.rx,sh.ry),pts=[];for(let a=0;a<Math.PI*2;a+=Math.PI/24){const rad=shapeRadius(isl,a),lx=Math.cos(a)*sh.rx*rad,ly=Math.sin(a)*sh.ry*rad,gx=lx*c+ly*sn,gy=-lx*sn+ly*c;pts.push([q.x+(gx/norm)*r,q.y+(gy/norm)*r])}return pts}
 function drawRumourCoastline(isl,q,r,iconZoom){const pts=chartIslandOutlinePoints(isl,q,r);ctx.save();ctx.globalAlpha=.76;ctx.setLineDash([Math.max(2,3*iconZoom),Math.max(3,5*iconZoom)]);ctx.strokeStyle='#806b49';ctx.lineWidth=Math.max(1,1.25*iconZoom);ctx.beginPath();pts.forEach((p,n)=>n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=.24;ctx.strokeStyle='#aa9060';ctx.lineWidth=1;ctx.beginPath();pts.filter((_,n)=>n%3===0).forEach((p,n)=>n?ctx.lineTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004):ctx.moveTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004));ctx.stroke();ctx.restore();pxText('?',q.x,q.y+4,'#6e5d40',Math.max(10,Math.round(10*iconZoom)),'center')}
 function chartCleanName(i){return(i.home?'HOME':String(i.name||'').replace(/\s+Island$/i,'')).toUpperCase()}
@@ -2143,7 +2181,7 @@ window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWea
 window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()})};
 
 // Start
-const startupWorldGap=Math.max(0,nowReal()-(worldState().lastSimAt||nowReal()));simulateWorldTo(nowReal(),startupWorldGap>10*60000);ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if(startupWorldGap>10*60000&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
+const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
 })();
 </script>
