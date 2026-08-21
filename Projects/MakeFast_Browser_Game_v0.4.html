@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>MakeFast v0.14.1 — Weather Icons Update</title>
+<title>MakeFast</title>
 <style>
   :root{
     --ink:#18313a;
@@ -189,10 +189,10 @@
 
 const SAVE_KEY='makefast_save_v1';
 const VERSION=18;
-const VERSION_LABEL='0.18';
+const VERSION_LABEL='0.18.2';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
-const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`;
+const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const nowReal=()=>Date.now();
@@ -1030,10 +1030,43 @@ function simulateBackgroundPassages(from,to,{demo=false,force=false,summarize=fa
 function shiftFutureWorldBack(real,delta){
   const w=worldState();w.vessels.forEach(v=>{['departAt','arrivalAt','nextActionAt','createdAt'].forEach(k=>{if(v[k]>real)v[k]-=delta})});w.log.forEach(e=>{if(e.at>real)e.at-=delta});state.liftRequests.forEach(r=>{if(r.createdAt>real)r.createdAt-=delta});state.backgroundPassages.forEach(r=>{if(r.endedAt>real){r.endedAt-=delta;r.startedAt-=delta}});state.islands.forEach(i=>{(i.residents||[]).forEach(p=>{if(p.joinedAt>real)p.joinedAt-=delta});(i.projects||[]).forEach(p=>{if(p.startedAt>real)p.startedAt-=delta;if(p.completedAt>real)p.completedAt-=delta});(i.vesselBuilds||[]).forEach(b=>{if(b.startedAt>real)b.startedAt-=delta;if(b.completedAt>real)b.completedAt-=delta})});w.lastSimAt=real;w.lastSettlementDay=Math.floor(real/86400000);state.idle.lastPassageAt=real;if(state.phaseStartedAt>real)state.phaseStartedAt-=delta
 }
+function demoHistoryProfile(dayIndex,at){
+  // Prototype-only history generator. The living world still makes its normal daily passage;
+  // this profile controls how that day appears in Tidebook so charts can be stress-tested
+  // with believable manual/assumed/missing variation without claiming real user data.
+  const rr=rng(hashString(`demo-history:${state.worldSeed}:${dayIndex}:${Math.floor(at/86400000)}`)),target=clamp(+state.settings.defaultFastHours||16,12,20),weekend=(dayIndex%7===0||dayIndex%7===6);
+  if(rr()<.075)return{kind:'gap'};
+  const assumed=rr()<.12;
+  // Docking time clusters around late morning, with weekends and a gentle multi-week drift.
+  const dockBase=660+(target-16)*25+(weekend?28:0)+Math.sin(dayIndex/8)*18;
+  const dockMinute=clamp(dockBase+(rr()+rr()+rr()-1.5)*(assumed?28:52),7*60,15*60);
+  const localNow=minuteOfDayInZone(at),endedAt=at+(dockMinute-localNow)*60000;
+  let durationH;
+  if(assumed){durationH=target+(rr()+rr()-1)*.22}
+  else{
+    durationH=target+(rr()+rr()+rr()+rr()-2)*.72;
+    const outlier=rr();if(outlier<.075)durationH-=1.1+rr()*1.6;else if(outlier>.955)durationH+=.65+rr()*1.05;
+  }
+  durationH=clamp(durationH,Math.max(10,target-3.25),Math.min(20,target+2.1));
+  const durationMs=Math.round(durationH*60)*60000,completed=durationMs>=target*3600000*.985;
+  return{kind:assumed?'assumed':'recorded',endedAt,startedAt:endedAt-durationMs,durationMs,targetHours:target,completed,progress:clamp(durationMs/(target*3600000),0,1.35)}
+}
+function applyDemoHistoryProfile(rec,profile){
+  if(!rec||!profile)return null;
+  if(profile.kind==='gap'){
+    const i=state.backgroundPassages.indexOf(rec);if(i>=0)state.backgroundPassages.splice(i,1);return null
+  }
+  rec.startedAt=profile.startedAt;rec.endedAt=profile.endedAt;rec.durationMs=profile.durationMs;rec.targetHours=profile.targetHours;rec.completed=profile.completed;rec.progress=profile.progress;rec.demo=true;rec.simulated=true;rec.assumed=profile.kind==='assumed';rec.demoRecorded=profile.kind==='recorded';return rec
+}
 function simulateTwelveWeeks(){
   if(state.phase!=='ashore'||state.voyage){toast('Dock first so the long demo can begin from harbour.');return}const days=84,day=86400000,real=nowReal(),w=worldState(),base=Math.max(w.lastSimAt||real,real),before=worldTrialSnapshot();
-  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.idle.lastPassageAt=base;const passages=[];for(let d=1;d<=days;d++){const at=base+d*day;simulateWorldTo(at,false,{maxDays:90,stepMs:12*3600000});const rec=runBackgroundPassage(at,{demo:true});if(rec)passages.push(rec);advanceArchipelagoSettlementDay(at,{demo:true})}state.idle.lastPassageAt=base+days*day;ensureWorldFleet();const after=worldTrialSnapshot(),reportEntries=w.log.filter(e=>e.at>base);shiftFutureWorldBack(real,days*day);save();renderUI();
-  showModal(`<h2>12-week archipelago demo</h2><p>The archipelago lived through twelve interleaved weeks: each day the captain made the usual background passage while settlements, builders and working boats continued their own routines.</p><div class="stat-grid"><div class="stat"><b>${passages.length}</b><span>background passages</span></div><div class="stat"><b>+${Math.max(0,after.known-before.known)}</b><span>shores discovered</span></div><div class="stat"><b>+${Math.max(0,after.population-before.population)}</b><span>new residents</span></div><div class="stat"><b>+${Math.max(0,after.vessels-before.vessels)}</b><span>working boats</span></div><div class="stat"><b>+${Math.max(0,after.projectsStarted-before.projectsStarted)}</b><span>projects started</span></div><div class="stat"><b>+${Math.max(0,after.projectsComplete-before.projectsComplete)}</b><span>projects completed</span></div><div class="stat"><b>${after.projectsActive}</b><span>underway now</span></div></div><div class="section" style="margin-top:10px"><div class="section-title">Archipelago activity <span>${reportEntries.length} log events</span></div>${reportEntries.slice(-12).reverse().map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${e.text}</b></div>`).join('')||'<div class="card"><p>The boats kept their quieter routines this time.</p></div>'}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO MAKEFAST</button></div>`)
+  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.idle.lastPassageAt=base;const passages=[],recorded=[],assumed=[];let gaps=0;
+  for(let d=1;d<=days;d++){
+    const at=base+d*day;simulateWorldTo(at,false,{maxDays:90,stepMs:12*3600000});const raw=runBackgroundPassage(at,{demo:true}),profile=demoHistoryProfile(d,at),rec=applyDemoHistoryProfile(raw,profile);
+    if(raw)passages.push(raw);if(rec){if(rec.assumed)assumed.push(rec);else recorded.push(rec)}else gaps++;advanceArchipelagoSettlementDay(at,{demo:true})
+  }
+  state.idle.lastPassageAt=base+days*day;ensureWorldFleet();const after=worldTrialSnapshot(),reportEntries=w.log.filter(e=>e.at>base);shiftFutureWorldBack(real,days*day);save();renderUI();
+  showModal(`<h2>12-week archipelago demo</h2><p>The world lived through twelve interleaved weeks. Tidebook now imitates ordinary play too: most days are synthetic recorded-style fasts with natural timing/duration variation, some are clearly assumed, and a few are left blank so the Calendar and Trends do not look artificially perfect.</p><div class="stat-grid"><div class="stat"><b>${recorded.length}</b><span>recorded-style demo fasts</span></div><div class="stat"><b>${assumed.length}</b><span>assumed fasts</span></div><div class="stat"><b>${gaps}</b><span>days without a record</span></div><div class="stat"><b>+${Math.max(0,after.known-before.known)}</b><span>shores discovered</span></div><div class="stat"><b>+${Math.max(0,after.population-before.population)}</b><span>new residents</span></div><div class="stat"><b>+${Math.max(0,after.vessels-before.vessels)}</b><span>working boats</span></div><div class="stat"><b>+${Math.max(0,after.projectsStarted-before.projectsStarted)}</b><span>projects started</span></div><div class="stat"><b>+${Math.max(0,after.projectsComplete-before.projectsComplete)}</b><span>projects completed</span></div></div><div class="notice" style="margin-top:9px"><b>Prototype data only.</b> Recorded-style demo fasts are plotted like ordinary manual voyages so you can inspect the charts, but they keep a DEMO marker in Tidebook details. Assumed days keep the ≈ treatment.</div><div class="section" style="margin-top:10px"><div class="section-title">Archipelago activity <span>${reportEntries.length} log events</span></div>${reportEntries.slice(-12).reverse().map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${e.text}</b></div>`).join('')||'<div class="card"><p>The boats kept their quieter routines this time.</p></div>'}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO MAKEFAST</button></div>`)
 }
 
 
@@ -1091,7 +1124,7 @@ function fastingInsights(days=30){
   const sessions=fastingSessionsInRange(days),total=sessions.reduce((n,s)=>n+s.durationMs,0),avg=sessions.length?total/sessions.length:0,targetAvg=sessions.length?sessions.reduce((n,s)=>n+sessionTargetMs(s),0)/sessions.length:0;
   const depart=circularMeanMinute(sessions.map(s=>minuteOfDayInZone(s.startedAt))),dock=circularMeanMinute(sessions.map(s=>minuteOfDayInZone(s.endedAt)));
   const planned=sessions.filter(s=>s.completed).length;
-  return {sessions,total,avg,targetAvg,depart,dock,planned,assumed:sessions.filter(s=>s.assumed).length,demo:sessions.filter(s=>s.demo).length,plannedRate:sessions.length?planned/sessions.length:0}
+  return {sessions,total,avg,targetAvg,depart,dock,planned,assumed:sessions.filter(s=>s.assumed).length,demo:sessions.filter(s=>s.demo).length,demoRecorded:sessions.filter(s=>s.demo&&!s.assumed).length,plannedRate:sessions.length?planned/sessions.length:0}
 }
 function passageClockHTML(v,p,remaining,dest){
   const elapsed=actualFastMs(),start=v.startedAtReal||v.startedAt,landfall=voyageIsDemo(v)?gameNow()+remaining:start+(v.targetMs||v.targetHours*3600000),arrived=state.phase==='arrived';
@@ -1119,14 +1152,16 @@ function updateFastingLiveUI(){
 }
 function fastingLogTabsHTML(){return `<div class="log-tabs">${[['overview','OVERVIEW'],['calendar','CALENDAR'],['trends','TRENDS'],['world','WORLD']].map(([id,label])=>`<button data-fast-tab="${id}" class="${fastingLogUI.tab===id?'active':''}">${label}</button>`).join('')}</div>`}
 function fastHistoryItemHTML(s){
-  const dest=getIsland(s.destinationId),pct=clamp((s.durationMs/Math.max(1,sessionTargetMs(s)))*100,0,100),badge=s.assumed?`<i class="assumed-badge">${s.demo?'DEMO':'ASSUMED'}</i>`:'';
-  return `<button class="fast-history-item ${s.assumed?'assumed':''}" data-session-id="${s.id}"><span>${fmtDate(s.endedAt)}</span><div><b>${dest?.name||'Voyage'} ${badge}</b><small>${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)} · ${s.assumed?'planned background passage':`${Math.round(pct)}% of planned crossing`}</small></div><strong>${fmtDuration(s.durationMs,true)}</strong></button>`
+  const dest=getIsland(s.destinationId),pct=clamp((s.durationMs/Math.max(1,sessionTargetMs(s)))*100,0,100),badge=s.assumed?`<i class="assumed-badge">${s.demo?'DEMO ≈':'ASSUMED'}</i>`:(s.demo?`<i class="assumed-badge">DEMO</i>`:'');
+  const detail=s.assumed?'planned background passage':s.demo?'prototype recorded-style fast':`${Math.round(pct)}% of planned crossing`;
+  return `<button class="fast-history-item ${s.assumed?'assumed':''}" data-session-id="${s.id}"><span>${fmtDate(s.endedAt)}</span><div><b>${dest?.name||'Voyage'} ${badge}</b><small>${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)} · ${detail}${!s.assumed&&s.demo?` · ${Math.round(pct)}% of plan`:''}</small></div><strong>${fmtDuration(s.durationMs,true)}</strong></button>`
 }
 function fastingOverviewHTML(){
   const ins=fastingInsights(30),r=currentRatio(),recent=ins.sessions.slice(-8).reverse(),current=state.phase==='ashore'
     ?`<div class="insight-hero"><div class="eyebrow">In harbour now</div><strong>${fmtDuration(shoreElapsed(),true)} ashore</strong><p>Your usual rhythm is ${r.label}. The next familiar tide falls around ${formatClockInZone(state.phaseStartedAt+r.eat*3600000,state.settings.timezone)}.</p></div>`
     :`<div class="insight-hero"><div class="eyebrow">${state.phase==='arrived'?'Land sighted':'Voyage under way'}</div><strong>${fmtDuration(actualFastMs(),true)} at sea</strong><p>${state.phase==='arrived'?'Your planned landfall has been reached.':`${fmtDuration(voyageRemainingMs(),true)} remains to the planned landfall.`}</p></div>`;
-  return `${current}${ins.assumed?`<div class="assumed-note"><b>≈ ${ins.assumed} background passage${ins.assumed===1?'':'s'} shown.</b> These are game-world assumptions based on your usual rhythm, not manually recorded fasts.${ins.demo?' Demo-mode passages are included for testing.':''}</div>`:''}
+  const demoNote=ins.demo?`<div class="assumed-note"><b>Prototype history is visible.</b> ${ins.demoRecorded?`${ins.demoRecorded} recorded-style demo fast${ins.demoRecorded===1?'':'s'} are plotted like ordinary play for chart testing. `:''}${ins.assumed?`${ins.assumed} ≈ assumed passage${ins.assumed===1?' is':'s are'} kept visually distinct. `:''}None of these prototype entries are claimed as real user records.</div>`:(ins.assumed?`<div class="assumed-note"><b>≈ ${ins.assumed} background passage${ins.assumed===1?'':'s'} shown.</b> These are game-world assumptions based on your usual rhythm, not manually recorded fasts.</div>`:'');
+  return `${current}${demoNote}
     <div class="section"><div class="section-title">Last 30 days <span>${ins.sessions.length} voyage${ins.sessions.length===1?'':'s'}</span></div><div class="stat-grid">
       <div class="stat"><b>${ins.sessions.length?fmtDuration(ins.avg,true):'—'}</b><span>average fast</span></div>
       <div class="stat"><b>${fmtFastHours(ins.total,1)}</b><span>total fasting time</span></div>
@@ -1184,7 +1219,8 @@ function bindFastingLogControls(){
 }
 function openSessionDetails(id){
   const s=tidebookSessions().find(x=>x.id===id);if(!s)return;const dest=getIsland(s.destinationId),planned=sessionTargetMs(s),pct=Math.round(clamp(s.durationMs/Math.max(1,planned),0,2)*100);
-  showModal(`<h2>${dest?.name||'Fasting voyage'}</h2>${s.assumed?`<div class="assumed-note"><b>${s.demo?'Demo passage':'Assumed background passage'}</b><br>This entry represents game-world continuity around your usual plan; it is not a manually recorded fast.</div>`:''}<p>${fmtDate(s.endedAt)} · ${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)}</p><div class="stat-grid"><div class="stat"><b>${fmtDuration(s.durationMs,true)}</b><span>fasting time</span></div><div class="stat"><b>${fmtDuration(planned,true)}</b><span>planned crossing</span></div><div class="stat"><b>${pct}%</b><span>of planned time</span></div><div class="stat"><b>${s.completed?'⚑':'⌁'}</b><span>${s.completed?'planned landfall':'sheltered harbour'}</span></div></div><div class="notice"><b>Departure</b> ${new Date(s.startedAt).toLocaleDateString()} · ${formatClockInZone(s.startedAt,state.settings.timezone)}<br><b>Docking</b> ${new Date(s.endedAt).toLocaleDateString()} · ${formatClockInZone(s.endedAt,state.settings.timezone)}<br><b>Rhythm</b> ${s.targetHours||16}:${24-(s.targetHours||16)}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE LOG</button></div>`)
+  const provenance=s.assumed?`<div class="assumed-note"><b>${s.demo?'Demo assumed passage':'Assumed background passage'}</b><br>This entry represents game-world continuity around your usual plan; it is not a manually recorded fast.</div>`:(s.demo?`<div class="assumed-note"><b>Demo recorded-style passage</b><br>This is synthetic prototype data shaped like an ordinary manually recorded fast so Calendar and Trends can be tested. It is not genuine fasting history.</div>`:'');
+  showModal(`<h2>${dest?.name||'Fasting voyage'}</h2>${provenance}<p>${fmtDate(s.endedAt)} · ${formatClockInZone(s.startedAt,state.settings.timezone)} → ${formatClockInZone(s.endedAt,state.settings.timezone)}</p><div class="stat-grid"><div class="stat"><b>${fmtDuration(s.durationMs,true)}</b><span>fasting time</span></div><div class="stat"><b>${fmtDuration(planned,true)}</b><span>planned crossing</span></div><div class="stat"><b>${pct}%</b><span>of planned time</span></div><div class="stat"><b>${s.completed?'⚑':'⌁'}</b><span>${s.completed?'planned landfall':'sheltered harbour'}</span></div></div><div class="notice"><b>Departure</b> ${new Date(s.startedAt).toLocaleDateString()} · ${formatClockInZone(s.startedAt,state.settings.timezone)}<br><b>Docking</b> ${new Date(s.endedAt).toLocaleDateString()} · ${formatClockInZone(s.endedAt,state.settings.timezone)}<br><b>Rhythm</b> ${s.targetHours||16}:${24-(s.targetHours||16)}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE LOG</button></div>`)
 }
 function openFastDay(key){
   const list=tidebookSessions().filter(s=>zonedYMD(s.endedAt).key===key),total=list.reduce((n,s)=>n+s.durationMs,0);
@@ -1680,7 +1716,7 @@ function renderSettingsPanel(){
     ${weatherSettingsHTML()}
     <div class="section"><div class="section-title">Default rhythm <span>used when you set sail</span></div>${rhythmPickerHTML('settingsRhythm')}</div>
     <div class="section"><div class="section-title">Sound & comfort</div><div class="sound-controls"><div class="sound-readout"><b>Harbour sounds</b><span id="soundVolumeText">${Math.round(audioVolume()*100)}%</span></div><input id="soundVolume" type="range" min="0" max="1" step="0.05" value="${audioVolume()}" aria-label="Sound volume"><div class="row" style="margin-top:6px"><button class="big-btn ghost" id="toggleSound">${state.sound?'MUTE':'TURN SOUND ON'}</button><button class="big-btn ghost" id="sampleSound">PLAY SAMPLE</button></div><div class="muted" style="margin-top:7px">Soft bells, little discovery notes and a quiet wash of sea on departure and arrival.</div></div></div>
-    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Demo mode</h3><p>When enabled, every voyage runs as a three-minute crossing with the full encounter itinerary. Demo voyages are visually complete but remain separate from manually recorded fasting history.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn ${state.settings.demoMode?'secondary':'ghost'}" id="toggleDemoMode">DEMO MODE: ${state.settings.demoMode?'ON':'OFF'}</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12 WEEKS</button><button class="big-btn ghost" style="margin-top:7px" id="clearDemoHistory">CLEAR DEMO HISTORY</button><div class="muted" style="margin-top:7px">The 12-week demo now advances the days in sequence: background passages, settlement growth, building work and working-boat traffic all happen together, so you can inspect how the archipelago actually develops.</div></div>`:''}</div>
+    <div class="section"><div class="section-title">Prototype tools</div><div class="card"><h3>Demo mode</h3><p>When enabled, every voyage runs as a three-minute crossing with the full encounter itinerary. Demo voyages are visually complete but remain separate from manually recorded fasting history.</p></div><button class="big-btn ghost" id="toggleProto">${state.settings.prototypeTools?'HIDE':'SHOW'} PROTOTYPE TOOLS</button>${state.settings.prototypeTools?`<div style="margin-top:7px"><button class="big-btn ${state.settings.demoMode?'secondary':'ghost'}" id="toggleDemoMode">DEMO MODE: ${state.settings.demoMode?'ON':'OFF'}</button><button class="big-btn ghost" style="margin-top:7px" id="advanceWorld">SIMULATE ARCHIPELAGO 12 WEEKS</button><button class="big-btn ghost" style="margin-top:7px" id="clearDemoHistory">CLEAR DEMO HISTORY</button><div class="muted" style="margin-top:7px">The 12-week demo advances the world day by day and also builds a mixed Tidebook test history: mostly recorded-style demo fasts with natural variation, some ≈ assumed days and a few gaps. This lets Calendar and Trends resemble months of ordinary play.</div></div>`:''}</div>
     <div class="section"><div class="section-title">Data</div><button class="big-btn danger" id="resetGame">RESET MAKEFAST</button><div class="muted" style="margin-top:7px">Reset permanently clears this browser save.</div></div>
     <div class="section"><div class="notice" style="background:#fff0ce;border:3px solid var(--ink);padding:9px;border-radius:7px;font-size:8px;line-height:1.45"><b>Health reminder</b><br>MakeFast is not medical advice. Fasting is not suitable for everyone; use an appropriate eating pattern for your circumstances and seek medical guidance where needed.</div></div>`;
   bindRhythmPicker('settingsRhythm',()=>{renderUI();toast('Your usual rhythm is set.')});bindWeatherSettings();
