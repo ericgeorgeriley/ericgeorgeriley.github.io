@@ -208,7 +208,7 @@
 
 const SAVE_KEY='makefast_save_v1';
 const VERSION=22;
-const VERSION_LABEL='0.22';
+const VERSION_LABEL='0.22.1';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -895,8 +895,25 @@ const AdaptiveMusic=(()=>{
   function sfxOsc(freq,time,dur=.25,gain=.025,type='sine',echo=.08){const a=ensure();if(!a||![freq,time,dur,gain,echo].every(Number.isFinite))return;const o=A.ctx.createOscillator(),g=A.ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,time);g.gain.setValueAtTime(.0001,time);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),time+.018);g.gain.exponentialRampToValueAtTime(.0001,time+dur);sfxRoute(o,g,echo);o.start(time);o.stop(time+dur+.025)}
   function swell(strength=.5){const a=ensure();if(!a)return;const dur=.95,frames=Math.max(1,Math.floor(A.ctx.sampleRate*dur)),buf=A.ctx.createBuffer(1,frames,A.ctx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<frames;i++){const env=Math.sin(Math.PI*i/frames);data[i]=(Math.random()*2-1)*env*.16}const src=A.ctx.createBufferSource(),filter=A.ctx.createBiquadFilter(),g=A.ctx.createGain();filter.type='lowpass';filter.frequency.value=430;g.gain.value=.027*strength;src.buffer=buf;src.connect(filter);filter.connect(g);sfxRoute(filter,g,.02);src.start()}
   function cue(type='soft'){const a=ensure();if(!a)return;const t=A.ctx.currentTime+.012,ch=currentChord(),root=ch[0]||60,third=ch[1]||root+4,fifth=ch[2]||root+7,top=root+12;if(type==='depart'){swell(.65);sfxOsc(hz(root-12),t,.42,.020,'sine',.04);sfxOsc(hz(fifth),t+.10,.42,.015,'triangle',.07);sync(true)}else if(type==='arrive'||type==='bell'){swell(.35);[root,fifth,top].forEach((m,i)=>sfxOsc(hz(m),t+i*.075,.42-i*.04,.019-i*.002,i===1?'triangle':'sine',.16));sync(true)}else if(type==='find'){sfxOsc(hz(third+12),t,.22,.021,'sine',.11);sfxOsc(hz(top+7),t+.08,.30,.017,'triangle',.14)}else if(type==='error'){sfxOsc(hz(root-12),t,.18,.014,'triangle',.02)}else{sfxOsc(hz(fifth+12),t,.12,.010,'sine',.045)}}
-  function status(){const w=WORLDS[A.activeWorld],p=PALETTES[A.paletteMorph?A.paletteMorph.to:A.activePalette];return{playing:A.playing,world:w?.name||'—',palette:p?.name||'—',section:A.currentPhrase?.variant||'waiting',intensity:A.ctl.intensity}}
-  return{state:A,ensure,start,stop,sync,cue,status,levels,tone:sfxOsc,swell,WORLDS,PALETTES};
+  async function wake(){
+    const a=ensure();if(!a||!A.ctx)return false;
+    try{
+      if(A.ctx.state!=='running')await A.ctx.resume();
+      if(A.ctx.state!=='running')return false;
+      levels();
+      if(state.settings.musicEnabled){
+        if(!A.playing)start();
+        else{
+          if(!A.timer)A.timer=setInterval(scheduler,LOOKAHEAD);
+          if(!Number.isFinite(A.nextTime)||A.nextTime<A.ctx.currentTime-.12||A.nextTime>A.ctx.currentTime+2)A.nextTime=A.ctx.currentTime+.07;
+          scheduler();sync(true);
+        }
+      }
+      return true;
+    }catch(e){console.warn('Adaptive audio could not unlock yet',e);return false}
+  }
+  function status(){const w=WORLDS[A.activeWorld],p=PALETTES[A.paletteMorph?A.paletteMorph.to:A.activePalette];return{playing:A.playing,world:w?.name||'—',palette:p?.name||'—',section:A.currentPhrase?.variant||'waiting',intensity:A.ctl.intensity,contextState:A.ctx?.state||'uninitialised'}}
+  return{state:A,ensure,start,stop,wake,sync,cue,status,levels,tone:sfxOsc,swell,WORLDS,PALETTES};
 })();
 const audioEngine=AdaptiveMusic.state;
 function ensureAudio(){const a=AdaptiveMusic.ensure();if(a&&state.settings.musicEnabled&&!AdaptiveMusic.state.playing)AdaptiveMusic.start();return a}
@@ -2625,7 +2642,22 @@ window.addEventListener('resize',()=>{fitResponsiveStage();syncMobilePanel()});
 window.addEventListener('beforeunload',()=>{simulateWorldTo(nowReal(),false);save()});
 setInterval(()=>{simulateWorldTo(nowReal(),false);save();if(['harbour','chart','log','voyage'].includes(state.activeView))renderUI()},60000);
 setInterval(()=>{if(state.sim?.active&&state.phase!=='ashore'){/* preview uses real time */}},1000);
-setInterval(()=>refreshLocalWeather(false),10*60000);let makeFastAudioUnlocked=false;const unlockMakeFastAudio=()=>{if(makeFastAudioUnlocked)return;makeFastAudioUnlocked=true;adaptiveMusicSync(true)};document.addEventListener('pointerdown',unlockMakeFastAudio,{passive:true});document.addEventListener('keydown',unlockMakeFastAudio);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){refreshLocalWeather(false);if(AdaptiveMusic.state.ctx?.state==='suspended')AdaptiveMusic.state.ctx.resume().then(()=>{AdaptiveMusic.state.nextTime=AdaptiveMusic.state.ctx.currentTime+.08;adaptiveMusicSync(true)})}else if(AdaptiveMusic.state.ctx?.state==='running')AdaptiveMusic.state.ctx.suspend()});
+setInterval(()=>refreshLocalWeather(false),10*60000);
+let makeFastAudioUnlocked=false;
+const unlockMakeFastAudio=()=>{
+  if(!state.sound)return;
+  AdaptiveMusic.wake().then(ok=>{if(ok)makeFastAudioUnlocked=true});
+};
+// Safari/iOS can be picky about which gesture is allowed to resume Web Audio.
+// Keep retrying on ordinary user gestures until the context genuinely reports running.
+document.addEventListener('pointerdown',unlockMakeFastAudio,{passive:true});
+document.addEventListener('touchend',unlockMakeFastAudio,{passive:true});
+document.addEventListener('click',unlockMakeFastAudio,{passive:true});
+document.addEventListener('keydown',unlockMakeFastAudio);
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){refreshLocalWeather(false);if(state.sound)AdaptiveMusic.wake().then(ok=>{if(ok){makeFastAudioUnlocked=true;AdaptiveMusic.state.nextTime=AdaptiveMusic.state.ctx.currentTime+.08;adaptiveMusicSync(true)}})}
+  else if(AdaptiveMusic.state.ctx?.state==='running')AdaptiveMusic.state.ctx.suspend();
+});
 
 window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES};
 window.__MakeFastArt={buildingSprite,residentSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit};
