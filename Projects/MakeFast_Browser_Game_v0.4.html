@@ -139,6 +139,31 @@
   .fast-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:7px;color:var(--ink-soft);margin-top:6px}.fast-legend i{display:inline-block;width:10px;height:5px;border:1px solid var(--ink);vertical-align:middle;margin-right:3px}.fast-legend .actual{background:var(--sea)}.fast-legend .target{background:var(--gold)}
   @media (max-width:520px){.fast-dial{width:min(166px,58vw)}.fast-calendar{gap:2px}.fast-day{min-height:47px;padding:3px}.log-tabs button{font-size:6px;padding:6px 2px}.harbour-clock{grid-template-columns:66px 1fr}.harbour-clock-face{width:64px;height:64px}.rhythm-head,.rhythm-row{grid-template-columns:42px 1fr}}
 
+/* MakeFast v0.23 resident relationships, trades + favours */
+.resident .item-hint{white-space:normal;line-height:1.3}
+.mf-social-section{margin-top:12px}
+.mf-social-card{background:#e8f5ed;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow);margin:9px 0 12px}
+.mf-social-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mf-social-head b{font-size:10px}.mf-social-head span{font-size:8px;color:var(--ink-soft);font-weight:900;text-align:right}
+.mf-social-card p{font-size:8px;line-height:1.4;color:var(--ink-soft);margin:6px 0 0}
+.mf-bond-meter{height:10px;border:2px solid var(--ink);background:#fff;border-radius:5px;overflow:hidden;margin-top:6px}
+.mf-bond-meter i{display:block;height:100%;background:var(--grass);width:0;transition:width .3s}
+.mf-trade-list{display:grid;gap:6px}
+.mf-trade-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:7px;padding:7px}
+.mf-trade-row b{font-size:9px;display:block}.mf-trade-row span{font-size:8px;color:var(--ink-soft);line-height:1.35;display:block;margin-top:2px}
+.mf-trade-row span strong{color:var(--sea-dark)}.mf-trade-row small{display:block;margin-top:3px;color:var(--sea-dark);font-size:7px;font-weight:900}
+.mf-trade-row button{border:2px solid var(--ink);background:var(--sea);border-radius:6px;padding:7px 8px;font-size:8px;font-weight:1000;cursor:pointer;min-width:72px}
+.mf-trade-row button:disabled{opacity:.42;filter:grayscale(.65);cursor:not-allowed}
+.mf-trade-row.locked{background:#f3ecd5;border-style:dashed}.mf-trade-row.locked b,.mf-trade-row.locked span{opacity:.66}.mf-lock{font-size:7px!important;font-weight:1000!important;color:var(--ink-soft)!important;margin:0!important}
+.mf-favour-card{background:#fff0ce;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow)}
+.mf-favour-card h3{font-size:10px;margin:0 0 4px}.mf-favour-card p{font-size:8px;line-height:1.4;color:var(--ink-soft);margin:0 0 7px}
+.mf-favour-bundles{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 8px}
+.mf-favour-bundles span{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:6px;font-size:7px;line-height:1.4;color:var(--ink-soft)}
+.mf-favour-bundles b{display:block;font-size:7px;color:var(--ink);text-transform:uppercase;margin-bottom:2px}
+.mf-no-deadline{display:inline-flex;align-items:center;border:2px solid var(--ink);background:#dff1cf;border-radius:999px;padding:2px 5px;font-size:7px!important;font-weight:1000;color:var(--ink)!important;letter-spacing:.2px}
+.mf-journey-favour{margin:9px 0 12px}.mf-journey-favour .mf-no-deadline{margin-bottom:6px}
+@media (max-width:520px){.mf-favour-bundles{grid-template-columns:1fr}.mf-trade-row{grid-template-columns:1fr}.mf-trade-row button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -206,9 +231,11 @@
 (()=>{
 'use strict';
 
+// v0.23.0 — resident relationships, trades and non-expiring favours.
+// The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
-const VERSION=22;
-const VERSION_LABEL='0.22.2';
+const VERSION=23;
+const VERSION_LABEL='0.23.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -2642,6 +2669,254 @@ const VOYAGE_SCENE_RENDERERS={
 function drawVoyageSceneEvent(e,ts,bx,by){if(!e)return;const age=ts-(e.started||ts),t=clamp(age/(e.duration||12000),0,1);if(t>=1&&e.ambient){sceneEvent=null;return}VOYAGE_SCENE_RENDERERS[e.scene||e.type]?.(e,ts,bx,by,t)}
 
 function animationLoop(ts){lastTs=ts;ensureArrived();processVoyageEvents();adaptiveMusicSync(false);const mobile=window.matchMedia('(max-width:900px)').matches,minGap=mobile?33:16;if(ts-lastPaintAt>=minGap){lastPaintAt=ts;updateHeader();updateVoyageStatus();updateFastingLiveUI();updateVoyageEncounterOverlay();updateAtmosphereUI();if(state.activeView==='settings'&&$('#musicNowText'))$('#musicNowText').textContent=audioNowPlaying();renderScene(ts);positionFloatingOverlays()}requestAnimationFrame(animationLoop)}
+
+// ============================================================
+// MAKEFAST v0.23 — RESIDENT RELATIONSHIPS, TRADES + FAVOURS
+// Additive social economy. It never changes fasting/voyage timing.
+// Relationship only grows; favours never expire; trades use island stores.
+// ============================================================
+const MF_SOCIAL_VERSION=1;
+const MF_RELATIONSHIP_TIERS=[
+  {name:'New face',min:0,next:2,discount:0,copy:'You have only just begun to know one another.'},
+  {name:'Familiar',min:2,next:6,discount:0,copy:'They know your name and are happy to see you at the quay.'},
+  {name:'Friend',min:6,next:12,discount:.25,copy:'A familiar face in the archipelago, with friendlier trades.'},
+  {name:'Trusted',min:12,next:null,discount:.40,copy:'They trust you with their best offers and unfinished ideas.'}
+];
+const MF_PERSONAL_TRADE_POOL=[
+  {id:'personal_stoneglass',label:'A useful swap',cost:{stone:4},reward:{glass:2}},
+  {id:'personal_timbercloth',label:'A bundle they saved',cost:{timber:4},reward:{cloth:2}},
+  {id:'personal_seedglass',label:'A curious exchange',cost:{seeds:5},reward:{glass:2}},
+  {id:'personal_glasshardware',label:'Workshop odds and ends',cost:{glass:3},reward:{hardware:2}},
+  {id:'personal_clothletters',label:'News from another quay',cost:{cloth:4},reward:{stories:2}},
+  {id:'personal_letterscharts',label:'Notes for the chart',cost:{stories:3},reward:{charts:2}},
+  {id:'personal_hardwarebrass',label:'A small brass piece',cost:{hardware:4},reward:{brass:1}},
+  {id:'personal_stonetimber',label:'A stack by the shed',cost:{stone:5},reward:{timber:4}}
+];
+const MF_NPC_TRADE_PROFILES={
+  fisher:[
+    {id:'fisher_shorefinds',label:'Shore finds',cost:{cloth:4},reward:{glass:2}},
+    {id:'fisher_tacklebox',label:'Old tackle box',cost:{hardware:5},reward:{glass:2,stories:1}},
+    {id:'fisher_tidenotes',label:'Tide notes',cost:{timber:5,cloth:2},reward:{charts:2}}
+  ],
+  gardener:[
+    {id:'gardener_seedpacket',label:'Seed packets',cost:{timber:4},reward:{seeds:4}},
+    {id:'gardener_wovenroll',label:'Garden cloth',cost:{stone:5},reward:{cloth:2,seeds:1}},
+    {id:'gardener_orchardnotes',label:'Orchard notes',cost:{glass:4,timber:3},reward:{stories:2,seeds:2}}
+  ],
+  carpenter:[
+    {id:'carpenter_offcuts',label:'Good offcuts',cost:{stone:4},reward:{timber:3}},
+    {id:'carpenter_fittings',label:'Workshop fittings',cost:{cloth:5,timber:2},reward:{hardware:3}},
+    {id:'carpenter_finework',label:'Fine joinery',cost:{glass:4,stone:3},reward:{timber:4,hardware:1}}
+  ],
+  trader:[
+    {id:'trader_mixedcrate',label:'Mixed harbour crate',cost:{timber:3,stone:3},reward:{cloth:2,glass:1}},
+    {id:'trader_imports',label:'Useful imports',cost:{seeds:5,glass:2},reward:{hardware:2,stories:1}},
+    {id:'trader_lockbox',label:'The little lockbox',cost:{cloth:5,hardware:3},reward:{brass:2}}
+  ],
+  navigator:[
+    {id:'navigator_sketches',label:'Coastal sketches',cost:{cloth:4},reward:{charts:1,stories:1}},
+    {id:'navigator_instruments',label:'Instrument parts',cost:{hardware:5,glass:2},reward:{charts:2}},
+    {id:'navigator_privatechart',label:'Private chart folio',cost:{brass:2,cloth:4},reward:{charts:3,stories:1}}
+  ],
+  naturalist:[
+    {id:'naturalist_specimens',label:'Shore specimens',cost:{cloth:4},reward:{glass:2,seeds:1}},
+    {id:'naturalist_fieldkit',label:'Field kit exchange',cost:{hardware:4,timber:3},reward:{seeds:3,stories:1}},
+    {id:'naturalist_notebook',label:'Weathered notebook',cost:{glass:4,cloth:3},reward:{stories:2,charts:1}}
+  ],
+  maker:[
+    {id:'maker_hardware',label:'Bench-made fittings',cost:{timber:4,stone:2},reward:{hardware:2}},
+    {id:'maker_canvaswork',label:'Stitched canvas work',cost:{glass:3,hardware:2},reward:{cloth:3}},
+    {id:'maker_brasswork',label:'Careful brasswork',cost:{timber:5,glass:3},reward:{brass:2}}
+  ]
+};
+const MF_NPC_FAVOURS={
+  fisher:[
+    {id:'fisher_patchnets',minTier:0,title:'Patch the old nets',text:'A little canvas would let them mend a stack of weathered gear.',need:{cloth:2},reward:{glass:1},bond:3},
+    {id:'fisher_newhooks',minTier:1,title:'Sort the tackle tin',text:'A few proper fittings would put several small pieces back into use.',need:{hardware:2},reward:{stories:1},bond:3},
+    {id:'fisher_marker',minTier:2,title:'Make a marker buoy',text:'Timber and canvas would make a bright marker for a useful patch of water.',need:{timber:3,cloth:1},reward:{charts:1},bond:4}
+  ],
+  gardener:[
+    {id:'gardener_beds',minTier:0,title:'Edge the garden beds',text:'A little timber would tidy the beds beside the path.',need:{timber:2},reward:{seeds:2},bond:3},
+    {id:'gardener_wall',minTier:1,title:'Mend the warm wall',text:'A few stones would shelter the young plants from the harbour wind.',need:{stone:3},reward:{seeds:2},bond:3},
+    {id:'gardener_glass',minTier:2,title:'Glaze a seed frame',text:'A small pane would make a sheltered place for delicate seedlings.',need:{glass:2,timber:1},reward:{cloth:1,seeds:1},bond:4}
+  ],
+  carpenter:[
+    {id:'carpenter_shelf',minTier:0,title:'Finish a quay shelf',text:'A couple of good stones would make solid feet for a little storage shelf.',need:{stone:2},reward:{timber:2},bond:3},
+    {id:'carpenter_apron',minTier:1,title:'Replace the work apron',text:'A dry length of canvas would be welcome in the workshop.',need:{cloth:2},reward:{hardware:1},bond:3},
+    {id:'carpenter_window',minTier:2,title:'Fit the workshop window',text:'They have the frame ready; the last thing missing is the glass.',need:{glass:2},reward:{timber:2,hardware:1},bond:4}
+  ],
+  trader:[
+    {id:'trader_crates',minTier:0,title:'Repack the small crates',text:'A bit of spare timber would make the next shipment easier to sort.',need:{timber:2},reward:{cloth:1},bond:3},
+    {id:'trader_labels',minTier:1,title:'Copy the harbour labels',text:'A few letters and notes would help untangle where several parcels belong.',need:{stories:2},reward:{glass:1},bond:3},
+    {id:'trader_display',minTier:2,title:'Brighten the market display',text:'Canvas and a little glass would make the stall much easier to spot.',need:{cloth:2,glass:1},reward:{brass:1},bond:4}
+  ],
+  navigator:[
+    {id:'navigator_case',minTier:0,title:'Repair a chart case',text:'A strip of canvas would keep the damp away from a battered chart case.',need:{cloth:2},reward:{charts:1},bond:3},
+    {id:'navigator_notes',minTier:1,title:'Compare harbour notes',text:'They are piecing together several travellers’ letters into a cleaner route.',need:{stories:2},reward:{charts:1},bond:3},
+    {id:'navigator_dividers',minTier:2,title:'Mend the chart dividers',text:'A little brass would put a favourite old pair of dividers back in service.',need:{brass:1},reward:{charts:2},bond:4}
+  ],
+  naturalist:[
+    {id:'naturalist_press',minTier:0,title:'Repair a field press',text:'A little timber would make a simple press for leaves and shore plants.',need:{timber:2},reward:{seeds:1},bond:3},
+    {id:'naturalist_satchel',minTier:1,title:'Patch the field satchel',text:'Canvas would keep notebooks and specimens dry on the next walk.',need:{cloth:2},reward:{glass:1},bond:3},
+    {id:'naturalist_lens',minTier:2,title:'Mount a small lens',text:'Glass and a fitting would finish a handy little viewing tool.',need:{glass:2,hardware:1},reward:{stories:1,seeds:1},bond:4}
+  ],
+  maker:[
+    {id:'maker_bench',minTier:0,title:'Brace the workbench',text:'A little timber would stop the old bench rocking on its feet.',need:{timber:2},reward:{hardware:1},bond:3},
+    {id:'maker_template',minTier:1,title:'Cut a new template',text:'A flat piece of stone would make a reliable pattern for repeated work.',need:{stone:2},reward:{cloth:1},bond:3},
+    {id:'maker_lamp',minTier:2,title:'Finish a bench lamp',text:'A small piece of glass is the last part of a cheerful workshop lamp.',need:{glass:2},reward:{hardware:1,brass:1},bond:4}
+  ]
+};
+
+function mfEnsureSocialData(p){
+  if(!p)return null;
+  if(!p.social||typeof p.social!=='object'||Array.isArray(p.social))p.social={};
+  const s=p.social;
+  s.version=MF_SOCIAL_VERSION;
+  s.points=clamp(Number.isFinite(+s.points)?+s.points:0,0,99);
+  s.tradeCount=Math.max(0,Math.floor(Number.isFinite(+s.tradeCount)?+s.tradeCount:0));
+  s.liftCount=Math.max(0,Math.floor(Number.isFinite(+s.liftCount)?+s.liftCount:0));
+  if(!Array.isArray(s.completedFavours))s.completedFavours=[];
+  if(!s.personalTradeId||!MF_PERSONAL_TRADE_POOL.some(t=>t.id===s.personalTradeId)){
+    s.personalTradeId=MF_PERSONAL_TRADE_POOL[Math.abs(hashString(`${p.id}:personal-trade`))%MF_PERSONAL_TRADE_POOL.length].id;
+  }
+  return s;
+}
+function mfRelationshipTierIndex(p){
+  const pts=mfEnsureSocialData(p)?.points||0;
+  for(let i=MF_RELATIONSHIP_TIERS.length-1;i>=0;i--)if(pts>=MF_RELATIONSHIP_TIERS[i].min)return i;
+  return 0;
+}
+function mfRelationshipTier(p){return MF_RELATIONSHIP_TIERS[mfRelationshipTierIndex(p)]}
+function mfAddRelationship(p,n=1){
+  const s=mfEnsureSocialData(p);if(!s||n<=0)return false;
+  const before=mfRelationshipTierIndex(p),old=s.points;
+  s.points=clamp(s.points+n,0,99);
+  const after=mfRelationshipTierIndex(p);
+  if(after>before){
+    const t=MF_RELATIONSHIP_TIERS[after];
+    state.journal.unshift(`${p.name} now considers you ${t.name==='Trusted'?'trusted company':`a ${t.name.toLowerCase()} face`}.`);
+  }
+  return s.points!==old;
+}
+function mfCanSocialiseHere(p,isl){
+  return !!(p&&isl&&state.phase==='ashore'&&state.currentIslandId===isl.id&&!residentAwayAssignment(p.id));
+}
+function mfConversationToken(isl){return `${isl?.id||'none'}:${isl?.visits||0}:${state.sessions?.length||0}`}
+function mfRegisterConversation(p,isl){
+  if(!mfCanSocialiseHere(p,isl))return false;
+  const s=mfEnsureSocialData(p),token=mfConversationToken(isl);
+  if(s.lastTalkToken===token)return false;
+  s.lastTalkToken=token;return mfAddRelationship(p,1);
+}
+function mfDiscountBundle(bundle,tierIndex){
+  const discount=MF_RELATIONSHIP_TIERS[tierIndex]?.discount||0,out={};
+  Object.entries(bundle||{}).forEach(([m,n])=>out[m]=Math.max(1,Math.ceil(n*(1-discount))));
+  return out;
+}
+function mfBundleLabel(bundle){
+  return Object.entries(bundle||{}).map(([m,n])=>`${MATERIALS[m]?.icon||'•'} ${n} ${materialName(m)}`).join(' · ');
+}
+function mfHasBundle(isl,bundle){return !!isl&&Object.entries(bundle||{}).every(([m,n])=>(isl.stock?.[m]||0)>=n)}
+function mfTakeBundle(isl,bundle){Object.entries(bundle||{}).forEach(([m,n])=>isl.stock[m]=Math.max(0,(isl.stock[m]||0)-n))}
+function mfGiveBundle(isl,bundle){Object.entries(bundle||{}).forEach(([m,n])=>addStock(isl,m,n))}
+function mfResidentTradeOffers(p){
+  const s=mfEnsureSocialData(p),profile=MF_NPC_TRADE_PROFILES[p.archetype]||MF_NPC_TRADE_PROFILES.maker,personal=MF_PERSONAL_TRADE_POOL.find(t=>t.id===s.personalTradeId)||MF_PERSONAL_TRADE_POOL[0];
+  return [
+    {...profile[0],minTier:0,kind:'profession'},
+    {...personal,minTier:1,kind:'personal'},
+    {...profile[1],minTier:2,kind:'profession'},
+    {...profile[2],minTier:3,kind:'profession'}
+  ];
+}
+function mfCurrentFavour(p){
+  const s=mfEnsureSocialData(p),tier=mfRelationshipTierIndex(p),list=MF_NPC_FAVOURS[p.archetype]||MF_NPC_FAVOURS.maker;
+  return list.find(f=>f.minTier<=tier&&!s.completedFavours.includes(f.id))||null;
+}
+function mfLockedFavour(p){
+  const s=mfEnsureSocialData(p),tier=mfRelationshipTierIndex(p),list=MF_NPC_FAVOURS[p.archetype]||MF_NPC_FAVOURS.maker;
+  return list.find(f=>f.minTier>tier&&!s.completedFavours.includes(f.id))||null;
+}
+function mfRelationshipHTML(p){
+  const s=mfEnsureSocialData(p),i=mfRelationshipTierIndex(p),tier=MF_RELATIONSHIP_TIERS[i],next=MF_RELATIONSHIP_TIERS[i+1]||null;
+  const pct=next?clamp((s.points-tier.min)/(next.min-tier.min)*100,0,100):100;
+  const progress=next?`${s.points}/${next.min} to ${next.name}`:`Trusted · ${s.tradeCount} trade${s.tradeCount===1?'':'s'}`;
+  return `<div class="mf-social-card"><div class="mf-social-head"><b>♡ ${tier.name}</b><span>${progress}</span></div><div class="mf-bond-meter"><i style="width:${pct}%"></i></div><p>${tier.copy} Relationship only grows — there is nothing to maintain and nothing expires.</p></div>`;
+}
+function mfTradeSectionHTML(p,isl,canTrade){
+  const tierIndex=mfRelationshipTierIndex(p),offers=mfResidentTradeOffers(p),rows=offers.map(o=>{
+    const required=MF_RELATIONSHIP_TIERS[o.minTier];
+    if(o.minTier>tierIndex)return `<div class="mf-trade-row locked"><div class="grow"><b>${o.kind==='personal'?'Personal offer':o.label}</b><span>Unlocks when you are ${required.name.toLowerCase()} · ? → ?</span></div><span class="mf-lock">LOCKED</span></div>`;
+    const cost=mfDiscountBundle(o.cost,tierIndex),affordable=mfHasBundle(isl,cost),discounted=JSON.stringify(cost)!==JSON.stringify(o.cost),buttonText=!canTrade?'MEET ASHORE':affordable?'TRADE':'NEED GOODS';
+    return `<div class="mf-trade-row"><div class="grow"><b>${o.label}${o.kind==='personal'?' · personal':''}</b><span>${mfBundleLabel(cost)} <strong>→</strong> ${mfBundleLabel(o.reward)}</span>${discounted?`<small>${MF_RELATIONSHIP_TIERS[tierIndex].name} price · usual cost ${mfBundleLabel(o.cost)}</small>`:''}</div><button data-mf-trade="${o.id}" ${!canTrade||!affordable?'disabled':''}>${buttonText}</button></div>`;
+  }).join('');
+  return `<div class="section mf-social-section"><div class="section-title">Trades <span>${offers.filter(o=>o.minTier<=tierIndex).length}/${offers.length} unlocked</span></div><div class="mf-trade-list">${rows}</div><div class="muted" style="margin-top:6px">Trades use the stores on this island. They never change your fasting clock or voyage timing.</div></div>`;
+}
+function mfFavourSectionHTML(p,isl,canHelp){
+  const f=mfCurrentFavour(p),locked=mfLockedFavour(p),s=mfEnsureSocialData(p);
+  if(!f){
+    const done=(MF_NPC_FAVOURS[p.archetype]||MF_NPC_FAVOURS.maker).every(x=>s.completedFavours.includes(x.id));
+    return `<div class="section mf-social-section"><div class="section-title">Favour</div><div class="card"><p>${done?`${p.name} has no unfinished favours just now. You have already helped with the things they had in mind.`:locked?`Nothing is being asked of you. As you get to know ${p.name.split(' ')[0]} better, another small favour may naturally come up.`:'Nothing is being asked of you just now.'}</p></div></div>`;
+  }
+  const enough=mfHasBundle(isl,f.need),buttonText=!canHelp?'MEET ASHORE':enough?'HELP WITH FAVOUR':'NEED GOODS';
+  return `<div class="section mf-social-section"><div class="section-title">Favour <span class="mf-no-deadline">NO DEADLINE</span></div><div class="mf-favour-card"><h3>${f.title}</h3><p>${f.text}</p><div class="mf-favour-bundles"><span><b>Needs</b>${mfBundleLabel(f.need)}</span><span><b>Thanks</b>${mfBundleLabel(f.reward)} · ♡ +${f.bond}</span></div><button class="big-btn ghost" data-mf-favour="${f.id}" ${!canHelp||!enough?'disabled':''}>${buttonText}</button></div></div>`;
+}
+function mfCompleteTrade(personId,tradeId){
+  const p=residentById(personId),isl=residentHomeIsland(personId);if(!p||!mfCanSocialiseHere(p,isl))return;
+  const tierIndex=mfRelationshipTierIndex(p),offer=mfResidentTradeOffers(p).find(o=>o.id===tradeId);if(!offer||offer.minTier>tierIndex)return;
+  const cost=mfDiscountBundle(offer.cost,tierIndex);if(!mfHasBundle(isl,cost)){toast('Those goods are not in the island stores yet.');return}
+  mfTakeBundle(isl,cost);mfGiveBundle(isl,offer.reward);const s=mfEnsureSocialData(p);s.tradeCount++;mfAddRelationship(p,1);save();renderUI();openResidentDetails(personId,{skipTalk:true});toast(`Traded with ${p.name}.`);
+}
+function mfCompleteFavour(personId,favourId){
+  const p=residentById(personId),isl=residentHomeIsland(personId);if(!p||!mfCanSocialiseHere(p,isl))return;
+  const f=mfCurrentFavour(p);if(!f||f.id!==favourId||!mfHasBundle(isl,f.need)){toast('The island stores do not have what this favour needs yet.');return}
+  mfTakeBundle(isl,f.need);mfGiveBundle(isl,f.reward);const s=mfEnsureSocialData(p);s.completedFavours.push(f.id);mfAddRelationship(p,f.bond);state.journal.unshift(`${p.name}: favour completed — ${f.title}.`);save();renderUI();openResidentDetails(personId,{skipTalk:true});toast(`${p.name} appreciated the help.`);
+}
+
+// Make social data lazy and migration-safe for every present and future resident.
+const mfOriginalEnsureResidentData=ensureResidentData;
+ensureResidentData=function(...args){const p=mfOriginalEnsureResidentData(...args);mfEnsureSocialData(p);return p};
+try{rootPersonRefs(state).forEach(p=>mfEnsureSocialData(p))}catch(e){console.warn('MakeFast social migration note',e)}
+
+// Existing passenger requests now also build the relationship when the PLAYER completes the lift.
+const mfOriginalDeliverPassengers=deliverPassengers;
+deliverPassengers=function(dest){
+  const delivered=mfOriginalDeliverPassengers(dest)||[];
+  delivered.forEach(p=>{const s=mfEnsureSocialData(p);s.liftCount++;mfAddRelationship(p,3)});
+  return delivered;
+};
+
+// Sharing a one-time resident story is another gentle way to become familiar.
+const mfOriginalShareResidentRumour=shareResidentRumour;
+shareResidentRumour=function(id){
+  const p=residentById(id),wasShared=!!p?.rumourShared;
+  mfOriginalShareResidentRumour(id);
+  if(p&&!wasShared&&p.rumourShared){mfAddRelationship(p,1);save();openResidentDetails(id,{skipTalk:true})}
+};
+
+// Enrich resident cards without changing list layout or interaction targets.
+residentHTML=function(p){
+  mfEnsureSocialData(p);
+  const cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),req=residentWaitingRequest(p),story=residentCanShareRumour(p),where=away?.kind==='captain'?`Away aboard ${away.vessel.name}`:away?.kind==='passenger'?'Away between islands':cap?`Captain of ${cap.name}`:'Ashore';
+  const tier=mfRelationshipTier(p),favour=mfCurrentFavour(p),unlocked=mfResidentTradeOffers(p).filter(o=>o.minTier<=mfRelationshipTierIndex(p)).length;
+  const hints=[req?'! REQUEST':'',story?'? STORY':'',favour?'★ FAVOUR':'',`♡ ${tier.name.toUpperCase()}`,`⇄ ${unlocked}`].filter(Boolean).join(' · ');
+  return `<div class="resident" data-resident-id="${p.id}"><span class="outfit-dot" style="background:linear-gradient(135deg,${p.outfit} 0 55%,${p.accent||p.outfit} 55% 100%)"></span><span><b>${p.name}</b><span class="item-sub">${p.occupation||'Island resident'} · ${where}</span>${hints?`<span class="item-hint">${hints}</span>`:''}</span></div>`;
+};
+
+// Resident conversation now contains the original story/request controls plus relationships, trades and favours.
+openResidentDetails=function(id,options={}){
+  const p=residentById(id),isl=residentHomeIsland(id);if(!p)return;mfEnsureSocialData(p);
+  const req=residentWaitingRequest(p,isl),cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),canSocialise=mfCanSocialiseHere(p,isl);
+  if(!options.skipTalk){p.chatIndex=(p.chatIndex||0)+1;mfRegisterConversation(p,isl)}
+  save();
+  const requestHTML=req?`<div class="mf-favour-card mf-journey-favour"><div class="mf-no-deadline">NO DEADLINE</div><h3>Journey favour</h3><p>${p.name} is hoping to reach ${getIsland(req.targetId)?.name||'another island'}. If you happen to be going that way, giving them a lift will strengthen your relationship. Ignoring it has no cost.</p><button class="big-btn ghost" data-person-course="${req.targetId}">MARK THE ROUTE</button></div>`:'';
+  showModal(`<h2>${p.name}</h2><p>${p.occupation||'Island resident'}${isl?` · ${isl.name}`:''}</p><div class="notice">${residentLore(p,isl)}</div><p>${p.note||''}${cap?`<br><b>Boat:</b> Captain of ${cap.name}`:''}${away?.kind==='passenger'?'<br><b>At the moment:</b> travelling between islands.':''}${!canSocialise&&isl?'<br><b>Trading:</b> available when you are ashore together.':''}</p>${mfRelationshipHTML(p)}${requestHTML}${mfFavourSectionHTML(p,isl,canSocialise)}${mfTradeSectionHTML(p,isl,canSocialise)}<div class="modal-actions">${residentCanShareRumour(p)?`<button class="big-btn secondary" data-person-rumour="${p.id}">ASK ABOUT THE WATER</button>`:''}<button class="big-btn ghost" data-close>CLOSE</button></div>`);
+  $('[data-person-course]')?.addEventListener('click',e=>{if(setCourseTo(e.currentTarget.dataset.personCourse))closeModal()});
+  $('[data-person-rumour]')?.addEventListener('click',e=>shareResidentRumour(e.currentTarget.dataset.personRumour));
+  $$('[data-mf-trade]').forEach(b=>b.addEventListener('click',()=>mfCompleteTrade(p.id,b.dataset.mfTrade)));
+  $('[data-mf-favour]')?.addEventListener('click',e=>mfCompleteFavour(p.id,e.currentTarget.dataset.mfFavour));
+};
+
+save();
 
 // UI events
 $$('.navbtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
