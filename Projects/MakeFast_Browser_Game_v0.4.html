@@ -33,9 +33,7 @@
   .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;background:linear-gradient(#d8f3ea 0,#d8f3ea 48%,#9bd8e2 48%,#9bd8e2 100%)}
   .topbar{display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--paper);border-bottom:4px solid var(--ink);box-shadow:0 4px 0 var(--shadow);z-index:10;min-height:70px}
   .brand{display:flex;align-items:center;gap:10px;min-width:190px}
-  .brandmark{width:43px;height:43px;position:relative;background:var(--sea);border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 var(--wood-dark);overflow:hidden}
-  .brandmark:before{content:"";position:absolute;left:6px;right:6px;bottom:7px;height:8px;background:#fff;border:3px solid var(--ink);clip-path:polygon(0 0,100% 0,78% 100%,20% 100%)}
-  .brandmark:after{content:"";position:absolute;left:19px;top:6px;width:3px;height:19px;background:var(--ink);box-shadow:7px 6px 0 -1px var(--cream)}
+  .brandmark{width:43px;height:43px;display:block;flex:0 0 43px;filter:drop-shadow(3px 3px 0 var(--wood-dark));overflow:visible}
   .brand h1{font-size:18px;line-height:1;margin:0;letter-spacing:-1px;display:flex;align-items:baseline;gap:6px}.version-tag{font-size:7px;letter-spacing:0;color:var(--ink-soft);font-weight:900;border:1px solid rgba(24,49,58,.35);border-radius:4px;padding:2px 4px;background:rgba(255,255,255,.48);vertical-align:middle}.brand small{display:block;color:var(--ink-soft);font-size:9px;margin-top:4px}
   .phase-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 var(--shadow);min-width:145px}
   .phase-dot{width:11px;height:11px;border:2px solid var(--ink);background:var(--grass);box-shadow:2px 2px 0 var(--shadow)}
@@ -178,7 +176,7 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="brandmark" aria-hidden="true"></div><div><h1>MAKEFAST <span class="version-tag" id="versionTag"></span></h1><small>EVERY FAST GOES SOMEWHERE</small></div></div>
+    <div class="brand"><svg class="brandmark" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="2" width="39" height="39" rx="7" fill="var(--sea)"/><path d="M21.5 41V8.2" stroke="var(--ink)" stroke-width="3" stroke-linecap="butt"/><path d="M21.5 10.1L34.6 31.5H21.5z" fill="var(--cream)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/><path d="M21.5 15.0L8.4 30.2H21.5z" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.1" stroke-linejoin="round"/><path d="M20.8 8.2h8.8l-2.9 3.3h-5.9z" fill="var(--red)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/><rect x="2" y="2" width="39" height="39" rx="7" fill="none" stroke="var(--ink)" stroke-width="3"/></svg><div><h1>MAKEFAST <span class="version-tag" id="versionTag"></span></h1><small>EVERY FAST GOES SOMEWHERE</small></div></div>
     <div class="phase-chip" id="phaseChip"><div class="phase-dot"></div><div><b id="phaseName">IN HARBOUR</b><span id="phaseHint">Choose your next voyage</span></div></div>
     <div class="timerbox"><div class="timer" id="headerTimer">00:00:00</div><div class="sub" id="headerSub">time ashore</div></div>
     <button class="tiny-btn quick-action" id="quickPhaseBtn" title="Quick fasting action">SET SAIL</button>
@@ -244,7 +242,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.23.9';
+const VERSION_LABEL='0.23.10';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3145,7 +3143,7 @@ window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,pa
 
 // v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
 // structure-only chart/approach views, and scaled passenger deck walkers.
-// v0.23.9 favour-capacity pass: passenger berths and parcel spaces now belong to boats and fittings.
+// v0.23.10 logo refresh: replaced the original CSS brandmark with the new inline SVG mast-and-sails mark.
 // Start
 backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
