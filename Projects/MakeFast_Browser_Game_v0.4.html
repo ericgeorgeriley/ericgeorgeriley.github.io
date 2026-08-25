@@ -243,7 +243,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.23.4';
+const VERSION_LABEL='0.23.5';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -660,6 +660,80 @@ const PROJECT_TEMPLATES=CONTENT.projects;
 const MINIGAME_META=CONTENT.minigames;
 const VOYAGE_EVENT_TYPES=CONTENT.voyageEvents;
 
+// v0.23.5: every arcade game has a normal at-sea entry point. These are not
+// extra demands on the player: they simply occupy some of the voyage moments
+// that were already interactive, and SAIL ON remains consequence-free.
+const AT_SEA_MINIGAME_SCENARIOS={
+  ferry_lines:{scene:'trader',icon:'⌁',title:['A line across the water','A launch matching your speed'],log:['A harbour launch comes alongside just long enough to pass a heaving line cleanly.','A little service boat matches your speed and sends a line arcing across the gap.'],rewardKind:'bottle'},
+  ferry_galley:{scene:'breeze',icon:'☕',title:['Tea in the cross-swell','A tray starts to wander'],log:['A ferry wake rolls under the boat just as mugs and a small tray come out on deck.','The sea turns lumpy for a moment and everything on the little refreshment tray begins to slide.'],rewardKind:'bottle'},
+  ferry_bags:{scene:'breeze',icon:'▣',title:['Loose bags on deck','The wake catches the luggage'],log:['A couple of passenger bags start rolling as a broad wake reaches the boat.','The deck gives one cheerful lurch and the soft bags begin making a break for the rail.'],rewardKind:'cloth'},
+  container_crane:{scene:'trader',icon:'▥',title:['A swinging lift nearby','Cargo over the water'],log:['A work pontoon is making one awkward lift and asks you to call the moment the load is square.','A crane barge has a pallet swinging over open water and could use another pair of eyes.'],rewardKind:'crate'},
+  container_stack:{scene:'stonecargo',icon:'▦',title:['Recovered crates need stowing','A hold full of awkward boxes'],log:['Several small recovered crates have to be packed before the next patch of swell.','A cluster of boxes comes aboard in all the wrong shapes and needs a steady hand in the hold.'],rewardKind:'crate'},
+  cruise_buffet:{scene:'breeze',icon:'◫',title:['Picnic in a rolling wake','Everything on the table moves'],log:['A friendly deck picnic meets a long rolling wake and every plate decides to travel at once.','The boat rolls gently beneath a tray of cups and snacks that suddenly needs full attention.'],rewardKind:'bottle'},
+  cruise_deckchairs:{scene:'breeze',icon:'▧',title:['Deck gear breaks loose','A gust rearranges the deck'],log:['A playful gust sends cushions, chairs and a few bright deck things wandering into the wrong corners.','Loose deck gear starts skating about in the breeze and needs sorting before it reaches the rail.'],rewardKind:'cloth'},
+  trawler_net:{scene:'rigging',icon:'⌇',title:['A snagged net line','Something heavy on the warp'],log:['A length of old net catches under a floating spar and the line comes tight.','A small working net picked up along the route needs easing aboard without overloading the line.'],rewardKind:'timber'},
+  trawler_sort:{scene:'seabirds',icon:'><>',title:['A little catch to sort','Gulls have noticed the basket'],log:['A neighbour hands over a mixed little catch and the gulls immediately become interested.','A small basket of catch comes aboard and needs sorting before the seabirds decide it belongs to them.'],rewardKind:'seeds'},
+  yacht_trim:{scene:'breeze',icon:'◢',title:['The breeze shifts','A clean sailing patch'],log:['The wind moves a few points and the sail needs a little attention to keep its easy shape.','A bright patch of breeze crosses the route and invites a few minutes of careful trim.'],rewardKind:'cloth'},
+  yacht_tack:{scene:'breeze',icon:'↗',title:['A narrow wind gap','Time for one neat tack'],log:['The breeze and a line of harmless chop make a clean tack the nicest way through.','A small wind shift opens a satisfying little tack window across the route.'],rewardKind:'cloth'},
+  speedboat_slalom:{scene:'shoal',icon:'≫',title:['Markers scattered ahead','A playful line through the buoys'],log:['A set of spare channel markers makes a harmless little weaving course in open water.','Bright practice buoys have been laid through a quiet patch of sea and make an inviting slalom.'],rewardKind:'bottle'},
+  tug_dock:{scene:'trader',icon:'●',title:['A drifting tender needs a nudge','A workboat has lost its angle'],log:['A small unmanned tender is drifting broadside and only needs a gentle push back toward its tow.','A squat workboat has come awkwardly across the swell and asks for a careful nudge into line.'],rewardKind:'timber'},
+  tanker_channel:{scene:'shoal',icon:'═',title:['A long buoyed channel','Deep water between the marks'],log:['The route narrows briefly between well-marked shoals, rewarding patient, tiny corrections.','A broad deep-water lane threads between banks on either side; the marks are clear and there is no hurry.'],rewardKind:'chart'},
+  naval_radar:{scene:'signal',icon:'◎',title:['Contacts in the haze','A radar practice buoy'],log:['A patch of haze fills with harmless echoes from buoys, birds and distant boats.','A survey beacon begins a friendly radar exercise, mixing real contacts with clutter.'],rewardKind:'chart'},
+  research_sonar:{scene:'shoal',icon:'◉',title:['An interesting seabed return','A survey ping under the keel'],log:['The sounder finds an unusually clean return below the route and there is time for a closer look.','A patch of seabed throws back a curious echo that invites a few careful pings.'],rewardKind:'stone'},
+  rescue_throw:{scene:'bottle',icon:'◯',title:['A practice ring overboard','A floating marker needs a line'],log:['A spare lifering slips over the side beside a floating marker — a perfect excuse for a practice throw.','A harmless training float is bobbing just out of reach and needs a line placed neatly beside it.'],rewardKind:'bottle'},
+  pilot_transfer:{scene:'trader',icon:'⇆',title:['A packet between boats','Matching speed for a handover'],log:['A nearby launch has a small mail packet to pass across while both boats hold the same speed.','Two boats settle alongside for a routine handover and the safe transfer window is wonderfully precise.'],rewardKind:'bottle'},
+  dredger_scoop:{scene:'seaglass',icon:'⌄',title:['A shallow gravel patch','Something bright on the bottom'],log:['Clear water reveals a patch of clean gravel with a few useful pieces among it.','A sandy pocket beside the route shows bright material on the bottom and invites a careful scoop.'],rewardKind:'stone'},
+  barge_balance:{scene:'stonecargo',icon:'▰',title:['Heavy salvage shifts on deck','Stone needs spreading out'],log:['A few recovered stones are all sitting on one side of the deck and need redistributing.','The latest bits of salvage are useful but heavy, and the boat would rather they were spread evenly.'],rewardKind:'stone'},
+  cargo_tetris:{scene:'stonecargo',icon:'▦',title:['Make room in the hold','Awkward cargo comes aboard'],log:['Several useful finds need fitting into the remaining corners of the hold.','A tidy stack will make room for the odd-shaped cargo gathered along the route.'],rewardKind:'crate'},
+  tallship_rigging:{scene:'rigging',icon:'⚑',title:['Running rigging needs sorting','A rope sequence on deck'],log:['A few lines have worked themselves into an untidy order and the next sail change is a good moment to sort them.','The rigging taps out a familiar little job: watch the lines, then work them in the right sequence.'],rewardKind:'cloth'},
+  sub_depth:{scene:'shoal',icon:'≈',title:['A survey drone below','A little vehicle under the keel'],log:['A research crew nearby offers the controls of a tiny underwater survey drone for one short run.','A compact submersible drone slips beneath the boat to trace a safe path through the darker water.'],rewardKind:'chart'},
+  carrier_landing:{scene:'signal',icon:'✈',title:['A spotter plane returning','A deck exercise over the horizon'],log:['A distant training ship asks you to watch a tiny spotter aircraft line up for one careful deck approach.','Radio chatter from a harmless sea exercise carries across the water as a small aircraft makes its approach.'],rewardKind:'bell'},
+  houseboat_catch:{scene:'breeze',icon:'⌂',title:['The cabin gets a wake','Mugs, cushions, everything'],log:['A passing wake reaches the cabin at exactly the wrong moment and the cosy loose things all begin to slide.','The boat gives one buoyant roll and mugs, cushions and supper suddenly need catching.'],rewardKind:'bottle'}
+};
+
+function ensureArcadeOfferData(arcade=null){
+  const a=arcade||(typeof state!=='undefined'?state.arcade:null);if(!a)return{scores:{},totalPlays:0,offers:{},recentOffers:[]};
+  if(!a.scores||typeof a.scores!=='object')a.scores={};if(!a.offers||typeof a.offers!=='object'||Array.isArray(a.offers)){a.offers={};Object.entries(a.scores||{}).forEach(([id,rec])=>a.offers[id]=Math.max(0,Math.floor(+rec?.plays||0)))}
+  if(!Array.isArray(a.recentOffers))a.recentOffers=[];
+  return a;
+}
+function markArcadeOffer(id,arcade=null){
+  if(!id||!MINIGAME_META[id])return;const a=ensureArcadeOfferData(arcade);a.offers[id]=Math.max(0,Math.floor(+a.offers[id]||0))+1;a.recentOffers.push(id);if(a.recentOffers.length>10)a.recentOffers.splice(0,a.recentOffers.length-10);
+}
+function fairVoyageMinigames(count,rr=Math.random,exclude=[],arcade=null){
+  const a=ensureArcadeOfferData(arcade),blocked=new Set(exclude),chosen=[];
+  while(chosen.length<count){
+    let ids=Object.keys(MINIGAME_META).filter(id=>AT_SEA_MINIGAME_SCENARIOS[id]&&!blocked.has(id));if(!ids.length)break;
+    const min=Math.min(...ids.map(id=>Math.max(0,+a.offers[id]||0)));
+    let frontier=ids.filter(id=>(+a.offers[id]||0)===min&&!a.recentOffers.includes(id));
+    if(!frontier.length)frontier=ids.filter(id=>(+a.offers[id]||0)===min);
+    if(!frontier.length)frontier=ids;
+    const id=frontier[Math.floor(rr()*frontier.length)];chosen.push(id);blocked.add(id);markArcadeOffer(id,a);
+  }
+  return chosen;
+}
+function materializeAtSeaMinigame(gameId,rr=Math.random){
+  const def=AT_SEA_MINIGAME_SCENARIOS[gameId],meta=MINIGAME_META[gameId];if(!def||!meta)return null;
+  const pick=v=>Array.isArray(v)?v[Math.floor(rr()*v.length)]:v;
+  return{type:`sea_${gameId}`,scene:def.scene||'breeze',icon:def.icon||meta.icon||'≈',title:pick(def.title)||meta.title,log:pick(def.log)||meta.desc,ambient:false,minigame:gameId,rewardKind:def.rewardKind||null,contentId:`sea_${gameId}`,fairArcade:true};
+}
+function leastOfferedGame(ids,rr=Math.random,arcade=null){
+  const a=ensureArcadeOfferData(arcade),valid=(ids||[]).filter(id=>MINIGAME_META[id]);if(!valid.length)return null;const min=Math.min(...valid.map(id=>Math.max(0,+a.offers[id]||0))),frontier=valid.filter(id=>(+a.offers[id]||0)===min);return frontier[Math.floor(rr()*frontier.length)]||valid[0];
+}
+function balancedClassicVoyagePick(pool,rr=Math.random,arcade=null){
+  if(!pool?.length)return null;
+  const a=ensureArcadeOfferData(arcade),all=Object.keys(MINIGAME_META),globalMin=Math.min(...all.map(id=>Math.max(0,+a.offers[id]||0)));
+  const rows=pool.map(def=>{
+    const ids=def.interaction?.minigames||[def.interaction?.minigame].filter(Boolean);
+    const eventMin=ids.length?Math.min(...ids.map(id=>Math.max(0,+a.offers[id]||0))):globalMin,gap=Math.max(0,eventMin-globalMin);
+    return{def,weight:(+def.weight||1)*Math.pow(.25,gap)};
+  });
+  return weightedPick(rows,rr)?.def||pool[0];
+}
+function materializeBalancedVoyageEvent(def,rr=Math.random,arcade=null){
+  const e=materializeVoyageEvent(def,rr),ids=def?.interaction?.minigames;if(ids?.length)e.minigame=leastOfferedGame(ids,rr,arcade);return e;
+}
+
 function unlockRuleMet(rule){
   if(!rule||rule.type==='always')return true;
   if(rule.type==='known_islands')return state.islands.filter(i=>i.known).length>=rule.count;
@@ -760,7 +834,7 @@ function defaultState(){
     version:VERSION, createdAt:nowReal(), onboarded:false, playerName:'Captain', sound:true, reducedMotion:false,
     phase:'ashore', phaseStartedAt:nowReal(), selectedRatio:16, voyage:null, activeView:'harbour',
     islands:[home,moss], routes:[['home',moss.id]], sessions:[], currentIslandId:'home', pendingResolutions:[],
-    totalMinigames:0, arcade:{scores:{},totalPlays:0}, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
+    totalMinigames:0, arcade:{scores:{},totalPlays:0,offers:{},recentOffers:[]}, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
     journal:[contentLine('copy.journal.inherited')],
     boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, boatStyles:{}, settings:{prototypeTools:false,demoMode:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34,musicEnabled:true,musicVolume:.62,effectsVolume:.72,weatherMode:'island'},
     weather:{lat:null,lon:null,updatedAt:0,current:null,hourly:[],error:null,manual:{kind:'clear',temp:18,wind:12}},
@@ -784,11 +858,11 @@ function migrate(s){
   s.settings.soundVolume=clamp(Number.isFinite(+s.settings.soundVolume)?+s.settings.soundVolume:.34,0,1);s.settings.musicEnabled=s.settings.musicEnabled!==false;s.settings.musicVolume=clamp(Number.isFinite(+s.settings.musicVolume)?+s.settings.musicVolume:.62,0,1);s.settings.effectsVolume=clamp(Number.isFinite(+s.settings.effectsVolume)?+s.settings.effectsVolume:.72,0,1);
   if(!hadDefaultFastHours)s.settings.defaultFastHours=Number.isFinite(+s.selectedRatio)?+s.selectedRatio:16;s.settings.defaultFastHours=clamp(Math.round(+s.settings.defaultFastHours*2)/2,12,20);s.selectedRatio=s.settings.defaultFastHours;
   if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;s.islands.forEach(ensureIslandData);
-  if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!Array.isArray(s.journal))s.journal=[]; if(!s.arcade||typeof s.arcade!=='object')s.arcade={scores:{},totalPlays:0};if(!s.arcade.scores||typeof s.arcade.scores!=='object')s.arcade.scores={};if(!Number.isFinite(+s.arcade.totalPlays))s.arcade.totalPlays=0;
+  if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!Array.isArray(s.journal))s.journal=[]; if(!s.arcade||typeof s.arcade!=='object')s.arcade={scores:{},totalPlays:0,offers:{},recentOffers:[]};if(!s.arcade.scores||typeof s.arcade.scores!=='object')s.arcade.scores={};if(!Number.isFinite(+s.arcade.totalPlays))s.arcade.totalPlays=0;if(!s.arcade.offers||typeof s.arcade.offers!=='object'||Array.isArray(s.arcade.offers)){s.arcade.offers={};Object.entries(s.arcade.scores).forEach(([id,rec])=>s.arcade.offers[id]=Math.max(0,Math.floor(+rec?.plays||0)))}if(!Array.isArray(s.arcade.recentOffers))s.arcade.recentOffers=[];
   if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};if(!s.boatStyles||typeof s.boatStyles!=='object'||Array.isArray(s.boatStyles))s.boatStyles={};if(!Array.isArray(s.backgroundPassages))s.backgroundPassages=[];s.idle={...d.idle,...(s.idle||{})};if(!Number.isFinite(+s.idle.lastPassageAt))s.idle.lastPassageAt=priorLastSaved||nowReal();s.settings.demoMode=!!s.settings.demoMode;
   if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
   s.version=VERSION;
-  if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy');if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
+  if(s.voyage){if(!Array.isArray(s.voyage.seaLog))s.voyage.seaLog=[];if(!Array.isArray(s.voyage.events)||!s.voyage.events.length)s.voyage.events=buildVoyageEvents(s.voyage.id||'oldvoy',{arcade:s.arcade});if(!('activeEventId' in s.voyage))s.voyage.activeEventId=null;if(!Array.isArray(s.voyage.passengers))s.voyage.passengers=[];}
   repairIdentityIntegrity(s);return s;
 }
 let storageWarned=false;
@@ -1587,8 +1661,20 @@ function ensureArrived(){
 }
 
 function buildVoyageEvents(voyageId,ctx={}){
-  const rr=rng(hashString(String(voyageId)+'makefast-events')),slots=[.08,.21,.36,.52,.68,.84],events=[];let pool=VOYAGE_EVENT_TYPES.filter(e=>eventEligible(e,ctx));if(pool.length<slots.length)pool=[...VOYAGE_EVENT_TYPES];
-  slots.forEach(p=>{const choices=pool.length?pool:VOYAGE_EVENT_TYPES,base=weightedPick(choices,rr)||VOYAGE_EVENT_TYPES[0],idx=pool.indexOf(base);if(idx>=0)pool.splice(idx,1);events.push({...materializeVoyageEvent(base,rr),id:uid('evt'),p,triggered:false,resolved:false});});return events;
+  const rr=rng(hashString(String(voyageId)+'makefast-events-v235')),slots=[.08,.21,.36,.52,.68,.84],events=[],arcade=ctx.arcade||null;
+  const eligible=VOYAGE_EVENT_TYPES.filter(e=>eventEligible(e,ctx)),ambientPool=eligible.filter(e=>e.ambient),interactivePool=eligible.filter(e=>!e.ambient),classic=[];
+  // Keep one quiet sea moment and two of the original encounter stories per voyage.
+  if(ambientPool.length){const a=weightedPick(ambientPool,rr);if(a)classic.push(materializeVoyageEvent(a,rr))}
+  let pool=[...interactivePool];
+  while(classic.length<3&&pool.length){
+    const base=balancedClassicVoyagePick(pool,rr,arcade),idx=pool.indexOf(base);if(idx>=0)pool.splice(idx,1);if(!base)break;
+    const e=materializeBalancedVoyageEvent(base,rr,arcade);classic.push(e);if(e.minigame)markArcadeOffer(e.minigame,arcade);
+  }
+  while(classic.length<3){const base=weightedPick(eligible.length?eligible:VOYAGE_EVENT_TYPES,rr);if(!base)break;const e=materializeVoyageEvent(base,rr);classic.push(e);if(e.minigame)markArcadeOffer(e.minigame,arcade)}
+  const already=classic.map(e=>e.minigame).filter(Boolean),fair=fairVoyageMinigames(3,rr,already,arcade).map(id=>materializeAtSeaMinigame(id,rr)).filter(Boolean);
+  const sequence=[classic[0],classic[1],fair[0],classic[2],fair[1],fair[2]].filter(Boolean);
+  sequence.forEach((e,i)=>events.push({...e,id:uid('evt'),p:slots[Math.min(i,slots.length-1)],triggered:false,resolved:false}));
+  return events;
 }
 function buildPreviewVoyageEvents(voyageId,ctx={}){
   // A sea trial is a showcase, not a lottery: it deliberately exercises ambience, cargo, wreckage and people.
@@ -1605,7 +1691,7 @@ function processVoyageEvents(){
   if(!state.voyage||state.phase!=='fasting'||minigame)return;
   syncPlayerTrafficEncounters();
   const t=performance.now(); if(t-lastVoyageEventCheck<700)return; lastVoyageEventCheck=t;
-  if(!Array.isArray(state.voyage.events)||!state.voyage.events.length)state.voyage.events=buildVoyageEvents(state.voyage.id,{phase:dayPhase(),weather:worldWeather(),destination:getIsland(state.voyage.destinationId)});
+  if(!Array.isArray(state.voyage.events)||!state.voyage.events.length)state.voyage.events=buildVoyageEvents(state.voyage.id,{phase:dayPhase(),weather:worldWeather(),destination:getIsland(state.voyage.destinationId),arcade:state.arcade});
   if(!Array.isArray(state.voyage.seaLog))state.voyage.seaLog=[];
   const p=voyageProgress(); let changed=false;
   for(const e of state.voyage.events){
@@ -1644,7 +1730,7 @@ function startVoyage(){
     id:voyageId, startedAt:gameNow(), startedAtReal:nowReal(), targetMs:r.fast*3600000, targetHours:r.fast, eatingHours:r.eat,
     originId:state.currentIslandId, originName:currentIsland().name, destinationId:dest.id, destinationName:dest.name,
     discoveryIds:[], discoveries:[], minigamesPlayed:0, plannedProgress:0, simulated:!!state.sim.active, uncharted:!dest.known,
-    events:buildVoyageEvents(voyageId,{phase:dayPhase(),weather:worldWeather(),destination:dest}), passengers:[...state.boatPassengers], trafficSeen:[], seaLog:[{at:gameNow(),icon:'⚑',title:'Under way',text:contentLine('copy.voyage.underway',{origin:currentIsland().name,destination:dest.known?dest.name:'open water'})},...(boarded?[{at:gameNow(),icon:'☻',title:'Passenger aboard',text:contentLine('copy.journal.passengerBoarded',{person:state.boatPassengers[state.boatPassengers.length-1]?.person?.name||'A neighbour',destination:dest.name})}]:[])],activeEventId:null
+    events:buildVoyageEvents(voyageId,{phase:dayPhase(),weather:worldWeather(),destination:dest,arcade:state.arcade}), passengers:[...state.boatPassengers], trafficSeen:[], seaLog:[{at:gameNow(),icon:'⚑',title:'Under way',text:contentLine('copy.voyage.underway',{origin:currentIsland().name,destination:dest.known?dest.name:'open water'})},...(boarded?[{at:gameNow(),icon:'☻',title:'Passenger aboard',text:contentLine('copy.journal.passengerBoarded',{person:state.boatPassengers[state.boatPassengers.length-1]?.person?.name||'A neighbour',destination:dest.name})}]:[])],activeEventId:null
   };
   if(state.settings.demoMode)engageVoyageDemo(state.voyage,false);
   worldSelection=null;updateWorldInfoOverlay();state.phase='fasting'; state.phaseStartedAt=gameNow(); state.activeView='voyage';passageUI.tab='clock';voyageMicroEvent=null;voyageMicroNext=performance.now()+2500;lastTrafficVisualReal=0;
@@ -2681,7 +2767,7 @@ function drawVoyageSceneEvent(e,ts,bx,by){if(!e)return;const age=ts-(e.started||
 function animationLoop(ts){lastTs=ts;ensureArrived();processVoyageEvents();adaptiveMusicSync(false);const mobile=window.matchMedia('(max-width:900px)').matches,minGap=mobile?33:16;if(ts-lastPaintAt>=minGap){lastPaintAt=ts;updateHeader();updateVoyageStatus();updateFastingLiveUI();updateVoyageEncounterOverlay();updateAtmosphereUI();if(state.activeView==='settings'&&$('#musicNowText'))$('#musicNowText').textContent=audioNowPlaying();renderScene(ts);positionFloatingOverlays()}requestAnimationFrame(animationLoop)}
 
 // ============================================================
-// MAKEFAST v0.23.4 — PEOPLE, TRADES, FAVOURS + HOMECOMING
+// MAKEFAST v0.23.5 — PEOPLE, TRADES, FAVOURS + VOYAGE VARIETY
 // Social progress is additive and non-coercive. Nothing here changes fasting
 // targets, fasting timestamps, voyage duration, arrival timing or early docking.
 // ============================================================
@@ -2964,7 +3050,7 @@ window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppear
 window.__MakeFastArt={buildingSprite,residentSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit};
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
-window.__MakeFastArcade={games:MINIGAME_META,start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
+window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
 window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()})};
 
 // Start
