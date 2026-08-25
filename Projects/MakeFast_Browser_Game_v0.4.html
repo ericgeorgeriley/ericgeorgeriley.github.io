@@ -243,7 +243,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.23.5';
+const VERSION_LABEL='0.23.6';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -1621,11 +1621,14 @@ function chartBounds(){
   return{midX:(minX+maxX)/2,midY:(minY+maxY)/2,spanX:Math.max(2.8,maxX-minX+2.1),spanY:Math.max(2.8,maxY-minY+2.1)};
 }
 function fitChartToKnown(){chartView.zoom=1;chartView.panX=0;chartView.panY=0;chartView.needsFit=false}
-function zoomChart(delta){chartView.zoom=clamp(chartView.zoom+delta,.48,7.5);chartView.needsFit=false}
+function zoomChart(delta){chartView.zoom=clamp(chartView.zoom+delta,.48,6.4);chartView.needsFit=false}
 function chartMapGeometry(){
   const vr=visibleSceneRect(),b=chartBounds(),padX=Math.max(42,vr.w*.085),padTop=52,padBottom=52,usableW=Math.max(120,vr.w-padX*2),usableH=Math.max(100,vr.h-padTop-padBottom);
-  const sx=usableW/b.spanX,sy=usableH/(b.spanY*.65),baseScale=Math.min(sx,sy,118),spatialZoom=chartView.zoom<=2.25?chartView.zoom:2.25+(chartView.zoom-2.25)*.18,scale=baseScale*spatialZoom,cx=vr.x+vr.w/2+chartView.panX,cy=vr.y+padTop+usableH/2+chartView.panY;
-  return{vr,...b,baseScale,scale,cx,cy,mapXY:(x,y)=>({x:cx+(x-b.midX)*scale,y:cy+(y-b.midY)*scale*.65})};
+  // v0.23.6: geographic spacing now scales one-for-one with zoom. Earlier builds
+  // compressed spacing above 2.25x while island art kept growing, so close islands
+  // inevitably collided even though the camera appeared to keep zooming.
+  const sx=usableW/b.spanX,sy=usableH/(b.spanY*.65),baseScale=Math.min(sx,sy,118),spatialZoom=chartView.zoom,scale=baseScale*spatialZoom,cx=vr.x+vr.w/2+chartView.panX,cy=vr.y+padTop+usableH/2+chartView.panY;
+  return{vr,...b,baseScale,spatialZoom,scale,cx,cy,mapXY:(x,y)=>({x:cx+(x-b.midX)*scale,y:cy+(y-b.midY)*scale*.65})};
 }
 function focusChartIsland(id){const i=getIsland(id);if(!i)return;chartView.zoom=Math.max(chartView.zoom,4.6);chartView.needsFit=false;const g=chartMapGeometry(),q=g.mapXY(i.x,i.y),cx=g.vr.x+g.vr.w/2,cy=g.vr.y+g.vr.h/2;chartView.panX+=cx-q.x;chartView.panY+=cy-q.y;chartView.selection={kind:'island',id};updateMapInfoOverlay()}
 function chartSelectionHTML(sel){
@@ -2184,7 +2187,7 @@ canvas.addEventListener('pointermove',e=>{
   const q=pointerCanvasXY(e);pointer.x=q.x;pointer.y=q.y;if(minigame){minigamePointer('move',pointer.x,pointer.y);return}
   if(state.activeView!=='chart'||!chartView.pointers.has(e.pointerId))return;chartView.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(chartView.pointers.size>=2){
-    const pts=[...chartView.pointers.values()],a=pts[0],b=pts[1],dist=Math.max(12,Math.hypot(b.x-a.x,b.y-a.y)),midX=(a.x+b.x)/2,midY=(a.y+b.y)/2;if(!chartView.pinch)chartView.pinch=chartPinchSnapshot();const st=chartView.pinch,scale=dist/Math.max(12,st.dist);chartView.zoom=clamp(st.zoom*scale,.48,7.5);chartView.panX=st.panX+(midX-st.midX)*(canvas.width/Math.max(1,q.r.width));chartView.panY=st.panY+(midY-st.midY)*(canvas.height/Math.max(1,q.r.height));chartView.needsFit=false;chartView.moved=true;return;
+    const pts=[...chartView.pointers.values()],a=pts[0],b=pts[1],dist=Math.max(12,Math.hypot(b.x-a.x,b.y-a.y)),midX=(a.x+b.x)/2,midY=(a.y+b.y)/2;if(!chartView.pinch)chartView.pinch=chartPinchSnapshot();const st=chartView.pinch,scale=dist/Math.max(12,st.dist);chartView.zoom=clamp(st.zoom*scale,.48,6.4);chartView.panX=st.panX+(midX-st.midX)*(canvas.width/Math.max(1,q.r.width));chartView.panY=st.panY+(midY-st.midY)*(canvas.height/Math.max(1,q.r.height));chartView.needsFit=false;chartView.moved=true;return;
   }
   if(chartView.dragging){const dx=e.clientX-chartView.lastX,dy=e.clientY-chartView.lastY;if(Math.hypot(e.clientX-chartView.downX,e.clientY-chartView.downY)>6)chartView.moved=true;chartView.panX+=dx*(canvas.width/Math.max(1,q.r.width));chartView.panY+=dy*(canvas.height/Math.max(1,q.r.height));chartView.needsFit=false;chartView.lastX=e.clientX;chartView.lastY=e.clientY}
 });
@@ -2268,6 +2271,15 @@ function renderBoatFitoutPreview(){const c=$('#boatFitoutCanvas');if(c)renderBoa
 // ============================================================
 const ISLAND_ART={tile:19,shape:1.08,layoutX:1.22,layoutY:1.17,tree:1.78,house:1.34,landmark:1.48,playerBoat:1.30,npcBoat:.82};
 function islandLayoutPoint(x,y){return{x:320+(x-320)*ISLAND_ART.layoutX,y:180+(y-180)*ISLAND_ART.layoutY}}
+// The settlement layout is intentionally roomier than the raw terrain coordinates.
+// Keep every structure/actor anchor inside the *actual rendered* procedural coast,
+// rather than assuming a fixed hand-authored island silhouette.
+function islandSceneLandMetric(isl,p){const unit=ISLAND_ART.tile*ISLAND_ART.shape;return islandShapeMetric(isl,(p.x-320)/unit,(p.y-180)/unit,1)}
+function islandSafePoint(isl,p,margin=.74){
+  if(!isl||!p)return p;const m=islandSceneLandMetric(isl,p);if(!Number.isFinite(m)||m<=margin)return{x:p.x,y:p.y};
+  const f=margin/Math.max(.001,m);return{x:320+(p.x-320)*f,y:180+(p.y-180)*f}
+}
+function islandSafeLayoutPoint(isl,x,y,margin=.74){return islandSafePoint(isl,islandLayoutPoint(x,y),margin)}
 function islandBuildingScale(kind,base=1){return base*(['lighthouse','windmill','market_hall','boatyard','map_room','observatory','ferry'].includes(kind)?ISLAND_ART.landmark:ISLAND_ART.house)}
 function visibleResidentLimit(isl){const n=population(isl);return Math.min(n,12,Math.max(1,4+Math.floor(Math.sqrt(Math.max(1,n))*1.6)))}
 function rotatingSubset(list,limit,key,periodMs=30*60000){if(list.length<=limit)return list;const bucket=Math.floor(gameNow()/periodMs),start=hashString(`${key}:${bucket}`)%list.length;return Array.from({length:limit},(_,i)=>list[(start+i)%list.length])}
@@ -2350,8 +2362,8 @@ function seaSprite(kind='dolphin',variant=0){const key=`sea:${kind}:${variant}`;
   worldSpriteCache.set(key,c);return c}
 function drawSeaSprite(kind,x,y,s=1,mirror=false,variant=0){const spr=seaSprite(kind,variant),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;if(mirror){ctx.translate(Math.round(x),0);ctx.scale(-1,1);ctx.drawImage(spr,Math.round(-w/2),Math.round(y-h/2),Math.round(w),Math.round(h))}else ctx.drawImage(spr,Math.round(x-w/2),Math.round(y-h/2),Math.round(w),Math.round(h));ctx.restore()}
 function residentWaypoints(isl,person,index){
-  const P=(x,y)=>islandLayoutPoint(x,y),pts=[P(320,178),P(300,214),P(348,205),P(332,244),P(276,178),P(382,188)],active=isl.projects.filter(p=>!p.complete),done=isl.projects.filter(p=>p.complete);
-  if(active.length){const q=projectSitePos(active[index%active.length],index%active.length);pts.push({x:q.x,y:q.y+15})}if(done.length){const q=projectSitePos(done[index%done.length],index%done.length);pts.push({x:q.x,y:q.y+16})}
+  const P=(x,y)=>islandSafeLayoutPoint(isl,x,y,.82),pts=[P(320,178),P(300,214),P(348,205),P(332,244),P(276,178),P(382,188)],active=isl.projects.filter(p=>!p.complete),done=isl.projects.filter(p=>p.complete);
+  if(active.length){const q=projectSitePos(active[index%active.length],index%active.length,isl);pts.push(islandSafePoint(isl,{x:q.x,y:q.y+15},.84))}if(done.length){const q=projectSitePos(done[index%done.length],index%done.length,isl);pts.push(islandSafePoint(isl,{x:q.x,y:q.y+16},.84))}
   if(person.archetype==='fisher')pts.push(P(350,255),P(383,236));if(person.archetype==='gardener')pts.push(P(268,205),P(286,194));if(person.archetype==='trader')pts.push(P(395,207),P(354,220));if(person.archetype==='carpenter')pts.push(P(302,198),P(376,215));if(person.archetype==='navigator')pts.push(P(315,122),P(410,155));if(person.archetype==='naturalist')pts.push(P(238,160),P(398,164));if(person.archetype==='maker')pts.push(P(340,190),P(370,205));return pts
 }
 function residentPose(isl,person,index,ts=frame){const pts=residentWaypoints(isl,person,index),seed=hashString(person.id||person.name),legMs=9000+(Math.abs(seed)%5000),clock=ts+Math.abs(seed)%17000,leg=Math.floor(clock/legMs),u=(clock%legMs)/legMs,a=pts[leg%pts.length],b=pts[(leg+1)%pts.length],move=clamp(u/.68,0,1),smooth=move*move*(3-2*move),lane=((seed>>>5)%5)-2,laneY=((seed>>>9)%3)-1,ang=(seed%628)/100,personal=4+((seed>>>12)%8);return{x:lerp(a.x,b.x,smooth)+lane*2.6+Math.cos(ang)*personal,y:lerp(a.y,b.y,smooth)+laneY*2+Math.sin(ang)*personal*.62,walking:u<.68,chat:u>=.68&&((leg+index)%5===0),facing:b.x<a.x?-1:1}}
@@ -2417,22 +2429,23 @@ function renderIslandTiles(isl,cx=320,cy=180,tile=16,scale=1,withJetty=true,alph
 function approachSprite(isl){
   ensureIslandData(isl);const key=`approach-v16:${isl.id}:${isl.biome}:${JSON.stringify(isl.shape)}`;if(approachSpriteCache.has(key))return approachSpriteCache.get(key);const off=document.createElement('canvas');off.width=280;off.height=220;const g=off.getContext('2d');g.imageSmoothingEnabled=false;const spr=islandTerrainSprite(isl);g.drawImage(spr,12,10,256,200);approachSpriteCache.set(key,off);return off
 }
-function approachPoint(x,y,cx,cy,s){const q=islandLayoutPoint(x,y),k=.43*s;return{x:cx+(q.x-320)*k,y:cy+(q.y-180)*k}}
+function approachScenePoint(q,cx,cy,s){const k=.43*s;return{x:cx+(q.x-320)*k,y:cy+(q.y-180)*k}}
+function approachPoint(x,y,cx,cy,s){return approachScenePoint(islandLayoutPoint(x,y),cx,cy,s)}
 function approachProjectKind(t){if(!t)return'house';if(t.draw==='market_square'||t.draw==='market_hall')return'market_hall';if(t.draw==='cottages')return'house';return t.draw||'house'}
 function approachSettlementSignature(isl){return `${isl.id}:${isl.known?1:0}:${population(isl)}:${(isl.projects||[]).map(p=>`${p.templateId}:${p.complete?1:0}`).join(',')}:${vesselsAtIsland(isl.id).map(v=>v.id).sort().join(',')}`}
 function drawApproachIsland(isl,cx,cy,scale){
   ensureIslandData(isl);const spr=approachSprite(isl),s=clamp(scale,.12,2.2),w=spr.width*s,h=spr.height*s;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(cx-w/2),Math.round(cy-h/2),Math.round(w),Math.round(h));
   // Unknown shores keep their secrets until the final approach; known islands show
-  // a simplified but genuine snapshot of the settlement rather than a generic cottage.
+  // structures only. People belong to the shore scene; at voyage scale they read as
+  // misplaced pixels and weaken the sense of distance.
   const reveal=isl.known||s>.98;if(s<.30||!reveal)return;const k=.43*s,draws=[];const put=(y,fn)=>draws.push({y,fn});
-  const core=approachPoint(320,156,cx,cy,s);put(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)*k));
+  const coreScene=islandSafeLayoutPoint(isl,320,156,.70),core=approachScenePoint(coreScene,cx,cy,s);put(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)*k));
   const completed=(isl.projects||[]).filter(p=>p.complete&&!isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===projectTemplate(p.templateId)?.feature)).slice(-5);
-  completed.forEach((p,i)=>{const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,i),q=approachPoint(pos.x,pos.y,cx,cy,s),kind=approachProjectKind(t);put(q.y,()=>drawTopHouse(q.x,q.y,kind,islandBuildingScale(kind,.86)*k))});
-  const extraHomes=Math.min(2,Math.max(0,Math.floor((population(isl)-4)/6)+1)),slots=[[280,126],[374,145]];for(let i=0;i<extraHomes;i++){const q=approachPoint(slots[i][0],slots[i][1],cx,cy,s);put(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.76)*k))}
+  completed.forEach((p,i)=>{const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,i,isl),q=approachScenePoint(pos,cx,cy,s),kind=approachProjectKind(t);put(q.y,()=>drawTopHouse(q.x,q.y,kind,islandBuildingScale(kind,.86)*k))});
+  const extraHomes=Math.min(2,Math.max(0,Math.floor((population(isl)-4)/6)+1)),slots=[[280,126],[374,145]];for(let i=0;i<extraHomes;i++){const pos=islandSafeLayoutPoint(isl,slots[i][0],slots[i][1],.72),q=approachScenePoint(pos,cx,cy,s);put(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.76)*k))}
   draws.sort((a,b)=>a.y-b.y).forEach(d=>d.fn());
   if(s>.52){const dockSpots=[[414,290],[226,292]],fleet=rotatingSubset(vesselsAtIsland(isl.id),2,`${isl.id}:approach-boats`,20*60000);fleet.forEach((v,i)=>{const q=approachPoint(dockSpots[i][0],dockSpots[i][1],cx,cy,s),t=vesselType(v.typeId),sc=Math.max(.16,ISLAND_ART.npcBoat*k*.94);drawTopBoat(q.x,q.y,sc,-.15,t.sprite,npcBoatAppearance(v));if(['night','dusk','dawn'].includes(dayPhase())){ctx.save();ctx.globalAlpha=.14;circle(q.x,q.y-2,7*s,timePalette().light);ctx.restore()}})}
-  if(s>.78&&isl.known){const people=rotatingSubset(isl.residents.filter(p=>!residentAwayAssignment(p.id)),3,`${isl.id}:approach-people`,30000);people.forEach((p,i)=>{const base=[[300,198],[350,204],[322,232]][i],q=approachPoint(base[0],base[1],cx,cy,s);drawResidentPerson(q.x,q.y,p,i%2===0,i%2?-1:1,Math.max(.34,1.35*k))})}
-  if(['night','dusk','dawn'].includes(dayPhase())&&s>.44){ctx.save();ctx.globalAlpha=.85;drawLamp(core.x,core.y);completed.slice(0,4).forEach((p,i)=>{const pos=projectSitePos(p,i),q=approachPoint(pos.x,pos.y,cx,cy,s);drawLamp(q.x,q.y)});ctx.restore()}
+  if(['night','dusk','dawn'].includes(dayPhase())&&s>.44){ctx.save();ctx.globalAlpha=.85;drawLamp(core.x,core.y);completed.slice(0,4).forEach((p,i)=>{const pos=projectSitePos(p,i,isl),q=approachScenePoint(pos,cx,cy,s);drawLamp(q.x,q.y)});ctx.restore()}
 }
 function parseHexColor(hex){const h=String(hex||'#000000').replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function mixHex(a,b,t){const A=parseHexColor(a),B=parseHexColor(b),v=A.map((n,i)=>Math.round(lerp(n,B[i],t)));return'#'+v.map(n=>n.toString(16).padStart(2,'0')).join('')}
@@ -2473,17 +2486,20 @@ function renderScene(ts){
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
 }
-function projectSitePos(p,index=0){
+function projectSitePos(p,index=0,isl=null){
   const base=BUILD_SITES[p.site]||BUILD_SITES.village,slots={
     harbour:[[-28,-9],[27,2],[-8,-27],[35,-24],[-36,18],[9,24]],
     village:[[0,0],[-31,-13],[31,10],[-16,25],[19,-27],[39,-10]],
     hill:[[-12,14],[22,12],[-2,-25],[35,-16],[14,26],[-25,-6]],
     meadow:[[0,0],[34,-8],[-31,10],[18,24],[-15,-25],[-41,-6]]
   },pool=slots[p.site]||slots.village,h=hashString(p.id||`${p.templateId}`),slot=pool[h%pool.length],rr=rng(h^0x51f15e);
-  const bx=base.x+(p.site==='hill'?42:0);return islandLayoutPoint(bx+slot[0]+(rr()-.5)*8,base.y+slot[1]+(rr()-.5)*7)
+  const bx=base.x+(p.site==='hill'?42:0),q=islandLayoutPoint(bx+slot[0]+(rr()-.5)*8,base.y+slot[1]+(rr()-.5)*7);if(!isl)return q;
+  // Harbour buildings may sit nearer the shoreline; larger inland structures keep
+  // a deeper footprint so their base never appears to stand in the water.
+  return islandSafePoint(isl,q,p.site==='harbour'?.82:p.site==='hill'?.70:.74)
 }
 function drawProjectOnIsland(isl,p,index){
-  const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index),prog=projectProgress(p);
+  const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index,isl),prog=projectProgress(p);
   if(!p.complete){const sc=1.22,w=42*sc,h=26*sc;shadow(pos.x-w*.5,pos.y+10,w,7,.18);rect(pos.x-w*.46,pos.y+5,w*.92,5,'#a86d45');const posts=1+Math.floor(prog*4);for(let i=0;i<posts;i++)rect(pos.x-w*.4+i*(w*.8/4),pos.y-h*.55,4,h*.72,'#704630');if(prog>.35)rect(pos.x-w*.42,pos.y-h*.48,w*.84,4,'#c98d61');if(prog>.7)poly([[pos.x-w*.44,pos.y-h*.46],[pos.x,pos.y-h],[pos.x+w*.44,pos.y-h*.46]],'#e7ce82','#18313a',2);return}
   if(t.draw==='market_square'){drawTopHouse(pos.x-18,pos.y,'market',islandBuildingScale('market',.82));drawTopHouse(pos.x+23,pos.y+10,'market',islandBuildingScale('market',.76));return}
   if(t.draw==='market_hall'){drawTopHouse(pos.x,pos.y,'market_hall',islandBuildingScale('market_hall',1.02));return}
@@ -2499,24 +2515,24 @@ function drawIslandScene(isl){
   const queue=(y,draw)=>actors.push({y,draw});
   // Development gradually replaces central wilderness; remaining trees sit mainly around the island edge.
   islandDecorPoints(isl).forEach((p,i)=>{const tree=biomeDef(isl.biome).tree||'broadleaf';if(p.roll<.68)queue(p.y,()=>drawTopTree(p.x,p.y,ISLAND_ART.tree*(.9+(i%3)*.06),tree));else if(p.roll<.88)queue(p.y,()=>drawTopRock(p.x,p.y,1.0));else queue(p.y,()=>drawFlowerPatch(p.x-4,p.y-4))});
-  const core=islandLayoutPoint(320,156);queue(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)));
-  if(isl.features.includes('cottage')){const q=islandLayoutPoint(374,145);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.96)))}
+  const core=islandSafeLayoutPoint(isl,320,156,.70);queue(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)));
+  if(isl.features.includes('cottage')){const q=islandSafeLayoutPoint(isl,374,145,.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.96)))}
   const projectFeatures=new Set(isl.projects.map(p=>projectTemplate(p.templateId)?.feature));
-  if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill')){const q=islandLayoutPoint(252,132);queue(q.y,()=>drawTopHouse(q.x,q.y,'windmill',islandBuildingScale('windmill',.82)))}
-  if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse')){const q=islandLayoutPoint(415,138);queue(q.y,()=>drawTopHouse(q.x,q.y,'lighthouse',islandBuildingScale('lighthouse',.96)))}
-  if(isl.features.includes('market')&&!projectFeatures.has('market_stall')){const q=islandLayoutPoint(388,198);queue(q.y,()=>drawTopHouse(q.x,q.y,'market',islandBuildingScale('market',.96)))}
-  if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house')){const q=islandLayoutPoint(340,210);queue(q.y,()=>drawTopHouse(q.x,q.y,'tea',islandBuildingScale('tea',.92)))}
-  if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandLayoutPoint(260,204);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
-  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
+  if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill')){const q=islandSafeLayoutPoint(isl,252,132,.68);queue(q.y,()=>drawTopHouse(q.x,q.y,'windmill',islandBuildingScale('windmill',.82)))}
+  if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse')){const q=islandSafeLayoutPoint(isl,415,138,.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'lighthouse',islandBuildingScale('lighthouse',.96)))}
+  if(isl.features.includes('market')&&!projectFeatures.has('market_stall')){const q=islandSafeLayoutPoint(isl,388,198,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'market',islandBuildingScale('market',.96)))}
+  if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house')){const q=islandSafeLayoutPoint(isl,340,210,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'tea',islandBuildingScale('tea',.92)))}
+  if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
+  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i,isl);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
   // One cottage sprite represents several homes, keeping large populations bustling without filling every tile with roofs.
   const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
-  for(let i=0;i<extraHomes;i++){const q=islandLayoutPoint(...homeSlots[i]);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
+  for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
   const presentResidents=isl.residents.filter(p=>!residentAwayAssignment(p.id)),limit=Math.min(visibleResidentLimit(isl),presentResidents.length),residentPoses=rotatingSubset(presentResidents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
   residentPoses.forEach(r=>{worldHitAreas.push({kind:'resident',id:r.person.id,x:r.x+off.x,y:r.y+off.y,r:26});queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);const req=residentWaitingRequest(r.person,isl),tip=residentCanShareRumour(r.person);if(req||tip){roundedRect(r.x+8,r.y-23,12,12,4,req?'#fff0ce':'#dff1cf','#18313a',1);pxText(req?'!':'?',r.x+14,r.y-14,'#18313a',7,'center')}else if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')})});
   actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
   const playerDock=islandLayoutPoint(340,290);drawTopBoat(playerDock.x,playerDock.y,ISLAND_ART.playerBoat,-.2,state.boat.type,playerBoatAppearance());
   const trafficSpots=[[414,290,1],[226,292,.96],[456,250,.90],[177,252,.88]];rotatingSubset(vesselsAtIsland(isl.id),4,`${isl.id}:harbour-boats`,20*60000).forEach((v,i)=>{const q=islandLayoutPoint(trafficSpots[i][0],trafficSpots[i][1]),t=vesselType(v.typeId),sc=ISLAND_ART.npcBoat*trafficSpots[i][2];drawTopBoat(q.x,q.y,sc,-.15,t.sprite,npcBoatAppearance(v));worldHitAreas.push({kind:'vessel',id:v.id,x:q.x+off.x,y:q.y+off.y,r:32});if(!v.rumourShared){roundedRect(q.x+12,q.y-28,12,12,4,'#dff1cf','#18313a',1);pxText('?',q.x+18,q.y-19,'#18313a',7,'center')}if(['night','dusk'].includes(dayPhase()))drawLamp(q.x,q.y-4)});
-  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(core.x,core.y);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i);drawLamp(q.x,q.y)})}ctx.restore();drawWeather();drawTimeLighting();
+  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(core.x,core.y);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i,isl);drawLamp(q.x,q.y)})}ctx.restore();drawWeather();drawTimeLighting();
 }
 
 function drawVoyageMood(vr,ph){
@@ -2524,22 +2540,34 @@ function drawVoyageMood(vr,ph){
 }
 function drawPassingLanternGlow(x,y,scale=1){if(!['night','dusk','dawn'].includes(dayPhase()))return;ctx.save();ctx.globalAlpha=.10;circle(x,y-7*scale,18*scale,timePalette().light);ctx.globalAlpha=.55;circle(x-8*scale,y-7*scale,1.8*scale,'#ffd978');circle(x+8*scale,y-7*scale,1.8*scale,'#ffd978');ctx.restore()}
 
+// Passengers are the only people shown in voyage mode: tiny, boat-scale figures
+// wandering the usable deck rather than full-size shore residents floating at sea.
+const VOYAGE_DECK_SLOTS={
+  cutter:[[27,45],[38,48],[54,45]],fishing:[[25,47],[37,49],[68,49]],shallow:[[28,47],[42,49],[57,47]],cabin:[[20,48],[29,50],[69,50]],sailer:[[26,47],[46,48],[59,46]]
+};
+function drawVoyagePassengers(bx,by,boatScale){
+  const aboard=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean);if(!aboard.length)return;const slots=VOYAGE_DECK_SLOTS[state.boat.type]||VOYAGE_DECK_SLOTS.cutter,visible=aboard.slice(0,Math.min(3,slots.length));
+  visible.forEach((person,i)=>{const slot=slots[i%slots.length],seed=Math.abs(hashString(person.id||person.name)),phase=frame*.00105+seed%997,walk=Math.sin(phase*.72+i)>.08,wander=Math.sin(phase+i*1.7)*2.4,x=bx+(slot[0]-44+wander)*boatScale,y=by+(slot[1]-42.9)*boatScale+Math.sin(phase*.6)*.6*boatScale,facing=Math.cos(phase+i) < 0?-1:1,personScale=clamp(.33*boatScale,.18,.48);drawResidentPerson(x,y,person,walk,facing,personScale)})
+}
+function voyageApproachHalfHeight(scale){return 110*clamp(scale,.12,2.2)}
+
 function drawVoyage(){
   drawSeaBackground();const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),origin=getIsland(v.originId),ph=dayPhase(),W=canvas.width,H=canvas.height,vr=visibleSceneRect();
-  // v0.17 cinematic focus pull: the island is the scale reference at each coast,
-  // while the camera closes onto the boat for the open-water middle of the voyage.
+  // The island is always kept on the far side of a strip of visible water. This
+  // prevents the player boat from visually sailing through the terrain during the
+  // departure/landfall focus pull while preserving the same voyage timing.
   drawVoyageMood(vr,ph);const smooth=t=>t*t*(3-2*t),depart=smooth(clamp(p/.24,0,1)),arrive=smooth(clamp((p-.74)/.26,0,1)),focus=p<.24?depart:(p>.74?1-arrive:1);
   const bx=W/2,cruiseY=vr.y+vr.h*.56,shoreY=vr.y+vr.h*.59,by=lerp(shoreY,cruiseY,focus)+Math.sin(frame*.006)*lerp(.7,2,focus),boatScale=lerp(.56,1.35,focus);
   const scroll=(frame*.022)%42;for(let y=-42;y<H+42;y+=34){const yy=(y+scroll)%(H+42);for(let x=18;x<W;x+=78){const sway=Math.sin((x+y+frame*.01)*.018)*5;rect(x+sway,yy,24,2,'rgba(255,255,255,.075)')}}
-  // Leaving harbour: begin with both boat and coast in the same wide shot, then
-  // grow the boat as the coast shrinks and slips below the frame.
-  if(p<.27){const t=depart,islandScale=lerp(1.02,.11,t),startGap=Math.min(150,Math.max(92,vr.h*.17)),endGap=Math.min(430,Math.max(260,vr.h*.48)),iy=by+lerp(startGap,endGap,t);ctx.globalAlpha=clamp(1-t*.96,.06,1);drawApproachIsland(origin,bx,iy,islandScale);ctx.globalAlpha=1}
-  // Landfall reverses the focus pull: the boat recedes back into a wider shot as
-  // the destination grows from a distant shoreline into the dominant scene.
-  if(arrive>0){const islandScale=lerp(.10,1.12,arrive),farY=vr.y+Math.max(54,vr.h*.08),nearY=by-Math.min(150,Math.max(92,vr.h*.16)),iy=lerp(farY,nearY,arrive);ctx.globalAlpha=clamp(.12+arrive*.9,.12,1);drawApproachIsland(dest,bx,iy,islandScale);ctx.globalAlpha=1;if(arrive>.28){for(let i=0;i<Math.floor(2+arrive*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(arrive>.62&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,iy-20);ctx.globalAlpha=1}}
-  updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,clamp(boatScale/1.35,.45,1));drawTopBoat(bx,by,boatScale,0,state.boat.type,playerBoatAppearance());drawWeather();drawTimeLighting();
+  if(p<.27){
+    const t=depart,islandScale=lerp(1.02,.11,t),halfH=voyageApproachHalfHeight(islandScale),waterGap=lerp(18,34,t),clearY=by+halfH+waterGap,offscreenY=vr.y+vr.h+halfH+24,iy=lerp(clearY,offscreenY,t);ctx.globalAlpha=clamp(1-t*.96,.06,1);drawApproachIsland(origin,bx,iy,islandScale);ctx.globalAlpha=1
+  }
+  if(arrive>0){
+    const islandScale=lerp(.10,1.12,arrive),halfH=voyageApproachHalfHeight(islandScale),farY=vr.y+Math.max(48,vr.h*.09),clearY=by-halfH-lerp(30,18,arrive),iy=lerp(farY,clearY,arrive);ctx.globalAlpha=clamp(.12+arrive*.9,.12,1);drawApproachIsland(dest,bx,iy,islandScale);ctx.globalAlpha=1;
+    if(arrive>.28){for(let i=0;i<Math.floor(2+arrive*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(arrive>.62&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,iy-20);ctx.globalAlpha=1}
+  }
+  updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,clamp(boatScale/1.35,.45,1));drawTopBoat(bx,by,boatScale,0,state.boat.type,playerBoatAppearance());drawVoyagePassengers(bx,by,boatScale);drawWeather();drawTimeLighting();
 }
-
 function chartIslandOutlinePoints(isl,q,r){const sh=ensureIslandData(isl).shape,c=Math.cos(sh.rotation),sn=Math.sin(sh.rotation),norm=Math.max(sh.rx,sh.ry),pts=[];for(let a=0;a<Math.PI*2;a+=Math.PI/24){const rad=shapeRadius(isl,a),lx=Math.cos(a)*sh.rx*rad,ly=Math.sin(a)*sh.ry*rad,gx=lx*c+ly*sn,gy=-lx*sn+ly*c;pts.push([q.x+(gx/norm)*r,q.y+(gy/norm)*r])}return pts}
 function drawRumourCoastline(isl,q,r,iconZoom){const pts=chartIslandOutlinePoints(isl,q,r);ctx.save();ctx.globalAlpha=.76;ctx.setLineDash([Math.max(2,3*iconZoom),Math.max(3,5*iconZoom)]);ctx.strokeStyle='#806b49';ctx.lineWidth=Math.max(1,1.25*iconZoom);ctx.beginPath();pts.forEach((p,n)=>n?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=.24;ctx.strokeStyle='#aa9060';ctx.lineWidth=1;ctx.beginPath();pts.filter((_,n)=>n%3===0).forEach((p,n)=>n?ctx.lineTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004):ctx.moveTo(p[0]*.996+q.x*.004,p[1]*.996+q.y*.004));ctx.stroke();ctx.restore();pxText('?',q.x,q.y+4,'#6e5d40',Math.max(10,Math.round(10*iconZoom)),'center')}
 function chartCleanName(i){return(i.home?'HOME':String(i.name||'').replace(/\s+Island$/i,'')).toUpperCase()}
@@ -2572,10 +2600,9 @@ function updateChartLabelOverlay(nodes,you,vr){
 }
 function drawChartIslandDetails(isl,q,r){
   if(!isl.known||r<48)return;const f=Math.min(1.35,r/105),map=(x,y)=>({x:q.x+(x-320)*(r/145),y:q.y+(y-180)*(r/112)}),draws=[];const put=(y,fn)=>draws.push({y,fn});
-  const core=map(320,156);put(core.y,()=>drawTopHouse(core.x,core.y,'house',.34*f));if(isl.features.includes('cottage')){const h=map(374,145);put(h.y,()=>drawTopHouse(h.x,h.y,'house',.30*f))}
-  (isl.projects||[]).filter(p=>p.complete).slice(-8).forEach((p,idx)=>{const t=projectTemplate(p.templateId);if(!t)return;const sp=projectSitePos(p,idx),m=map(sp.x,sp.y),kind=t.draw==='market_square'||t.draw==='market_hall'?'market_hall':t.draw==='cottages'?'house':t.draw||'house';put(m.y,()=>drawTopHouse(m.x,m.y,kind,.30*f))});
-  (isl.projects||[]).filter(p=>!p.complete).slice(0,3).forEach((p,idx)=>{const sp=projectSitePos(p,idx),m=map(sp.x,sp.y),sc=clamp(r/100,.55,1.1);put(m.y,()=>{rect(m.x-6*sc,m.y-2*sc,12*sc,4*sc,'#a86d45');rect(m.x-5*sc,m.y-12*sc,2*sc,13*sc,'#704630');rect(m.x+3*sc,m.y-12*sc,2*sc,13*sc,'#704630');line(m.x-6*sc,m.y-10*sc,m.x+6*sc,m.y-4*sc,'#c98d61',2)})});
-  if(r>78){const residents=rotatingSubset(isl.residents.filter(p=>!residentAwayAssignment(p.id)),Math.min(7,population(isl)),`${isl.id}:chart-residents`,30000);residents.forEach((p,i)=>{const a=(i/residents.length)*Math.PI*2+(hashString(p.id)%10)*.08,x=q.x+Math.cos(a)*r*.40,y=q.y+Math.sin(a)*r*.27;put(y,()=>drawPixelSprite(residentSprite(p.id,p.outfit,p.accent||'#e5b54e',p.archetype||'maker',p.style||0,Math.floor(frame/320+i)%2,false),x,y,clamp(r/150,.42,.78),.5,.88))})}
+  const corePos=islandSafeLayoutPoint(isl,320,156,.70),core=map(corePos.x,corePos.y);put(core.y,()=>drawTopHouse(core.x,core.y,'house',.34*f));if(isl.features.includes('cottage')){const hp=islandSafeLayoutPoint(isl,374,145,.72),h=map(hp.x,hp.y);put(h.y,()=>drawTopHouse(h.x,h.y,'house',.30*f))}
+  (isl.projects||[]).filter(p=>p.complete).slice(-8).forEach((p,idx)=>{const t=projectTemplate(p.templateId);if(!t)return;const sp=projectSitePos(p,idx,isl),m=map(sp.x,sp.y),kind=t.draw==='market_square'||t.draw==='market_hall'?'market_hall':t.draw==='cottages'?'house':t.draw||'house';put(m.y,()=>drawTopHouse(m.x,m.y,kind,.30*f))});
+  (isl.projects||[]).filter(p=>!p.complete).slice(0,3).forEach((p,idx)=>{const sp=projectSitePos(p,idx,isl),m=map(sp.x,sp.y),sc=clamp(r/100,.55,1.1);put(m.y,()=>{rect(m.x-6*sc,m.y-2*sc,12*sc,4*sc,'#a86d45');rect(m.x-5*sc,m.y-12*sc,2*sc,13*sc,'#704630');rect(m.x+3*sc,m.y-12*sc,2*sc,13*sc,'#704630');line(m.x-6*sc,m.y-10*sc,m.x+6*sc,m.y-4*sc,'#c98d61',2)})});
   draws.sort((a,b)=>a.y-b.y).forEach(d=>d.fn());if(r>92){const docked=vesselsAtIsland(isl.id).slice(0,3);docked.forEach((v,i)=>{const a=.45+i*.38,x=q.x+Math.cos(a)*r*.75,y=q.y+Math.sin(a)*r*.48;circle(x,y,Math.max(2,r*.025),'#527da0','#5e4c2a',1)})}
 }
 function drawChart(){
@@ -2583,7 +2610,7 @@ function drawChart(){
   rect(0,0,W,H,'#eadbae');rect(vr.x+12,vr.y+12,Math.max(10,vr.w-24),Math.max(10,vr.h-24),'#f8efd0');
   for(let x=vr.x+28;x<vr.x+vr.w-18;x+=40)rect(x,vr.y+20,1,Math.max(0,vr.h-40),'rgba(115,88,48,.09)');for(let y=vr.y+30;y<vr.y+vr.h-18;y+=34)rect(vr.x+20,y,Math.max(0,vr.w-40),1,'rgba(115,88,48,.09)');
   const roseX=vr.x+vr.w-50,roseY=vr.y+62;circle(roseX,roseY,22,'#f3e6c6','#8d6b3f',2);line(roseX,roseY-20,roseX,roseY+20,'#8d6b3f',2);line(roseX-20,roseY,roseX+20,roseY,'#8d6b3f',2);poly([[roseX,roseY-25],[roseX+5,roseY-7],[roseX,roseY-12],[roseX-5,roseY-7]],'#df7c68','#8d6b3f',1);pxText('N',roseX,roseY-30,'#8d6b3f',8,'center');
-  const visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured);chartView.hitAreas=[];if(!visible.length){updateChartLabelOverlay([],null,vr);return}const mapXY=g.mapXY,densityBoost=visible.length<=6?1.32:visible.length<=12?1.16:1,iconZoom=clamp(chartView.zoom*densityBoost,.72,7.2),labelNodes=[];
+  const visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured);chartView.hitAreas=[];if(!visible.length){updateChartLabelOverlay([],null,vr);return}const mapXY=g.mapXY,densityBoost=visible.length<=6?1.24:visible.length<=12?1.12:1,detailZoom=chartView.zoom<=2.4?chartView.zoom:2.4+(chartView.zoom-2.4)*.62,iconZoom=clamp(detailZoom*densityBoost,.72,6.1),labelNodes=[];
   ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
   ctx.strokeStyle='#8d6b3f';ctx.lineWidth=Math.max(1.5,1.8*iconZoom*.8);state.routes.forEach(r=>{const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y);ctx.setLineDash([7,7]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
   ctx.strokeStyle='rgba(110,91,56,.32)';rumours.forEach(i=>{const a=getIsland(i.rumourFromId);if(!a)return;const A=mapXY(a.x,a.y),B=mapXY(i.x,i.y);ctx.setLineDash([3,9]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
@@ -3053,6 +3080,8 @@ window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldT
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
 window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()})};
 
+// v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
+// structure-only chart/approach views, and scaled passenger deck walkers.
 // Start
 const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
