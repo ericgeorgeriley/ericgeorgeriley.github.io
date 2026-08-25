@@ -242,7 +242,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.23.10';
+const VERSION_LABEL='0.24.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3097,6 +3097,187 @@ openResidentDetails=function(id,options={}){
   const p=residentById(id),isl=residentHomeIsland(id);if(!p)return;mfEnsureSocialData(p);const req=residentWaitingRequest(p,isl),cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),canSocialise=mfCanSocialiseHere(p,isl);if(!options.skipTalk){p.chatIndex=(p.chatIndex||0)+1;mfRegisterConversation(p,isl)}const errand=mfResidentErrand(p,isl,true),memory=mfMemoryLine(p);save();const hasBerth=playerHasPassengerSpace(),requestHTML=req?`<div class="mf-favour-card mf-journey-favour"><h3>Journey favour</h3><p>${p.name} is hoping to reach ${getIsland(req.targetId)?.name||'another island'}. You currently have ${playerPassengerCount()}/${playerPassengerCapacity()} passenger berths occupied. ${hasBerth?'Offer them the free berth and mark their destination as your course.':'This boat has no free passenger berth just now.'}</p><button class="big-btn ghost" data-person-course="${req.targetId}" ${!canSocialise||!hasBerth?'disabled':''}>${!canSocialise?'MEET ASHORE':hasBerth?'OFFER LIFT · MARK ROUTE':'PASSENGER SPACE FULL'}</button></div>`:'';showModal(`<h2>${p.name}</h2><p>${p.occupation||'Island resident'}${isl?` · ${isl.name}`:''}</p><div class="notice">${residentLore(p,isl)}</div><p>${p.note||''}${cap?`<br><b>Boat:</b> Captain of ${cap.name}`:''}${away?.kind==='passenger'?'<br><b>At the moment:</b> travelling between islands.':''}${!canSocialise&&isl?'<br><b>Trading:</b> available when you are ashore together.':''}</p>${memory?`<div class="mf-memory"><b>They remember</b>${memory}</div>`:''}${mfRelationshipHTML(p)}${requestHTML}${mfFavourSectionHTML(p,isl,canSocialise)}${mfErrandSectionHTML(p,isl,canSocialise)}${mfTradeSectionHTML(p,isl,canSocialise)}<div class="modal-actions">${residentCanShareRumour(p)?`<button class="big-btn secondary" data-person-rumour="${p.id}">ASK ABOUT THE WATER</button>`:''}<button class="big-btn ghost" data-close>CLOSE</button></div>`);$('[data-person-course]')?.addEventListener('click',e=>{if(!playerHasPassengerSpace()){toast('No passenger berth free on this boat.');openResidentDetails(id,{skipTalk:true});return}if(setCourseTo(e.currentTarget.dataset.personCourse))closeModal()});$('[data-person-rumour]')?.addEventListener('click',e=>shareResidentRumour(e.currentTarget.dataset.personRumour));$$('[data-mf-trade]').forEach(b=>b.addEventListener('click',()=>mfCompleteTrade(p.id,b.dataset.mfTrade)));$('[data-mf-favour]')?.addEventListener('click',e=>mfCompleteFavour(p.id,e.currentTarget.dataset.mfFavour));$('[data-mf-errand]')?.addEventListener('click',e=>mfAcceptErrand(p.id,e.currentTarget.dataset.mfErrand));$('[data-mf-errand-course]')?.addEventListener('click',e=>{if(setCourseTo(e.currentTarget.dataset.mfErrandCourse))closeModal()})
 };
 
+
+// ============================================================
+// v0.24.0 ISLAND LIFE PASS
+// Animated structures, ambient animals, varied seeded routes, structure visits,
+// and lightweight tap reactions. This layer is visual/social only: fasting and
+// voyage timing are deliberately untouched.
+// ============================================================
+const MF_LIFE_ANIMAL_TYPES=['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'];
+const MF_LIFE_ANIMAL_LABELS={cat:'Harbour cat',dog:'Island dog',duck:'Duck',goose:'Goose',chicken:'Chicken',sheep:'Sheep',goat:'Goat',rabbit:'Rabbit',crab:'Shore crab'};
+const MF_LIFE_ANIMAL_NAMES={
+  cat:['Marmalade','Pebble','Mackerel','Button','Pip'],dog:['Skipper','Moss','Bramble','Patch','Nori'],duck:['Puddle','Dab','Reed','Pip','Waddle'],
+  goose:['Gus','Mallow','Cloud','Tern','Bracken'],chicken:['Dot','Marigold','Pepper','Bean','Daisy'],sheep:['Floss','Cloudlet','Tuft','Mallow','Biscuit'],
+  goat:['Sprig','Nettle','Pebble','Juniper','Moss'],rabbit:['Thimble','Clover','Dune','Button','Fern'],crab:['Clack','Rusty','Pebble','Nip','Coral']
+};
+const mfAnimalReactions=new Map();
+const mfLifeStructureCache=new Map(),mfLifeRouteCache=new Map(),mfLifeAnimalCache=new Map();
+function mfLifeIslandSignature(isl){return `${isl.id}:${isl.biome}:${population(isl)}:${(isl.features||[]).slice().sort().join(',')}:${(isl.projects||[]).map(p=>`${p.id}:${p.templateId}:${p.complete?1:0}:${p.site||''}`).sort().join('|')}`}
+function mfLifeCachePut(map,key,value,limit=900){if(map.size>=limit){const first=map.keys().next().value;if(first!==undefined)map.delete(first)}map.set(key,value);return value}
+function mfLifePhase(period=650,steps=4,seed=0){if(state.reducedMotion)return 0;return Math.floor((frame+Math.abs(seed)%(period*steps))/period)%steps}
+function mfLifeNodeKey(n){return `${Math.round(n.x)}:${Math.round(n.y)}:${n.kind||''}`}
+function mfUniqueLifeNodes(nodes){const seen=new Set();return nodes.filter(n=>{if(!n)return false;const k=mfLifeNodeKey(n);if(seen.has(k))return false;seen.add(k);return true})}
+function mfSeededOrder(list,seed){return list.map((v,i)=>({v,k:hashString(`${seed}:${i}:${mfLifeNodeKey(v)}`)})).sort((a,b)=>a.k-b.k).map(x=>x.v)}
+function mfStructureKindFromTemplate(t){if(!t)return'house';if(t.draw==='market_square')return'market';if(t.draw==='cottages')return'house';return t.draw||'house'}
+function mfIndoorKind(kind){return ['house','market','market_hall','tea','boatyard','map_room','observatory','windmill','lighthouse'].includes(kind)}
+function mfStructureDoor(isl,x,y,kind,tag='structure'){const q=islandSafePoint(isl,{x,y:y+10},kind==='ferry'?.86:.82);return{x:q.x,y:q.y,kind:'door',structureKind:kind,tag,indoors:mfIndoorKind(kind)}}
+function mfIslandLifeStructures(isl){
+  const sig=mfLifeIslandSignature(isl),cacheKey=`structures:${sig}`,cached=mfLifeStructureCache.get(cacheKey);if(cached)return cached;
+  const out=[],push=(x,y,kind,tag)=>out.push(mfStructureDoor(isl,x,y,kind,tag));
+  const core=islandSafeLayoutPoint(isl,320,156,.70);push(core.x,core.y,'house','home');
+  if(isl.features.includes('cottage')){const q=islandSafeLayoutPoint(isl,374,145,.72);push(q.x,q.y,'house','home')}
+  const pf=new Set((isl.projects||[]).map(p=>projectTemplate(p.templateId)?.feature));
+  if(isl.features.includes('windmill_ruin')&&!pf.has('windmill')){const q=islandSafeLayoutPoint(isl,252,132,.68);push(q.x,q.y,'windmill','work')}
+  if(isl.features.includes('lighthouse')&&!pf.has('lighthouse')){const q=islandSafeLayoutPoint(isl,415,138,.72);push(q.x,q.y,'lighthouse','work')}
+  if(isl.features.includes('market')&&!pf.has('market_stall')){const q=islandSafeLayoutPoint(isl,388,198,.74);push(q.x,q.y,'market','work')}
+  if(isl.features.includes('tea_house')&&!pf.has('tea_house')){const q=islandSafeLayoutPoint(isl,340,210,.74);push(q.x,q.y,'tea','work')}
+  if(isl.features.includes('orchard')&&!pf.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);push(q.x,q.y,'garden','work')}
+  (isl.projects||[]).forEach((p,i)=>{if(!p.complete)return;const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,i,isl);if(t.draw==='market_square'){push(pos.x-18,pos.y,'market','work');push(pos.x+23,pos.y+10,'market','work')}else if(t.draw==='cottages'){push(pos.x-18,pos.y,'house','home');push(pos.x+20,pos.y+12,'house','home')}else push(pos.x,pos.y,mfStructureKindFromTemplate(t),'work')});
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
+  for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);push(q.x,q.y,'house','home')}
+  return mfLifeCachePut(mfLifeStructureCache,cacheKey,mfUniqueLifeNodes(out),180)
+}
+function mfResidentPreferredKinds(archetype){return({
+  fisher:['ferry','boatyard','market'],gardener:['garden','market','tea'],carpenter:['boatyard','windmill','house'],trader:['market','market_hall','ferry','tea'],
+  navigator:['map_room','observatory','lighthouse','ferry'],naturalist:['garden','observatory','lighthouse'],maker:['boatyard','windmill','market','house']
+})[archetype]||['house','market']}
+function residentWaypoints(isl,person,index){
+  const sig=mfLifeIslandSignature(isl),routeKey=`resident:${sig}:${person.id||person.name}:${index}`,cached=mfLifeRouteCache.get(routeKey);if(cached)return cached;
+  const P=(x,y,kind='lane')=>({...islandSafeLayoutPoint(isl,x,y,.82),kind}),seed=hashString(`${isl.id}:${person.id||person.name}:life-v24`),structures=mfIslandLifeStructures(isl),prefs=mfResidentPreferredKinds(person.archetype),preferred=structures.filter(n=>prefs.includes(n.structureKind)),homes=structures.filter(n=>n.tag==='home'),general=[P(320,178),P(300,214),P(348,205),P(332,244),P(276,178),P(382,188),P(247,205),P(400,222),P(288,145),P(365,150)];
+  const active=(isl.projects||[]).filter(p=>!p.complete).map((p,i)=>{const q=projectSitePos(p,i,isl);return{...islandSafePoint(isl,{x:q.x,y:q.y+15},.84),kind:'worksite',structureKind:'construction',indoors:false}});
+  let route=[];if(homes.length)route.push(mfSeededOrder(homes,seed^0x11)[0]);route.push(...mfSeededOrder(preferred.length?preferred:structures,seed^0x22).slice(0,3));route.push(...mfSeededOrder(active,seed^0x33).slice(0,1));route.push(...mfSeededOrder(general,seed^0x44).slice(0,4));
+  if(person.archetype==='fisher')route.push(P(350,255,'harbour'),P(383,236,'harbour'));if(person.archetype==='gardener')route.push(P(268,205,'garden'),P(286,194,'garden'));if(person.archetype==='navigator')route.push(P(315,122,'lookout'),P(410,155,'lookout'));if(person.archetype==='naturalist')route.push(P(238,160,'nature'),P(398,164,'nature'));
+  route=mfUniqueLifeNodes(route);route=mfSeededOrder(route,seed^0x55);if(route.length<4)route.push(...general.slice(0,4-route.length));return mfLifeCachePut(mfLifeRouteCache,routeKey,route)
+}
+function residentPose(isl,person,index,ts=frame){
+  const pts=residentWaypoints(isl,person,index),seed=hashString(`${person.id||person.name}:pose-v24`),legMs=7600+(Math.abs(seed)%6200),clock=ts+Math.abs(seed)%47000,leg=Math.floor(clock/legMs),u=(clock%legMs)/legMs,a=pts[leg%pts.length],b=pts[(leg+1)%pts.length],movePart=.54+((seed>>>8)%12)/100,move=clamp(u/movePart,0,1),smooth=move*move*(3-2*move),lane=((seed>>>5)%7)-3,laneY=((seed>>>10)%5)-2,personal=2+((seed>>>13)%7),ang=(seed%628)/100,x=lerp(a.x,b.x,smooth)+lane*1.9+Math.cos(ang)*personal,y=lerp(a.y,b.y,smooth)+laneY*1.25+Math.sin(ang)*personal*.52,atStop=u>=movePart,hidden=!!(b.indoors&&u>movePart+.10),walking=!atStop,facing=b.x<a.x?-1:1;
+  return{x,y,walking,hidden,chat:atStop&&!hidden&&((leg+index+(seed&3))%6===0),facing,structureKind:b.structureKind||null,activity:b.kind||'lane'}
+}
+
+function mfWindmillSprite(variant=0,motion=0){
+  const lit=spriteLit(),key=`life-windmill:${variant}:${motion}:${lit?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const[c,g]=pixelCanvas(64,60),p=buildingPalette('windmill',variant);spriteShadow(g,10,48,44,5,.22);const win=(x,y,w=5,h=5)=>{psRect(g,x-1,y-1,w+2,h+2,p.ink);psRect(g,x,y,w,h,p.glass);psRect(g,x+Math.floor(w/2),y,1,h,p.cream);psRect(g,x,y+Math.floor(h/2),w,1,p.cream)};
+  psOutlinePoly(g,[[17,49],[20,27],[40,25],[47,47],[38,53],[24,53]],p.wall,p.ink,1);psPoly(g,[[34,27],[40,26],[45,46],[38,50]],p.wallShade);psOutlinePoly(g,[[17,28],[29,17],[43,25],[40,29],[27,23]],p.roof,p.ink,1);psRect(g,28,39,6,14,p.wood);win(21,33,5,5);
+  const cx=31,cy=17,base=(motion%8)*(Math.PI/4);for(let k=0;k<4;k++){const a=base+k*Math.PI/2,ux=Math.cos(a),uy=Math.sin(a),px=-uy,py=ux,x1=cx+ux*4,y1=cy+uy*4,x2=cx+ux*15,y2=cy+uy*15;psLine(g,cx,cy,x2,y2,p.ink,2);psOutlinePoly(g,[[x1+px*3,y1+py*3],[x2+px*3,y2+py*3],[x2-px*3,y2-py*3],[x1-px*2,y1-py*2]],p.cloth,p.ink,1)}psCircle(g,cx,cy,3,p.ink);psCircle(g,cx,cy,2,p.gold);worldSpriteCache.set(key,c);return c
+}
+function mfBoatyardSprite(variant=0,motion=0){
+  const lit=spriteLit(),key=`life-boatyard:${variant}:${motion}:${lit?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const[c,g]=pixelCanvas(64,60),p=buildingPalette('boatyard',variant);spriteShadow(g,10,48,44,5,.22);const crate=(x,y)=>{psRect(g,x,y,7,6,p.ink);psRect(g,x+1,y+1,5,4,p.woodHi);psLine(g,x+1,y+1,x+5,y+4,p.wood,1);psLine(g,x+5,y+1,x+1,y+4,p.wood,1)};
+  psRect(g,8,45,50,5,p.ink);psRect(g,9,46,48,3,p.woodHi);psOutlinePoly(g,[[12,42],[14,27],[40,25],[43,42]],'#caa06a',p.ink,1);psOutlinePoly(g,[[10,27],[26,17],[45,24],[40,29],[25,22]],p.roof,p.ink,1);psRect(g,17,31,3,12,p.wood);psRect(g,34,30,3,13,p.wood);psLine(g,48,18,48,45,p.ink,2);psLine(g,48,19,59,24,p.wood,2);const swing=[-3,-2,0,2,3,2,0,-2][motion%8],hy=37+Math.abs(swing)*.25;psLine(g,58,24,58+swing,hy,p.ink,1);psRect(g,56+swing,hy,5,4,p.gold);psLine(g,18,48,31,39,p.cream,2);psLine(g,30,48,39,40,p.cream,2);crate(10,39);worldSpriteCache.set(key,c);return c
+}
+function mfBuildingMotion(kind,x,y){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),steps=kind==='windmill'||kind==='boatyard'?8:4,period=kind==='windmill'?520:kind==='lighthouse'?780:900;return mfLifePhase(period,steps,seed)}
+function mfSpritePoint(x,y,s,lx,ly){return{x:x+(lx-32)*s,y:y+(ly-51.6)*s}}
+function mfDrawBuildingLifeOverlay(x,y,kind,s=1,motion=0){
+  if(state.reducedMotion)return;const p=buildingPalette(kind,Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4),P=(lx,ly)=>mfSpritePoint(x,y,s,lx,ly),px=Math.max(1,Math.round(s));
+  if(kind==='house'){const q=P(21,18),rise=(motion%4)*2;ctx.globalAlpha=.38;circle(q.x-1*s,q.y-rise*s,2.2*s,'#e8eee7');circle(q.x+2*s,q.y-(rise+4)*s,1.7*s,'#f3f5eb');ctx.globalAlpha=1}
+  else if(kind==='lighthouse'){const q=P(33,11),a=-.55+(motion%4)*.36,len=34*s,spread=5*s,ex=q.x+Math.cos(a)*len,ey=q.y+Math.sin(a)*len;ctx.save();ctx.globalAlpha=['night','dusk','dawn'].includes(dayPhase())?.22:.10;poly([[q.x,q.y-spread*.25],[ex,ey-spread],[ex,ey+spread]],'#fff1ad');ctx.restore()}
+  else if(kind==='market'||kind==='market_hall'){const hall=kind==='market_hall',count=hall?6:5;for(let i=0;i<count;i++){const q=P(15+i*7,34+(i+motion)%2);rect(q.x,q.y,3*s,1.3*s,i%2?p.cream:p.red)}if(hall){const q=P(33,25),dx=[-1,0,1,0][motion%4]*s;line(q.x,q.y,q.x+dx,q.y+5*s,p.ink,Math.max(1,s));rect(q.x-3*s+dx,q.y+5*s,6*s,3*s,p.woodHi)}}
+  else if(kind==='tea'){const q=P(51,38);ctx.globalAlpha=.55;for(let i=0;i<2;i++){const yy=q.y-(motion+i*2)*1.3*s;circle(q.x+(i?2:-1)*s,yy,1.3*s,p.cream)}ctx.globalAlpha=1}
+  else if(kind==='garden'){const q=P(36+(motion%2)*3,25-(motion%3));rect(q.x,q.y,2*px,px,p.gold);rect(q.x+2*px,q.y-px,px,px,p.ink)}
+  else if(kind==='ferry'){const pole=P(17,33),flap=[2,4,5,3][motion%4]*s;poly([[pole.x,pole.y],[pole.x+flap,pole.y+1*s],[pole.x,pole.y+3*s]],p.red,p.ink,Math.max(1,s));const m=P(12,50);line(m.x,m.y,m.x+12*s,m.y+Math.sin(frame*.006+motion)*1.4*s,'rgba(23,49,58,.65)',Math.max(1,s))}
+  else if(kind==='map_room'){const q=P(55,13),r=(motion%4===1?5:motion%4===2?7:3)*s;ctx.save();ctx.globalAlpha=.22;circle(q.x,q.y,r,'rgba(121,183,200,.18)',p.blue,1);ctx.restore();if(motion%4===2)drawSparkle(q.x+4*s,q.y-3*s,p.cream)}
+  else if(kind==='observatory'){const q=P(50,6);if(motion%4===1||motion%4===2)drawSparkle(q.x+(motion%4===2?2:0)*s,q.y-1*s,p.cream)}
+}
+function drawTopHouse(x,y,kind='house',s=1){const variant=Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4,motion=mfBuildingMotion(kind,x,y),spr=kind==='windmill'?mfWindmillSprite(variant,motion):kind==='boatyard'?mfBoatyardSprite(variant,motion):buildingSprite(kind,variant);drawPixelSprite(spr,x,y,s,0.5,.86);mfDrawBuildingLifeOverlay(x,y,kind,s,motion)}
+
+// One-pixel ambient vegetation movement. It is deliberately tiny so coast-safe
+// placement remains visually stable and the island never looks like it is wobbling.
+function drawTopTree(x,y,s=1,kind='broadleaf'){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),phase=mfLifePhase(900,4,seed),sway=state.reducedMotion?0:[-0.45,0,.45,0][phase]*s;drawPixelSprite(propSprite(kind,Math.abs(seed)%3),x+sway,y,s,0.5,.86)}
+function drawFlowerPatch(x,y){const seed=hashString(`flowers:${Math.round(x)}:${Math.round(y)}`),phase=mfLifePhase(820,4,seed),sway=state.reducedMotion?0:[-.5,0,.5,0][phase];drawPixelSprite(propSprite('flowers',Math.abs(seed)%3),x+6+sway,y+7,1,0.5,.78)}
+
+function mfAnimalSpeciesForIsland(isl){
+  const pool=['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'],eligible=pool.filter(k=>{
+    if(k==='cat'||k==='dog'||k==='crab')return true;if(k==='duck'||k==='goose')return population(isl)>=2;if(k==='chicken')return population(isl)>=3||isl.features.includes('orchard')||isl.features.includes('market');if(k==='sheep'||k==='goat')return population(isl)>=4&&['meadow','pine','dune'].includes(isl.biome);if(k==='rabbit')return ['meadow','pine','marsh','dune'].includes(isl.biome);return true
+  }),seed=hashString(`${isl.id}:animals-v24`),ordered=eligible.map((v,i)=>({v,k:hashString(`${seed}:${v}:${i}`)})).sort((a,b)=>a.k-b.k).map(x=>x.v),count=clamp(2+Math.floor(population(isl)/4)+Math.floor((isl.projects||[]).filter(p=>p.complete).length/3),2,Math.min(9,ordered.length));return ordered.slice(0,count)
+}
+function islandAnimals(isl){const sig=mfLifeIslandSignature(isl),key=`animals:${sig}`,cached=mfLifeAnimalCache.get(key);if(cached)return cached;const animals=mfAnimalSpeciesForIsland(isl).map((species,i)=>{const names=MF_LIFE_ANIMAL_NAMES[species],seed=hashString(`${isl.id}:${species}:${i}:animal-v24`);return{id:`${isl.id}:animal:${species}:${i}`,species,name:names[Math.abs(seed)%names.length],seed,index:i}});return mfLifeCachePut(mfLifeAnimalCache,key,animals,180)}
+function animalById(id){const isl=currentIsland();return islandAnimals(isl).find(a=>a.id===id)||null}
+function mfAnimalPalette(species){const p={ink:'#17313a',cream:'#f1dfb2',paper:'#fff0c8',red:'#c85f52',gold:'#e0b04e',brown:'#805334',brown2:'#b97d49',gray:'#89958d',green:'#619a5e',blue:'#527da0'};if(species==='cat')return{...p,body:'#89958d',mark:'#f1dfb2'};if(species==='dog')return{...p,body:'#b97d49',mark:'#fff0c8'};if(species==='duck')return{...p,body:'#f1dfb2',mark:'#619a5e'};if(species==='goose')return{...p,body:'#fff0c8',mark:'#89958d'};if(species==='chicken')return{...p,body:'#b97d49',mark:'#c85f52'};if(species==='sheep')return{...p,body:'#fff0c8',mark:'#89958d'};if(species==='goat')return{...p,body:'#89958d',mark:'#805334'};if(species==='rabbit')return{...p,body:'#89958d',mark:'#f1dfb2'};return{...p,body:'#c85f52',mark:'#e0b04e'}}
+function animalSprite(species='cat',phase=0,mirror=false){
+  const key=`animal:${species}:${phase%4}:${mirror?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const[c,g]=pixelCanvas(24,20),p=mfAnimalPalette(species);g.save();if(mirror){g.translate(24,0);g.scale(-1,1)}spriteShadow(g,5,17,14,2,.17);const bob=(phase%4===1)?-1:0;
+  if(species==='cat'){psRect(g,7,9+bob,10,6,p.body);psRect(g,14,6+bob,6,6,p.body);psPoly(g,[[15,6+bob],[16,3+bob],[18,6+bob]],p.body);psPoly(g,[[18,6+bob],[20,3+bob],[20,7+bob]],p.body);psRect(g,17,8+bob,1,1,p.ink);psRect(g,7,14+bob,2,4,p.ink);psRect(g,15,14+bob,2,4,p.ink);const ty=phase%2?7:5;psLine(g,7,10+bob,3,ty,p.ink,1);psLine(g,3,ty,2,ty-2,p.ink,1)}
+  else if(species==='dog'){psRect(g,6,9+bob,11,6,p.body);psRect(g,14,6+bob,6,7,p.body);psRect(g,18,7+bob,3,3,p.mark);psRect(g,17,8+bob,1,1,p.ink);psRect(g,7,14+bob,2,4,p.ink);psRect(g,15,14+bob,2,4,p.ink);psLine(g,6,10+bob,2,7+(phase%3),p.ink,1)}
+  else if(species==='duck'){psRect(g,6,10+bob,11,5,p.body);psCircle(g,16,8+bob,4,p.mark);psRect(g,19,8+bob,4,2,p.gold);psRect(g,17,7+bob,1,1,p.ink);psRect(g,8,15+bob,3,2,p.gold);psRect(g,14,15+bob,3,2,p.gold)}
+  else if(species==='goose'){psRect(g,5,11+bob,11,5,p.body);psRect(g,14,6+bob,3,7,p.body);psCircle(g,16,5+bob,3,p.body);psRect(g,18,5+bob,4,2,p.gold);psRect(g,17,4+bob,1,1,p.ink);psRect(g,8,16+bob,2,2,p.gold);psRect(g,14,16+bob,2,2,p.gold)}
+  else if(species==='chicken'){const peck=phase%4===2?2:0;psRect(g,7,9+bob,10,7,p.body);psCircle(g,16,7+bob+peck,4,p.body);psRect(g,18,7+bob+peck,4,2,p.gold);psRect(g,15,3+bob+peck,2,2,p.red);psRect(g,17,4+bob+peck,2,2,p.red);psRect(g,17,6+bob+peck,1,1,p.ink);psRect(g,9,16+bob,2,2,p.gold);psRect(g,14,16+bob,2,2,p.gold)}
+  else if(species==='sheep'){for(const[x,y]of[[7,9],[11,8],[15,9],[9,12],[14,12]])psCircle(g,x,y+bob,4,p.body);psRect(g,16,9+bob,5,5,p.mark);psRect(g,19,10+bob,1,1,p.ink);psRect(g,8,15+bob,2,3,p.ink);psRect(g,15,15+bob,2,3,p.ink)}
+  else if(species==='goat'){psRect(g,6,9+bob,11,6,p.body);psRect(g,15,6+bob,5,7,p.body);psLine(g,16,6+bob,14,3+bob,p.cream,1);psLine(g,19,6+bob,21,3+bob,p.cream,1);psRect(g,18,8+bob,1,1,p.ink);psRect(g,7,14+bob,2,4,p.ink);psRect(g,15,14+bob,2,4,p.ink)}
+  else if(species==='rabbit'){const hop=phase%4===1?-2:0;psRect(g,6,11+hop,10,5,p.body);psCircle(g,16,9+hop,4,p.body);psRect(g,15,2+hop,2,6,p.body);psRect(g,18,3+hop,2,6,p.body);psRect(g,18,8+hop,1,1,p.ink);psCircle(g,5,12+hop,2,p.mark);psRect(g,8,15+hop,3,2,p.ink);psRect(g,14,15+hop,3,2,p.ink)}
+  else {const claw=phase%2?1:0;psRect(g,7,10,10,6,p.body);psRect(g,9,7,6,4,p.body);psRect(g,10,7,1,1,p.ink);psRect(g,14,7,1,1,p.ink);psLine(g,7,13,3,9-claw,p.ink,1);psLine(g,17,13,21,9+claw,p.ink,1);psRect(g,2,7-claw,4,3,p.body);psRect(g,19,8+claw,4,3,p.body);for(const x of[7,10,14,17])psLine(g,x,15,x+(x<12?-2:2),18,p.ink,1)}
+  g.restore();worldSpriteCache.set(key,c);return c
+}
+function mfAnimalRoute(isl,a,index){
+  const sig=mfLifeIslandSignature(isl),routeKey=`animal-route:${sig}:${a.id}:${index}`,cached=mfLifeRouteCache.get(routeKey);if(cached)return cached;
+  const P=(x,y,kind='lane',indoors=false)=>({...islandSafeLayoutPoint(isl,x,y,.86),kind,indoors}),structures=mfIslandLifeStructures(isl),seed=a.seed,doors=structures.filter(n=>n.indoors),garden=structures.filter(n=>n.structureKind==='garden'),market=structures.filter(n=>['market','market_hall','tea'].includes(n.structureKind)),harbour=[P(250,248,'shore'),P(292,258,'shore'),P(348,256,'shore'),P(390,241,'shore')],meadow=[P(255,177,'grass'),P(290,205,'grass'),P(355,196,'grass'),P(390,174,'grass'),P(320,230,'grass')];let route=[];
+  if(a.species==='cat'){route.push(...mfSeededOrder([...doors,...market],seed).slice(0,3),...mfSeededOrder(meadow,seed^7).slice(0,2))}
+  else if(a.species==='dog'){route.push(...mfSeededOrder([...doors,...structures.filter(n=>['ferry','boatyard'].includes(n.structureKind))],seed).slice(0,3),...mfSeededOrder(harbour,seed^9).slice(0,2))}
+  else if(a.species==='duck'||a.species==='goose'){route.push(...mfSeededOrder(harbour,seed).slice(0,4),...mfSeededOrder(garden,seed^11).slice(0,1))}
+  else if(a.species==='chicken'){route.push(...mfSeededOrder([...garden,...market],seed).slice(0,2),...mfSeededOrder(meadow,seed^13).slice(0,3))}
+  else if(a.species==='sheep'||a.species==='goat'){route.push(...mfSeededOrder(meadow,seed).slice(0,4),...mfSeededOrder(garden,seed^15).slice(0,1))}
+  else if(a.species==='rabbit'){route.push(...mfSeededOrder(meadow,seed).slice(0,4),P(242,168,'burrow',true))}
+  else route.push(...mfSeededOrder(harbour,seed).slice(0,4));
+  route=mfUniqueLifeNodes(route);return mfLifeCachePut(mfLifeRouteCache,routeKey,route.length>=3?route:meadow.slice(0,3))
+}
+function mfAnimalPose(isl,a,index,ts=frame){
+  const pts=mfAnimalRoute(isl,a,index),seed=a.seed,speeds={cat:6900,dog:6200,duck:7600,goose:8200,chicken:5600,sheep:9000,goat:7800,rabbit:5200,crab:6400},legMs=(speeds[a.species]||7000)+(Math.abs(seed)%2600),clock=ts+Math.abs(seed)%53000,leg=Math.floor(clock/legMs),u=(clock%legMs)/legMs,A=pts[leg%pts.length],B=pts[(leg+1)%pts.length],movePart={cat:.56,dog:.63,duck:.48,goose:.46,chicken:.52,sheep:.43,goat:.48,rabbit:.62,crab:.40}[a.species]||.52,move=clamp(u/movePart,0,1),smooth=move*move*(3-2*move),wiggle=Math.sin((ts+seed)*.0017)*({duck:1.2,goose:1.0,crab:.5}[a.species]||.35),hidden=!!(B.indoors&&u>movePart+.12),idle=u>=movePart&&!hidden,x=lerp(A.x,B.x,smooth)+wiggle,y=lerp(A.y,B.y,smooth)+Math.sin((ts+seed)*.0011)*.45,facing=B.x<A.x?-1:1;
+  return{x,y,walking:u<movePart,hidden,idle,facing,activity:B.kind||'lane'}
+}
+function mfAnimalReaction(id){const r=mfAnimalReactions.get(id);if(!r)return null;if(performance.now()>r.until){mfAnimalReactions.delete(id);return null}return r}
+function mfAnimalReactionText(a,n){const sets={
+  cat:[`${a.name} leans into the scratch and purrs.`,`${a.name} gives you a slow, approving blink.`,`${a.name} chirps once, then winds around an imaginary ankle.`],
+  dog:[`${a.name} does a delighted little tail-whirl.`,`${a.name} trots in a tiny circle and beams at you.`,`${a.name} offers one extremely serious paw.`],
+  duck:[`${a.name} gives an enthusiastic little quack.`,`${a.name} does one proud head-bob.`,`${a.name} shuffles closer, just in case snacks exist.`],
+  goose:[`${a.name} honks with great importance.`,`${a.name} stretches tall, then decides you are acceptable.`,`${a.name} gives the ground a thoughtful little peck.`],
+  chicken:[`${a.name} fluffs up like a tiny feathered cloud.`,`${a.name} pecks twice, then looks pleased with the result.`,`${a.name} makes a soft, busy little cluck.`],
+  sheep:[`${a.name} gives a quiet baa and a woolly shuffle.`,`${a.name} leans forward for a cautious nose-boop.`,`${a.name} blinks at you from inside an impressive amount of wool.`],
+  goat:[`${a.name} does a tiny sideways hop.`,`${a.name} considers your sleeve, then politely leaves it alone.`,`${a.name} gives you an inquisitive little head tilt.`],
+  rabbit:[`${a.name} does one quick happy hop.`,`${a.name} twitches both ears in your direction.`,`${a.name} freezes, decides you are safe, and resumes being tiny.`],
+  crab:[`${a.name} raises one claw in formal greeting.`,`${a.name} sidesteps with surprising purpose.`,`${a.name} clicks both claws like very small castanets.`]
+  },arr=sets[a.species]||[`${a.name} seems pleased to see you.`];return arr[n%arr.length]}
+function interactWithAnimal(id){const a=animalById(id);if(!a)return;const prev=mfAnimalReactions.get(id),count=(prev?.count||0)+1,text=mfAnimalReactionText(a,count-1),glyph=['♥','♪','!'][Math.abs(hashString(`${id}:${count}`))%3];mfAnimalReactions.set(id,{until:performance.now()+1800,count,text,glyph});toast(text)}
+function drawIslandAnimal(isl,a,pose){
+  const reaction=mfAnimalReaction(a.id),tapPhase=reaction?Math.sin((reaction.until-performance.now())*.012):0,bounce=reaction?Math.max(0,tapPhase)*2.2:0,phase=mfLifePhase(a.species==='rabbit'?220:300,4,a.seed),sc={cat:.92,dog:1.05,duck:.82,goose:.95,chicken:.82,sheep:1.08,goat:1.02,rabbit:.82,crab:.78}[a.species]||.9,spr=animalSprite(a.species,phase,pose.facing<0);drawPixelSprite(spr,pose.x,pose.y-bounce,sc,.5,.88);if(reaction){roundedRect(pose.x+7,pose.y-23-bounce,13,12,4,'rgba(255,247,222,.94)','#18313a',1);pxText(reaction.glyph,pose.x+13.5,pose.y-14-bounce,reaction.glyph==='♥'?'#c55c57':'#18313a',7,'center')}}
+function mfAnimalInfoHTML(a){return `<button class="world-info-close" data-world-close aria-label="Close">×</button><b>♣ ${a.name}</b><span>${MF_LIFE_ANIMAL_LABELS[a.species]||'Island animal'} · just part of island life.</span><div class="world-info-actions"><button data-world-animal="${a.id}">SAY HELLO</button></div>`}
+
+worldSelectionHTML=function(sel){
+  if(!sel)return'';
+  if(sel.kind==='animal'){const a=animalById(sel.id);return a?mfAnimalInfoHTML(a):''}
+  if(sel.kind==='resident'){const p=residentById(sel.id),isl=residentHomeIsland(sel.id);if(!p)return'';const req=residentWaitingRequest(p,isl);return `<button class="world-info-close" data-world-close aria-label="Close">×</button><b>☻ ${p.name}</b><span>${p.occupation||'Island resident'} · ${residentLore(p,isl)}${req?`<br><b>Request:</b> hopes to reach ${getIsland(req.targetId)?.name||'another island'}.`:''}</span><div class="world-info-actions"><button data-world-person="${p.id}">TALK</button>${req?`<button data-world-course="${req.targetId}">MARK ROUTE</button>`:''}${residentCanShareRumour(p)?`<button data-world-person-rumour="${p.id}">ASK ABOUT WATER</button>`:''}</div>`}
+  if(sel.kind==='vessel'){const v=worldState().vessels.find(x=>x.id===sel.id);if(!v)return'';const t=vesselType(v.typeId);return `<button class="world-info-close" data-world-close aria-label="Close">×</button><b>⛵ ${v.name}</b><span>${t.name} · Captain ${v.captainName}<br>${v.mission||'Working the island routes.'}</span><div class="world-info-actions"><button data-world-vessel="${v.id}">DETAILS</button>${!v.rumourShared?`<button data-world-vessel-rumour="${v.id}">ASK ABOUT WATER</button>`:''}</div>`}
+  return''
+};
+updateWorldInfoOverlay=function(){
+  const el=$('#worldInfo');if(!el)return;const show=!!worldSelection&&state.activeView!=='chart'&&!minigame;el.classList.toggle('show',show);if(!show){el.innerHTML='';return}el.innerHTML=worldSelectionHTML(worldSelection);positionFloatingOverlays();
+  el.querySelector('[data-world-close]')?.addEventListener('click',()=>{worldSelection=null;updateWorldInfoOverlay()});el.querySelector('[data-world-animal]')?.addEventListener('click',e=>interactWithAnimal(e.currentTarget.dataset.worldAnimal));el.querySelector('[data-world-person]')?.addEventListener('click',e=>openResidentDetails(e.currentTarget.dataset.worldPerson));el.querySelector('[data-world-course]')?.addEventListener('click',e=>setCourseTo(e.currentTarget.dataset.worldCourse));el.querySelector('[data-world-person-rumour]')?.addEventListener('click',e=>shareResidentRumour(e.currentTarget.dataset.worldPersonRumour));el.querySelector('[data-world-vessel]')?.addEventListener('click',e=>openVesselDetails(e.currentTarget.dataset.worldVessel));el.querySelector('[data-world-vessel-rumour]')?.addEventListener('click',e=>shareVesselRumour(e.currentTarget.dataset.worldVesselRumour))
+};
+hitTestWorld=function(x,y){const hits=(worldHitAreas||[]).filter(h=>Math.hypot(x-h.x,y-h.y)<=h.r).sort((a,b)=>a.r-b.r);if(!hits.length){worldSelection=null;updateWorldInfoOverlay();return}const hit=hits[0];worldSelection={kind:hit.kind,id:hit.id};if(hit.kind==='animal')interactWithAnimal(hit.id);updateWorldInfoOverlay()};
+
+drawIslandScene=function(isl){
+  ensureIslandData(isl);drawSeaBackground();const off=legacySceneOffset();ctx.save();ctx.translate(off.x,off.y);
+  renderIslandTiles(isl,320,180,ISLAND_ART.tile,ISLAND_ART.shape,true,1);
+  const actors=[],queue=(y,draw)=>actors.push({y,draw});
+  islandDecorPoints(isl).forEach((p,i)=>{const tree=biomeDef(isl.biome).tree||'broadleaf';if(p.roll<.68)queue(p.y,()=>drawTopTree(p.x,p.y,ISLAND_ART.tree*(.9+(i%3)*.06),tree));else if(p.roll<.88)queue(p.y,()=>drawTopRock(p.x,p.y,1.0));else queue(p.y,()=>drawFlowerPatch(p.x-4,p.y-4))});
+  const core=islandSafeLayoutPoint(isl,320,156,.70);queue(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)));
+  if(isl.features.includes('cottage')){const q=islandSafeLayoutPoint(isl,374,145,.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.96)))}
+  const projectFeatures=new Set(isl.projects.map(p=>projectTemplate(p.templateId)?.feature));
+  if(isl.features.includes('windmill_ruin')&&!isl.projects.some(p=>projectTemplate(p.templateId)?.feature==='windmill')){const q=islandSafeLayoutPoint(isl,252,132,.68);queue(q.y,()=>drawTopHouse(q.x,q.y,'windmill',islandBuildingScale('windmill',.82)))}
+  if(isl.features.includes('lighthouse')&&!projectFeatures.has('lighthouse')){const q=islandSafeLayoutPoint(isl,415,138,.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'lighthouse',islandBuildingScale('lighthouse',.96)))}
+  if(isl.features.includes('market')&&!projectFeatures.has('market_stall')){const q=islandSafeLayoutPoint(isl,388,198,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'market',islandBuildingScale('market',.96)))}
+  if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house')){const q=islandSafeLayoutPoint(isl,340,210,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'tea',islandBuildingScale('tea',.92)))}
+  if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
+  isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i,isl);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
+  const presentResidents=isl.residents.filter(p=>!residentAwayAssignment(p.id)),limit=Math.min(visibleResidentLimit(isl),presentResidents.length),residentPoses=rotatingSubset(presentResidents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
+  residentPoses.forEach(r=>{if(r.hidden)return;worldHitAreas.push({kind:'resident',id:r.person.id,x:r.x+off.x,y:r.y+off.y,r:24});queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);const req=residentWaitingRequest(r.person,isl),tip=residentCanShareRumour(r.person);if(req||tip){roundedRect(r.x+8,r.y-23,12,12,4,req?'#fff0ce':'#dff1cf','#18313a',1);pxText(req?'!':'?',r.x+14,r.y-14,'#18313a',7,'center')}else if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')})});
+  const animals=islandAnimals(isl);animals.forEach((a,i)=>{const pose=mfAnimalPose(isl,a,i);if(pose.hidden)return;worldHitAreas.push({kind:'animal',id:a.id,x:pose.x+off.x,y:pose.y+off.y,r:18});queue(pose.y+2,()=>drawIslandAnimal(isl,a,pose))});
+  actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
+  const playerDock=islandLayoutPoint(340,290);drawTopBoat(playerDock.x,playerDock.y,ISLAND_ART.playerBoat,-.2,state.boat.type,playerBoatAppearance());
+  const trafficSpots=[[414,290,1],[226,292,.96],[456,250,.90],[177,252,.88]];rotatingSubset(vesselsAtIsland(isl.id),4,`${isl.id}:harbour-boats`,20*60000).forEach((v,i)=>{const q=islandLayoutPoint(trafficSpots[i][0],trafficSpots[i][1]),t=vesselType(v.typeId),sc=ISLAND_ART.npcBoat*trafficSpots[i][2];drawTopBoat(q.x,q.y,sc,-.15,t.sprite,npcBoatAppearance(v));worldHitAreas.push({kind:'vessel',id:v.id,x:q.x+off.x,y:q.y+off.y,r:32});if(!v.rumourShared){roundedRect(q.x+12,q.y-28,12,12,4,'#dff1cf','#18313a',1);pxText('?',q.x+18,q.y-19,'#18313a',7,'center')}if(['night','dusk'].includes(dayPhase()))drawLamp(q.x,q.y-4)});
+  if(['night','dusk','dawn'].includes(dayPhase())){drawLamp(core.x,core.y);isl.projects.filter(p=>p.complete).forEach((p,i)=>{const q=projectSitePos(p,i,isl);drawLamp(q.x,q.y)})}ctx.restore();drawWeather();drawTimeLighting()
+};
+
+function mfIslandLifeStats(isl=currentIsland()){const residents=(isl.residents||[]).filter(p=>!residentAwayAssignment(p.id)),animals=islandAnimals(isl),structures=mfIslandLifeStructures(isl);return{population:population(isl),residentTotal:residents.length,residentVisibleCap:visibleResidentLimit(isl),animalCount:animals.length,animalSpecies:animals.map(a=>a.species),structureAnchors:structures.length,spriteCache:worldSpriteCache.size}}
+
+
 // Reduced project requirements can leave an old in-progress project already complete.
 // Reconcile that once, quietly, so existing saves never get stuck at 100%.
 try{const priorSim=worldSimulating;worldSimulating=true;state.islands.forEach(isl=>(isl.projects||[]).filter(p=>!p.complete&&projectProgress(p)>=.999).forEach(p=>completeIslandProject(isl,p)));worldSimulating=priorSim}catch(e){console.warn('MakeFast v0.23.4 project reconciliation note',e)}
@@ -3135,7 +3316,7 @@ document.addEventListener('visibilitychange',()=>{
 
 window.__MakeFastAudio={status:()=>AdaptiveMusic.status(),state:AdaptiveMusic.state,sync:(force=true)=>adaptiveMusicSync(force),wake:()=>AdaptiveMusic.wake(),director:()=>AdaptiveMusic.state.playing?AdaptiveMusic.status():AdaptiveMusic.status()};
 window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES,holdCapacity:playerBoatCapacity,passengerCapacity:playerPassengerCapacity,parcelCapacity:playerParcelCapacity,helpLoad:()=>({passengers:playerPassengerCount(),parcels:playerParcelCount()})};
-window.__MakeFastArt={buildingSprite,residentSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit};
+window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit,islandAnimals,lifeStats:mfIslandLifeStats};
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
@@ -3144,6 +3325,7 @@ window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,pa
 // v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
 // structure-only chart/approach views, and scaled passenger deck walkers.
 // v0.23.10 logo refresh: replaced the original CSS brandmark with the new inline SVG mast-and-sails mark.
+// v0.24.0 island-life pass: animated structures/scenery, seeded resident routes, ambient animals, building visits, and tap reactions.
 // Start
 backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
