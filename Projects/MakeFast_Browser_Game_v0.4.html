@@ -244,7 +244,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.9';
+const VERSION_LABEL='0.24.10';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -1575,7 +1575,7 @@ function setView(view){
   const enteringChart=view==='chart'&&state.activeView!=='chart';
   state.activeView=view;
   worldSelection=null;updateWorldInfoOverlay();
-  if(enteringChart){chartView.selection=null;chartView.needsFit=true;resetChartView();}
+  if(enteringChart){chartView.selection=null;chartView.needsFit=true;resetChartView();if(typeof chartStaticCache!=='undefined')chartStaticCache.lastDataCheckAt=0;}
   if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=false;syncMobilePanel()} save(); renderUI();
   if(enteringChart)requestAnimationFrame(()=>{fitChartToKnown();updateMapInfoOverlay()});
 }
@@ -2756,23 +2756,144 @@ function drawChartIslandDetails(isl,q,r,tile){
   (isl.projects||[]).filter(p=>!p.complete).slice(0,3).forEach((p,idx)=>{const sp=projectSitePos(p,idx,isl),m=map(sp.x,sp.y),sc=clamp(r/100,.55,1.1);put(m.y,()=>{rect(m.x-6*sc,m.y-2*sc,12*sc,4*sc,'#a86d45');rect(m.x-5*sc,m.y-12*sc,2*sc,13*sc,'#704630');rect(m.x+3*sc,m.y-12*sc,2*sc,13*sc,'#704630');line(m.x-6*sc,m.y-10*sc,m.x+6*sc,m.y-4*sc,'#c98d61',2)})});
   draws.sort((a,b)=>a.y-b.y).forEach(d=>d.fn());if(r>92){const docked=vesselsAtIsland(isl.id).slice(0,3);docked.forEach((v,i)=>{const a=.45+i*.38,x=q.x+Math.cos(a)*r*.75,y=q.y+Math.sin(a)*r*.48;circle(x,y,Math.max(2,r*.025),'#527da0','#5e4c2a',1)})}
 }
-function drawChart(){
-  ensureChartRumours(3);const W=canvas.width,H=canvas.height,g=chartMapGeometry(),vr=g.vr,mobile=window.matchMedia('(max-width:900px)').matches;
+let chartStaticCache={key:'',dataKey:'',lastDataCheckAt:0,canvas:null,labelNodes:[],hitAreas:[],recentHops:[],buildMs:0,builds:0};
+let chartCourseCache={key:'',path:null};
+function chartMarkedCoursePath(){
+  if(state.phase!=='ashore'||state.selectedDestinationId==='uncharted')return null;
+  const d=selectedDest(),a=currentIsland();if(!d||!a||d.id===a.id)return null;
+  const key=`${a.id}>${d.id}:${state.islands.length}`;if(chartCourseCache.key===key)return chartCourseCache.path;
+  chartCourseCache={key,path:planSafeCourse(a,d)};return chartCourseCache.path;
+}
+
+function drawChartCompassRose(vr,mobile=false){
+  const scale=mobile?.92:1,roseX=vr.x+48*scale,roseY=vr.y+vr.h-50*scale,R=27*scale,ink='#755b36',paper='#f7ebc9',faint='rgba(117,91,54,.35)';
+  ctx.save();ctx.globalAlpha=.96;
+  circle(roseX,roseY,R,paper,ink,1.4);circle(roseX,roseY,R-4,'rgba(255,255,255,0)',faint,1);
+  for(let i=0;i<16;i++){const a=-Math.PI/2+i*Math.PI/8,major=i%4===0,mid=i%2===0,len=major?R-7:mid?R-10:R-13;line(roseX+Math.cos(a)*(R-4),roseY+Math.sin(a)*(R-4),roseX+Math.cos(a)*len,roseY+Math.sin(a)*len,major?ink:faint,major?1.2:.8)}
+  line(roseX-R+7,roseY,roseX+R-7,roseY,faint,.8);line(roseX,roseY-R+7,roseX,roseY+R-7,faint,.8);
+  // Four-point star: north is the only coloured leaf, like a printed chart rose.
+  poly([[roseX,roseY-R+5],[roseX+4*scale,roseY-3*scale],[roseX,roseY-8*scale],[roseX-4*scale,roseY-3*scale]],'#c85f52',ink,.9);
+  poly([[roseX+R-7,roseY],[roseX+3*scale,roseY+4*scale],[roseX+8*scale,roseY],[roseX+3*scale,roseY-4*scale]],'#e6cf98',ink,.8);
+  poly([[roseX,roseY+R-7],[roseX-4*scale,roseY+3*scale],[roseX,roseY+8*scale],[roseX+4*scale,roseY+3*scale]],'#e6cf98',ink,.8);
+  poly([[roseX-R+7,roseY],[roseX-3*scale,roseY-4*scale],[roseX-8*scale,roseY],[roseX-3*scale,roseY+4*scale]],'#e6cf98',ink,.8);
+  circle(roseX,roseY,2.2*scale,'#755b36');
+  pxText('N',roseX,roseY-R-5*scale,ink,8*scale,'center');
+  pxText('E',roseX+R+6*scale,roseY+3*scale,ink,6.5*scale,'center');
+  pxText('S',roseX,roseY+R+10*scale,ink,6.5*scale,'center');
+  pxText('W',roseX-R-7*scale,roseY+3*scale,ink,6.5*scale,'center');
+  ctx.restore();
+}
+
+function chartStaticDataSignature(visible,recentBundle){
+  const islandSig=visible.map(i=>{
+    const projects=(i.projects||[]).map(p=>`${p.id||p.templateId}:${p.complete?1:0}:${p.site||''}`).join(',');
+    return `${i.id}:${i.known?1:0}:${i.rumoured?1:0}:${i.home?1:0}:${i.visits||0}:${(+i.x||0).toFixed(3)}:${(+i.y||0).toFixed(3)}:${(i.features||[]).join('.')}:${projects}:${i.rumourFromId||''}`;
+  }).join('|');
+  const routeSig=(state.routes||[]).map(r=>{const k=routeKey(r[0],r[1]),path=state.routePaths?.[k];return `${k}:${state.routeTraffic?.[k]||0}:${state.demoRouteTraffic?.[k]||0}:${path?.length||0}`}).join('|');
+  const recentSig=(recentBundle?.hops||[]).map(h=>`${h.originId}>${h.destinationId}:${h.endedAt||h.at||h.time||''}`).join('|');
+  const dockedSig=(worldState().vessels||[]).filter(v=>v.status==='docked').map(v=>`${v.id}:${v.locationId}`).sort().join('|');
+  return [hashString(islandSig),hashString(routeSig),hashString(recentSig),hashString(dockedSig)].join(':');
+}
+function chartStaticSignature(g,visible,recentBundle){
+  const cameraKey=[
+    canvas.width,canvas.height,
+    Math.round(g.vr.x),Math.round(g.vr.y),Math.round(g.vr.w),Math.round(g.vr.h),
+    Math.round(chartView.zoom*1000),Math.round(chartView.panX*10),Math.round(chartView.panY*10)
+  ].join(':');
+  const t=performance.now();
+  // World/development data changes slowly. Re-hash it a few times per second, while
+  // camera changes still invalidate immediately. This keeps the cached chart cheap
+  // even with a large archipelago.
+  if(!chartStaticCache.dataKey||t-chartStaticCache.lastDataCheckAt>450){
+    chartStaticCache.dataKey=chartStaticDataSignature(visible,recentBundle);
+    chartStaticCache.lastDataCheckAt=t;
+  }
+  return `${cameraKey}:${chartStaticCache.dataKey}`;
+}
+
+function buildChartStaticLayer(g,visible,known,rumours,mobile,recentBundle,key){
+  const started=performance.now(),W=canvas.width,H=canvas.height,vr=g.vr,mapXY=g.mapXY,densityBoost=visible.length<=6?1.24:visible.length<=12?1.12:1,detailZoom=chartView.zoom<=2.4?chartView.zoom:2.4+(chartView.zoom-2.4)*.62,iconZoom=clamp(detailZoom*densityBoost,.72,6.1),labelNodes=[],hitAreas=[];
   rect(0,0,W,H,'#eadbae');rect(vr.x+12,vr.y+12,Math.max(10,vr.w-24),Math.max(10,vr.h-24),'#f8efd0');
-  for(let x=vr.x+28;x<vr.x+vr.w-18;x+=40)rect(x,vr.y+20,1,Math.max(0,vr.h-40),'rgba(115,88,48,.09)');for(let y=vr.y+30;y<vr.y+vr.h-18;y+=34)rect(vr.x+20,y,Math.max(0,vr.w-40),1,'rgba(115,88,48,.09)');
-  const roseX=vr.x+vr.w-50,roseY=vr.y+62;circle(roseX,roseY,22,'#f3e6c6','#8d6b3f',2);line(roseX,roseY-20,roseX,roseY+20,'#8d6b3f',2);line(roseX-20,roseY,roseX+20,roseY,'#8d6b3f',2);poly([[roseX,roseY-25],[roseX+5,roseY-7],[roseX,roseY-12],[roseX-5,roseY-7]],'#df7c68','#8d6b3f',1);pxText('N',roseX,roseY-30,'#8d6b3f',8,'center');
-  const visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured);chartView.hitAreas=[];if(!visible.length){updateChartLabelOverlay([],null,vr);return}const mapXY=g.mapXY,densityBoost=visible.length<=6?1.24:visible.length<=12?1.12:1,detailZoom=chartView.zoom<=2.4?chartView.zoom:2.4+(chartView.zoom-2.4)*.62,iconZoom=clamp(detailZoom*densityBoost,.72,6.1),labelNodes=[];
+  for(let x=vr.x+28;x<vr.x+vr.w-18;x+=40)rect(x,vr.y+20,1,Math.max(0,vr.h-40),'rgba(115,88,48,.09)');
+  for(let y=vr.y+30;y<vr.y+vr.h-18;y+=34)rect(vr.x+20,y,Math.max(0,vr.w-40),1,'rgba(115,88,48,.09)');
+  drawChartCompassRose(vr,mobile);
+
   ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
-  const weightedRoutes=(state.routes||[]).map(r=>({r,style:routeVisualStyle(r[0],r[1],chartView.zoom)})).sort((a,b)=>a.style.strength-b.style.strength);weightedRoutes.forEach(({r,style})=>{const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const path=routePathFor(r[0],r[1]);ctx.lineCap='round';ctx.lineJoin='round';if(style.casingWidth){ctx.strokeStyle=`rgba(248,239,208,${style.casingAlpha.toFixed(3)})`;ctx.lineWidth=style.casingWidth;ctx.setLineDash([]);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke()}ctx.strokeStyle=`rgba(93,75,42,${style.alpha.toFixed(3)})`;ctx.lineWidth=style.width;ctx.setLineDash(style.dash);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])});ctx.lineCap='butt';ctx.lineJoin='miter';
-  const recentBundle=recentChartRouteBundle(6),recentHops=recentBundle.hops;[...recentBundle.edges].reverse().forEach(hop=>{const a=getIsland(hop.originId),b=getIsland(hop.destinationId);if(!a?.known||!b?.known)return;const style=recentRouteVisualStyle(hop.rank,recentHops.length),path=routePathFor(hop.originId,hop.destinationId);if(path.length<2)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);if(style.halo){ctx.strokeStyle=`rgba(248,239,208,${style.haloAlpha.toFixed(3)})`;ctx.lineWidth=style.haloWidth;ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke()}ctx.strokeStyle=`rgba(45,126,154,${style.alpha.toFixed(3)})`;ctx.lineWidth=style.width;ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.restore()});
-  ctx.strokeStyle='rgba(110,91,56,.18)';ctx.lineWidth=.75;rumours.forEach(i=>{const a=getIsland(i.rumourFromId);if(!a)return;const A=mapXY(a.x,a.y),B=mapXY(i.x,i.y);ctx.setLineDash([2,10]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
-  if(state.phase==='ashore'&&state.selectedDestinationId!=='uncharted'){const d=selectedDest(),a=currentIsland(),path=d&&a&&d.id!==a.id?planSafeCourse(a,d):null;if(path){ctx.strokeStyle='rgba(197,92,87,.84)';ctx.lineWidth=1.8;ctx.setLineDash([3,5]);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])}}else if(state.voyage?.coursePath){ctx.strokeStyle='rgba(197,92,87,.90)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();state.voyage.coursePath.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])}
-  known.forEach(i=>{const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,tile=Math.max(2,Math.round(r/5));renderIslandTiles(i,q.x,q.y,tile,.42,false,1);drawChartIslandDetails(i,q,r,tile);if(state.selectedDestinationId===i.id&&state.phase==='ashore')circle(q.x,q.y,r+8,'rgba(0,0,0,0)','#c55c57',2);labelNodes.push({i,q,r});chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+7)})});
-  const recentMarked=new Set();recentHops.forEach(hop=>{if(recentMarked.has(hop.destinationId))return;recentMarked.add(hop.destinationId);const i=getIsland(hop.destinationId);if(!i?.known)return;const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,style=recentRouteVisualStyle(hop.rank,recentHops.length),ringAlpha=.12+.48*Math.pow(style.freshness,1.25);circle(q.x,q.y,r+4,'rgba(0,0,0,0)',`rgba(45,126,154,${ringAlpha.toFixed(3)})`,hop.rank<2?1.5:1)});
-  rumours.forEach(i=>{const q=mapXY(i.x,i.y),r=15*iconZoom;drawRumourCoastline(i,q,r,iconZoom);chartView.hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(24,r+9)})});
+  const weightedRoutes=(state.routes||[]).map(r=>({r,style:routeVisualStyle(r[0],r[1],chartView.zoom)})).sort((a,b)=>a.style.strength-b.style.strength);
+  weightedRoutes.forEach(({r,style})=>{
+    const a=getIsland(r[0]),b=getIsland(r[1]);if(!a?.known||!b?.known)return;const path=routePathFor(r[0],r[1]);
+    ctx.lineCap='round';ctx.lineJoin='round';
+    if(style.casingWidth){ctx.strokeStyle=`rgba(248,239,208,${style.casingAlpha.toFixed(3)})`;ctx.lineWidth=style.casingWidth;ctx.setLineDash([]);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke()}
+    ctx.strokeStyle=`rgba(93,75,42,${style.alpha.toFixed(3)})`;ctx.lineWidth=style.width;ctx.setLineDash(style.dash);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])
+  });
+  ctx.lineCap='butt';ctx.lineJoin='miter';
+
+  const recentHops=recentBundle.hops;
+  [...recentBundle.edges].reverse().forEach(hop=>{
+    const a=getIsland(hop.originId),b=getIsland(hop.destinationId);if(!a?.known||!b?.known)return;const style=recentRouteVisualStyle(hop.rank,recentHops.length),path=routePathFor(hop.originId,hop.destinationId);if(path.length<2)return;
+    ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+    if(style.halo){ctx.strokeStyle=`rgba(248,239,208,${style.haloAlpha.toFixed(3)})`;ctx.lineWidth=style.haloWidth;ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke()}
+    ctx.strokeStyle=`rgba(45,126,154,${style.alpha.toFixed(3)})`;ctx.lineWidth=style.width;ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.restore()
+  });
+
+  ctx.strokeStyle='rgba(110,91,56,.18)';ctx.lineWidth=.75;
+  rumours.forEach(i=>{const a=getIsland(i.rumourFromId);if(!a)return;const A=mapXY(a.x,a.y),B=mapXY(i.x,i.y);ctx.setLineDash([2,10]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([])});
+
+  known.forEach(i=>{
+    const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,tile=Math.max(2,Math.round(r/5));
+    renderIslandTiles(i,q.x,q.y,tile,.42,false,1);drawChartIslandDetails(i,q,r,tile);
+    labelNodes.push({i,q,r});hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(22,r+7)})
+  });
+
+  const recentMarked=new Set();
+  recentHops.forEach(hop=>{if(recentMarked.has(hop.destinationId))return;recentMarked.add(hop.destinationId);const i=getIsland(hop.destinationId);if(!i?.known)return;const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom,style=recentRouteVisualStyle(hop.rank,recentHops.length),ringAlpha=.12+.48*Math.pow(style.freshness,1.25);circle(q.x,q.y,r+4,'rgba(0,0,0,0)',`rgba(45,126,154,${ringAlpha.toFixed(3)})`,hop.rank<2?1.5:1)});
+
+  rumours.forEach(i=>{const q=mapXY(i.x,i.y),r=15*iconZoom;drawRumourCoastline(i,q,r,iconZoom);hitAreas.push({kind:'island',id:i.id,x:q.x,y:q.y,r:Math.max(24,r+9)})});
+  ctx.restore();
+
+  if(!chartStaticCache.canvas){chartStaticCache.canvas=document.createElement('canvas')}
+  if(chartStaticCache.canvas.width!==canvas.width)chartStaticCache.canvas.width=canvas.width;
+  if(chartStaticCache.canvas.height!==canvas.height)chartStaticCache.canvas.height=canvas.height;
+  const cctx=chartStaticCache.canvas.getContext('2d');cctx.imageSmoothingEnabled=false;cctx.clearRect(0,0,canvas.width,canvas.height);cctx.drawImage(canvas,0,0);
+  chartStaticCache.key=key;chartStaticCache.labelNodes=labelNodes;chartStaticCache.hitAreas=hitAreas;chartStaticCache.recentHops=recentHops;chartStaticCache.buildMs=performance.now()-started;chartStaticCache.builds++;
+  return{labelNodes,hitAreas,recentHops,iconZoom}
+}
+
+function drawChart(){
+  ensureChartRumours(3);
+  const g=chartMapGeometry(),vr=g.vr,mobile=window.matchMedia('(max-width:900px)').matches,visible=chartVisibleIslands(),known=visible.filter(i=>i.known),rumours=visible.filter(i=>!i.known&&i.rumoured),recentBundle=recentChartRouteBundle(6),densityBoost=visible.length<=6?1.24:visible.length<=12?1.12:1,detailZoom=chartView.zoom<=2.4?chartView.zoom:2.4+(chartView.zoom-2.4)*.62,iconZoom=clamp(detailZoom*densityBoost,.72,6.1);
+  if(!visible.length){rect(0,0,canvas.width,canvas.height,'#eadbae');rect(vr.x+12,vr.y+12,Math.max(10,vr.w-24),Math.max(10,vr.h-24),'#f8efd0');drawChartCompassRose(vr,mobile);chartView.hitAreas=[];updateChartLabelOverlay([],null,vr);return}
+  const key=chartStaticSignature(g,visible,recentBundle);
+  let labelNodes,baseHits,recentHops;
+  if(key!==chartStaticCache.key||!chartStaticCache.canvas){
+    const built=buildChartStaticLayer(g,visible,known,rumours,mobile,recentBundle,key);labelNodes=built.labelNodes;baseHits=built.hitAreas;recentHops=built.recentHops;
+  }else{
+    ctx.drawImage(chartStaticCache.canvas,0,0);labelNodes=chartStaticCache.labelNodes;baseHits=chartStaticCache.hitAreas;recentHops=chartStaticCache.recentHops;
+  }
+  chartView.hitAreas=baseHits.map(h=>({...h}));
+  const mapXY=g.mapXY;
+  ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
+
+  // Live layer: only the marked course, moving vessels and player position redraw each frame.
+  if(state.phase==='ashore'&&state.selectedDestinationId!=='uncharted'){
+    const path=chartMarkedCoursePath();
+    if(path){ctx.strokeStyle='rgba(197,92,87,.84)';ctx.lineWidth=1.8;ctx.setLineDash([3,5]);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])}
+  }else if(state.voyage?.coursePath){
+    ctx.strokeStyle='rgba(197,92,87,.90)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();state.voyage.coursePath.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])
+  }
+
+  if(state.phase==='ashore'&&state.selectedDestinationId&&state.selectedDestinationId!=='uncharted'){
+    const i=getIsland(state.selectedDestinationId);if(i?.known){const q=mapXY(i.x,i.y),baseR=i.home?18:13+Math.min(7,i.visits||0),r=baseR*iconZoom;circle(q.x,q.y,r+8,'rgba(0,0,0,0)','#c55c57',2)}
+  }
+
   activeWorldVessels().slice(0,48).forEach(v=>{const wp=vesselWorldPosition(v,gameNow()),q=mapXY(wp.x,wp.y),dest=getIsland(v.destinationId),origin=getIsland(v.originId||v.locationId),ang=dest&&origin?Math.atan2(dest.y-origin.y,dest.x-origin.x):0,rr=Math.max(3,3.2*iconZoom);circle(q.x,q.y,rr,'#527da0','#5e4c2a',1);line(q.x,q.y,q.x+Math.cos(ang)*7*iconZoom,q.y+Math.sin(ang)*5*iconZoom,'#527da0',1);chartView.hitAreas.push({kind:'vessel',id:v.id,x:q.x,y:q.y,r:Math.max(10,Math.min(18,8+iconZoom*2))})});
-  let you=null;if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b){const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y),pp=voyageProgress();you={x:lerp(A.x,B.x,pp),y:lerp(A.y,B.y,pp)}}}else{const a=currentIsland();if(a)you=mapXY(a.x,a.y)}if(you){circle(you.x,you.y,10*iconZoom,'rgba(223,124,104,.12)','#df7c68',1);poly([[you.x,you.y-5*iconZoom],[you.x+5*iconZoom,you.y],[you.x,you.y+5*iconZoom],[you.x-5*iconZoom,you.y]],'#df7c68','#5e4c2a',1);chartView.hitAreas.push({kind:'player',id:'player',x:you.x,y:you.y,r:Math.max(10,Math.min(18,9+iconZoom))})}
-  ctx.restore();updateChartLabelOverlay(labelNodes,you,vr);chartView.needsFit=false;
+
+  let you=null;
+  if(state.voyage){const a=getIsland(state.voyage.originId),b=getIsland(state.voyage.destinationId);if(a&&b){const A=mapXY(a.x,a.y),B=mapXY(b.x,b.y),pp=voyageProgress();you={x:lerp(A.x,B.x,pp),y:lerp(A.y,B.y,pp)}}}
+  else{const a=currentIsland();if(a)you=mapXY(a.x,a.y)}
+  if(you){circle(you.x,you.y,10*iconZoom,'rgba(223,124,104,.12)','#df7c68',1);poly([[you.x,you.y-5*iconZoom],[you.x+5*iconZoom,you.y],[you.x,you.y+5*iconZoom],[you.x-5*iconZoom,you.y]],'#df7c68','#5e4c2a',1);chartView.hitAreas.push({kind:'player',id:'player',x:you.x,y:you.y,r:Math.max(10,Math.min(18,9+iconZoom))})}
+  ctx.restore();
+  updateChartLabelOverlay(labelNodes,you,vr);chartView.needsFit=false;
 }
 
 function arcadeThemePalette(theme){const p={ferry:['#e9e2c5','#d7cda9','#497b94'],container:['#b98359','#704630','#4f8b56'],cruise:['#fff7de','#d9eef2','#527da0'],trawler:['#a86d45','#704630','#4f8b56'],yacht:['#f2e7c5','#a86d45','#4f8b56'],speedboat:['#d9eef2','#527da0','#df7c68'],tug:['#d6c287','#704630','#e5b54e'],tanker:['#6a7c7f','#384f55','#df7c68'],naval:['#7a8c88','#435d5b','#d8caa1'],research:['#e5e8df','#527da0','#e5b54e'],rescue:['#fff7de','#df7c68','#527da0'],pilot:['#fff7de','#527da0','#e5b54e'],dredger:['#c89d63','#704630','#e5b54e'],barge:['#a86d45','#704630','#527da0'],tallship:['#a86d45','#704630','#fff7de'],submarine:['#49646b','#263c45','#65bdd1'],carrier:['#7f8a86','#46534f','#e5b54e'],houseboat:['#fff7de','#a86d45','#83bf6a']};return p[theme]||p.ferry}
@@ -2944,7 +3065,7 @@ const VOYAGE_SCENE_RENDERERS={
 };
 function drawVoyageSceneEvent(e,ts,bx,by){if(!e)return;const age=ts-(e.started||ts),t=clamp(age/(e.duration||12000),0,1);if(t>=1&&e.ambient){sceneEvent=null;return}VOYAGE_SCENE_RENDERERS[e.scene||e.type]?.(e,ts,bx,by,t)}
 
-function animationLoop(ts){lastTs=ts;ensureArrived();processVoyageEvents();adaptiveMusicSync(false);const mobile=window.matchMedia('(max-width:900px)').matches,minGap=mobile?33:16;if(ts-lastPaintAt>=minGap){lastPaintAt=ts;updateHeader();updateVoyageStatus();updateFastingLiveUI();updateVoyageEncounterOverlay();updateAtmosphereUI();if(state.activeView==='settings'&&$('#musicNowText'))$('#musicNowText').textContent=audioNowPlaying();renderScene(ts);updateAnimalDialogue(ts);updateWorldInteractionAvatar(ts);positionFloatingOverlays()}requestAnimationFrame(animationLoop)}
+function animationLoop(ts){lastTs=ts;ensureArrived();processVoyageEvents();adaptiveMusicSync(false);const mobile=window.matchMedia('(max-width:900px)').matches,minGap=(mobile||state.activeView==='chart')?33:16;if(ts-lastPaintAt>=minGap){lastPaintAt=ts;updateHeader();updateVoyageStatus();updateFastingLiveUI();updateVoyageEncounterOverlay();updateAtmosphereUI();if(state.activeView==='settings'&&$('#musicNowText'))$('#musicNowText').textContent=audioNowPlaying();renderScene(ts);updateAnimalDialogue(ts);updateWorldInteractionAvatar(ts);positionFloatingOverlays()}requestAnimationFrame(animationLoop)}
 
 // ============================================================
 // MAKEFAST v0.23.5 — PEOPLE, TRADES, FAVOURS + VOYAGE VARIETY
@@ -3441,7 +3562,7 @@ window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaS
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
-window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),demoRouteTraffic:()=>JSON.parse(JSON.stringify(state.demoRouteTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),recentCrossings:(limit=9)=>recentChartCrossings(limit),recentRouteBundle:(limit=6)=>recentChartRouteBundle(limit),recentRouteStyle:(rank,total)=>recentRouteVisualStyle(rank,total),chartDetailScale:(tile)=>chartIslandDetailScale(tile),chartDetailPoint:(q,x,y,tile)=>chartIslandDetailPoint(q,x,y,tile),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
+window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length,cacheBuilds:chartStaticCache.builds,cacheBuildMs:+chartStaticCache.buildMs.toFixed(2),cacheReady:!!chartStaticCache.canvas}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),demoRouteTraffic:()=>JSON.parse(JSON.stringify(state.demoRouteTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),recentCrossings:(limit=9)=>recentChartCrossings(limit),recentRouteBundle:(limit=6)=>recentChartRouteBundle(limit),recentRouteStyle:(rank,total)=>recentRouteVisualStyle(rank,total),chartDetailScale:(tile)=>chartIslandDetailScale(tile),chartDetailPoint:(q,x,y,tile)=>chartIslandDetailPoint(q,x,y,tile),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
 
 // v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
 // structure-only chart/approach views, and scaled passenger deck walkers.
@@ -3450,6 +3571,7 @@ window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,pa
 // v0.24.1 harbour/tap polish: water-clear player docking and direct animal reactions without the world-info panel.
 // v0.24.7 audio/life polish: transition-safe adaptive music requests, duplicate-instrument morph suppression, restored audio-node cleanup/routing, and animated animal dialogue portraits.
 // v0.24.9 UI quieting: unavailable actions hide, completed builds collapse, and docked people/boats use persistent animated portrait talk cards.
+// v0.24.10 chart-performance pass: static cartography is cached between camera/world changes; compass rose moved to the lower-left.
 // v0.24.6 chart-clarity pass: semantic zoom, familiar-lane casing, deduplicated recent trail and coral active course.
 // Start
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
@@ -3461,4 +3583,4 @@ ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray
 
 // v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
 
-<!-- v0.24.9 -->
+<!-- v0.24.8 arrival-copy pass -->
