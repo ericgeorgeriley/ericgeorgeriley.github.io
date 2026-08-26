@@ -242,7 +242,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.3';
+const VERSION_LABEL='0.24.4';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -848,7 +848,7 @@ function defaultState(){
   return {
     version:VERSION, createdAt:nowReal(), onboarded:false, playerName:'Captain', sound:true, reducedMotion:false,
     phase:'ashore', phaseStartedAt:nowReal(), selectedRatio:16, voyage:null, activeView:'harbour',
-    islands:[home,moss], routes:[['home',moss.id]], routePaths:{}, routeTraffic:{}, routeTrafficVersion:0, sessions:[], currentIslandId:'home', pendingResolutions:[],
+    islands:[home,moss], routes:[['home',moss.id]], routePaths:{}, routeTraffic:{}, demoRouteTraffic:{}, routeTrafficVersion:0, sessions:[], currentIslandId:'home', pendingResolutions:[],
     totalMinigames:0, arcade:{scores:{},totalPlays:0,offers:{},recentOffers:[]}, worldSeed:Math.floor(Math.random()*1e9), selectedDestinationId:moss.id,
     journal:[contentLine('copy.journal.inherited')],
     boat:{type:'cutter',name:'Mackerel',features:['small cabin']}, boatStyles:{}, settings:{prototypeTools:false,demoMode:false,timezone:DEFAULT_TIMEZONE,defaultFastHours:16,soundVolume:.34,musicEnabled:true,musicVolume:.62,effectsVolume:.72,weatherMode:'island'},
@@ -873,7 +873,7 @@ function migrate(s){
   s.settings.soundVolume=clamp(Number.isFinite(+s.settings.soundVolume)?+s.settings.soundVolume:.34,0,1);s.settings.musicEnabled=s.settings.musicEnabled!==false;s.settings.musicVolume=clamp(Number.isFinite(+s.settings.musicVolume)?+s.settings.musicVolume:.62,0,1);s.settings.effectsVolume=clamp(Number.isFinite(+s.settings.effectsVolume)?+s.settings.effectsVolume:.72,0,1);
   if(!hadDefaultFastHours)s.settings.defaultFastHours=Number.isFinite(+s.selectedRatio)?+s.selectedRatio:16;s.settings.defaultFastHours=clamp(Math.round(+s.settings.defaultFastHours*2)/2,12,20);s.selectedRatio=s.settings.defaultFastHours;
   if(!Array.isArray(s.islands)||!s.islands.length)s.islands=d.islands;s.islands.forEach(ensureIslandData);
-  if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!s.routePaths||typeof s.routePaths!=='object'||Array.isArray(s.routePaths))s.routePaths={};if(!s.routeTraffic||typeof s.routeTraffic!=='object'||Array.isArray(s.routeTraffic))s.routeTraffic={};if(!Number.isFinite(+s.routeTrafficVersion))s.routeTrafficVersion=0; if(!Array.isArray(s.journal))s.journal=[]; if(!s.arcade||typeof s.arcade!=='object')s.arcade={scores:{},totalPlays:0,offers:{},recentOffers:[]};if(!s.arcade.scores||typeof s.arcade.scores!=='object')s.arcade.scores={};if(!Number.isFinite(+s.arcade.totalPlays))s.arcade.totalPlays=0;if(!s.arcade.offers||typeof s.arcade.offers!=='object'||Array.isArray(s.arcade.offers)){s.arcade.offers={};Object.entries(s.arcade.scores).forEach(([id,rec])=>s.arcade.offers[id]=Math.max(0,Math.floor(+rec?.plays||0)))}if(!Array.isArray(s.arcade.recentOffers))s.arcade.recentOffers=[];
+  if(!Array.isArray(s.sessions))s.sessions=[]; if(!Array.isArray(s.routes))s.routes=[]; if(!s.routePaths||typeof s.routePaths!=='object'||Array.isArray(s.routePaths))s.routePaths={};if(!s.routeTraffic||typeof s.routeTraffic!=='object'||Array.isArray(s.routeTraffic))s.routeTraffic={};if(!s.demoRouteTraffic||typeof s.demoRouteTraffic!=='object'||Array.isArray(s.demoRouteTraffic))s.demoRouteTraffic={};if(!Number.isFinite(+s.routeTrafficVersion))s.routeTrafficVersion=0; if(!Array.isArray(s.journal))s.journal=[]; if(!s.arcade||typeof s.arcade!=='object')s.arcade={scores:{},totalPlays:0,offers:{},recentOffers:[]};if(!s.arcade.scores||typeof s.arcade.scores!=='object')s.arcade.scores={};if(!Number.isFinite(+s.arcade.totalPlays))s.arcade.totalPlays=0;if(!s.arcade.offers||typeof s.arcade.offers!=='object'||Array.isArray(s.arcade.offers)){s.arcade.offers={};Object.entries(s.arcade.scores).forEach(([id,rec])=>s.arcade.offers[id]=Math.max(0,Math.floor(+rec?.plays||0)))}if(!Array.isArray(s.arcade.recentOffers))s.arcade.recentOffers=[];
   if(!Array.isArray(s.liftRequests))s.liftRequests=[];if(!Array.isArray(s.boatPassengers))s.boatPassengers=[];if(!s.boatCargo||typeof s.boatCargo!=='object'||Array.isArray(s.boatCargo))s.boatCargo={};if(!s.boatStyles||typeof s.boatStyles!=='object'||Array.isArray(s.boatStyles))s.boatStyles={};if(!Array.isArray(s.backgroundPassages))s.backgroundPassages=[];s.idle={...d.idle,...(s.idle||{})};if(!Number.isFinite(+s.idle.lastPassageAt))s.idle.lastPassageAt=priorLastSaved||nowReal();s.settings.demoMode=!!s.settings.demoMode;
   if(!s.world||typeof s.world!=='object')s.world={};s.world={...d.world,...s.world};if(!Array.isArray(s.world.vessels))s.world.vessels=[];if(!Array.isArray(s.world.log))s.world.log=[];if(!Array.isArray(s.world.pendingSummary))s.world.pendingSummary=[];if(!s.world.productionCarry)s.world.productionCarry={};if(!hadWorld)s.world.lastSimAt=priorLastSaved||nowReal();else if(!s.world.lastSimAt)s.world.lastSimAt=priorLastSaved||nowReal();
   s.version=VERSION;
@@ -1342,7 +1342,7 @@ function backgroundPassageFind(dest,at,rr){
 function runBackgroundPassage(at,{demo=false}={}){
   const from=getIsland(state.currentIslandId)||state.islands.find(i=>i.known);if(!from)return null;const rr=rng(hashString(`idle:${state.worldSeed}:${Math.floor(at/86400000)}:${from.id}`)),dest=chooseBackgroundDestination(from,rr);if(!dest)return null;const wasUnknown=!dest.known;
   if(wasUnknown){dest.known=true;dest.rumoured=false;logWorld(`${state.boat.name} followed a pencilled shoreline and made first landfall at ${dest.name}.`,at,true,'⌁')}
-  ensureRoute(from.id,dest.id);ensureIslandData(dest);dest.visits=(dest.visits||0)+1;const finds=[],findCount=1+(rr()>.62?1:0);for(let i=0;i<findCount;i++)finds.push(backgroundPassageFind(dest,at,rr));
+  ensureRoute(from.id,dest.id);if(demo)recordDemoRouteCrossing(from.id,dest.id);ensureIslandData(dest);dest.visits=(dest.visits||0)+1;const finds=[],findCount=1+(rr()>.62?1:0);for(let i=0;i<findCount;i++)finds.push(backgroundPassageFind(dest,at,rr));
   let met=null;if(rr()<.11&&population(dest)<settlementResidentCap(dest)){met=addBackgroundResident(dest,at,rr,`met ${state.playerName||'the captain'} during a quiet harbour call`)}
   const helper={name:state.boat.name||'Mackerel'};worldSupplyProject(dest,helper,at,rr()>.62?2:1);state.currentIslandId=dest.id;
   const targetHours=clamp(+state.settings.defaultFastHours||16,12,20),durationMs=targetHours*3600000,record={id:uid(demo?'demo_bg':'assumed_bg'),startedAt:at-durationMs,endedAt:at,durationMs,targetHours,completed:true,progress:1,destinationId:dest.id,assumed:true,demo:!!demo,simulated:!!demo,originId:from.id,finds:finds.map(d=>d.kind)};(state.backgroundPassages||(state.backgroundPassages=[])).push(record);if(state.backgroundPassages.length>420)state.backgroundPassages.splice(0,state.backgroundPassages.length-420);return record
@@ -1385,7 +1385,7 @@ function applyDemoHistoryProfile(rec,profile){
 }
 function simulateTwelveWeeks(){
   if(state.phase!=='ashore'||state.voyage){toast('Dock first so the long demo can begin from harbour.');return}const days=84,day=86400000,real=nowReal(),w=worldState(),base=Math.max(w.lastSimAt||real,real),before=worldTrialSnapshot();
-  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.idle.lastPassageAt=base;const passages=[],recorded=[],assumed=[];let gaps=0;
+  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.demoRouteTraffic={};state.idle.lastPassageAt=base;const passages=[],recorded=[],assumed=[];let gaps=0;
   for(let d=1;d<=days;d++){
     const at=base+d*day;simulateWorldTo(at,false,{maxDays:90,stepMs:12*3600000});const raw=runBackgroundPassage(at,{demo:true}),profile=demoHistoryProfile(d,at),rec=applyDemoHistoryProfile(raw,profile);
     if(raw)passages.push(raw);if(rec){if(rec.assumed)assumed.push(rec);else recorded.push(rec)}else gaps++;advanceArchipelagoSettlementDay(at,{demo:true})
@@ -1621,13 +1621,15 @@ const ROUTE_ISLAND_CLEARANCE=.74;
 const ROUTE_PLACEMENT_CLEARANCE=.66;
 function routeKey(a,b){return String(a)<String(b)?`${a}|${b}`:`${b}|${a}`}
 function routeCrossingCount(a,b){const n=+(state.routeTraffic?.[routeKey(a,b)]||0);return Number.isFinite(n)?Math.max(0,Math.floor(n)):0}
+function demoRouteCrossingCount(a,b){const n=+(state.demoRouteTraffic?.[routeKey(a,b)]||0);return Number.isFinite(n)?Math.max(0,Math.floor(n)):0}
 function recordRouteCrossing(a,b){if(!a||!b||a===b)return 0;if(!state.routeTraffic||typeof state.routeTraffic!=='object'||Array.isArray(state.routeTraffic))state.routeTraffic={};const k=routeKey(a,b),n=routeCrossingCount(a,b)+1;state.routeTraffic[k]=n;state.routeTrafficVersion=1;return n}
+function recordDemoRouteCrossing(a,b){if(!a||!b||a===b)return 0;if(!state.demoRouteTraffic||typeof state.demoRouteTraffic!=='object'||Array.isArray(state.demoRouteTraffic))state.demoRouteTraffic={};const k=routeKey(a,b),n=demoRouteCrossingCount(a,b)+1;state.demoRouteTraffic[k]=n;return n}
 function ensureRouteTrafficHistory(){
   if(+state.routeTrafficVersion>=1)return;if(!state.routeTraffic||typeof state.routeTraffic!=='object'||Array.isArray(state.routeTraffic))state.routeTraffic={};
   let cursor='home';const sessions=[...(state.sessions||[])].sort((a,b)=>(+a.endedAt||+a.startedAt||0)-(+b.endedAt||+b.startedAt||0));
   sessions.forEach(rec=>{const dest=rec?.destinationId,origin=rec?.originId||cursor;if(!rec?.simulated&&origin&&dest&&origin!==dest){const k=routeKey(origin,dest);state.routeTraffic[k]=Math.max(0,Math.floor(+state.routeTraffic[k]||0))+1}if(dest)cursor=dest});state.routeTrafficVersion=1;
 }
-function routeVisualStyle(a,b){const count=routeCrossingCount(a,b),strength=count>0?clamp(Math.log1p(count)/Math.log(13),0,1):0;return{count,strength,width:.55+2.2*strength,alpha:.10+.64*strength,dash:count>=8?[]:count>=3?[8,6]:count>=1?[5,8]:[2,11]}}
+function routeVisualStyle(a,b){const realCount=routeCrossingCount(a,b),demoCount=demoRouteCrossingCount(a,b),count=realCount+demoCount,strength=count>0?clamp(Math.log1p(count)/Math.log(13),0,1):0;return{count,realCount,demoCount,strength,width:.82+2.05*strength,alpha:.18+.58*strength,dash:count>=8?[]:count>=3?[8,6]:count>=1?[5,7]:[3,8]}}
 function pointSegmentInfo(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;if(l2<1e-9)return{distance:Math.hypot(px-ax,py-ay),t:0,x:ax,y:ay};const t=clamp(((px-ax)*dx+(py-ay)*dy)/l2,0,1),x=ax+dx*t,y=ay+dy*t;return{distance:Math.hypot(px-x,py-y),t,x,y}}
 function routePathLength(path){let n=0;for(let i=1;i<(path||[]).length;i++)n+=Math.hypot(path[i].x-path[i-1].x,path[i].y-path[i-1].y);return n}
 function routeStoredPath(a,b){const rec=state.routePaths?.[routeKey(a,b)];if(!rec)return null;let pts=Array.isArray(rec)?rec:rec.points;if(!Array.isArray(pts)||pts.length<2)return null;pts=pts.map(p=>({x:+p.x,y:+p.y})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));if(pts.length<2)return null;const canonical=String(a)<String(b);return canonical?pts:[...pts].reverse()}
@@ -2130,7 +2132,7 @@ function toggleDemoMode(){
   state.settings.demoMode=!state.settings.demoMode;if(state.settings.demoMode&&state.phase==='fasting'&&state.voyage&&!voyageIsDemo(state.voyage)){engageVoyageDemo(state.voyage,true);notifyVoyage('⚙ Demo mode on','The current crossing will reach land in about three minutes.','Demo mode on')}save();renderUI();toast(state.settings.demoMode?'Demo mode is on. Voyages now run in three minutes.':'Demo mode is off. Future voyages use real time.')
 }
 function clearDemoHistory(){
-  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.sessions=(state.sessions||[]).filter(s=>!s.simulated);save();renderUI();toast('Demo fasting history cleared. The living-world save remains intact.')
+  state.backgroundPassages=(state.backgroundPassages||[]).filter(r=>!r.demo);state.sessions=(state.sessions||[]).filter(s=>!s.simulated);state.demoRouteTraffic={};save();renderUI();toast('Demo fasting history and prototype route familiarity cleared. The living-world save remains intact.')
 }
 
 
@@ -3380,7 +3382,7 @@ window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaS
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
-window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
+window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),demoRouteTraffic:()=>JSON.parse(JSON.stringify(state.demoRouteTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
 
 // v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
 // structure-only chart/approach views, and scaled passenger deck walkers.
@@ -3395,4 +3397,4 @@ ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray
 </body>
 </html>
 
-// v0.24.3 chart traffic pass: completed player crossings weight route lines by familiarity, with historical session backfill.
+// v0.24.4 chart-route visibility fix: zero-use routes remain visible and the 12-week prototype keeps separate demo route familiarity without contaminating real crossing counts.
