@@ -242,7 +242,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.1';
+const VERSION_LABEL='0.24.2';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -2552,17 +2552,56 @@ function renderScene(ts){
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
 }
+// v0.24.2 settlement layout: projects still belong to their chosen district, but
+// large structures reserve visual footprints and later projects choose nearby clear
+// anchors instead of independently hashing onto the same location.
+const mfProjectPositionCache=new Map(),mfExtraHomePositionCache=new Map();
+const MF_PROJECT_SITE_SLOTS={
+  harbour:[[-28,-9],[27,2],[-8,-31],[38,-27],[-43,18],[10,29],[58,8],[-62,-5],[55,-38],[-48,-39],[34,38],[-27,42],[75,-16],[-78,20],[4,-55],[69,31],[-69,-28],[45,58],[-38,60],[82,12]],
+  village:[[0,0],[-38,-15],[39,12],[-19,31],[23,-32],[53,-12],[-54,19],[8,46],[65,20],[-65,-17],[44,43],[-43,48],[73,-34],[-76,35],[9,-53],[75,3],[-72,3],[60,55],[-57,61],[86,29]],
+  hill:[[-12,14],[24,14],[-4,-27],[39,-18],[16,31],[-31,-7],[58,5],[-55,22],[50,-40],[-44,-39],[42,43],[-40,45],[72,-18],[-68,5],[8,57],[70,29],[-64,-27],[53,61],[-52,63],[84,13]],
+  meadow:[[0,0],[39,-9],[-37,11],[21,29],[-18,-31],[-50,-6],[55,13],[-4,44],[67,-20],[-64,25],[43,43],[-42,48],[76,9],[-75,-15],[13,-52],[72,35],[-70,45],[55,60],[-56,63],[86,26]]
+};
+function mfProjectDrawKind(t){if(!t)return'house';if(t.draw==='market_square')return'market_square';if(t.draw==='cottages')return'cottages';return t.draw||'house'}
+function mfProjectFootprint(t){const k=mfProjectDrawKind(t);if(k==='market_square')return{rx:55,ry:32};if(k==='cottages')return{rx:52,ry:31};if(k==='boatyard')return{rx:58,ry:34};if(['lighthouse','windmill','market_hall','map_room','observatory','ferry'].includes(k))return{rx:42,ry:30};if(k==='garden')return{rx:40,ry:26};if(['market','tea'].includes(k))return{rx:38,ry:27};return{rx:38,ry:28}}
+function mfProjectVisibleForLayout(isl,p){if(!p)return false;const t=projectTemplate(p.templateId),feat=t?.feature;if(!p.complete||!feat)return true;return !(isl.projects||[]).some(q=>q!==p&&q.complete&&projectTemplate(q.templateId)?.prereq===feat)}
+function mfProjectReserveFixed(isl){
+  const out=[],add=(q,rx,ry,key)=>out.push({x:q.x,y:q.y,rx,ry,key}),pf=new Set((isl.projects||[]).map(p=>projectTemplate(p.templateId)?.feature));
+  add(islandSafeLayoutPoint(isl,320,156,.70),38,28,'core-house');
+  if(isl.features.includes('cottage'))add(islandSafeLayoutPoint(isl,374,145,.72),36,26,'feature-cottage');
+  if(isl.features.includes('windmill_ruin')&&!pf.has('windmill'))add(islandSafeLayoutPoint(isl,252,132,.68),42,30,'ruin-windmill');
+  if(isl.features.includes('lighthouse')&&!pf.has('lighthouse'))add(islandSafeLayoutPoint(isl,415,138,.72),44,31,'feature-lighthouse');
+  if(isl.features.includes('market')&&!pf.has('market_stall'))add(islandSafeLayoutPoint(isl,388,198,.74),38,27,'feature-market');
+  if(isl.features.includes('tea_house')&&!pf.has('tea_house'))add(islandSafeLayoutPoint(isl,340,210,.74),38,27,'feature-tea');
+  if(isl.features.includes('orchard')&&!pf.has('orchard'))add(islandSafeLayoutPoint(isl,260,204,.74),40,26,'feature-orchard');
+  return out
+}
+function mfProjectCollisionPenalty(p,fp,occupied){let score=0;for(const o of occupied){const dx=Math.abs(p.x-o.x),dy=Math.abs(p.y-o.y),center=Math.hypot(dx,dy),minCenter=Math.max(48,Math.min(70,(fp.rx+o.rx)*.68));if(center<minCenter)score+=12000+(minCenter-center)*220;const nx=dx/Math.max(1,fp.rx+o.rx),ny=dy/Math.max(1,fp.ry+o.ry);if(nx<1&&ny<1)score+=1800+(1-nx)*900+(1-ny)*650;else{const d=Math.hypot(nx,ny);if(d<1.02)score+=(1.02-d)*55}}return score}
+function mfProjectLayoutSignature(isl){const sh=isl.shape||{};return `${isl.id}:${sh.rx}:${sh.ry}:${sh.k1}:${sh.k2}:${sh.rotation}:${(isl.features||[]).slice().sort().join(',')}:${(isl.projects||[]).map((p,i)=>`${i}:${p.id||''}:${p.templateId}:${p.site||''}:${p.complete?1:0}`).join('|')}`}
+function mfProjectCandidates(isl,p,index){
+  const base=BUILD_SITES[p.site]||BUILD_SITES.village,pool=MF_PROJECT_SITE_SLOTS[p.site]||MF_PROJECT_SITE_SLOTS.village,h=Math.abs(hashString(p.id||`${p.templateId}:${index}`)),start=h%pool.length,bx=base.x+(p.site==='hill'?42:0),preferred=islandLayoutPoint(bx,base.y),margin=p.site==='harbour'?.95:p.site==='hill'?.92:.94,candidates=[],seen=new Set();
+  const add=(q,rank=0)=>{const metric=islandSceneLandMetric(isl,q);if(!Number.isFinite(metric)||metric>margin)return;const k=`${Math.round(q.x/3)}:${Math.round(q.y/3)}`;if(seen.has(k))return;seen.add(k);const dist=Math.hypot(q.x-preferred.x,q.y-preferred.y),sitePenalty=p.site==='hill'?Math.max(0,q.y-190)*1.15:p.site==='harbour'?Math.max(0,178-q.y)*1.1:0,approach=q.y>232&&Math.abs(q.x-320)<100?180:0,edge=Math.max(0,metric-.82)*115,tie=(hashString(`${h}:${k}`)%997)/997;candidates.push({q,baseScore:dist*.16+sitePenalty+approach+edge+rank*.08+tie*.03})};
+  for(let n=0;n<pool.length;n++){const slot=pool[(start+n)%pool.length],rr=rng(h^Math.imul(n+1,0x45d9f3b));add(islandLayoutPoint(bx+slot[0]+(rr()-.5)*4,base.y+slot[1]+(rr()-.5)*3),n)}
+  for(const dy of [-108,-84,-60,-36,-12,12,36,60,84,108])for(const dx of [-200,-170,-140,-110,-80,-50,-20,20,50,80,110,140,170,200])add({x:320+dx,y:180+dy},40);
+  for(const r of [45,65,85,105,125,145,165,185])for(let ai=0;ai<24;ai++){const a=ai*Math.PI/12;add({x:320+Math.cos(a)*r,y:180+Math.sin(a)*r*.64},55)}
+  add(islandSafePoint(isl,preferred,.88),90);return candidates.sort((a,b)=>a.baseScore-b.baseScore)
+}
+function mfResolvedProjectPositions(isl){
+  ensureIslandData(isl);const key=mfProjectLayoutSignature(isl),cached=mfProjectPositionCache.get(key);if(cached)return cached;
+  const result=new Map(),occupied=mfProjectReserveFixed(isl),projects=(isl.projects||[]).map((p,i)=>({p,i})).filter(x=>mfProjectVisibleForLayout(isl,x.p));
+  projects.forEach(({p,i})=>{const t=projectTemplate(p.templateId);if(!t)return;const fp=mfProjectFootprint(t),candidates=mfProjectCandidates(isl,p,i);let best=null;for(const c of candidates){const collision=mfProjectCollisionPenalty(c.q,fp,occupied),score=collision+c.baseScore;if(!best||score<best.score)best={score,q:c.q,collision};if(collision===0&&c.baseScore<24){best={score,q:c.q,collision};break}}const base=BUILD_SITES[p.site]||BUILD_SITES.village,bx=base.x+(p.site==='hill'?42:0),q=best?.q||islandSafePoint(isl,islandLayoutPoint(bx,base.y),.82);result.set(p.id||`#${i}`,q);occupied.push({x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,key:p.id||`#${i}`})});
+  if(mfProjectPositionCache.size>220){const first=mfProjectPositionCache.keys().next().value;if(first!==undefined)mfProjectPositionCache.delete(first)}mfProjectPositionCache.set(key,result);return result
+}
 function projectSitePos(p,index=0,isl=null){
-  const base=BUILD_SITES[p.site]||BUILD_SITES.village,slots={
-    harbour:[[-28,-9],[27,2],[-8,-27],[35,-24],[-36,18],[9,24]],
-    village:[[0,0],[-31,-13],[31,10],[-16,25],[19,-27],[39,-10]],
-    hill:[[-12,14],[22,12],[-2,-25],[35,-16],[14,26],[-25,-6]],
-    meadow:[[0,0],[34,-8],[-31,10],[18,24],[-15,-25],[-41,-6]]
-  },pool=slots[p.site]||slots.village,h=hashString(p.id||`${p.templateId}`),slot=pool[h%pool.length],rr=rng(h^0x51f15e);
-  const bx=base.x+(p.site==='hill'?42:0),q=islandLayoutPoint(bx+slot[0]+(rr()-.5)*8,base.y+slot[1]+(rr()-.5)*7);if(!isl)return q;
-  // Harbour buildings may sit nearer the shoreline; larger inland structures keep
-  // a deeper footprint so their base never appears to stand in the water.
-  return islandSafePoint(isl,q,p.site==='harbour'?.82:p.site==='hill'?.70:.74)
+  const base=BUILD_SITES[p.site]||BUILD_SITES.village;if(isl){const placed=mfResolvedProjectPositions(isl).get(p.id||`#${index}`);if(placed)return{x:placed.x,y:placed.y}}
+  const pool=MF_PROJECT_SITE_SLOTS[p.site]||MF_PROJECT_SITE_SLOTS.village,h=Math.abs(hashString(p.id||`${p.templateId}:${index}`)),slot=pool[h%pool.length],rr=rng(h^0x51f15e),bx=base.x+(p.site==='hill'?42:0);return islandLayoutPoint(bx+slot[0]+(rr()-.5)*5,base.y+slot[1]+(rr()-.5)*4)
+}
+function mfExtraHomePositions(isl,count){
+  count=clamp(Math.floor(count||0),0,4);if(!count)return[];const key=`homes:${mfProjectLayoutSignature(isl)}:${count}`,cached=mfExtraHomePositionCache.get(key);if(cached)return cached;
+  const occupied=mfProjectReserveFixed(isl),placed=mfResolvedProjectPositions(isl);(isl.projects||[]).forEach((p,i)=>{if(!mfProjectVisibleForLayout(isl,p))return;const t=projectTemplate(p.templateId),q=placed.get(p.id||`#${i}`);if(q){const fp=mfProjectFootprint(t);occupied.push({x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,key:`project-${i}`})}});
+  const raw=[[280,126],[365,118],[412,170],[244,184],[304,126],[392,142],[276,216],[374,215],[228,154],[432,190],[320,226],[338,118]],fp={rx:34,ry:25},out=[];
+  for(let i=0;i<count;i++){let best=null;raw.forEach((pt,j)=>{const q=islandLayoutPoint(pt[0],pt[1]),metric=islandSceneLandMetric(isl,q);if(metric>.92)return;const collision=mfProjectCollisionPenalty(q,fp,occupied),score=collision+j*2+(hashString(`${isl.id}:home:${i}:${j}`)%101)/100;if(!best||score<best.score)best={score,q}});const q=best?.q||islandSafeLayoutPoint(isl,raw[i][0],raw[i][1],.82);out.push(q);occupied.push({x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,key:`home-${i}`})}
+  if(mfExtraHomePositionCache.size>220){const first=mfExtraHomePositionCache.keys().next().value;if(first!==undefined)mfExtraHomePositionCache.delete(first)}mfExtraHomePositionCache.set(key,out);return out
 }
 function drawProjectOnIsland(isl,p,index){
   const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index,isl),prog=projectProgress(p);
@@ -2591,8 +2630,7 @@ function drawIslandScene(isl){
   if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
   isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i,isl);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
   // One cottage sprite represents several homes, keeping large populations bustling without filling every tile with roofs.
-  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
-  for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1));mfExtraHomePositions(isl,extraHomes).forEach(q=>queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82))))
   const presentResidents=isl.residents.filter(p=>!residentAwayAssignment(p.id)),limit=Math.min(visibleResidentLimit(isl),presentResidents.length),residentPoses=rotatingSubset(presentResidents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
   residentPoses.forEach(r=>{worldHitAreas.push({kind:'resident',id:r.person.id,x:r.x+off.x,y:r.y+off.y,r:26});queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);const req=residentWaitingRequest(r.person,isl),tip=residentCanShareRumour(r.person);if(req||tip){roundedRect(r.x+8,r.y-23,12,12,4,req?'#fff0ce':'#dff1cf','#18313a',1);pxText(req?'!':'?',r.x+14,r.y-14,'#18313a',7,'center')}else if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')})});
   actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
@@ -3149,8 +3187,7 @@ function mfIslandLifeStructures(isl){
   if(isl.features.includes('tea_house')&&!pf.has('tea_house')){const q=islandSafeLayoutPoint(isl,340,210,.74);push(q.x,q.y,'tea','work')}
   if(isl.features.includes('orchard')&&!pf.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);push(q.x,q.y,'garden','work')}
   (isl.projects||[]).forEach((p,i)=>{if(!p.complete)return;const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,i,isl);if(t.draw==='market_square'){push(pos.x-18,pos.y,'market','work');push(pos.x+23,pos.y+10,'market','work')}else if(t.draw==='cottages'){push(pos.x-18,pos.y,'house','home');push(pos.x+20,pos.y+12,'house','home')}else push(pos.x,pos.y,mfStructureKindFromTemplate(t),'work')});
-  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];
-  for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);push(q.x,q.y,'house','home')}
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1));mfExtraHomePositions(isl,extraHomes).forEach(q=>push(q.x,q.y,'house','home'))
   return mfLifeCachePut(mfLifeStructureCache,cacheKey,mfUniqueLifeNodes(out),180)
 }
 function mfResidentPreferredKinds(archetype){return({
@@ -3280,7 +3317,7 @@ drawIslandScene=function(isl){
   if(isl.features.includes('tea_house')&&!projectFeatures.has('tea_house')){const q=islandSafeLayoutPoint(isl,340,210,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'tea',islandBuildingScale('tea',.92)))}
   if(isl.features.includes('orchard')&&!projectFeatures.has('orchard')){const q=islandSafeLayoutPoint(isl,260,204,.74);queue(q.y,()=>drawTopHouse(q.x,q.y,'garden',islandBuildingScale('garden',.98)))}
   isl.projects.forEach((p,i)=>{const feat=projectTemplate(p.templateId)?.feature,superseded=p.complete&&isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===feat);if(!superseded){const q=projectSitePos(p,i,isl);queue(q.y,()=>drawProjectOnIsland(isl,p,i))}});
-  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1)),homeSlots=[[280,126],[365,118],[412,170],[244,184]];for(let i=0;i<extraHomes;i++){const q=islandSafeLayoutPoint(isl,homeSlots[i][0],homeSlots[i][1],.72);queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82)))}
+  const extraHomes=Math.min(4,Math.max(0,Math.floor((population(isl)-3)/4)+1));mfExtraHomePositions(isl,extraHomes).forEach(q=>queue(q.y,()=>drawTopHouse(q.x,q.y,'house',islandBuildingScale('house',.82))))
   const presentResidents=isl.residents.filter(p=>!residentAwayAssignment(p.id)),limit=Math.min(visibleResidentLimit(isl),presentResidents.length),residentPoses=rotatingSubset(presentResidents,limit,`${isl.id}:residents`).map((person,i)=>({person,i,...residentPose(isl,person,i)}));let chats=0;
   residentPoses.forEach(r=>{if(r.hidden)return;worldHitAreas.push({kind:'resident',id:r.person.id,x:r.x+off.x,y:r.y+off.y,r:24});queue(r.y+3,()=>{drawResidentPerson(r.x,r.y,r.person,r.walking,r.facing);const req=residentWaitingRequest(r.person,isl),tip=residentCanShareRumour(r.person);if(req||tip){roundedRect(r.x+8,r.y-23,12,12,4,req?'#fff0ce':'#dff1cf','#18313a',1);pxText(req?'!':'?',r.x+14,r.y-14,'#18313a',7,'center')}else if(r.chat&&chats<(population(isl)>10?2:1)){chats++;roundedRect(r.x+5,r.y-17,16,9,3,'rgba(255,247,222,.9)','#18313a',1);pxText('…',r.x+13,r.y-10,'#18313a',7,'center')}if(r.i<2&&population(isl)<5)pxText(r.person.name.split(' ')[0],r.x,r.y+19,'#18313a',6,'center')})});
   const animals=islandAnimals(isl);animals.forEach((a,i)=>{const pose=mfAnimalPose(isl,a,i);if(pose.hidden)return;worldHitAreas.push({kind:'animal',id:a.id,x:pose.x+off.x,y:pose.y+off.y,r:18});queue(pose.y+2,()=>drawIslandAnimal(isl,a,pose))});
@@ -3335,11 +3372,12 @@ window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaS
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
-window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{}))};
+window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
 
 // v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
 // structure-only chart/approach views, and scaled passenger deck walkers.
 // v0.23.10 logo refresh: replaced the original CSS brandmark with the new inline SVG mast-and-sails mark.
+// v0.24.2 settlement-spacing pass: collision-aware project anchors prevent large structures from stacking on top of each other.
 // v0.24.1 harbour/tap polish: water-clear player docking and direct animal reactions without the world-info panel.
 // Start
 backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
