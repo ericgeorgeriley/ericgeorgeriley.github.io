@@ -246,7 +246,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.11';
+const VERSION_LABEL='0.24.12';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3423,12 +3423,32 @@ function mfBoatyardSprite(variant=0,motion=0){
   const lit=spriteLit(),key=`life-boatyard:${variant}:${motion}:${lit?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const[c,g]=pixelCanvas(64,60),p=buildingPalette('boatyard',variant);spriteShadow(g,10,48,44,5,.22);const crate=(x,y)=>{psRect(g,x,y,7,6,p.ink);psRect(g,x+1,y+1,5,4,p.woodHi);psLine(g,x+1,y+1,x+5,y+4,p.wood,1);psLine(g,x+5,y+1,x+1,y+4,p.wood,1)};
   psRect(g,8,45,50,5,p.ink);psRect(g,9,46,48,3,p.woodHi);psOutlinePoly(g,[[12,42],[14,27],[40,25],[43,42]],'#caa06a',p.ink,1);psOutlinePoly(g,[[10,27],[26,17],[45,24],[40,29],[25,22]],p.roof,p.ink,1);psRect(g,17,31,3,12,p.wood);psRect(g,34,30,3,13,p.wood);psLine(g,48,18,48,45,p.ink,2);psLine(g,48,19,59,24,p.wood,2);const swing=[-3,-2,0,2,3,2,0,-2][motion%8],hy=37+Math.abs(swing)*.25;psLine(g,58,24,58+swing,hy,p.ink,1);psRect(g,56+swing,hy,5,4,p.gold);psLine(g,18,48,31,39,p.cream,2);psLine(g,30,48,39,40,p.cream,2);crate(10,39);worldSpriteCache.set(key,c);return c
 }
-function mfBuildingMotion(kind,x,y){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),steps=kind==='windmill'||kind==='boatyard'?8:4,period=kind==='windmill'?520:kind==='lighthouse'?780:900;return mfLifePhase(period,steps,seed)}
+function mfBuildingMotion(kind,x,y){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),steps=kind==='windmill'||kind==='boatyard'||kind==='lighthouse'?8:4,period=kind==='windmill'?520:kind==='lighthouse'?560:900;return mfLifePhase(period,steps,seed)}
 function mfSpritePoint(x,y,s,lx,ly){return{x:x+(lx-32)*s,y:y+(ly-51.6)*s}}
 function mfDrawBuildingLifeOverlay(x,y,kind,s=1,motion=0){
   if(state.reducedMotion)return;const p=buildingPalette(kind,Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4),P=(lx,ly)=>mfSpritePoint(x,y,s,lx,ly),px=Math.max(1,Math.round(s));
   if(kind==='house'){const q=P(21,18),rise=(motion%4)*2;ctx.globalAlpha=.38;circle(q.x-1*s,q.y-rise*s,2.2*s,'#e8eee7');circle(q.x+2*s,q.y-(rise+4)*s,1.7*s,'#f3f5eb');ctx.globalAlpha=1}
-  else if(kind==='lighthouse'){const q=P(33,11),a=-.55+(motion%4)*.36,len=34*s,spread=5*s,ex=q.x+Math.cos(a)*len,ey=q.y+Math.sin(a)*len;ctx.save();ctx.globalAlpha=['night','dusk','dawn'].includes(dayPhase())?.22:.10;poly([[q.x,q.y-spread*.25],[ex,ey-spread],[ex,ey+spread]],'#fff1ad');ctx.restore()}
+  else if(kind==='lighthouse'){
+    const q=P(33,11),ph=dayPhase(),lit=['night','dusk','dawn'].includes(ph),night=ph==='night',step=motion%8;
+    const a=-Math.PI/2+step*(Math.PI*2/8),len=(night?44:lit?36:26)*s,wide=(night?12:lit?8:5)*s,narrow=(night?6.2:lit?4.8:3.2)*s;
+    const ex=q.x+Math.cos(a)*len,ey=q.y+Math.sin(a)*len;
+    const lx=q.x+Math.cos(a+Math.PI/2)*wide,ly=q.y+Math.sin(a+Math.PI/2)*wide;
+    const rx=q.x+Math.cos(a-Math.PI/2)*wide,ry=q.y+Math.sin(a-Math.PI/2)*wide;
+    const lx2=q.x+Math.cos(a+Math.PI/2)*narrow,ly2=q.y+Math.sin(a+Math.PI/2)*narrow;
+    const rx2=q.x+Math.cos(a-Math.PI/2)*narrow,ry2=q.y+Math.sin(a-Math.PI/2)*narrow;
+    ctx.save();
+    if(lit){
+      ctx.globalAlpha=night?.26:.18;circle(q.x,q.y,9.5*s,'rgba(255,241,173,.45)');
+      ctx.globalAlpha=night?.48:.34;circle(q.x,q.y,5.2*s,'rgba(255,217,120,.85)');
+      ctx.globalAlpha=night?.16:.09;poly([[lx,ly],[ex,ey-wide*.95],[rx,ry]],'#fff4c8');
+      ctx.globalAlpha=night?.34:.18;poly([[lx2,ly2],[ex,ey-narrow*.7],[rx2,ry2]],'#fff0a8');
+      ctx.globalAlpha=night?.22:.12;circle(ex,ey,(night?5.5:3.5)*s,'rgba(255,241,173,.40)');
+      if(night){ctx.globalAlpha=.09;circle(ex,ey,10*s,'rgba(255,241,173,.22)')}
+    }else{
+      ctx.globalAlpha=.06;poly([[lx2,ly2],[ex,ey-narrow*.55],[rx2,ry2]],'#fff1ad');
+    }
+    ctx.restore()
+  }
   else if(kind==='market'||kind==='market_hall'){const hall=kind==='market_hall',count=hall?6:5;for(let i=0;i<count;i++){const q=P(15+i*7,34+(i+motion)%2);rect(q.x,q.y,3*s,1.3*s,i%2?p.cream:p.red)}if(hall){const q=P(33,25),dx=[-1,0,1,0][motion%4]*s;line(q.x,q.y,q.x+dx,q.y+5*s,p.ink,Math.max(1,s));rect(q.x-3*s+dx,q.y+5*s,6*s,3*s,p.woodHi)}}
   else if(kind==='tea'){const q=P(51,38);ctx.globalAlpha=.55;for(let i=0;i<2;i++){const yy=q.y-(motion+i*2)*1.3*s;circle(q.x+(i?2:-1)*s,yy,1.3*s,p.cream)}ctx.globalAlpha=1}
   else if(kind==='garden'){const q=P(36+(motion%2)*3,25-(motion%3));rect(q.x,q.y,2*px,px,p.gold);rect(q.x+2*px,q.y-px,px,px,p.ink)}
