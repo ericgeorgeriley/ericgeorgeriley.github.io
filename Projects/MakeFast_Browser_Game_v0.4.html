@@ -247,7 +247,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.14';
+const VERSION_LABEL='0.24.15';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -1251,8 +1251,13 @@ function trafficCanDepart(v,origin,at,rr=Math.random){
   }
   return true;
 }
-function logWorld(text,at=nowReal(),important=false,icon='⛵'){
-  if(!text)return;const w=worldState();w.log.unshift({id:uid('worldlog'),at,text,icon});w.log=w.log.slice(0,180);if(important&&w.collectingSummary)w.pendingSummary.push({at,text,icon});if(w.pendingSummary.length>30)w.pendingSummary=w.pendingSummary.slice(-30);
+function logWorld(text,at=nowReal(),important=false,icon='⛵',meta=null){
+  if(!text)return;const w=worldState(),entry={id:uid('worldlog'),at,text,icon,...(meta?{meta}: {})};w.log.unshift(entry);w.log=w.log.slice(0,180);if(important&&w.collectingSummary)w.pendingSummary.push({at,text,icon,...(meta?{meta}: {})});if(w.pendingSummary.length>30)w.pendingSummary=w.pendingSummary.slice(-30);
+}
+function mfRecordArrivalStock(kind,isl,at,stock={},meta={}){
+  const pv=state.voyage;if(!pv||!isl||pv.destinationId!==isl.id)return;const started=Number(pv.startedAtReal||pv.startedAt||0);if(started&&at<started)return;
+  const clean={};Object.entries(stock||{}).forEach(([m,n])=>{n=Math.floor(+n||0);if(n>0)clean[m]=(clean[m]||0)+n});if(!Object.keys(clean).length)return;
+  if(!Array.isArray(pv.mfArrivalLedger))pv.mfArrivalLedger=[];pv.mfArrivalLedger.push({id:uid('supply'),kind,islandId:isl.id,at,stock:clean,...meta});if(pv.mfArrivalLedger.length>96)pv.mfArrivalLedger=pv.mfArrivalLedger.slice(-96)
 }
 function beginNpcTrip(v,dest,at,{cargo={},passengers=[],mission='Crossing between islands'}={}){
   const origin=getIsland(v.locationId)||getIsland(v.homeId),type=vesselType(v.typeId);if(!origin||!dest)return false;
@@ -1267,21 +1272,21 @@ function maybeCreateWorldLiftRequest(isl,at,rr){
 function productionRatesForResident(p){return{fisher:{glass:.012,stories:.01,timber:.006,stone:.004},gardener:{seeds:.032},carpenter:{timber:.022,hardware:.008},trader:{stories:.018},navigator:{charts:.018,stories:.006},naturalist:{glass:.016,seeds:.012,stone:.010},maker:{hardware:.018,cloth:.014,brass:.004}}[p.archetype]||{}}
 function projectProductionRates(isl){const r={};if(population(isl)>0){r.timber=(r.timber||0)+.004;r.cloth=(r.cloth||0)+.0025;r.hardware=(r.hardware||0)+.0015;r.stone=(r.stone||0)+(isl.biome==='cliff'?.012:.004)}if(completedFeature(isl,'orchard'))r.seeds=(r.seeds||0)+.03;if(completedFeature(isl,'boatyard'))r.hardware=(r.hardware||0)+.012;if(completedFeature(isl,'market_hall'))r.stories=(r.stories||0)+.012;return r}
 function produceIslandResources(isl,hours,at){
-  ensureIslandData(isl);const w=worldState(),key=isl.id,wbuf=w.productionCarry[key]||(w.productionCarry[key]={}),rates=projectProductionRates(isl);isl.residents.filter(p=>!residentAwayAssignment(p.id)).forEach(p=>{const pr=productionRatesForResident(p);Object.entries(pr).forEach(([m,r])=>rates[m]=(rates[m]||0)+r)});
-  Object.entries(rates).forEach(([m,r])=>{wbuf[m]=(wbuf[m]||0)+r*hours;const n=Math.floor(wbuf[m]);if(n>0){addStock(isl,m,n);wbuf[m]-=n}});
+  ensureIslandData(isl);const w=worldState(),key=isl.id,wbuf=w.productionCarry[key]||(w.productionCarry[key]={}),rates=projectProductionRates(isl),produced={};isl.residents.filter(p=>!residentAwayAssignment(p.id)).forEach(p=>{const pr=productionRatesForResident(p);Object.entries(pr).forEach(([m,r])=>rates[m]=(rates[m]||0)+r)});
+  Object.entries(rates).forEach(([m,r])=>{wbuf[m]=(wbuf[m]||0)+r*hours;const n=Math.floor(wbuf[m]);if(n>0){addStock(isl,m,n);produced[m]=(produced[m]||0)+n;wbuf[m]-=n}});if(Object.keys(produced).length)mfRecordArrivalStock('local',isl,at,produced);
   const rr=rng(hashString(`${isl.id}-${Math.floor(at/21600000)}-lift`));maybeCreateWorldLiftRequest(isl,at,rr);
 }
 function worldSupplyProject(isl,vessel,at,maxUnits=1){
   const p=isl.projects.find(p=>!p.complete);if(!p)return false;const t=projectTemplate(p.templateId);if(!t)return false;let moved=0;
   for(const m of Object.keys(t.req)){while(moved<maxUnits&&(isl.stock[m]||0)>0&&(p.contributed[m]||0)<t.req[m]){isl.stock[m]--;p.contributed[m]=(p.contributed[m]||0)+1;moved++}}
-  if(moved){logWorld(contentLine('copy.world.projectHelp',{vessel:vessel.name,project:t.name,destination:isl.name}),at,true,'✚');if(projectProgress(p)>=.999)completeIslandProject(isl,p);return true}return false;
+  if(moved){logWorld(contentLine('copy.world.projectHelp',{vessel:vessel.name,project:t.name,destination:isl.name}),at,true,'✚',{type:'projectHelp',islandId:isl.id,projectId:p.id,vesselId:vessel.id});if(projectProgress(p)>=.999)completeIslandProject(isl,p);return true}return false;
 }
 function revealSurveyRoute(from,at,vessel){
   if(state.islands.length>=28)return false;const n=createChartRumour(from,`${vessel.name}’s sounding notes`);if(!n)return false;const txt=contentLine('copy.world.survey',{vessel:vessel.name,destination:from.name});logWorld(`${txt} An unnamed coastline was pencilled onto the chart.`,at,true,'⌁');return true;
 }
 function resolveNpcArrival(v,at){
   const dest=getIsland(v.destinationId),type=vesselType(v.typeId);if(!dest)return;ensureIslandData(dest);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=nextNpcActionAt(v,dest,at,Math.random);
-  if(Object.keys(v.cargo||{}).length){Object.entries(v.cargo).forEach(([m,n])=>addStock(dest,m,n));logWorld(contentLine('copy.world.cargo',{vessel:v.name,cargo:cargoLabel(v.cargo),destination:dest.name}),at,true,type.icon)}
+  if(Object.keys(v.cargo||{}).length){const landed={...v.cargo};Object.entries(landed).forEach(([m,n])=>addStock(dest,m,n));mfRecordArrivalStock('delivery',dest,at,landed,{vesselId:v.id,vesselName:v.name,icon:type.icon});logWorld(contentLine('copy.world.cargo',{vessel:v.name,cargo:cargoLabel(landed),destination:dest.name}),at,true,type.icon,{type:'cargo',islandId:dest.id,vesselId:v.id,vesselName:v.name,stock:landed})}
   (v.passengers||[]).forEach(ps=>{const person=ensureResidentData(ps.person,ps.person.id,dest.biome);if(!dest.residents.some(p=>p.id===person.id))dest.residents.push(person);person.note=contentLine('copy.residents.movedNote',{origin:getIsland(ps.originId)?.name||'another island'});const req=state.liftRequests.find(r=>r.id===ps.requestId);if(req)req.status='delivered';logWorld(contentLine('copy.world.passenger',{person:person.name,vessel:v.name,destination:dest.name}),at,true,'☻')});
   if(type.role==='work')worldSupplyProject(dest,v,at,2);else if(type.role==='tender')worldSupplyProject(dest,v,at,1);
   if(type.role==='survey'){const rr=rng(hashString(`${v.id}-${v.trips}-survey`));if(rr()<.16)revealSurveyRoute(dest,at,v)}
@@ -3328,9 +3333,24 @@ function mfCompleteTrade(personId,tradeId){
 function mfCompleteFavour(personId,favourId){const p=residentById(personId),isl=residentHomeIsland(personId);if(!p||!mfCanSocialiseHere(p,isl))return;const f=mfCurrentFavour(p);if(!f||f.id!==favourId||!mfHasBundle(isl,f.need)){toast('The island stores do not have what this favour needs yet.');return}mfTakeBundle(isl,f.need);mfGiveBundle(isl,f.reward);const s=mfEnsureSocialData(p);s.completedFavours.push(f.id);mfAddRelationship(p,f.bond);state.journal.unshift(`You helped ${p.name} with ${f.title.toLowerCase()}.`);save();renderUI();openResidentDetails(personId,{skipTalk:true});toast(`${p.name} appreciated the help.`)}
 
 function mfMakeArrivalSnapshot(isl){if(!isl)return null;ensureIslandData(isl);return{islandId:isl.id,residents:(isl.residents||[]).map(p=>p.id),stock:{...isl.stock},projects:(isl.projects||[]).map(p=>({id:p.id,templateId:p.templateId,complete:!!p.complete,progress:projectProgress(p)})),features:[...(isl.features||[])]}}
+function mfLegacyCargoEntry(e,dest){
+  if(!e?.text||!dest)return null;const esc=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),dn=esc(dest.name),a=e.text.match(new RegExp(`^(.+?) brought (.+?) to ${dn}\\.$`)),b=e.text.match(new RegExp(`^(.+?) came ashore from (.+?) at ${dn}\\.$`));let vessel,cargo;if(a){vessel=a[1];cargo=a[2]}else if(b){cargo=b[1];vessel=b[2]}else return null;const stock={};for(const bit of cargo.split(/,\s*/)){const m=bit.match(/^(\d+)\s+(.+)$/);if(!m)continue;const material=Object.keys(MATERIALS).find(k=>materialName(k).toLowerCase()===m[2].trim().toLowerCase());if(material)stock[material]=(stock[material]||0)+(+m[1]||0)}return Object.keys(stock).length?{kind:'delivery',stock,vesselName:vessel,at:e.at,legacy:true}:null
+}
+function mfArrivalSupplyItems(dest,v,pendingAll=[]){
+  const ledger=(Array.isArray(v?.mfArrivalLedger)?v.mfArrivalLedger:[]).filter(e=>e?.islandId===dest.id),legacy=ledger.length?[]:pendingAll.map(e=>mfLegacyCargoEntry(e,dest)).filter(Boolean),events=ledger.length?ledger:legacy,items=[],accounted=new Set(),deliveryGroups={},localGroups={};
+  const add=(bag,m,n)=>{if(n>0)bag[m]=(bag[m]||0)+n};
+  for(const e of events){for(const [m,n0] of Object.entries(e.stock||{})){const n=Math.floor(+n0||0);if(n<=0)continue;accounted.add(m);if(e.kind==='delivery'){const g=deliveryGroups[m]||(deliveryGroups[m]={total:0,count:0,vessels:{}});g.total+=n;g.count++;const name=e.vesselName||'a working boat';g.vessels[name]=(g.vessels[name]||0)+n}else add(localGroups,m,n)}}
+  Object.entries(deliveryGroups).sort((a,b)=>b[1].total-a[1].total).forEach(([m,g])=>{const sources=Object.entries(g.vessels).map(([name,n])=>`${name} ${n}`).join(' · '),deliveries=g.count===1?'delivery':'deliveries';items.push({icon:MATERIALS[m]?.icon||'▰',text:g.count===1?`${g.total} ${materialName(m).toLowerCase()} came ashore aboard ${Object.keys(g.vessels)[0]||'a working boat'}.`:`${g.total} ${materialName(m).toLowerCase()} came ashore in ${g.count} ${deliveries} — ${sources}.`})});
+  Object.entries(localGroups).sort((a,b)=>b[1]-a[1]).forEach(([m,n])=>items.push({icon:MATERIALS[m]?.icon||'·',text:`Local work added ${n} ${materialName(m).toLowerCase()} to the island stores.`}));
+  const snap=v?.mfDepartureSnapshot;if(snap&&snap.islandId===dest.id){Object.keys(MATERIALS).map(m=>({m,n:(dest.stock?.[m]||0)-(snap.stock?.[m]||0)})).filter(x=>x.n>0&&!accounted.has(x.m)).sort((a,b)=>b.n-a.n).slice(0,2).forEach(x=>items.push({icon:MATERIALS[x.m].icon,text:`The island stores are up by ${x.n} ${materialName(x.m).toLowerCase()} since departure.`}))}
+  return items
+}
 function mfArrivalItems(dest,v,errandNotes=[],passengerNotes=[]){
-  const items=[],snap=v?.mfDepartureSnapshot,passengerIds=new Set(passengerNotes.map(x=>x?.personId).filter(Boolean));if(snap&&snap.islandId===dest.id){const beforePeople=new Set(snap.residents||[]),newPeople=(dest.residents||[]).filter(p=>!beforePeople.has(p.id)&&!passengerIds.has(p.id));newPeople.slice(0,2).forEach(p=>items.push({icon:'☻',text:`${p.name} is now part of life on ${dest.name}.`}));const beforeProjects=new Map((snap.projects||[]).map(p=>[p.id,p]));for(const p of dest.projects||[]){const old=beforeProjects.get(p.id),t=projectTemplate(p.templateId);if(!old&&t)items.push({icon:'✚',text:`Work has begun on ${t.name}.`});else if(old&&!old.complete&&p.complete&&t)items.push({icon:'✓',text:`${t.name} was finished while you were away.`});else if(old&&!p.complete&&projectProgress(p)-old.progress>=.22&&t)items.push({icon:'✚',text:`${t.name} made visible progress.`})}const gains=Object.keys(MATERIALS).map(m=>({m,n:(dest.stock?.[m]||0)-(snap.stock?.[m]||0)})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n).slice(0,2);gains.forEach(x=>items.push({icon:MATERIALS[x.m].icon,text:`${x.n} ${materialName(x.m).toLowerCase()} arrived in the island stores.`}))}
-  errandNotes.forEach(text=>items.push({icon:'▣',text}));passengerNotes.forEach(note=>items.push({icon:'☻',text:typeof note==='string'?note:note.text}));const w=worldState(),pending=(w.pendingSummary||[]).filter(e=>!v?.startedAt||e.at>=v.startedAt).slice(-3).reverse();pending.forEach(e=>items.push({icon:e.icon||'⛵',text:e.text}));if(pending.length)w.pendingSummary=[];const seen=new Set();return items.filter(x=>{const k=x.text;if(seen.has(k))return false;seen.add(k);return true}).slice(0,7)
+  const items=[],snap=v?.mfDepartureSnapshot,passengerIds=new Set(passengerNotes.map(x=>x?.personId).filter(Boolean)),w=worldState(),allPending=(w.pendingSummary||[]).filter(e=>!v?.startedAtReal||e.at>=v.startedAtReal),supplyItems=mfArrivalSupplyItems(dest,v,allPending);
+  if(snap&&snap.islandId===dest.id){const beforePeople=new Set(snap.residents||[]),newPeople=(dest.residents||[]).filter(p=>!beforePeople.has(p.id)&&!passengerIds.has(p.id));newPeople.slice(0,2).forEach(p=>items.push({icon:'☻',text:`${p.name} is now part of life on ${dest.name}.`}));const beforeProjects=new Map((snap.projects||[]).map(p=>[p.id,p]));for(const p of dest.projects||[]){const old=beforeProjects.get(p.id),t=projectTemplate(p.templateId);if(!old&&t)items.push({icon:'✚',text:`Work has begun on ${t.name}.`});else if(old&&!old.complete&&p.complete&&t)items.push({icon:'✓',text:`${t.name} was finished while you were away.`});else if(old&&!p.complete&&projectProgress(p)-old.progress>=.22&&t)items.push({icon:'✚',text:`${t.name} made visible progress.`})}}
+  items.push(...supplyItems);errandNotes.forEach(text=>items.push({icon:'▣',text}));passengerNotes.forEach(note=>items.push({icon:'☻',text:typeof note==='string'?note:note.text}));
+  const projectIds=new Set((snap?.projects||[]).map(p=>p.id)),pending=allPending.filter(e=>{if(e?.meta?.type==='cargo')return false;if(e?.meta?.type==='projectHelp'&&projectIds.has(e.meta.projectId))return false;if(!e?.meta&&mfLegacyCargoEntry(e,dest))return false;return true}).slice(-3).reverse();pending.forEach(e=>items.push({icon:e.icon||'⛵',text:e.text}));if(allPending.length)w.pendingSummary=[];
+  const seen=new Set();return items.filter(x=>{const k=x.text;if(seen.has(k))return false;seen.add(k);return true}).slice(0,7)
 }
 let mfPendingArrival=null;
 function mfShowArrivalRecap(isl,data){const items=data?.items||[];if(!items.length){mfOriginalOpenDocksideBoard(isl,true);return}const home=isl.home,title=home?'Back in harbour':`Alongside · ${isl.name}`,intro=home?'The harbour has been busy in your absence.':'A few things have changed around the island since you set out.';showModal(`<h2>${title}</h2><p>${intro}</p><div class="mf-homecoming-list">${items.map(x=>`<div class="mf-homecoming-item"><i>${x.icon}</i><span>${x.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn secondary" id="mfOpenIslandBoard">OPEN ISLAND BOARD</button><button class="big-btn ghost" data-close>CLOSE</button></div>`,false);$('#mfOpenIslandBoard').onclick=()=>{closeModal();mfOriginalOpenDocksideBoard(isl,true)}}
