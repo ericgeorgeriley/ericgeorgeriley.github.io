@@ -247,7 +247,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.16';
+const VERSION_LABEL='0.24.19';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -2610,7 +2610,7 @@ function mfApproachLighthouseInfo(isl,cx,cy,s){
 }
 function mfDrawApproachBeaconGlow(info,s){
   if(!info)return;const ph=dayPhase(),lit=['night','dusk','dawn'].includes(ph);if(!lit)return;
-  const night=ph==='night',q=info.q,seed=info.seed;
+  const night=ph==='night',q=mfSpritePoint(info.q.x,info.q.y,info.scale,33,11),seed=info.seed;
   // Approach beacon rotates slowly enough to read as a distant sweep rather than a spinner.
   const angle=state.reducedMotion?-.8:((frame*.00125+(Math.abs(seed)%628)/100)%(Math.PI*2));
   const root=Math.sqrt(Math.max(.12,s)),len=Math.max(night?58:38,(night?108:68)*root),dx=Math.cos(angle),dy=Math.sin(angle),nx=-dy,ny=dx,ex=q.x+dx*len,ey=q.y+dy*len;
@@ -2628,7 +2628,7 @@ function mfDrawApproachBeaconGlow(info,s){
   ctx.restore()
 }
 const mf2413OriginalDrawApproachIsland=drawApproachIsland;
-drawApproachIsland=function(isl,cx,cy,scale){mf2413OriginalDrawApproachIsland(isl,cx,cy,scale);const s=clamp(scale,.10,2.2),info=mfApproachLighthouseInfo(isl,cx,cy,s);if(!info)return;mfDrawApproachBeaconGlow(info,s);const variant=Math.abs(hashString(`lighthouse:${Math.round(info.q.x)}:${Math.round(info.q.y)}`))%4;drawPixelSprite(buildingSprite('lighthouse',variant),info.q.x,info.q.y,info.scale,.5,.86)};
+drawApproachIsland=function(isl,cx,cy,scale){const prevSuppress=mfSuppressLighthouseBuildingLight;mfSuppressLighthouseBuildingLight=true;try{mf2413OriginalDrawApproachIsland(isl,cx,cy,scale)}finally{mfSuppressLighthouseBuildingLight=prevSuppress}const s=clamp(scale,.10,2.2),info=mfApproachLighthouseInfo(isl,cx,cy,s);if(!info)return;mfDrawApproachBeaconGlow(info,s);const variant=Math.abs(hashString(`lighthouse:${Math.round(info.q.x)}:${Math.round(info.q.y)}`))%4;drawPixelSprite(buildingSprite('lighthouse',variant),info.q.x,info.q.y,info.scale,.5,.86)};
 
 function parseHexColor(hex){const h=String(hex||'#000000').replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function mixHex(a,b,t){const A=parseHexColor(a),B=parseHexColor(b),v=A.map((n,i)=>Math.round(lerp(n,B[i],t)));return'#'+v.map(n=>n.toString(16).padStart(2,'0')).join('')}
@@ -3525,12 +3525,13 @@ function mfBoatyardSprite(variant=0,motion=0){
 }
 function mfBuildingMotion(kind,x,y){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),steps=kind==='lighthouse'?16:(kind==='windmill'||kind==='boatyard'?8:4),period=kind==='windmill'?520:kind==='lighthouse'?650:900;return mfLifePhase(period,steps,seed)}
 function mfSpritePoint(x,y,s,lx,ly){return{x:x+(lx-32)*s,y:y+(ly-51.6)*s}}
+let mfSuppressLighthouseBuildingLight=false;
 function mfDrawBuildingLifeOverlay(x,y,kind,s=1,motion=0){
   if(state.reducedMotion)return;const p=buildingPalette(kind,Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4),P=(lx,ly)=>mfSpritePoint(x,y,s,lx,ly),px=Math.max(1,Math.round(s));
   if(kind==='house'){const q=P(21,18),rise=(motion%4)*2;ctx.globalAlpha=.38;circle(q.x-1*s,q.y-rise*s,2.2*s,'#e8eee7');circle(q.x+2*s,q.y-(rise+4)*s,1.7*s,'#f3f5eb');ctx.globalAlpha=1}
-  else if(kind==='lighthouse'){
-    const q=P(33,11),ph=dayPhase(),lit=['night','dusk','dawn'].includes(ph),night=ph==='night',step=motion%16;
-    const a=-Math.PI/2+step*(Math.PI*2/16),len=(night?52:lit?41:28)*s;
+  else if(kind==='lighthouse'&&!mfSuppressLighthouseBuildingLight){
+    const q=P(33,11),ph=dayPhase(),lit=['night','dusk','dawn'].includes(ph),night=ph==='night',turnMs=11800,offset=Math.abs(hashString(`lighthouse-sweep:${Math.round(x)}:${Math.round(y)}`))%turnMs;
+    const a=-Math.PI/2+(((frame+offset)%turnMs)/turnMs)*(Math.PI*2),len=(night?52:lit?41:28)*s;
     const outerNear=(night?2.2:1.6)*s,outerFar=(night?16:lit?11:6)*s;
     const coreNear=(night?1.1:.9)*s,coreFar=(night?7.4:lit?5.4:3.2)*s;
     const dx=Math.cos(a),dy=Math.sin(a),nx=-dy,ny=dx,ex=q.x+dx*len,ey=q.y+dy*len;
@@ -3619,13 +3620,14 @@ function mfAnimalReactionText(a,n){const sets={
   rabbit:[`${a.name} does one quick happy hop.`,`${a.name} twitches both ears in your direction.`,`${a.name} freezes, decides you are safe, and resumes being tiny.`],
   crab:[`${a.name} raises one claw in formal greeting.`,`${a.name} sidesteps with surprising purpose.`,`${a.name} clicks both claws like very small castanets.`]
   },arr=sets[a.species]||[`${a.name} seems pleased to see you.`];return arr[n%arr.length]}
-function showAnimalDialogue(a,text,count=1){
-  const el=$('#animalDialogue');if(!el||!a)return;const now=performance.now();mfAnimalDialogue={id:a.id,species:a.species,name:a.name,text,count,seed:a.seed,until:now+3300};
+function showAnimalDialogue(a,text,count=1,opts={}){
+  const el=$('#animalDialogue');if(!el||!a)return;const now=performance.now(),context=opts.context||'shore',duration=clamp(Number(opts.duration)||3300,1800,8000);mfAnimalDialogue={id:a.id,species:a.species,name:a.name,text,count,seed:a.seed,context,until:now+duration};
   const toastEl=$('#toast');if(toastEl){toastEl.classList.remove('show');clearTimeout(toastTimer)}
-  $('#animalDialogueName').textContent=a.name;$('#animalDialogueKind').textContent=MF_LIFE_ANIMAL_LABELS[a.species]||'Island animal';$('#animalDialogueText').textContent=text;el.classList.add('show');positionFloatingOverlays();updateAnimalDialogue(now)
+  const note=$('#voyageNote');if(context==='voyage'&&note){note.classList.remove('show');note.dataset.eventId=''}
+  $('#animalDialogueName').textContent=a.name;$('#animalDialogueKind').textContent=opts.kind||(MF_LIFE_ANIMAL_LABELS[a.species]||'Island animal');$('#animalDialogueText').textContent=text;el.classList.add('show');positionFloatingOverlays();updateAnimalDialogue(now)
 }
 function updateAnimalDialogue(ts=performance.now()){
-  const el=$('#animalDialogue'),d=mfAnimalDialogue;if(!el)return;if(!d||ts>d.until||state.activeView==='chart'||state.phase!=='ashore'||minigame){el.classList.remove('show');if(d&&(ts>d.until||state.activeView==='chart'||state.phase!=='ashore'||minigame))mfAnimalDialogue=null;return}
+  const el=$('#animalDialogue'),d=mfAnimalDialogue;if(!el)return;const phaseOK=d?.context==='voyage'?(state.phase==='fasting'||state.phase==='arrived'):state.phase==='ashore';if(!d||ts>d.until||state.activeView==='chart'||!phaseOK||minigame){el.classList.remove('show');if(d&&(ts>d.until||state.activeView==='chart'||!phaseOK||minigame))mfAnimalDialogue=null;return}
   if(!el.classList.contains('show'))el.classList.add('show');const c=$('#animalDialogueAvatar');if(!c)return;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,c.width,c.height);
   const phase=state.reducedMotion?0:Math.floor((ts+Math.abs(d.seed)%1100)/245)%4,mirror=(d.seed&1)===1,spr=animalSprite(d.species,phase,mirror),scale=2.45,bob=state.reducedMotion?0:Math.sin((ts+Math.abs(d.seed)%600)*.010)*1.25,dw=spr.width*scale,dh=spr.height*scale,x=(c.width-dw)/2,y=(c.height-dh)/2+bob;g.drawImage(spr,Math.round(x),Math.round(y),Math.round(dw),Math.round(dh));positionFloatingOverlays()
 }
@@ -3732,7 +3734,7 @@ const MF_STOWAWAY_FLAVOUR={
   crab:a=>`${a.name} clicks one claw from inside a coil of rope. Apparently the boat has a stowaway.`
 };
 function mfPlanStowaway(v,origin){if(!v)return;state.boatAnimals=[];const rr=rng(hashString(`${v.id}:stowaway-v2413`));if(rr()>=.18){v.stowawayPlan=null;return}const localSpecies=[...new Set((origin?islandAnimals(origin):[]).map(a=>a.species).filter(s=>MF_STOWAWAY_FLAVOUR[s]))],fallback=['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'],species=localSpecies.length?localSpecies[Math.floor(rr()*localSpecies.length)]:fallback[Math.floor(rr()*fallback.length)],names=MF_LIFE_ANIMAL_NAMES[species]||['Stowaway'],name=names[Math.floor(rr()*names.length)],seed=hashString(`${v.id}:${species}:${name}`);v.stowawayPlan={species,name,seed,revealAtReal:(v.startedAtReal||nowReal())+(90+Math.floor(rr()*300))*1000,revealAtProgress:.035+rr()*.035,revealed:false}}
-function mfUpdateVoyageStowaway(){const v=state.voyage,plan=v?.stowawayPlan;if(!v||!plan||plan.revealed||state.phase!=='fasting')return;const ready=v.simulated||state.settings.demoMode?voyageProgress()>=plan.revealAtProgress:nowReal()>=plan.revealAtReal;if(!ready)return;plan.revealed=true;const a={id:`stowaway_${Math.abs(hashString(v.id+plan.name))}`,species:plan.species,name:plan.name,seed:plan.seed,index:0,flavour:''};a.flavour=(MF_STOWAWAY_FLAVOUR[a.species]||MF_STOWAWAY_FLAVOUR.cat)(a);v.stowaway=a;state.boatAnimals=[a];v.seaLog.unshift({at:gameNow(),icon:'✦',title:'Stowaway aboard',text:a.flavour});save();notifyVoyage(`Stowaway · ${a.name}`,a.flavour,`${a.name} found aboard`);renderUI()}
+function mfUpdateVoyageStowaway(){const v=state.voyage,plan=v?.stowawayPlan;if(!v||!plan||plan.revealed||state.phase!=='fasting')return;const ready=v.simulated||state.settings.demoMode?voyageProgress()>=plan.revealAtProgress:nowReal()>=plan.revealAtReal;if(!ready||minigame||state.activeView==='chart')return;plan.revealed=true;const a={id:`stowaway_${Math.abs(hashString(v.id+plan.name))}`,species:plan.species,name:plan.name,seed:plan.seed,index:0,flavour:''};a.flavour=(MF_STOWAWAY_FLAVOUR[a.species]||MF_STOWAWAY_FLAVOUR.cat)(a);v.stowaway=a;state.boatAnimals=[a];v.seaLog.unshift({at:gameNow(),icon:'✦',title:'Stowaway aboard',text:a.flavour});save();beep('soft');showAnimalDialogue(a,a.flavour,1,{context:'voyage',duration:5200,kind:'Stowaway aboard'});renderUI()}
 function mfLandStowaway(dest,a){if(!dest||!a)return;ensureIslandData(dest);if(!dest.animalGuests.some(x=>x.id===a.id)){dest.animalGuests.push({id:a.id,species:a.species,name:a.name,seed:a.seed,arrivedAt:nowReal()});if(dest.animalGuests.length>4)dest.animalGuests.splice(0,dest.animalGuests.length-4)}state.boatAnimals=[];const line=`${a.name} came ashore at ${dest.name} after stowing away aboard ${state.boat.name}.`;state.journal.unshift(line);if(mfPendingArrival?.destId===dest.id)mfPendingArrival.items=[{icon:'✦',text:line},...(mfPendingArrival.items||[])].slice(0,7)}
 const mf2413StartVoyage=startVoyage;
 startVoyage=function(){const origin=state.phase==='ashore'?currentIsland():null;mf2413StartVoyage();if(state.voyage&&state.phase==='fasting'){mfPlanStowaway(state.voyage,origin);save()}};
@@ -3750,7 +3752,6 @@ window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,pa
 // v0.24.9 UI quieting: unavailable actions hide, completed builds collapse, and docked people/boats use persistent animated portrait talk cards.
 // v0.24.10 chart-performance pass: static cartography is cached between camera/world changes; compass rose moved to the lower-left.
 // v0.24.6 chart-clarity pass: semantic zoom, familiar-lane casing, deduplicated recent trail and coral active course.
-// v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
 // Start
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
@@ -3758,5 +3759,7 @@ ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray
 </script>
 </body>
 </html>
+
+// v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
 
 <!-- v0.24.8 arrival-copy pass -->
