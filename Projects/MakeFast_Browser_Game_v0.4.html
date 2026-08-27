@@ -247,7 +247,7 @@
 // The fasting clock and voyage timing remain authoritative and unchanged.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.15';
+const VERSION_LABEL='0.24.16';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -2657,7 +2657,7 @@ function drawVoyageMicroEvent(ts,bx,by){
   else if(e.type==='flyingfish'){for(let i=0;i<4;i++){const tt=clamp(t-i*.06,0,1),x=50+tt*(W-100),y=by+65-Math.sin(tt*Math.PI)*55-i*4;rect(x,y,5,2,'#dff5f4');rect(x+4,y-1,3,1,'#dff5f4')}}
   else if(e.type==='kelp'){for(let i=0;i<5;i++){const x=W+20-t*(W+100)+i*34,y=top+80+i*46;ctx.globalAlpha=.72;drawSeaSprite('kelp',x,y,.72,false,i);ctx.globalAlpha=1}}
   else if(e.type==='whalepuff'){const x=W*.78-t*W*.25,y=top+70;ctx.globalAlpha=ease;circle(x,y,12,'rgba(38,77,91,.38)');for(let i=0;i<4;i++)rect(x-5+i*4,y-12-i*5,2,7,'rgba(255,255,255,.32)');ctx.globalAlpha=1}
-  else if(e.type==='distantSail'){const x=W+20-t*(W+80),y=top+75;drawTopBoat(x,y,.42,-.35,'sailer',defaultBoatAppearance('sailer'))}
+  else if(e.type==='distantSail'){const q=mfVoyageTrafficPoint(t,false,top+75,.42,`micro:${e.seed}`);drawTopBoat(q.x,q.y,q.scale,-.35,'sailer',defaultBoatAppearance('sailer'))}
   else if(e.type==='sparkles'){for(let i=0;i<18;i++){const rr=rng(hashString(`${e.seed}-${i}`)),x=rr()*W,y=top+20+rr()*Math.max(40,bottom-top-40);ctx.globalAlpha=ease*.5;drawSparkle(x,y,timePalette().light);ctx.globalAlpha=1}}
 }
 
@@ -2766,6 +2766,48 @@ function drawPassingLanternGlow(x,y,scale=1){if(!['night','dusk','dawn'].include
 const VOYAGE_DECK_SLOTS={
   cutter:[[27,45],[38,48],[54,45]],fishing:[[25,47],[37,49],[68,49]],shallow:[[28,47],[42,49],[57,47]],cabin:[[20,48],[29,50],[69,50]],sailer:[[26,47],[46,48],[59,46]]
 };
+// v0.24.16 voyage traffic perspective + island clearance. Ambient/crossing
+// vessels are screen-space actors, so they need an explicit depth model and a
+// conservative exclusion envelope for any island visible in the approach shot.
+let mfVoyageTrafficContext={vr:null,playerY:0,exclusions:[]};
+function mfVoyageTrafficBegin(vr,playerY){mfVoyageTrafficContext={vr,playerY,exclusions:[]}}
+function mfVoyageTrafficRegisterIsland(isl,cx,cy,scale,role='arrival'){
+  if(!isl)return;const s=clamp(scale,.10,2.2);
+  // Slightly larger than the rendered terrain silhouette. Boat-specific hull
+  // clearance is added by mfVoyageTrafficAvoidY below.
+  mfVoyageTrafficContext.exclusions.push({islId:isl.id,role,cx,cy,scale:s,rx:126*s,ry:94*s});
+}
+function mfVoyageTrafficScale(base,y){
+  const c=mfVoyageTrafficContext,vr=c.vr||visibleSceneRect(),horizon=vr.y+vr.h*.10,playerY=c.playerY||vr.y+vr.h*.56;
+  const depth=clamp((y-horizon)/Math.max(1,playerY-horizon),0,1),perspective=.24+.76*Math.pow(depth,.82);
+  let islandDepth=1;
+  for(const e of c.exclusions||[]){
+    const nearY=clamp(1-Math.abs(y-e.cy)/Math.max(1,vr.h*.46),0,1),farScale=clamp(.30+.70*Math.sqrt(e.scale/1.12),.30,1.18);
+    islandDepth=Math.min(islandDepth,lerp(1,farScale,nearY*.82));
+  }
+  return Math.max(.14,base*perspective*islandDepth)
+}
+function mfVoyageTrafficAvoidY(x,y,boatScale=.4,seed=0){
+  const c=mfVoyageTrafficContext,vr=c.vr||visibleSceneRect();let yy=y;
+  for(const e of c.exclusions||[]){
+    // Reserve enough room for the hull/sails as well as the island itself.
+    const rx=e.rx+42*boatScale,ry=e.ry+24*boatScale,dx=x-e.cx;if(Math.abs(dx)>=rx)continue;
+    const edge=ry*Math.sqrt(Math.max(0,1-(dx*dx)/(rx*rx))),dy=yy-e.cy;if(Math.abs(dy)>=edge+3)continue;
+    let sign=Math.abs(dy)>3?(dy<0?-1:1):(((Math.abs(hashString(`${seed}:${e.islId}`))&1)===0)?-1:1);
+    const topRoom=e.cy-(edge+7)-vr.y,bottomRoom=(vr.y+vr.h)-(e.cy+(edge+7));
+    if(sign<0&&topRoom<12&&bottomRoom>topRoom)sign=1;else if(sign>0&&bottomRoom<12&&topRoom>bottomRoom)sign=-1;
+    yy=e.cy+sign*(edge+7);
+  }
+  return yy
+}
+function mfVoyageTrafficPoint(t,fromLeft,laneY,baseScale,seed=0){
+  const W=canvas.width,start=fromLeft?-86:W+86,end=fromLeft?W+86:-86,x=lerp(start,end,t);
+  let y=laneY,scale=mfVoyageTrafficScale(baseScale,y);y=mfVoyageTrafficAvoidY(x,y,scale,seed);
+  // One refinement keeps the reserved hull footprint correct after perspective
+  // changes caused by the detour itself.
+  scale=mfVoyageTrafficScale(baseScale,y);y=mfVoyageTrafficAvoidY(x,y,scale,seed);
+  return{x,y,scale}
+}
 function drawVoyagePassengers(bx,by,boatScale){
   const aboard=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean);if(!aboard.length)return;const slots=VOYAGE_DECK_SLOTS[state.boat.type]||VOYAGE_DECK_SLOTS.cutter,visible=aboard.slice(0,Math.min(3,slots.length));
   visible.forEach((person,i)=>{const slot=slots[i%slots.length],seed=Math.abs(hashString(person.id||person.name)),phase=frame*.00105+seed%997,walk=Math.sin(phase*.72+i)>.08,wander=Math.sin(phase+i*1.7)*2.4,x=bx+(slot[0]-44+wander)*boatScale,y=by+(slot[1]-42.9)*boatScale+Math.sin(phase*.6)*.6*boatScale,facing=Math.cos(phase+i) < 0?-1:1,personScale=clamp(.33*boatScale,.18,.48);drawResidentPerson(x,y,person,walk,facing,personScale)})
@@ -2779,13 +2821,13 @@ function drawVoyage(){
   // prevents the player boat from visually sailing through the terrain during the
   // departure/landfall focus pull while preserving the same voyage timing.
   drawVoyageMood(vr,ph);const smooth=t=>t*t*(3-2*t),depart=smooth(clamp(p/.24,0,1)),arrive=smooth(clamp((p-.74)/.26,0,1)),focus=p<.24?depart:(p>.74?1-arrive:1);
-  const bx=W/2,cruiseY=vr.y+vr.h*.56,shoreY=vr.y+vr.h*.59,by=lerp(shoreY,cruiseY,focus)+Math.sin(frame*.006)*lerp(.7,2,focus),boatScale=lerp(.56,1.35,focus);
+  const bx=W/2,cruiseY=vr.y+vr.h*.56,shoreY=vr.y+vr.h*.59,by=lerp(shoreY,cruiseY,focus)+Math.sin(frame*.006)*lerp(.7,2,focus),boatScale=lerp(.56,1.35,focus);mfVoyageTrafficBegin(vr,by);
   const scroll=(frame*.022)%42;for(let y=-42;y<H+42;y+=34){const yy=(y+scroll)%(H+42);for(let x=18;x<W;x+=78){const sway=Math.sin((x+y+frame*.01)*.018)*5;rect(x+sway,yy,24,2,'rgba(255,255,255,.075)')}}
   if(p<.27){
-    const t=depart,islandScale=lerp(1.02,.11,t),halfH=voyageApproachHalfHeight(islandScale),waterGap=lerp(18,34,t),clearY=by+halfH+waterGap,offscreenY=vr.y+vr.h+halfH+24,iy=lerp(clearY,offscreenY,t);ctx.globalAlpha=clamp(1-t*.96,.06,1);drawApproachIsland(origin,bx,iy,islandScale);ctx.globalAlpha=1
+    const t=depart,islandScale=lerp(1.02,.11,t),halfH=voyageApproachHalfHeight(islandScale),waterGap=lerp(18,34,t),clearY=by+halfH+waterGap,offscreenY=vr.y+vr.h+halfH+24,iy=lerp(clearY,offscreenY,t);mfVoyageTrafficRegisterIsland(origin,bx,iy,islandScale,'departure');ctx.globalAlpha=clamp(1-t*.96,.06,1);drawApproachIsland(origin,bx,iy,islandScale);ctx.globalAlpha=1
   }
   if(arrive>0){
-    const islandScale=lerp(.10,1.12,arrive),halfH=voyageApproachHalfHeight(islandScale),farY=vr.y+Math.max(48,vr.h*.09),clearY=by-halfH-lerp(30,18,arrive),iy=lerp(farY,clearY,arrive);ctx.globalAlpha=clamp(.12+arrive*.9,.12,1);drawApproachIsland(dest,bx,iy,islandScale);ctx.globalAlpha=1;
+    const islandScale=lerp(.10,1.12,arrive),halfH=voyageApproachHalfHeight(islandScale),farY=vr.y+Math.max(48,vr.h*.09),clearY=by-halfH-lerp(30,18,arrive),iy=lerp(farY,clearY,arrive);mfVoyageTrafficRegisterIsland(dest,bx,iy,islandScale,'arrival');ctx.globalAlpha=clamp(.12+arrive*.9,.12,1);drawApproachIsland(dest,bx,iy,islandScale);ctx.globalAlpha=1;
     if(arrive>.28){for(let i=0;i<Math.floor(2+arrive*6);i++){const gx=W*.30+i*(W*.07)+Math.sin(frame*.002+i)*12,gy=vr.y+48+(i%3)*12;line(gx-5,gy,gx,gy-3,'rgba(255,247,222,.72)',2);line(gx,gy-3,gx+5,gy,'rgba(255,247,222,.72)',2)}}if(arrive>.62&&['night','dusk','dawn'].includes(ph)){const flick=.7+.3*Math.sin(frame*.006);ctx.globalAlpha=flick;drawLamp(bx,iy-20);ctx.globalAlpha=1}
   }
   updateVoyageMicroEvent(frame);drawVoyageMicroEvent(frame,bx,by);const ev=sceneEvent||activeVoyageEvent();if(ev)drawVoyageSceneEvent(ev,frame,bx,by);drawWake(bx,by,clamp(boatScale/1.35,.45,1));drawTopBoat(bx,by,boatScale,0,state.boat.type,playerBoatAppearance());drawVoyagePassengers(bx,by,boatScale);drawVoyageStowaway(bx,by,boatScale);drawWeather();drawTimeLighting();
@@ -3119,12 +3161,12 @@ function renderArcadeGame(g,ts){const G=arcadeGeom(),running=!!g.started,dt=runn
 }
 function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=`0 pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='100%';return}const elapsed=ts-g.started,remain=clamp(1-elapsed/g.duration,0,1);$('#gameHudText').textContent=`${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(remain*100)+'%';if(elapsed>=g.duration){endMinigame();return}}
 const VOYAGE_SCENE_RENDERERS={
-  arcadevessel(e,ts,bx,by,t){const x=canvas.width+120-t*(canvas.width+250),y=visibleSceneRect().y+visibleSceneRect().h*.24;drawTopBoat(x,y,.95,-.2,'cabin',defaultBoatAppearance('cabin'));for(let i=0;i<4;i++)rect(x-24+i*13,y+8,10,7,['#527da0','#df7c68','#e5b54e','#4f8b56'][i%4],'#18313a',1)},
-  npcboat(e,ts,bx,by,t){const v=worldState().vessels.find(x=>x.id===e.vesselId);if(!v)return;const W=canvas.width,vr=visibleSceneRect(),type=vesselType(v.typeId),fromLeft=(hashString(v.id)%2)===0,x=fromLeft?(-70+t*(W+140)):(W+70-t*(W+140)),y=vr.y+vr.h*.22+Math.sin(t*Math.PI)*28;drawPassingLanternGlow(x,y,.68);drawTopBoat(x,y,.68,fromLeft?.25:-.25,type.sprite,npcBoatAppearance(v));worldHitAreas.push({kind:'vessel',id:v.id,x,y,r:34});},
+  arcadevessel(e,ts,bx,by,t){const vr=visibleSceneRect(),q=mfVoyageTrafficPoint(t,false,vr.y+vr.h*.24,.95,`arcade:${e.id||e.started||0}`),ds=q.scale/.95;drawTopBoat(q.x,q.y,q.scale,-.2,'cabin',defaultBoatAppearance('cabin'));for(let i=0;i<4;i++)rect(q.x-24*ds+i*13*ds,q.y+8*ds,Math.max(2,10*ds),Math.max(2,7*ds),['#527da0','#df7c68','#e5b54e','#4f8b56'][i%4],'#18313a',1)},
+  npcboat(e,ts,bx,by,t){const v=worldState().vessels.find(x=>x.id===e.vesselId);if(!v)return;const vr=visibleSceneRect(),type=vesselType(v.typeId),fromLeft=(hashString(v.id)%2)===0,lane=vr.y+vr.h*.22+Math.sin(t*Math.PI)*28,q=mfVoyageTrafficPoint(t,fromLeft,lane,.68,v.id);drawPassingLanternGlow(q.x,q.y,q.scale);drawTopBoat(q.x,q.y,q.scale,fromLeft?.25:-.25,type.sprite,npcBoatAppearance(v));worldHitAreas.push({kind:'vessel',id:v.id,x:q.x,y:q.y,r:Math.max(16,34*q.scale/.68)});},
   dolphins(e,ts,bx,by,t){for(let i=0;i<4;i++){const x=bx+85+i*30-(t*165),y=by-34+Math.sin(t*12+i)*14;drawSeaSprite('dolphin',x,y,.78,(i%2)===0,i)}},
   wildlife(e,ts,bx,by,t){VOYAGE_SCENE_RENDERERS.dolphins(e,ts,bx,by,t)},
   seabirds(e,ts,bx,by,t){for(let i=0;i<6;i++){const x=20+t*(canvas.width-40)+i*18,y=visibleSceneRect().y+45+i%3*11;drawSeaSprite('gull',x,y,.8,(i%2)===0,i)}},
-  trader(e,ts,bx,by,t){drawTopBoat(canvas.width+20-t*(canvas.width+100),visibleSceneRect().y+70,.55,-.35,'sailer',defaultBoatAppearance('sailer'))},
+  trader(e,ts,bx,by,t){const q=mfVoyageTrafficPoint(t,false,visibleSceneRect().y+70,.55,`trader:${e.id||e.started||0}`);drawTopBoat(q.x,q.y,q.scale,-.35,'sailer',defaultBoatAppearance('sailer'))},
   squall(e,ts,bx,by,t){const x=canvas.width-t*(canvas.width+180);rect(x,0,180,canvas.height,'rgba(38,71,83,.28)');for(let i=0;i<28;i++)rect(x+10+(i*31)%170,40+(i*47)%Math.max(100,canvas.height-50),1,8,'rgba(240,252,255,.48)')},
   bottle(e,ts,bx,by,t){drawSeaSprite('bottle',bx+76,by-40,.9,false,0);drawSparkle(bx+89,by-50,'#fff7de')},
   signal(e,ts,bx,by,t){const pulse=(Math.sin(ts*.008)>0)?1:0,x=canvas.width*.84,y=visibleSceneRect().y+55;circle(x,y,5,pulse?'#fff7de':'#df7c68');if(pulse)circle(x,y,14,'rgba(255,247,222,.12)')},
@@ -3708,6 +3750,7 @@ window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,pa
 // v0.24.9 UI quieting: unavailable actions hide, completed builds collapse, and docked people/boats use persistent animated portrait talk cards.
 // v0.24.10 chart-performance pass: static cartography is cached between camera/world changes; compass rose moved to the lower-left.
 // v0.24.6 chart-clarity pass: semantic zoom, familiar-lane casing, deduplicated recent trail and coral active course.
+// v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
 // Start
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
@@ -3715,7 +3758,5 @@ ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray
 </script>
 </body>
 </html>
-
-// v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
 
 <!-- v0.24.8 arrival-copy pass -->
