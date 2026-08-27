@@ -117,9 +117,7 @@
   .boat-disclosure{border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden;margin-top:7px}.boat-disclosure summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;cursor:pointer;font-size:9px;font-weight:1000;background:#fff7de}.boat-disclosure summary::-webkit-details-marker{display:none}.boat-disclosure summary:after{content:'▾';font-size:10px;color:var(--sea-dark)}.boat-disclosure[open] summary:after{content:'▴'}.boat-disclosure[open] summary{border-bottom:2px solid var(--ink);background:#f6edcf}.boat-disclosure-body{padding:9px}.boat-disclosure-body>.card:first-child{margin-top:0}.boat-wide-select{width:100%;padding:8px 9px;border:2px solid var(--ink);border-radius:6px;background:#fff;color:var(--ink);font:inherit;font-size:9px;font-weight:900}.boat-load-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.boat-load-cell{border:2px solid var(--ink);border-radius:7px;background:#fff;padding:7px;min-width:0}.boat-load-cell b{display:block;font-size:10px}.boat-load-cell span{display:block;margin-top:2px;color:var(--ink-soft);font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.boat-stowaway-card{display:flex;gap:9px;align-items:center;border:2px solid var(--ink);border-radius:8px;background:#fff7de;padding:8px}.boat-stowaway-card canvas{width:54px;height:45px;image-rendering:pixelated;flex:0 0 auto}.boat-stowaway-card b{display:block;font-size:10px}.boat-stowaway-card span{display:block;color:var(--ink-soft);font-size:8px;line-height:1.35;margin-top:2px}.shore-stack{display:grid;gap:14px}.shore-stack>.section{margin:0}.shore-fleet-actions{display:grid;gap:7px;margin-top:8px}@media(max-width:560px){.boat-load-grid{grid-template-columns:1fr 1fr}.boat-load-cell:last-child{grid-column:1/-1}}
   .finds-locker{display:grid;gap:6px}.finds-locker-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;border:2px solid var(--ink);border-radius:7px;background:#fff;padding:7px}.finds-locker-row b{display:block;font-size:9px}.finds-locker-row small{display:block;font-size:7px;color:var(--ink-soft);line-height:1.35;margin-top:2px}.finds-locker-row button{border:2px solid var(--ink);border-radius:6px;background:var(--gold);padding:6px 7px;font-size:7px;font-weight:1000;cursor:pointer}.finds-recent{font-size:7px;line-height:1.45;color:var(--ink-soft);margin-top:5px}
 
-  /* ============================================================
-     v0.13 FASTING UPDATE — TIDEBOOK + VOYAGE CLOCK
-     ============================================================ */
+  /* Tidebook, fasting history and voyage clock */
   .fast-clock-card{background:linear-gradient(180deg,#edf9f7,#fff7de);border:3px solid var(--ink);border-radius:10px;padding:11px;box-shadow:3px 3px 0 var(--shadow);overflow:hidden}
   .fast-clock-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.fast-clock-top b{font-size:10px}.fast-clock-top span{font-size:8px;color:var(--ink-soft)}
   .fast-dial-wrap{display:grid;place-items:center;padding:3px 0 8px}
@@ -141,7 +139,7 @@
   .fast-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:7px;color:var(--ink-soft);margin-top:6px}.fast-legend i{display:inline-block;width:10px;height:5px;border:1px solid var(--ink);vertical-align:middle;margin-right:3px}.fast-legend .actual{background:var(--sea)}.fast-legend .target{background:var(--gold)}
   @media (max-width:520px){.fast-dial{width:min(166px,58vw)}.fast-calendar{gap:2px}.fast-day{min-height:47px;padding:3px}.log-tabs button{font-size:6px;padding:6px 2px}.harbour-clock{grid-template-columns:66px 1fr}.harbour-clock-face{width:64px;height:64px}.rhythm-head,.rhythm-row{grid-template-columns:42px 1fr}}
 
-/* MakeFast v0.23 resident relationships, trades + favours */
+/* Resident relationships, trades and favours */
 .resident .item-hint{white-space:normal;line-height:1.3}
 .mf-social-section{margin-top:12px}
 .mf-social-card{background:#e8f5ed;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow);margin:9px 0 12px}
@@ -167,12 +165,12 @@
 @media (max-width:520px){.mf-favour-bundles{grid-template-columns:1fr}.mf-trade-row{grid-template-columns:1fr}.mf-trade-row button{width:100%}}
 
 
-/* v0.23.4 social polish + homecoming */
+/* Resident memories, errands and arrival recap */
 .mf-heart-row{display:flex;gap:5px;margin-top:7px}.mf-heart-row i{font-style:normal;font-size:13px;line-height:1;color:#c6bfa6;text-shadow:1px 1px 0 rgba(24,49,58,.12)}.mf-heart-row i.on{color:var(--coral)}
 .mf-keepsake{margin-top:8px;background:#fff;border:2px dashed var(--ink);border-radius:6px;padding:7px;font-size:7px;line-height:1.45;color:var(--ink-soft)}.mf-keepsake b{display:block;color:var(--ink);font-size:7px;text-transform:uppercase;margin-bottom:2px}
 .mf-memory{background:#fff;border-left:4px solid var(--sea-dark);border-radius:5px;padding:7px 8px;margin:8px 0;font-size:8px;line-height:1.45;color:var(--ink-soft)}.mf-memory b{display:block;color:var(--ink);font-size:7px;text-transform:uppercase;margin-bottom:2px}
 .mf-errand-card{background:#eef7f4;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow)}.mf-errand-card h3{font-size:10px;margin:0 0 4px}.mf-errand-card p{font-size:8px;line-height:1.45;color:var(--ink-soft);margin:0 0 8px}
-.mf-manifest-list{display:grid;gap:6px}.mf-manifest-card{background:#fff;border:2px solid var(--ink);border-radius:7px;padding:8px;box-shadow:2px 2px 0 var(--shadow)}.mf-manifest-card h3{font-size:9px;margin:0 0 4px}.mf-manifest-card p{font-size:7px;line-height:1.45;color:var(--ink-soft);margin:0}.mf-manifest-route{display:inline-block;margin-top:5px;border:1px solid rgba(24,49,58,.45);border-radius:999px;padding:2px 5px;font-size:6px;font-weight:1000;color:var(--sea-dark);background:#eef7f4}.mf-complete-banner{background:#e3f2d7;border:3px solid var(--ink);border-radius:8px;padding:9px;margin:9px 0;box-shadow:3px 3px 0 var(--shadow)}.mf-complete-banner b{display:block;font-size:10px}.mf-complete-banner span{display:block;font-size:8px;line-height:1.4;color:var(--ink-soft);margin-top:3px}
+.mf-manifest-list{display:grid;gap:6px}.mf-manifest-card{background:#fff;border:2px solid var(--ink);border-radius:7px;padding:8px;box-shadow:2px 2px 0 var(--shadow)}.mf-manifest-card h3{font-size:9px;margin:0 0 4px}.mf-manifest-card p{font-size:7px;line-height:1.45;color:var(--ink-soft);margin:0}.mf-manifest-route{display:inline-block;margin-top:5px;border:1px solid rgba(24,49,58,.45);border-radius:999px;padding:2px 5px;font-size:6px;font-weight:1000;color:var(--sea-dark);background:#eef7f4}
 .mf-homecoming-list{display:grid;gap:6px;margin:10px 0}.mf-homecoming-item{display:grid;grid-template-columns:28px 1fr;gap:7px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:7px;padding:7px}.mf-homecoming-item i{font-style:normal;width:28px;height:28px;display:grid;place-items:center;background:#e8f5ed;border:2px solid var(--ink);border-radius:5px;font-size:13px}.mf-homecoming-item span{font-size:8px;line-height:1.4;color:var(--ink-soft)}
 
 </style>
@@ -243,11 +241,11 @@
 (()=>{
 'use strict';
 
-// v0.23.4 — people, trades, favours, connected errands and homecoming.
-// The fasting clock and voyage timing remain authoritative and unchanged.
+// MakeFast runtime
+// Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.24.19';
+const VERSION_LABEL='0.25.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -277,20 +275,15 @@ function zonedParts(ts=gameNow()){
 }
 function dayPhase(ts=gameNow()){const t=zonedParts(ts),h=t.hour+t.minute/60;if(h>=5&&h<7)return'dawn';if(h>=7&&h<17)return'day';if(h>=17&&h<19)return'golden';if(h>=19&&h<21)return'dusk';return'night'}
 
-// ============================================================
-// v0.14 WEATHER + ATMOSPHERE
-// Local weather is optional. Location coordinates are stored only in this
-// browser save and are sent to Open-Meteo when weather is refreshed.
-// The island clock remains controlled independently by Settings > Timezone.
-// ============================================================
+// Weather and atmosphere
+// Optional local weather uses saved approximate coordinates; timezone controls the island clock.
 const WEATHER_KINDS={
   clear:{label:'Clear',icon:'☀',gameKind:'clear'},cloudy:{label:'Cloudy',icon:'☁',gameKind:'clear'},mist:{label:'Mist',icon:'≋',gameKind:'mist'},
   drizzle:{label:'Drizzle',icon:'☂',gameKind:'rain'},rain:{label:'Rain',icon:'☂',gameKind:'rain'},storm:{label:'Storm',icon:'ϟ',gameKind:'rain'},
   snow:{label:'Snow',icon:'✦',gameKind:'rain'},breezy:{label:'Breezy',icon:'≈',gameKind:'breezy'}
 };
 
-// Tiny authored weather sprites for the HUD. These are rendered at 32x32 and
-// scaled with nearest-neighbour pixels so they stay crisp beside the clock.
+// Pixel weather glyphs for the HUD.
 function drawWeatherGlyph(canvasEl,kind='clear',ts=gameNow()){
   if(!canvasEl)return;const g=canvasEl.getContext('2d');if(!g)return;canvasEl.width=32;canvasEl.height=32;g.clearRect(0,0,32,32);g.imageSmoothingEnabled=false;
   const ink='#18313a',sun='#f4c95f',sunHi='#fff1a1',cloud='#f7f3dd',cloudShade='#bfd1cf',storm='#78909a',rain='#4ea7c2',snow='#fffdf1',wind='#76b7c7',moon='#ffe58a';
@@ -392,11 +385,8 @@ function updateAtmosphereUI(force=false){
   box.classList.toggle('hidden',!!minigame||state.activeView==='chart');
 }
 
-// ============================================================
-// 1. CONTENT DATABASE
-// Add names, prose, projects, discoveries, biomes and events here.
-// The game engine below consumes these records instead of owning them.
-// ============================================================
+// Content database
+// Names, prose, projects, discoveries, biomes and events live here.
 const CONTENT={
   ratios:[
     {fast:14,eat:10,label:'14:10',name:'Coastal',desc:'A gentle coastal rhythm.'},
@@ -648,8 +638,7 @@ function weightedPick(items,rand=Math.random,weightKey='weight'){if(!items?.leng
 function generateIslandName(rand=Math.random,suffixOverride=null){const a=CONTENT.names.islandPrefixes[Math.floor(rand()*CONTENT.names.islandPrefixes.length)],b=suffixOverride||CONTENT.names.islandSuffixes[Math.floor(rand()*CONTENT.names.islandSuffixes.length)];return `${a} ${b}`}
 function biomeDef(id){return CONTENT.biomes[id]||CONTENT.biomes.meadow}
 
-// Compatibility aliases keep the engine concise while all editable content
-// lives in CONTENT above.
+// Short aliases for frequently used content tables.
 const RATIO_OPTIONS=CONTENT.ratios;
 const ISLAND_NAMES_A=CONTENT.names.islandPrefixes;
 const ISLAND_NAMES_B=CONTENT.names.islandSuffixes;
@@ -665,9 +654,7 @@ const PROJECT_TEMPLATES=CONTENT.projects;
 const MINIGAME_META=CONTENT.minigames;
 const VOYAGE_EVENT_TYPES=CONTENT.voyageEvents;
 
-// v0.23.5: every arcade game has a normal at-sea entry point. These are not
-// extra demands on the player: they simply occupy some of the voyage moments
-// that were already interactive, and SAIL ON remains consequence-free.
+// Arcade games share the normal at-sea encounter scheduler.
 const AT_SEA_MINIGAME_SCENARIOS={
   ferry_lines:{scene:'trader',icon:'⌁',title:['A line across the water','A launch matching your speed'],log:['A harbour launch comes alongside just long enough to pass a heaving line cleanly.','A little service boat matches your speed and sends a line arcing across the gap.'],rewardKind:'bottle'},
   ferry_galley:{scene:'breeze',icon:'☕',title:['Tea in the cross-swell','A tray starts to wander'],log:['A ferry wake rolls under the boat just as mugs and a small tray come out on deck.','The sea turns lumpy for a moment and everything on the little refreshment tray begins to slide.'],rewardKind:'bottle'},
@@ -800,14 +787,12 @@ function playerParcelCount(){return(state.socialErrands||[]).filter(e=>e.status=
 function playerHelpLoadFits(type=state.boat.type){return playerPassengerCount()<=playerPassengerCapacity(type)&&playerParcelCount()<=playerParcelCapacity(type)}
 function playerHasPassengerSpace(type=state.boat.type){return playerPassengerCount()<playerPassengerCapacity(type)}
 function playerHasParcelSpace(type=state.boat.type){return playerParcelCount()<playerParcelCapacity(type)}
-function boatHelpCapacityHTML(type=state.boat.type){const pc=playerPassengerCount(),pp=playerPassengerCapacity(type),ec=playerParcelCount(),ep=playerParcelCapacity(type),over=pc>pp||ec>ep;return `<div class="card ${over?'danger':''}"><h3>People & parcels · ${state.boat.name}</h3><p>Passenger berths <b>${pc}/${pp}</b> · Parcel spaces <b>${ec}/${ep}</b><br>${over?'Finish the journeys already aboard before taking on more.':'These spaces are separate from the ordinary cargo hold.'}</p></div>`}
 function boatUpgradeDef(id){return CONTENT.boatVisuals.upgrades.find(u=>u.id===id)}
 function boatEffectiveStats(type=state.boat.type){const def=BOAT_TYPES.find(b=>b.id===type)||BOAT_TYPES[0],style=ensurePlayerBoatStyle(type),u=style.upgrades||{},base=def.stats||{handling:3,lookout:3,comfort:3};let handling=base.handling||3,lookout=base.lookout||3,comfort=base.comfort||3;for(const id of Object.keys(u).filter(k=>u[k])){const fit=boatUpgradeDef(id);handling+=fit?.handling||0;lookout+=fit?.lookout||0;comfort+=fit?.comfort||0}return{hold:playerBoatCapacity(type),berths:playerPassengerCapacity(type),parcels:playerParcelCapacity(type),handling:clamp(handling,1,6),lookout:clamp(lookout,1,6),comfort:clamp(comfort,1,6)}}
 function boatFindChanceBonus(type=state.boat.type){return clamp((boatEffectiveStats(type).lookout-3)*.025,-.05,.075)}
 function boatRewardThreshold(base,type=state.boat.type){return Math.round(base*clamp(1-(boatEffectiveStats(type).handling-3)*.04,.88,1.08))}
 function boatPassengerBondBonus(type=state.boat.type){const c=boatEffectiveStats(type).comfort;return c>=6?2:c>=4?1:0}
 function boatStatsHTML(type=state.boat.type,compact=false){const st=boatEffectiveStats(type),rows=[['Hold',st.hold,20,''],['Berths',st.berths,3,'green'],['Parcels',st.parcels,3,'green'],['Handling',st.handling,6,'coral'],['Lookout',st.lookout,6,''],['Comfort',st.comfort,6,'warm']];return `<div class="boat-stat-grid">${rows.map(([label,val,max,tone])=>`<div class="boat-stat"><div class="boat-stat-head"><b>${label}</b><span>${val}/${max}</span></div><div class="boat-stat-meter"><i class="${tone}" style="width:${Math.min(100,val/max*100)}%"></i></div></div>`).join('')}</div>${compact?'':`<p class="boat-stat-note">Handling helps strong at-sea scores turn into finds · Lookout improves find chances · Comfort makes passenger crossings warmer.</p>`}`}
-function boatChoiceCardHTML(b){const unlocked=b.need(),cap=playerBoatCapacity(b.id),fitsCargo=boatCargoUnits()<=cap,fitsHelp=playerHelpLoadFits(b.id),canSwap=unlocked&&fitsCargo&&fitsHelp,reason=!fitsCargo?'Unload some cargo first.':!fitsHelp?'Finish enough passenger or parcel journeys first.':'';if(!unlocked)return `<div class="card"><h3>? ${b.name}</h3><p>Keep exploring and enriching the archipelago to discover this boat.</p></div>`;return `<div class="card ${state.boat.type===b.id?'selected':''}" ${canSwap?`data-boat="${b.id}" style="cursor:pointer"`:''}><h3>${b.name}</h3><p>${b.desc}${reason?`<br>${reason}`:''}</p>${boatStatsHTML(b.id,true)}</div>`}
 function canAffordBoatUpgrade(isl,u){return Object.entries(u.cost||{}).every(([m,n])=>(isl.stock[m]||0)>=n)}
 function fitBoatUpgrade(isl,id){const u=boatUpgradeDef(id),style=ensurePlayerBoatStyle();if(!u||style.upgrades[id]||!canAffordBoatUpgrade(isl,u))return;Object.entries(u.cost).forEach(([m,n])=>isl.stock[m]-=n);style.upgrades[id]=true;state.journal.unshift(`${u.name} fitted to ${state.boat.name}.`);save();renderUI();toast(`${u.name} fitted.`)}
 function setBoatCosmetic(group,id){const style=ensurePlayerBoatStyle();style[group]=id;save();renderVoyagePanel()}
@@ -845,19 +830,15 @@ function materializeVoyageEvent(def,rr=Math.random){
   const reward=def.rewards?.length?weightedPick(def.rewards,rr):null,pool=def.interaction?.minigames||null,mg=pool?.length?pool[Math.floor(rr()*pool.length)]:def.interaction?.minigame||null;return{type:def.id,scene:def.scene||def.id,icon:def.icon,title:Array.isArray(def.title)?def.title[Math.floor(rr()*def.title.length)]:def.title,log:Array.isArray(def.log)?def.log[Math.floor(rr()*def.log.length)]:def.log,ambient:!!def.ambient,minigame:mg,rewardKind:reward?.kind||null,contentId:def.id};
 }
 
-// ============================================================
-// 2. EFFECT REGISTRY
-// Project records declare effects; the engine only dispatches them.
-// ============================================================
+// Project effect registry
+// Project records declare effects; this registry applies them.
 const PROJECT_EFFECTS={
   feature({island,effect}){if(effect.feature&&!island.features.includes(effect.feature))island.features.push(effect.feature)},
   reveal_route({island}){const n=generateUnchartedIslandFrom(island);n.known=true;state.islands.push(n);ensureRoute(island.id,n.id,planSafeCourse(island,n));const line=contentLine('copy.journal.routeRevealed',{destination:n.name});island.notes.unshift(line);state.journal.unshift(line)}
 };
 function applyProjectEffects(island,project,template){(template.effects||[{type:'feature',feature:template.feature}]).forEach(effect=>PROJECT_EFFECTS[effect.type]?.({island,project,template,effect}))}
 
-// ============================================================
-// 3. GAME STATE + RULES
-// ============================================================
+// State, persistence and rules
 function starterIsland(){const i={id:'home',name:'Home Harbour',x:0,y:0,biome:'meadow',visits:1,known:true,home:true,features:['dock','cottage'],story:0,notes:['Your little harbour.'],createdAt:nowReal(),stock:{timber:1},projects:[],residents:[makeResident('home-orla','Orla Reed')],vesselBuilds:[],commissionedVessels:[],shape:makeIslandShape('home')};return i}
 function makeIsland(name,x,y,biome='meadow'){const id=uid('isl');return{id,name,x,y,biome,visits:0,known:true,home:false,features:['jetty'],story:0,notes:[],createdAt:nowReal(),stock:{},projects:[],residents:[],vesselBuilds:[],commissionedVessels:[],shape:makeIslandShape(id)}}
 
@@ -910,11 +891,8 @@ const pointer={x:0,y:0,down:false,startX:0,startY:0};const canvasPointerIds=new 
 let voyageMicroEvent=null,voyageMicroNext=0,lastTrafficVisualReal=0,lastPaintAt=0;const approachSpriteCache=new Map(),terrainSpriteCache=new Map();
 
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');positionFloatingOverlays();clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
-// ============================================================
-// ADAPTIVE SOUNDTRACK v0.22
-// Integrated from the Adaptive Jingle Composer: authored musical worlds,
-// phrase-boundary transitions, palette morphing and shared musical SFX.
-// ============================================================
+// Adaptive soundtrack
+// Authored phrases, phrase-boundary transitions, palette morphing and musical SFX.
 function audioVolume(){return clamp(Number(state.settings?.soundVolume??.34),0,1)}
 function musicVolume(){return clamp(Number(state.settings?.musicVolume??.62),0,1)}
 function effectsVolume(){return clamp(Number(state.settings?.effectsVolume??.72),0,1)}
@@ -1088,9 +1066,7 @@ const AdaptiveMusic=(()=>{
   return{state:A,ensure,start,stop,wake,sync,cue,status,levels,tone:sfxOsc,swell,WORLDS,PALETTES};
 })();
 const audioEngine=AdaptiveMusic.state;
-function ensureAudio(){const a=AdaptiveMusic.ensure();if(a&&state.settings.musicEnabled&&!AdaptiveMusic.state.playing)AdaptiveMusic.start();return a}
 function tone(freq,when,duration=.34,gain=.035,type='sine',echo=.15){const a=AdaptiveMusic.ensure();if(!a)return;AdaptiveMusic.tone(freq,when,duration,gain,type,echo)}
-function seaSwell(strength=.55){AdaptiveMusic.swell(strength)}
 function beep(type='bell'){if(!state.sound||audioVolume()<=0)return;AdaptiveMusic.cue(type)}
 function playCue(type){if(!state.sound)return;AdaptiveMusic.cue(type)}
 function adaptiveMusicSync(force=false){if(typeof makeFastAudioUnlocked!=='undefined'&&!makeFastAudioUnlocked)return;if(state.sound&&state.settings.musicEnabled){AdaptiveMusic.ensure();AdaptiveMusic.start();AdaptiveMusic.sync(force)}else{AdaptiveMusic.stop();AdaptiveMusic.levels()}}
@@ -1114,11 +1090,8 @@ function voyageRemainingMs(){if(!state.voyage)return 0;const v=state.voyage;if(v
 function shoreElapsed(){return Math.max(0,gameNow()-state.phaseStartedAt)}
 function selectedDest(){return state.selectedDestinationId==='uncharted'?null:getIsland(state.selectedDestinationId)}
 
-// ============================================================
-// WORLD IDENTITY INTEGRITY
-// Names are presentation; IDs are identity. These helpers keep captains,
-// passengers, residents, boats and islands from becoming visually ambiguous.
-// ============================================================
+// World identity
+// Stable IDs keep residents, captains, boats and islands distinct.
 function rootPersonRefs(root=state){
   const refs=[],seen=new Set(),add=p=>{if(p?.id&&!seen.has(p.id)){seen.add(p.id);refs.push(p)}};
   (root?.islands||[]).forEach(i=>(i.residents||[]).forEach(add));(root?.boatPassengers||[]).forEach(x=>add(x.person));
@@ -1139,16 +1112,15 @@ function worldVesselNameSet(root=state,exceptVesselId=null){const set=new Set();
 function uniqueIslandNameFromSeed(seed,used,suffixOverride=null){const rr=rng(hashString(String(seed)+'island-name'));for(let k=0;k<80;k++){const candidate=generateIslandName(rr,suffixOverride);if(!used.has(nameKey(candidate)))return candidate}return uniqueDisplayName(suffixOverride?`Quiet ${suffixOverride}`:'Quiet Island',used)}
 function repairIdentityIntegrity(root){
   if(!root)return root;
-  // People: one display name per persistent person.
+  // Persistent people use unique display names.
   const people=rootPersonRefs(root),usedPeople=new Set();for(const p of people){let nm=String(p.name||'').trim();if(!nm||usedPeople.has(nameKey(nm)))nm=uniquePersonName(p.id||nm,usedPeople);p.name=nm;usedPeople.add(nameKey(nm))}
-  // Player boats keep their chosen names where possible; duplicate player hull names receive a gentle suffix.
+  // Preserve player boat names while resolving duplicates.
   const usedBoats=new Set();for(const [type,st] of Object.entries(root.boatStyles||{})){if(!st?.name)continue;st.name=uniqueDisplayName(st.name,usedBoats);usedBoats.add(nameKey(st.name))}if(root.boatStyles?.[root.boat?.type]?.name)root.boat.name=root.boatStyles[root.boat.type].name;else if(root.boat?.name)usedBoats.add(nameKey(root.boat.name));
-  // NPC vessel names are guaranteed unique against player boats and each other.
+  // Keep NPC vessel names unique across the fleet.
   for(const v of root.world?.vessels||[]){let nm=String(v.name||'').trim();if(!nm||usedBoats.has(nameKey(nm)))nm=uniqueVesselName(v.id||`${v.homeId}-${v.typeId}`,usedBoats);v.name=nm;usedBoats.add(nameKey(nm))}
-  // Islands also use names as map labels, so repair duplicate labels while IDs/routes remain untouched.
+  // Repair duplicate island labels without changing IDs or routes.
   const usedIslands=new Set();for(const i of root.islands||[]){let nm=String(i.name||'').trim()||'Unnamed Island';if(usedIslands.has(nameKey(nm)))nm=uniqueIslandNameFromSeed(i.id||nm,usedIslands,nm.endsWith('Cove')?'Cove':null);i.name=nm;usedIslands.add(nameKey(nm))}
-  // Captains: bind a real identity to each vessel. A resident may captain one vessel only,
-  // and anyone currently travelling cannot simultaneously be assigned to the helm.
+  // Bind one eligible resident identity to each vessel captain.
   const busy=aboardPersonIds(root),usedCaptainIds=new Set(),personNames=new Set(rootPersonRefs(root).map(p=>nameKey(p.name)).filter(Boolean));const islandById=id=>(root.islands||[]).find(i=>i.id===id);
   for(const v of (root.world?.vessels||[]).slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)||String(a.id).localeCompare(String(b.id)))){
     const home=islandById(v.homeId),type=NPC_VESSEL_TYPES.find(t=>t.id===v.typeId)||NPC_VESSEL_TYPES[0],residents=home?.residents||[];let captain=null;
@@ -1158,19 +1130,15 @@ function repairIdentityIntegrity(root){
     if(captain){v.captainPersonId=captain.id;v.captainName=captain.name;v.captainSource='resident';usedCaptainIds.add(captain.id);personNames.add(nameKey(captain.name))}
     else {let crewName=(v.captainSource==='crew'&&v.captainName&&!personNames.has(nameKey(v.captainName)))?v.captainName:uniquePersonName(`crew-${v.id}`,personNames);v.captainPersonId=`crew:${v.id}`;v.captainName=crewName;v.captainSource='crew';usedCaptainIds.add(v.captainPersonId);personNames.add(nameKey(crewName))}
   }
-  // A captain cannot retain a stale waiting lift request from an older save.
+  // Clear stale lift requests for assigned captains.
   const residentCaptains=new Set((root.world?.vessels||[]).filter(v=>v.captainSource==='resident').map(v=>v.captainPersonId));for(const r of root.liftRequests||[])if(r.status==='waiting'&&residentCaptains.has(r.personId))r.status='cancelled';return root;
 }
 function makeWorldResident(seedKey='resident',fixedName=null,biome='meadow'){return makeResident(seedKey,fixedName,biome,worldPersonNameSet())}
 function generateUniqueIslandName(rand=Math.random,suffixOverride=null){const used=new Set((state.islands||[]).map(i=>nameKey(i.name)));for(let k=0;k<80;k++){const candidate=generateIslandName(rand,suffixOverride);if(!used.has(nameKey(candidate)))return candidate}return uniqueIslandNameFromSeed(`${nowReal()}-${state.islands.length}`,used,suffixOverride)}
 function boatNameTaken(name,exceptType=state.boat.type){const key=nameKey(name);if(!key)return false;if((state.world?.vessels||[]).some(v=>nameKey(v.name)===key))return true;return Object.entries(state.boatStyles||{}).some(([type,st])=>type!==exceptType&&nameKey(st?.name)===key)}
 
-// ============================================================
-// LIVING ARCHIPELAGO SIMULATION
-// Persistent NPC vessels move residents and stock whether or not the player
-// is currently looking at the chart. Verified fasting history is never invented;
-// background captain passages live in a separate, explicitly assumed Tidebook layer.
-// ============================================================
+// Living archipelago simulation
+// NPC vessels move residents and stock independently of verified player fasting history.
 let worldSimulating=false;
 function worldState(){if(!state.world)state.world={lastSimAt:nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0,lastSettlementDay:null};return state.world}
 function connectedIslands(id){const ids=[];state.routes.forEach(r=>{if(r[0]===id)ids.push(r[1]);else if(r[1]===id)ids.push(r[0])});return [...new Set(ids)].map(getIsland).filter(i=>i?.known)}
@@ -1244,7 +1212,7 @@ function nextNpcActionAt(v,isl,at,rr=Math.random){
 }
 function trafficCanDepart(v,origin,at,rr=Math.random){
   const role=vesselType(v.typeId).role,phase=dayPhase(at),weather=worldWeather(at);
-  // Essential local services keep going; discretionary traffic becomes quieter in poor weather and darkness.
+  // Weather and darkness reduce discretionary background traffic.
   if(weather==='rain'&&!['ferry','mail','tender'].includes(role)&&rr()<.42)return false;
   if(phase==='night'&&!['ferry','mail','fishing','tender'].includes(role)){
     const beacon=completedFeature(origin,'lighthouse');if(!beacon&&rr()<.68)return false;if(beacon&&rr()<.16)return false;
@@ -1327,9 +1295,7 @@ function worldTrialSnapshot(){
   const assigned=state.islands.reduce((sum,i)=>sum+(i.projects||[]).reduce((a,p)=>a+Object.values(p.contributed||{}).reduce((m,n)=>m+(+n||0),0),0),0);
   return {log:w.log.length,known:state.islands.filter(i=>i.known).length,stock,assigned,travellers:state.liftRequests.filter(r=>r.status==='waiting').length,sailing:w.vessels.filter(v=>v.status==='sailing').length,population:state.islands.reduce((n,i)=>n+population(i),0),projectsStarted:state.islands.reduce((n,i)=>n+(i.projects||[]).length,0),projectsComplete:state.islands.reduce((n,i)=>n+(i.projects||[]).filter(p=>p.complete).length,0),projectsActive:state.islands.reduce((n,i)=>n+(i.projects||[]).filter(p=>!p.complete).length,0),vessels:w.vessels.length,backgroundPassages:(state.backgroundPassages||[]).length,verifiedSessions:(state.sessions||[]).filter(x=>!x.simulated).length};
 }
-// Long absences should leave a visibly changed archipelago, not merely advanced clocks.
-// This layer is intentionally constructive: residents settle, communities choose work and
-// useful materials find their way into active builds while the player is away.
+// Long-absence simulation advances settlement, work and material movement.
 function settlementResidentCap(isl){
   let cap=isl.home?12:10;if(completedFeature(isl,'cottage_row'))cap+=4;if(completedFeature(isl,'market_hall'))cap+=2;if(completedFeature(isl,'ferry'))cap+=2;return Math.min(18,cap)
 }
@@ -1362,7 +1328,7 @@ function backgroundBoatbuilding(isl,at,rr){
 }
 function advanceIslandSettlementDay(isl,at,demo=false){
   if(!isl?.known)return;ensureIslandData(isl);const day=Math.floor(at/86400000),rr=rng(hashString(`settlement:${state.worldSeed}:${isl.id}:${day}`));
-  // A first landfall should become a place, not an empty marker on the chart.
+  // Seed basic settlement state on first landfall.
   if(!isl.home&&population(isl)===0){addBackgroundResident(isl,at,rr,'came ashore from a neighbouring island');addBackgroundResident(isl,at+1,rr,'arrived on the next little boat')}
   const pop=population(isl),cap=settlementResidentCap(isl);if(pop<cap){let chance=pop<3?.18:pop<6?.095:pop<10?.045:.018;if(completedFeature(isl,'market_stall'))chance+=.012;if(completedFeature(isl,'ferry'))chance+=.012;if(rr()<chance)addBackgroundResident(isl,at,rr,rr()<.5?'arrived with one of the island boats':'decided to stay after a harbour visit')}
   const active=isl.projects.filter(p=>!p.complete),limit=population(isl)>=10&&isl.projects.filter(p=>p.complete).length>=3?2:1;if(active.length<limit&&(isl.projects.length===0||rr()<.085))startBackgroundProject(isl,at,rr);
@@ -1395,13 +1361,11 @@ function shiftFutureWorldBack(real,delta){
   const w=worldState();w.vessels.forEach(v=>{['departAt','arrivalAt','nextActionAt','createdAt'].forEach(k=>{if(v[k]>real)v[k]-=delta})});w.log.forEach(e=>{if(e.at>real)e.at-=delta});state.liftRequests.forEach(r=>{if(r.createdAt>real)r.createdAt-=delta});state.backgroundPassages.forEach(r=>{if(r.endedAt>real){r.endedAt-=delta;r.startedAt-=delta}});state.islands.forEach(i=>{(i.residents||[]).forEach(p=>{if(p.joinedAt>real)p.joinedAt-=delta});(i.projects||[]).forEach(p=>{if(p.startedAt>real)p.startedAt-=delta;if(p.completedAt>real)p.completedAt-=delta});(i.vesselBuilds||[]).forEach(b=>{if(b.startedAt>real)b.startedAt-=delta;if(b.completedAt>real)b.completedAt-=delta})});w.lastSimAt=real;w.lastSettlementDay=Math.floor(real/86400000);state.idle.lastPassageAt=real;if(state.phaseStartedAt>real)state.phaseStartedAt-=delta
 }
 function demoHistoryProfile(dayIndex,at){
-  // Prototype-only history generator. The living world still makes its normal daily passage;
-  // this profile controls how that day appears in Tidebook so charts can be stress-tested
-  // with believable manual/assumed/missing variation without claiming real user data.
+  // Prototype Tidebook history generator for repeatable chart testing.
   const rr=rng(hashString(`demo-history:${state.worldSeed}:${dayIndex}:${Math.floor(at/86400000)}`)),target=clamp(+state.settings.defaultFastHours||16,12,20),weekend=(dayIndex%7===0||dayIndex%7===6);
   if(rr()<.075)return{kind:'gap'};
   const assumed=rr()<.12;
-  // Docking time clusters around late morning, with weekends and a gentle multi-week drift.
+  // Prototype docking times use a late-morning distribution with weekly drift.
   const dockBase=660+(target-16)*25+(weekend?28:0)+Math.sin(dayIndex/8)*18;
   const dockMinute=clamp(dockBase+(rr()+rr()+rr()-1.5)*(assumed?28:52),7*60,15*60);
   const localNow=minuteOfDayInZone(at),endedAt=at+(dockMinute-localNow)*60000;
@@ -1446,25 +1410,9 @@ function syncPlayerTrafficEncounters(){
 function showOfflineWorldSummary(){
   const w=worldState(),items=w.pendingSummary||[];if(!items.length)return;const top=items.slice(-8).reverse();w.pendingSummary=[];save();showModal(`<h2>${contentLine('copy.world.summaryTitle')}</h2><p>${contentLine('copy.world.quiet')}</p><div class="section">${top.map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${fmtDate(e.at)} · ${formatClockInZone(e.at,state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE ARCHIPELAGO</button></div>`)}
 
-function totalFastMs(){
-  let total=state.sessions.filter(s=>!s.simulated).reduce((a,s)=>a+(s.durationMs||0),0);
-  if((state.phase==='fasting'||state.phase==='arrived')&&state.voyage&&!state.voyage.simulated) total+=actualFastMs();
-  return total;
-}
-function totalShoreMs(){return Math.max(0,(nowReal()-state.createdAt)-totalFastMs())}
-function rollingStats(days=30){
-  const from=nowReal()-days*86400000; const sessions=state.sessions.filter(s=>!s.simulated&&s.endedAt>=from);
-  if(!sessions.length)return {avgFast:0,avgEat:0,count:0};
-  const avgFast=sessions.reduce((a,s)=>a+s.durationMs,0)/sessions.length;
-  const intervals=[]; for(let i=1;i<sessions.length;i++){const d=sessions[i].startedAt-sessions[i-1].endedAt;if(d>0&&d<36*3600000)intervals.push(d)}
-  const avgEat=intervals.length?intervals.reduce((a,b)=>a+b,0)/intervals.length:Math.max(0,86400000-avgFast);
-  return {avgFast,avgEat,count:sessions.length};
-}
 
 
-// ============================================================
-// v0.13 FASTING UPDATE — HISTORY, CALENDAR, TRENDS + LIVE CLOCK
-// ============================================================
+// Fasting history, calendar, trends and live clock
 const fastingLogUI={tab:'overview',range:30,year:null,month:null};
 function realFastingSessions(){return state.sessions.filter(s=>!s.simulated&&Number.isFinite(+s.endedAt)&&Number.isFinite(+s.startedAt)&&Number.isFinite(+s.durationMs)).slice().sort((a,b)=>a.endedAt-b.endedAt)}
 function zonedYMD(ts){
@@ -1652,11 +1600,8 @@ function fitResponsiveStage(){
   const logicalW=640,logicalH=clamp(Math.round(logicalW*r.height/Math.max(1,r.width)),360,1180);setCanvasSize(logicalW,logicalH);c.style.width='100%';c.style.height='100%';c.style.left='0';c.style.top='0';c.style.transform='none';
   const pal=typeof timePalette==='function'?timePalette():{water:'#4d9fbe'};wrap.style.background=pal.water;main.style.background=pal.water;
 }
-// ============================================================
-// v0.23.7 CLEAR-WATER ROUTING
-// Sailed lanes reserve clear water. Courses may bend around intervening
-// islands, but this never alters fasting/voyage duration or destination.
-// ============================================================
+// Clear-water routing
+// Course geometry may bend around islands; fasting duration remains independent of route shape.
 const ROUTE_ISLAND_CLEARANCE=.74;
 const ROUTE_PLACEMENT_CLEARANCE=.66;
 function routeKey(a,b){return String(a)<String(b)?`${a}|${b}`:`${b}|${a}`}
@@ -1739,9 +1684,7 @@ function fitChartToKnown(){chartView.zoom=1;chartView.panX=0;chartView.panY=0;ch
 function zoomChart(delta){chartView.zoom=clamp(chartView.zoom+delta,.48,6.4);chartView.needsFit=false}
 function chartMapGeometry(){
   const vr=visibleSceneRect(),b=chartBounds(),padX=Math.max(42,vr.w*.085),padTop=52,padBottom=52,usableW=Math.max(120,vr.w-padX*2),usableH=Math.max(100,vr.h-padTop-padBottom);
-  // v0.23.6: geographic spacing now scales one-for-one with zoom. Earlier builds
-  // compressed spacing above 2.25x while island art kept growing, so close islands
-  // inevitably collided even though the camera appeared to keep zooming.
+  // Geographic chart spacing scales directly with zoom.
   const sx=usableW/b.spanX,sy=usableH/(b.spanY*.65),baseScale=Math.min(sx,sy,118),spatialZoom=chartView.zoom,scale=baseScale*spatialZoom,cx=vr.x+vr.w/2+chartView.panX,cy=vr.y+padTop+usableH/2+chartView.panY;
   return{vr,...b,baseScale,spatialZoom,scale,cx,cy,mapXY:(x,y)=>({x:cx+(x-b.midX)*scale,y:cy+(y-b.midY)*scale*.65})};
 }
@@ -1781,7 +1724,7 @@ function ensureArrived(){
 function buildVoyageEvents(voyageId,ctx={}){
   const rr=rng(hashString(String(voyageId)+'makefast-events-v235')),slots=[.08,.21,.36,.52,.68,.84],events=[],arcade=ctx.arcade||null;
   const eligible=VOYAGE_EVENT_TYPES.filter(e=>eventEligible(e,ctx)),ambientPool=eligible.filter(e=>e.ambient),interactivePool=eligible.filter(e=>!e.ambient),classic=[];
-  // Keep one quiet sea moment and two of the original encounter stories per voyage.
+  // Build a balanced mix of ambient and interactive voyage events.
   if(ambientPool.length){const a=weightedPick(ambientPool,rr);if(a)classic.push(materializeVoyageEvent(a,rr))}
   let pool=[...interactivePool];
   while(classic.length<3&&pool.length){
@@ -1795,7 +1738,7 @@ function buildVoyageEvents(voyageId,ctx={}){
   return events;
 }
 function buildPreviewVoyageEvents(voyageId,ctx={}){
-  // A sea trial is a showcase, not a lottery: it deliberately exercises ambience, cargo, wreckage and people.
+  // Sea trials use a fixed event mix for repeatable testing.
   const rr=rng(hashString(String(voyageId)+'makefast-preview-events'));
   const slots=[.06,.18,.34,.50,.67,.83];
   const preferred=['arcade_ferry','shipwreck','arcade_container','seaglass','arcade_rescue','arcade_speedboat'];
@@ -2087,7 +2030,6 @@ function updateVoyageEncounterOverlay(){
 
 function passageTabsHTML(){return `<div class="passage-tabs"><button data-passage-tab="clock" class="${passageUI.tab==='clock'?'active':''}">◷ CLOCK & CROSSING</button><button data-passage-tab="deck" class="${passageUI.tab==='deck'?'active':''}">▣ DECK & BOAT</button></div>`}
 function bindPassageTabs(){$$('[data-passage-tab]').forEach(b=>b.onclick=()=>{passageUI.tab=b.dataset.passageTab;renderVoyagePanel();$('#panelBody').scrollTop=0})}
-function courseName(){if(state.selectedDestinationId==='uncharted')return'Open water';const d=selectedDest();return d?(d.known?d.name:`${d.name} ?`):'No course marked'}
 function residentHomeIsland(id){return state.islands.find(i=>i.residents?.some(p=>p.id===id))||null}
 function residentById(id){for(const i of state.islands){const p=i.residents?.find(x=>x.id===id);if(p)return p}for(const v of worldState().vessels){const ps=(v.passengers||[]).find(x=>x.person?.id===id);if(ps)return ps.person}return null}
 function residentLore(p,isl){
@@ -2220,13 +2162,10 @@ function resetGame(){showModal(`<h2>Reset MakeFast?</h2><p>This permanently clea
 
 function islandSummary(i){ensureIslandData(i);const pop=population(i),active=i.projects.filter(p=>!p.complete),done=i.projects.filter(p=>p.complete);if(active.length)return`${active.map(p=>projectTemplate(p.templateId)?.name).filter(Boolean).slice(0,2).join(' and ')} ${active.length===1?'is':'are'} taking shape here. ${pop} resident${pop===1?'':'s'} live on the island.`;if(done.length)return`${projectTemplate(done[done.length-1].templateId)?.name||'A new place'} now stands here. ${pop} resident${pop===1?'':'s'} call the island home.`;const special=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty','windmill_ruin'].includes(f));if(!special.length)return`${pop?`${pop} resident${pop===1?'':'s'} share`:'Quiet paths cross'} a mostly undeveloped ${i.biome} shore.`;return`${featureLabel(special[special.length-1])} now shapes the island. ${pop} resident${pop===1?'':'s'} live here.`;}
 
-function featureWords(i){const a=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty'].includes(f)).slice(-3).map(featureLabel);return a.length?a.join(' • '):'quiet shoreline'}
 function findHTML(d){return `<div class="find"><div class="find-icon">${d.icon}</div><div><b>${d.name}</b><small>${d.desc}</small></div></div>`}
 
-// ============================================================
-// 4. GAMEPLAY PLUG-INS
-// Each minigame registers create/render/input handlers in MINIGAME_PLUGINS.
-// ============================================================
+// Minigame plug-ins
+// Each game registers create, render and input handlers.
 function arcadeScoreRecord(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};return state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]})}
 function arcadeBest(id){return arcadeScoreRecord(id).best||0}
 function randomArcadeGameId(){const ids=Object.keys(MINIGAME_META);return ids[Math.floor(Math.random()*ids.length)]||'ferry_lines'}
@@ -2343,9 +2282,7 @@ window.addEventListener('pointerup',e=>finishCanvasPointer(e,false));window.addE
 canvas.addEventListener('wheel',e=>{if(state.activeView!=='chart'||minigame)return;e.preventDefault();zoomChart(e.deltaY<0?.15:-.15)},{passive:false});
 window.addEventListener('keydown',e=>{if(!minigame)return;if(e.key==='Escape'){endMinigame('leave');return}MINIGAME_PLUGINS[minigame.type]?.key?.(minigame,e)});
 function minigamePointer(type,x,y){if(!minigame)return;MINIGAME_PLUGINS[minigame.type]?.pointer?.(minigame,type,x,y)}
-// ============================================================
-// 5. RENDERER
-// ============================================================
+// Renderer
 function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function pxText(text,x,y,c='#18313a',size=10,align='left'){ctx.fillStyle=c;ctx.font=`bold ${size}px monospace`;ctx.textAlign=align;ctx.fillText(text,Math.round(x),Math.round(y));ctx.textAlign='left'}
 function poly(points,c,stroke=null,lw=2){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
@@ -2353,28 +2290,19 @@ function line(x1,y1,x2,y2,c='#18313a',lw=2){ctx.strokeStyle=c;ctx.lineWidth=lw;c
 function circle(x,y,r,c,stroke=null,lw=2){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
 function roundedRect(x,y,w,h,r,c,stroke=null,lw=2){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fillStyle=c;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
 function shadow(x,y,w,h,a=.14){ctx.fillStyle=`rgba(18,46,55,${a})`;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
-function pixelCloud(x,y,s=1){rect(x,y,30*s,8*s,'#fff8df');rect(x+8*s,y-6*s,15*s,8*s,'#fff8df');rect(x+17*s,y-11*s,10*s,6*s,'#fffdf1');rect(x+5*s,y-10*s,7*s,5*s,'#fffdf1')}
 function drawSparkle(x,y,c='#fffdf1'){rect(x,y,1,1,c);rect(x-2,y,5,1,c);rect(x,y-2,1,5,c)}
-function drawWaveTile(x,y,phase=0){const c1='rgba(255,255,255,.10)',c2='rgba(255,255,255,.17)',ph=dayPhase(),a=ph==='night'?'#244f6a':ph==='dusk'?'#477f99':ph==='dawn'?'#6aa8bd':'#4d9fbe',b=ph==='night'?'#214760':ph==='dusk'?'#42758e':ph==='dawn'?'#639eb3':'#4596b5';rect(x,y,16,16,a);rect(x,y+8,16,8,b);if(((x+y+phase)>>4)%2===0){rect(x+2,y+4,6,2,c1);rect(x+9,y+10,4,1,c2)}else{rect(x+6,y+3,7,2,c2);rect(x+2,y+11,5,1,c1)}}
 function drawWaterField(){const W=canvas.width,H=canvas.height,pal=timePalette();rect(0,0,W,H,pal.water);const drift=(frame*.018)%34;for(let y=10;y<H+20;y+=24){for(let x=-36;x<W+36;x+=48){const xx=x+((((y/24)|0)%2)?drift:-drift);rect(xx,y,15,2,'rgba(255,255,255,.11)');rect(xx+19,y+9,8,1,'rgba(255,255,255,.07)')}}}
-function ellipseFill(x,y,rx,ry,c){ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=c;ctx.fill()}
-// ============================================================
-// v0.10 SPRITE-FIRST VESSEL ART
-// Boats are authored as low-resolution pixel sprites, cached, then scaled with
-// nearest-neighbour sampling. The world never rotates the sprite artwork: heading
-// only mirrors the consistent 3/4 RPG perspective, keeping pixel edges clean.
-// ============================================================
+// Vessel sprites
+// Low-resolution boat art is cached and scaled with nearest-neighbour sampling.
 const boatSpriteCache=new Map();
 function hexRGB(hex){hex=String(hex||'#777').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return[(n>>16)&255,(n>>8)&255,n&255]}
 function rgbHex(r,g,b){return'#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('')}
 function shadeHex(hex,delta){const [r,g,b]=hexRGB(hex);return rgbHex(r+delta,g+delta,b+delta)}
-function mixHex(a,b,t=.5){const A=hexRGB(a),B=hexRGB(b);return rgbHex(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t)}
 function psRect(g,x,y,w,h,c){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function psLine(g,x0,y0,x1,y1,c,w=1){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);let dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1,err=dx+dy;g.fillStyle=c;while(true){g.fillRect(x0-Math.floor((w-1)/2),y0-Math.floor((w-1)/2),w,w);if(x0===x1&&y0===y1)break;const e2=2*err;if(e2>=dy){err+=dy;x0+=sx}if(e2<=dx){err+=dx;y0+=sy}}}
 function psPoly(g,pts,c){const minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1])));g.fillStyle=c;for(let y=minY;y<=maxY;y++){const hits=[];for(let i=0,j=pts.length-1;i<pts.length;j=i++){const a=pts[i],b=pts[j];if((a[1]>y)!==(b[1]>y)){const x=a[0]+(y-a[1])*(b[0]-a[0])/(b[1]-a[1]);hits.push(x)}}hits.sort((a,b)=>a-b);for(let i=0;i<hits.length-1;i+=2){const x0=Math.ceil(hits[i]),x1=Math.floor(hits[i+1]);if(x1>=x0)g.fillRect(x0,y,x1-x0+1,1)}}}
 function psOutlinePoly(g,pts,fill,stroke='#18313a',w=1){psPoly(g,pts,fill);for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];psLine(g,a[0],a[1],b[0],b[1],stroke,w)}}
 function psCircle(g,cx,cy,r,c){g.fillStyle=c;for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)if(x*x+y*y<=r*r)g.fillRect(cx+x,cy+y,1,1)}
-function psRing(g,cx,cy,r,c,inner){psCircle(g,cx,cy,r,c);psCircle(g,cx,cy,inner,'rgba(0,0,0,0)')}
 function pointInPoly(x,y,pts){let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1],hit=((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);if(hit)inside=!inside}return inside}
 function psSail(g,pts,a,pal){psOutlinePoly(g,pts,a.sailBase||'#fff3cf',pal.ink,1);const minX=Math.floor(Math.min(...pts.map(p=>p[0]))),maxX=Math.ceil(Math.max(...pts.map(p=>p[0]))),minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1]))),accent=a.sailAccent||'#c86355';for(let y=minY+1;y<maxY;y++)for(let x=minX+1;x<maxX;x++){if(!pointInPoly(x+.5,y+.5,pts))continue;let paint=false;if(a.sailPattern==='stripe')paint=((x+y)%9<2);else if(a.sailPattern==='panel')paint=x>minX+(maxX-minX)*.58;else if(a.sailPattern==='patch')paint=((x>>2)+(y>>2))%5===0;if(paint)psRect(g,x,y,1,1,accent)}psLine(g,pts[0][0],pts[0][1]+1,pts[1][0],pts[1][1],shadeHex(a.sailBase||'#fff3cf',-26),1)}
 function boatPalette(a){const hull=a.hull||'#416f83',trim=a.trim||'#e8dfbd';return{ink:'#17313a',ink2:'#26454c',hull,hullDark:shadeHex(hull,-42),hullMid:shadeHex(hull,-22),hullLight:shadeHex(hull,34),trim,trimDark:shadeHex(trim,-35),deck:'#b77a45',deckDark:'#805330',deckLight:'#d59b5c',cream:'#f5e4b8',window:'#77b6c7',windowDark:'#315d68',metal:'#8b9c95',rope:'#5d3c29',gold:'#d7a948',white:'#fff3cf',red:'#c75f52',green:'#4f7964'}}
@@ -2400,31 +2328,40 @@ function drawCabinSprite(g,a,pal){commonHull(g,a,pal,'cabin');const roof=(a.roof
 function drawSailerSprite(g,a,pal){commonHull(g,a,pal,'sailer');psLine(g,38,7,38,48,pal.rope,2);psSail(g,[[36,9],[13,31],[36,37]],a,pal);psSail(g,[[40,12],[65,27],[40,38]],a,pal);psSail(g,[[35,18],[24,32],[35,35]],{...a,sailAccent:mixHex(a.sailAccent||pal.red,pal.hull,.3)},pal);psLine(g,38,8,13,44,pal.rope,1);psLine(g,38,8,69,35,pal.rope,1);drawPennant(g,38,4,a,pal,1);drawCrate(g,50,41,pal,1);psRect(g,21,43,8,4,pal.cream);drawRoleDetails(g,a,pal,'sailer');drawUpgradeDetails(g,a,pal,'sailer')}
 function createBoatSprite(type,a,mirror=false){const key=JSON.stringify([type,a.hull,a.trim,a.sailBase,a.sailAccent,a.sailPattern,a.pennant,a.role,a.variant,a.roofTone,a.upgrades,mirror,dayPhase()]);if(boatSpriteCache.has(key))return boatSpriteCache.get(key);const off=document.createElement('canvas');off.width=88;off.height=78;const g=off.getContext('2d');g.imageSmoothingEnabled=false;g.save();if(mirror){g.translate(off.width,0);g.scale(-1,1)}const pal=boatPalette(a);boatWaterBase(g,pal);if(type==='fishing')drawFishingSprite(g,a,pal);else if(type==='shallow')drawShallowSprite(g,a,pal);else if(type==='cabin')drawCabinSprite(g,a,pal);else if(type==='sailer')drawSailerSprite(g,a,pal);else drawCutterSprite(g,a,pal);if((a.upgrades?.lanterns||['ferry','work','mail'].includes(a.role))&&['night','dusk','dawn'].includes(dayPhase())){g.globalAlpha=.28;psCircle(g,15,48,5,'#ffd978');psCircle(g,69,48,5,'#ffd978');g.globalAlpha=1;psRect(g,15,47,2,2,'#ffe29a');psRect(g,68,47,2,2,'#ffe29a')}g.restore();boatSpriteCache.set(key,off);return off}
 function drawTopBoat(x,y,s=1,heading=0,type=state.boat.type,appearance=null){appearance=appearance||(type===state.boat.type?playerBoatAppearance(type):defaultBoatAppearance(type));const mirror=heading<-.05,spr=createBoatSprite(type,appearance,mirror),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*.55),Math.round(w),Math.round(h));ctx.restore()}
-function renderBoatPreviewCanvas(canvas,type,appearance,scale=2,live=false,ts=performance.now()){if(!canvas)return;const g=canvas.getContext('2d'),W=canvas.width,H=canvas.height;g.imageSmoothingEnabled=false;g.clearRect(0,0,W,H);g.fillStyle='#4d9fbe';g.fillRect(0,0,W,H);const waveShift=live?Math.floor(ts/120)%42:0;for(let y=16;y<H;y+=22){g.fillStyle='rgba(255,255,255,.12)';for(let x=(y%44?8:24)-waveShift;x<W+42;x+=42)g.fillRect(x,y,14,2)}const spr=createBoatSprite(type,appearance,false),drawScale=Math.min(scale,(W-20)/spr.width,(H-18)/spr.height),w=spr.width*drawScale,h=spr.height*drawScale,cx=W/2,cy=H/2+(live?Math.sin(ts*.003)*1.4:0),left=Math.round(cx-w/2),top=Math.round(cy-h/2);g.drawImage(spr,left,top,Math.round(w),Math.round(h));if(!live)return;const deckY=top+h*.62,cargo=Math.min(4,boatCargoUnits()),parcels=Math.min(3,playerParcelCount()),people=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean).slice(0,3);for(let i=0;i<cargo;i++){const x=cx-30+i*14,y=deckY-8-(i%2)*5;g.fillStyle='#805334';g.fillRect(Math.round(x),Math.round(y),11,8);g.strokeStyle='#17313a';g.lineWidth=2;g.strokeRect(Math.round(x),Math.round(y),11,8);g.fillStyle='#b97d49';g.fillRect(Math.round(x+2),Math.round(y+2),7,2)}for(let i=0;i<parcels;i++){const x=cx+17+i*10,y=deckY-7-(i%2)*4;g.fillStyle='#d9c68c';g.fillRect(Math.round(x),Math.round(y),8,6);g.strokeStyle='#17313a';g.lineWidth=1;g.strokeRect(Math.round(x),Math.round(y),8,6);g.fillStyle='#c85f52';g.fillRect(Math.round(x+3),Math.round(y),2,6)}people.forEach((p,i)=>{const phase=Math.floor(ts/360+i)%2,rs=residentSprite(p.id||p.name,p.outfit,p.accent||'#e5b54e',p.archetype||'maker',p.style||0,phase,i%2===1),rw=rs.width*1.25,rh=rs.height*1.25,x=cx-18+i*19-rw/2,y=deckY-rh+5;g.drawImage(rs,Math.round(x),Math.round(y),Math.round(rw),Math.round(rh))});const animals=(state.boatAnimals||[]).slice(0,2);animals.forEach((a,i)=>{const as=animalSprite(a.species||'cat',Math.floor(ts/380+i)%4,i%2===1),aw=as.width*1.1,ah=as.height*1.1;g.drawImage(as,Math.round(cx+26+i*15-aw/2),Math.round(deckY-ah+5),Math.round(aw),Math.round(ah))})}
+function mfDeckActorMotion(seed,ts=performance.now(),index=0,range=1){
+  const h=Math.abs(hashString(String(seed||`deck-${index}`))),seconds=ts/1000,speed=.39+(h%13)*.009,phase=seconds*speed+(h%6283)/1000+index*.83;
+  const x=Math.sin(phase)*range,y=Math.sin(phase*.53+1.9+index*.41)*range*.18,velocity=Math.cos(phase)*speed;
+  const moving=Math.abs(velocity)>.075,facing=velocity<0?-1:1;
+  return{x,y,moving,facing,walk2:moving?Math.floor((ts+h%800)/520)%2:0,walk4:moving?Math.floor((ts+h%1200)/520)%4:0}
+}
+function renderBoatPreviewCanvas(canvas,type,appearance,scale=2,live=false,ts=performance.now()){
+  if(!canvas)return;const g=canvas.getContext('2d'),W=canvas.width,H=canvas.height;g.imageSmoothingEnabled=false;g.clearRect(0,0,W,H);g.fillStyle='#4d9fbe';g.fillRect(0,0,W,H);
+  const waveShift=live?Math.floor(ts/120)%42:0;for(let y=16;y<H;y+=22){g.fillStyle='rgba(255,255,255,.12)';for(let x=(y%44?8:24)-waveShift;x<W+42;x+=42)g.fillRect(x,y,14,2)}
+  const spr=createBoatSprite(type,appearance,false),drawScale=Math.min(scale,(W-20)/spr.width,(H-18)/spr.height),w=spr.width*drawScale,h=spr.height*drawScale,cx=W/2,cy=H/2+(live?Math.sin(ts*.003)*1.4:0),left=Math.round(cx-w/2),top=Math.round(cy-h/2);g.drawImage(spr,left,top,Math.round(w),Math.round(h));if(!live)return;
+  const deckY=top+h*.62,cargo=Math.min(4,boatCargoUnits()),parcels=Math.min(3,playerParcelCount()),people=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean).slice(0,3);
+  for(let i=0;i<cargo;i++){const x=cx-30+i*14,y=deckY-8-(i%2)*5;g.fillStyle='#805334';g.fillRect(Math.round(x),Math.round(y),11,8);g.strokeStyle='#17313a';g.lineWidth=2;g.strokeRect(Math.round(x),Math.round(y),11,8);g.fillStyle='#b97d49';g.fillRect(Math.round(x+2),Math.round(y+2),7,2)}
+  for(let i=0;i<parcels;i++){const x=cx+17+i*10,y=deckY-7-(i%2)*4;g.fillStyle='#d9c68c';g.fillRect(Math.round(x),Math.round(y),8,6);g.strokeStyle='#17313a';g.lineWidth=1;g.strokeRect(Math.round(x),Math.round(y),8,6);g.fillStyle='#c85f52';g.fillRect(Math.round(x+3),Math.round(y),2,6)}
+  const slots=VOYAGE_DECK_SLOTS[type]||VOYAGE_DECK_SLOTS.cutter;
+  people.slice(0,Math.min(3,slots.length)).forEach((p,i)=>{const slot=slots[i%slots.length],mv=mfDeckActorMotion(p.id||p.name,ts,i,3.2),rs=residentSprite(p.id||p.name,p.outfit,p.accent||'#e5b54e',p.archetype||'maker',p.style||0,mv.walk2,mv.facing<0),rw=rs.width*1.25,rh=rs.height*1.25,x=left+(slot[0]+mv.x)*drawScale-rw/2,y=top+(slot[1]+mv.y)*drawScale-rh*.86;g.drawImage(rs,Math.round(x),Math.round(y),Math.round(rw),Math.round(rh))});
+  const animalSlots=VOYAGE_ANIMAL_DECK_SLOTS[type]||VOYAGE_ANIMAL_DECK_SLOTS.cutter,animals=(state.boatAnimals||[]).slice(0,2);
+  animals.forEach((animal,i)=>{const base=animalSlots[i%animalSlots.length],mv=mfDeckActorMotion(animal.seed||animal.id||animal.name,ts,i+5,4.0),as=animalSprite(animal.species||'cat',mv.walk4,mv.facing<0),aw=as.width*1.1,ah=as.height*1.1,x=left+(base[0]+mv.x)*drawScale-aw/2,y=top+(base[1]+mv.y)*drawScale-ah*.82;g.drawImage(as,Math.round(x),Math.round(y),Math.round(aw),Math.round(ah))})
+}
 let lastBoatFitoutPreviewAt=0;
 function renderBoatFitoutPreview(ts=performance.now()){const c=$('#boatFitoutCanvas');if(c)renderBoatPreviewCanvas(c,state.boat.type,playerBoatAppearance(),2.2,true,ts)}
 function renderBoatStowawayPortrait(ts=performance.now()){const c=$('#boatStowawayPortrait'),a=(state.boatAnimals||[])[0];if(!c||!a)return;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,c.width,c.height);const spr=animalSprite(a.species||'cat',Math.floor(ts/360)%4,false),sc=Math.min(2.6,(c.width-6)/spr.width,(c.height-6)/spr.height),w=spr.width*sc,h=spr.height*sc;g.drawImage(spr,Math.round((c.width-w)/2),Math.round((c.height-h)/2),Math.round(w),Math.round(h))}
 function updateBoatFitoutLivePreview(ts){if(ts-lastBoatFitoutPreviewAt<110)return;lastBoatFitoutPreviewAt=ts;if($('#boatFitoutCanvas'))renderBoatFitoutPreview(ts);if($('#boatStowawayPortrait'))renderBoatStowawayPortrait(ts)}
-// ============================================================
-// v0.12 WORLD SPRITE ATLAS + SETTLEMENT SCALE PASS
-// The rest of the visible world now follows the same rule as the v0.10 boats:
-// authored low-resolution sprites are cached, then scaled with nearest-neighbour
-// sampling. Simulation/state stays completely separate from this art layer.
-// ============================================================
+// World sprite atlas and settlement rendering
+// Art caches are separate from simulation state.
 const ISLAND_ART={tile:19,shape:1.08,layoutX:1.22,layoutY:1.17,tree:1.78,house:1.34,landmark:1.48,playerBoat:1.30,npcBoat:.82};
 function islandLayoutPoint(x,y){return{x:320+(x-320)*ISLAND_ART.layoutX,y:180+(y-180)*ISLAND_ART.layoutY}}
-// The settlement layout is intentionally roomier than the raw terrain coordinates.
-// Keep every structure/actor anchor inside the *actual rendered* procedural coast,
-// rather than assuming a fixed hand-authored island silhouette.
+// Settlement anchors are resolved against the rendered procedural coastline.
 function islandSceneLandMetric(isl,p){const unit=ISLAND_ART.tile*ISLAND_ART.shape;return islandShapeMetric(isl,(p.x-320)/unit,(p.y-180)/unit,1)}
 function islandSafePoint(isl,p,margin=.74){
   if(!isl||!p)return p;const m=islandSceneLandMetric(isl,p);if(!Number.isFinite(m)||m<=margin)return{x:p.x,y:p.y};
   const f=margin/Math.max(.001,m);return{x:320+(p.x-320)*f,y:180+(p.y-180)*f}
 }
 function islandSafeLayoutPoint(isl,x,y,margin=.74){return islandSafePoint(isl,islandLayoutPoint(x,y),margin)}
-// Docking is visual only, but the boat must always resolve over water. Procedural
-// island silhouettes can extend into the old fixed harbour point, so test a small
-// hull footprint against the actual rendered coast and cache the nearest clear berth.
+// Resolve and cache a water-clear harbour berth against the procedural coastline.
 const islandDockWaterCache=new Map();
 function islandBoatWaterClear(isl,p,scale=ISLAND_ART.playerBoat,margin=1.015){
   if(!isl||!p)return false;const w=88*scale,h=78*scale,samples=[[-.38,-.18],[0,-.22],[.38,-.18],[-.40,0],[0,0],[.40,0],[-.34,.20],[0,.23],[.34,.20]];
@@ -2466,9 +2403,7 @@ function propSprite(kind='broadleaf',variant=0){const key=`prop:${kind}:${varian
   else if(kind==='scrub'){spriteShadow(g,5,23,19,3,.16);psCircle(g,9,17,6,ink);psCircle(g,18,16,7,ink);psCircle(g,9,17,5,leaf1);psCircle(g,18,16,6,leaf2);psRect(g,7,13,4,2,leaf3);psRect(g,17,11,4,2,leaf3)}
   else {spriteShadow(g,4,24,20,3,.2);psRect(g,13,13,3,11,wood);psRect(g,14,14,1,10,wood2);psCircle(g,9,10,7,ink);psCircle(g,18,10,8,ink);psCircle(g,14,6,8,ink);psCircle(g,9,10,6,leaf1);psCircle(g,18,10,7,leaf2);psCircle(g,14,6,7,leaf3);psRect(g,9,7,5,2,'#9fd27b');if(kind==='fruit'){for(const [x,y] of [[9,9],[17,7],[14,4],[20,12]])psRect(g,x,y,2,2,variant%2?'#e5b54e':'#d9635b')}}
   worldSpriteCache.set(key,c);return c}
-function drawTopTree(x,y,s=1,kind='broadleaf'){drawPixelSprite(propSprite(kind,hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x,y,s,0.5,.86)}
 function drawTopRock(x,y,s=1){drawPixelSprite(propSprite('rock',hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x,y,s,0.5,.84)}
-function drawFlowerPatch(x,y){drawPixelSprite(propSprite('flowers',hashString(`${Math.round(x)}:${Math.round(y)}`)%3),x+6,y+7,1,0.5,.78)}
 function buildingPalette(kind,variant=0){const roofs=['#a65443','#486d72','#92704b','#526f58'],walls=['#ead9b5','#f0e3c1','#d9cfaa','#e8d6b0'];return{ink:'#17313a',ink2:'#294950',wall:walls[variant%walls.length],wallShade:shadeHex(walls[variant%walls.length],-28),roof:roofs[(variant+(kind==='map_room'?1:0))%roofs.length],roofShade:shadeHex(roofs[(variant+(kind==='map_room'?1:0))%roofs.length],-36),wood:'#805334',woodHi:'#b97d49',cream:'#fff0c8',glass:spriteLit()?'#ffd978':'#79b7c8',grass:'#619a5e',grassHi:'#86bd69',stone:'#89958d',cloth:'#f1dfb2',red:'#c85f52',blue:'#527da0',gold:'#e0b04e'}}
 function buildingSprite(kind='house',variant=0){const lit=spriteLit(),key=`building:${kind}:${variant}:${lit?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const [c,g]=pixelCanvas(64,60),p=buildingPalette(kind,variant);spriteShadow(g,10,48,44,5,.22);
   const win=(x,y,w=5,h=5)=>{psRect(g,x-1,y-1,w+2,h+2,p.ink);psRect(g,x,y,w,h,p.glass);psRect(g,x+Math.floor(w/2),y,1,h,p.cream);psRect(g,x,y+Math.floor(h/2),w,1,p.cream)};
@@ -2495,7 +2430,6 @@ function buildingSprite(kind='house',variant=0){const lit=spriteLit(),key=`build
     psOutlinePoly(g,[[13,48],[14,31],[49,31],[50,48],[38,53],[22,52]],p.wall,p.ink,1);psPoly(g,[[37,32],[49,32],[49,47],[38,50]],p.wallShade);psOutlinePoly(g,[[9,31],[31,17],[54,29],[35,38],[17,36]],p.roof,p.ink,1);psPoly(g,[[31,18],[53,29],[35,36]],p.roofShade);psRect(g,28,41,7,11,p.wood);psRect(g,29,43,1,1,p.gold);win(18,36);win(40,35);psRect(g,18,21,5,9,p.ink);psRect(g,19,20,4,8,p.wood);if(variant%2===0){psRect(g,15,45,8,2,p.red);psRect(g,16,47,2,2,p.grass)}
   }
   worldSpriteCache.set(key,c);return c}
-function drawTopHouse(x,y,kind='house',s=1){const variant=Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4;drawPixelSprite(buildingSprite(kind,variant),x,y,s,0.5,.86)}
 function residentLook(seed){const h=Math.abs(hashString(seed||'resident'));const skins=['#f1c69c','#deb081','#b97f58','#8f5d43'],hair=['#4b3025','#6d4a30','#9a6a39','#c7a465','#2e3435'];return{skin:skins[h%skins.length],hair:hair[(h>>3)%hair.length]}}
 function residentSprite(seed,shirt='#df7c68',accent='#e5b54e',archetype='maker',style=0,walkFrame=0,mirror=false){const look=residentLook(seed),key=`resident:${seed}:${shirt}:${accent}:${archetype}:${style}:${walkFrame}:${mirror?1:0}`;if(worldSpriteCache.has(key))return worldSpriteCache.get(key);const [c,g]=pixelCanvas(20,28),ink='#17313a';g.save();if(mirror){g.translate(20,0);g.scale(-1,1)}spriteShadow(g,5,25,10,2,.2);const legA=walkFrame?1:0,legB=walkFrame?0:1;psRect(g,7,20+legA,3,6-legA,ink);psRect(g,11,20+legB,3,6-legB,ink);psRect(g,6,11,9,10,ink);psRect(g,7,12,7,8,shirt);psRect(g,7,15,7,2,accent);psRect(g,4,13+(walkFrame?1:0),3,7,ink);psRect(g,5,14+(walkFrame?1:0),2,5,look.skin);psRect(g,15,13+(walkFrame?0:1),2,7,ink);psRect(g,15,14+(walkFrame?0:1),1,5,look.skin);psCircle(g,10,7,5,ink);psRect(g,7,5,7,6,look.skin);psRect(g,7,4,7,3,look.hair);psRect(g,7,6,2,3,look.hair);psRect(g,12,6,2,2,look.hair);psRect(g,9,8,1,1,'#4b3b31');psRect(g,12,8,1,1,'#4b3b31');
   if(archetype==='fisher'){psRect(g,6,3,9,2,accent);psRect(g,8,1,6,3,shirt);psLine(g,16,13,19,4,'#6a4b35',1)}
@@ -2518,12 +2452,6 @@ function seaSprite(kind='dolphin',variant=0){const key=`sea:${kind}:${variant}`;
   else if(kind==='kelp'){for(let i=0;i<3;i++){const x=8+i*7;psLine(g,x,22,x+(i%2?3:-2),5,'#376f55',2);psRect(g,x+(i%2?1:-4),9+i*3,5,2,'#5a9a66');psRect(g,x-2,15-i*2,5,2,'#6aad6d')}}
   worldSpriteCache.set(key,c);return c}
 function drawSeaSprite(kind,x,y,s=1,mirror=false,variant=0){const spr=seaSprite(kind,variant),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;if(mirror){ctx.translate(Math.round(x),0);ctx.scale(-1,1);ctx.drawImage(spr,Math.round(-w/2),Math.round(y-h/2),Math.round(w),Math.round(h))}else ctx.drawImage(spr,Math.round(x-w/2),Math.round(y-h/2),Math.round(w),Math.round(h));ctx.restore()}
-function residentWaypoints(isl,person,index){
-  const P=(x,y)=>islandSafeLayoutPoint(isl,x,y,.82),pts=[P(320,178),P(300,214),P(348,205),P(332,244),P(276,178),P(382,188)],active=isl.projects.filter(p=>!p.complete),done=isl.projects.filter(p=>p.complete);
-  if(active.length){const q=projectSitePos(active[index%active.length],index%active.length,isl);pts.push(islandSafePoint(isl,{x:q.x,y:q.y+15},.84))}if(done.length){const q=projectSitePos(done[index%done.length],index%done.length,isl);pts.push(islandSafePoint(isl,{x:q.x,y:q.y+16},.84))}
-  if(person.archetype==='fisher')pts.push(P(350,255),P(383,236));if(person.archetype==='gardener')pts.push(P(268,205),P(286,194));if(person.archetype==='trader')pts.push(P(395,207),P(354,220));if(person.archetype==='carpenter')pts.push(P(302,198),P(376,215));if(person.archetype==='navigator')pts.push(P(315,122),P(410,155));if(person.archetype==='naturalist')pts.push(P(238,160),P(398,164));if(person.archetype==='maker')pts.push(P(340,190),P(370,205));return pts
-}
-function residentPose(isl,person,index,ts=frame){const pts=residentWaypoints(isl,person,index),seed=hashString(person.id||person.name),legMs=9000+(Math.abs(seed)%5000),clock=ts+Math.abs(seed)%17000,leg=Math.floor(clock/legMs),u=(clock%legMs)/legMs,a=pts[leg%pts.length],b=pts[(leg+1)%pts.length],move=clamp(u/.68,0,1),smooth=move*move*(3-2*move),lane=((seed>>>5)%5)-2,laneY=((seed>>>9)%3)-1,ang=(seed%628)/100,personal=4+((seed>>>12)%8);return{x:lerp(a.x,b.x,smooth)+lane*2.6+Math.cos(ang)*personal,y:lerp(a.y,b.y,smooth)+laneY*2+Math.sin(ang)*personal*.62,walking:u<.68,chat:u>=.68&&((leg+index)%5===0),facing:b.x<a.x?-1:1}}
 function drawWeather(){
   const W=canvas.width,H=canvas.height,w=activeWeatherDetails(),kind=w.kind,density=Math.min(120,Math.ceil(W*H/4700));
   if(kind==='cloudy'){ctx.globalAlpha=.10;for(let i=0;i<Math.max(5,Math.floor(H/110));i++){const x=((i*173+frame*.012)%(W+180))-90,y=38+i*96;roundedRect(x,y,92,15,8,'#d7e4df');roundedRect(x+34,y-8,68,17,9,'#e6eee8')}ctx.globalAlpha=1}
@@ -2533,7 +2461,6 @@ function drawWeather(){
   if(kind==='breezy'||kind==='storm'){for(let i=0;i<Math.max(7,Math.floor(H/58));i++){const x=((i*151+frame*(kind==='storm'?.075:.045))%(W+140))-70,y=54+i*55;rect(x,y,kind==='storm'?54:38,1,'rgba(255,255,255,.20)')}}
   if(kind==='clear'&&['day','golden','dawn'].includes(dayPhase())){for(let i=0;i<Math.min(14,Math.floor(W/55));i++){const x=(i*79+frame*.012)%W,y=H*.42+(i%5)*37;if(((Math.floor(frame/900)+i)%8)===0)drawSparkle(x,y,'rgba(255,248,199,.6)')}}
 }
-function biomeColor(b){return biomeDef(b).color}
 function shapeRadius(isl,theta){const s=ensureIslandData(isl).shape;const dtheta=Math.atan2(Math.sin(theta-s.coveAngle),Math.cos(theta-s.coveAngle));const cove=s.coveDepth*Math.exp(-(dtheta*dtheta)/(s.coveWidth*s.coveWidth));return 1+s.a1*Math.sin(s.k1*theta+s.p1)+s.a2*Math.cos(s.k2*theta+s.p2)-cove}
 function islandShapeMetric(isl,gx,gy,scale=1){const s=ensureIslandData(isl).shape,c=Math.cos(s.rotation),sn=Math.sin(s.rotation),rx=(gx*c-gy*sn)/(s.rx*scale),ry=(gx*sn+gy*c)/(s.ry*scale),theta=Math.atan2(ry,rx),dist=Math.hypot(rx,ry);return dist/Math.max(.001,shapeRadius(isl,theta))}
 function islandTileIsLand(isl,gx,gy,scale=1){return islandShapeMetric(isl,gx,gy,scale)<1}
@@ -2552,7 +2479,7 @@ function islandTerrainSprite(isl){
   ensureIslandData(isl);const key=`terrain-v16b:${isl.id}:${isl.biome}:${JSON.stringify(isl.shape)}`;if(terrainSpriteCache.has(key))return terrainSpriteCache.get(key);
   const W=192,H=144,CX=96,CY=72,U=6,[c,g]=pixelCanvas(W,H),p=terrainPalette(isl.biome),seed=(hashString(`${isl.id}:surface`)>>>0)/4294967295;g.imageSmoothingEnabled=false;
   const field=(gx,gy)=>Math.sin(gx*.57+seed*11)*.52+Math.cos(gy*.71+seed*17)*.42+Math.sin((gx+gy)*.31+seed*23)*.28+Math.cos((gx-gy)*.22+seed*31)*.18;
-  // A soft under-shore edge is generated from the actual coastline, never from square tile neighbours.
+  // Generate the under-shore edge from the procedural coastline.
   for(let y=3;y<H-3;y++)for(let x=3;x<W-3;x++){const gx=(x-CX)/U,gy=(y-CY)/U,m=islandShapeMetric(isl,gx,gy,1);if(m>=1&&m<1.055&&terrainNoise(isl,Math.floor(x/3),Math.floor(y/3),'shadow')>.58){g.fillStyle='rgba(19,51,59,.14)';g.fillRect(x,y+2,1,1)}}
   for(let y=3;y<H-3;y++)for(let x=3;x<W-3;x++){
     const gx=(x-CX)/U,gy=(y-CY)/U,m=islandShapeMetric(isl,gx,gy,1);if(m>=1)continue;const f=field(gx,gy),speck=terrainNoise(isl,Math.floor(x/4),Math.floor(y/4),'speck');let col=p.base;
@@ -2589,12 +2516,9 @@ function approachSprite(isl){
 function approachScenePoint(q,cx,cy,s){const k=.43*s;return{x:cx+(q.x-320)*k,y:cy+(q.y-180)*k}}
 function approachPoint(x,y,cx,cy,s){return approachScenePoint(islandLayoutPoint(x,y),cx,cy,s)}
 function approachProjectKind(t){if(!t)return'house';if(t.draw==='market_square'||t.draw==='market_hall')return'market_hall';if(t.draw==='cottages')return'house';return t.draw||'house'}
-function approachSettlementSignature(isl){return `${isl.id}:${isl.known?1:0}:${population(isl)}:${(isl.projects||[]).map(p=>`${p.templateId}:${p.complete?1:0}`).join(',')}:${vesselsAtIsland(isl.id).map(v=>v.id).sort().join(',')}`}
 function drawApproachIsland(isl,cx,cy,scale){
   ensureIslandData(isl);const spr=approachSprite(isl),s=clamp(scale,.12,2.2),w=spr.width*s,h=spr.height*s;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(cx-w/2),Math.round(cy-h/2),Math.round(w),Math.round(h));
-  // Unknown shores keep their secrets until the final approach; known islands show
-  // structures only. People belong to the shore scene; at voyage scale they read as
-  // misplaced pixels and weaken the sense of distance.
+  // Approach scenes show terrain and structures; shore residents remain in the shore view.
   const reveal=isl.known||s>.98;if(s<.30||!reveal)return;const k=.43*s,draws=[];const put=(y,fn)=>draws.push({y,fn});
   const coreScene=islandSafeLayoutPoint(isl,320,156,.70),core=approachScenePoint(coreScene,cx,cy,s);put(core.y,()=>drawTopHouse(core.x,core.y,'house',islandBuildingScale('house',1)*k));
   const completed=(isl.projects||[]).filter(p=>p.complete&&!isl.projects.some(q=>q.complete&&projectTemplate(q.templateId)?.prereq===projectTemplate(p.templateId)?.feature)).slice(-5);
@@ -2611,7 +2535,7 @@ function mfApproachLighthouseInfo(isl,cx,cy,s){
 function mfDrawApproachBeaconGlow(info,s){
   if(!info)return;const ph=dayPhase(),lit=['night','dusk','dawn'].includes(ph);if(!lit)return;
   const night=ph==='night',q=mfSpritePoint(info.q.x,info.q.y,info.scale,33,11),seed=info.seed;
-  // Approach beacon rotates slowly enough to read as a distant sweep rather than a spinner.
+  // Smooth distant lighthouse sweep.
   const angle=state.reducedMotion?-.8:((frame*.00125+(Math.abs(seed)%628)/100)%(Math.PI*2));
   const root=Math.sqrt(Math.max(.12,s)),len=Math.max(night?58:38,(night?108:68)*root),dx=Math.cos(angle),dy=Math.sin(angle),nx=-dy,ny=dx,ex=q.x+dx*len,ey=q.y+dy*len;
   const outerNear=(night?1.8:1.2)*Math.max(.6,info.scale),outerFar=(night?13:7)*Math.max(.7,root),coreNear=(night?.8:.6)*Math.max(.6,info.scale),coreFar=(night?5.8:3.5)*Math.max(.7,root);
@@ -2627,8 +2551,8 @@ function mfDrawApproachBeaconGlow(info,s){
   ctx.globalAlpha=night?.12:.055;circle(ex,ey,(night?8:5)*Math.max(.6,root),'rgba(255,241,173,.26)');
   ctx.restore()
 }
-const mf2413OriginalDrawApproachIsland=drawApproachIsland;
-drawApproachIsland=function(isl,cx,cy,scale){const prevSuppress=mfSuppressLighthouseBuildingLight;mfSuppressLighthouseBuildingLight=true;try{mf2413OriginalDrawApproachIsland(isl,cx,cy,scale)}finally{mfSuppressLighthouseBuildingLight=prevSuppress}const s=clamp(scale,.10,2.2),info=mfApproachLighthouseInfo(isl,cx,cy,s);if(!info)return;mfDrawApproachBeaconGlow(info,s);const variant=Math.abs(hashString(`lighthouse:${Math.round(info.q.x)}:${Math.round(info.q.y)}`))%4;drawPixelSprite(buildingSprite('lighthouse',variant),info.q.x,info.q.y,info.scale,.5,.86)};
+const drawApproachIslandBase=drawApproachIsland;
+drawApproachIsland=function(isl,cx,cy,scale){const prevSuppress=mfSuppressLighthouseBuildingLight;mfSuppressLighthouseBuildingLight=true;try{drawApproachIslandBase(isl,cx,cy,scale)}finally{mfSuppressLighthouseBuildingLight=prevSuppress}const s=clamp(scale,.10,2.2),info=mfApproachLighthouseInfo(isl,cx,cy,s);if(!info)return;mfDrawApproachBeaconGlow(info,s);const variant=Math.abs(hashString(`lighthouse:${Math.round(info.q.x)}:${Math.round(info.q.y)}`))%4;drawPixelSprite(buildingSprite('lighthouse',variant),info.q.x,info.q.y,info.scale,.5,.86)};
 
 function parseHexColor(hex){const h=String(hex||'#000000').replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function mixHex(a,b,t){const A=parseHexColor(a),B=parseHexColor(b),v=A.map((n,i)=>Math.round(lerp(n,B[i],t)));return'#'+v.map(n=>n.toString(16).padStart(2,'0')).join('')}
@@ -2669,9 +2593,7 @@ function renderScene(ts){
   if(state.phase==='fasting'||state.phase==='arrived'){drawVoyage();return}
   drawIslandScene(currentIsland());
 }
-// v0.24.2 settlement layout: projects still belong to their chosen district, but
-// large structures reserve visual footprints and later projects choose nearby clear
-// anchors instead of independently hashing onto the same location.
+// Collision-aware settlement placement keeps project districts while reserving structure footprints.
 const mfProjectPositionCache=new Map(),mfExtraHomePositionCache=new Map();
 const MF_PROJECT_SITE_SLOTS={
   harbour:[[-28,-9],[27,2],[-8,-31],[38,-27],[-43,18],[10,29],[58,8],[-62,-5],[55,-38],[-48,-39],[34,38],[-27,42],[75,-16],[-78,20],[4,-55],[69,31],[-69,-28],[45,58],[-38,60],[82,12]],
@@ -2761,14 +2683,14 @@ function drawVoyageMood(vr,ph){
 }
 function drawPassingLanternGlow(x,y,scale=1){if(!['night','dusk','dawn'].includes(dayPhase()))return;ctx.save();ctx.globalAlpha=.10;circle(x,y-7*scale,18*scale,timePalette().light);ctx.globalAlpha=.55;circle(x-8*scale,y-7*scale,1.8*scale,'#ffd978');circle(x+8*scale,y-7*scale,1.8*scale,'#ffd978');ctx.restore()}
 
-// Passengers are the only people shown in voyage mode: tiny, boat-scale figures
-// wandering the usable deck rather than full-size shore residents floating at sea.
+// Voyage passengers and stowaways use boat-scale deck movement.
 const VOYAGE_DECK_SLOTS={
   cutter:[[27,45],[38,48],[54,45]],fishing:[[25,47],[37,49],[68,49]],shallow:[[28,47],[42,49],[57,47]],cabin:[[20,48],[29,50],[69,50]],sailer:[[26,47],[46,48],[59,46]]
 };
-// v0.24.16 voyage traffic perspective + island clearance. Ambient/crossing
-// vessels are screen-space actors, so they need an explicit depth model and a
-// conservative exclusion envelope for any island visible in the approach shot.
+const VOYAGE_ANIMAL_DECK_SLOTS={
+  cutter:[[63,47],[48,46]],fishing:[[57,49],[69,48]],shallow:[[63,49],[50,47]],cabin:[[57,50],[42,49]],sailer:[[68,47],[55,46]]
+};
+// Voyage traffic uses depth scaling and an island-clearance envelope.
 let mfVoyageTrafficContext={vr:null,playerY:0,exclusions:[]};
 function mfVoyageTrafficBegin(vr,playerY){mfVoyageTrafficContext={vr,playerY,exclusions:[]}}
 function mfVoyageTrafficRegisterIsland(isl,cx,cy,scale,role='arrival'){
@@ -2810,16 +2732,16 @@ function mfVoyageTrafficPoint(t,fromLeft,laneY,baseScale,seed=0){
 }
 function drawVoyagePassengers(bx,by,boatScale){
   const aboard=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean);if(!aboard.length)return;const slots=VOYAGE_DECK_SLOTS[state.boat.type]||VOYAGE_DECK_SLOTS.cutter,visible=aboard.slice(0,Math.min(3,slots.length));
-  visible.forEach((person,i)=>{const slot=slots[i%slots.length],seed=Math.abs(hashString(person.id||person.name)),phase=frame*.00105+seed%997,walk=Math.sin(phase*.72+i)>.08,wander=Math.sin(phase+i*1.7)*2.4,x=bx+(slot[0]-44+wander)*boatScale,y=by+(slot[1]-42.9)*boatScale+Math.sin(phase*.6)*.6*boatScale,facing=Math.cos(phase+i) < 0?-1:1,personScale=clamp(.33*boatScale,.18,.48);drawResidentPerson(x,y,person,walk,facing,personScale)})
+  visible.forEach((person,i)=>{const slot=slots[i%slots.length],mv=mfDeckActorMotion(person.id||person.name,frame,i,3.2),x=bx+(slot[0]-44+mv.x)*boatScale,y=by+(slot[1]-42.9+mv.y)*boatScale,personScale=clamp(.33*boatScale,.18,.48),spr=residentSprite(person.id||person.name,person.outfit,person.accent||'#e5b54e',person.archetype||'maker',person.style||0,mv.walk2,mv.facing<0);drawPixelSprite(spr,x,y,personScale,.5,.88)})
 }
 function voyageApproachHalfHeight(scale){return 110*clamp(scale,.12,2.2)}
 
-function drawVoyageStowaway(bx,by,boatScale){const a=(state.boatAnimals||[])[0];if(!a)return;const phase=Math.floor(frame/24)%4,spr=animalSprite(a.species||'cat',phase,false),sc=.58*boatScale,x=bx+18*boatScale,y=by-8*boatScale;drawPixelSprite(spr,x,y,sc,.5,.86)}
+function drawVoyageStowaway(bx,by,boatScale){
+  const animal=(state.boatAnimals||[])[0];if(!animal)return;const slots=VOYAGE_ANIMAL_DECK_SLOTS[state.boat.type]||VOYAGE_ANIMAL_DECK_SLOTS.cutter,slot=slots[0],mv=mfDeckActorMotion(animal.seed||animal.id||animal.name,frame,5,4.0),spr=animalSprite(animal.species||'cat',mv.walk4,mv.facing<0),sc=.58*boatScale,x=bx+(slot[0]-44+mv.x)*boatScale,y=by+(slot[1]-42.9+mv.y)*boatScale;drawPixelSprite(spr,x,y,sc,.5,.86)
+}
 function drawVoyage(){
   drawSeaBackground();const v=state.voyage,p=voyageProgress(),dest=getIsland(v.destinationId),origin=getIsland(v.originId),ph=dayPhase(),W=canvas.width,H=canvas.height,vr=visibleSceneRect();
-  // The island is always kept on the far side of a strip of visible water. This
-  // prevents the player boat from visually sailing through the terrain during the
-  // departure/landfall focus pull while preserving the same voyage timing.
+  // Keep visible water between the player boat and the approach island.
   drawVoyageMood(vr,ph);const smooth=t=>t*t*(3-2*t),depart=smooth(clamp(p/.24,0,1)),arrive=smooth(clamp((p-.74)/.26,0,1)),focus=p<.24?depart:(p>.74?1-arrive:1);
   const bx=W/2,cruiseY=vr.y+vr.h*.56,shoreY=vr.y+vr.h*.59,by=lerp(shoreY,cruiseY,focus)+Math.sin(frame*.006)*lerp(.7,2,focus),boatScale=lerp(.56,1.35,focus);mfVoyageTrafficBegin(vr,by);
   const scroll=(frame*.022)%42;for(let y=-42;y<H+42;y+=34){const yy=(y+scroll)%(H+42);for(let x=18;x<W;x+=78){const sway=Math.sin((x+y+frame*.01)*.018)*5;rect(x+sway,yy,24,2,'rgba(255,255,255,.075)')}}
@@ -2842,11 +2764,6 @@ function chartCssGeometry(vr){
   return{sx,sy,ox,oy,toX:x=>ox+x*sx,toY:y=>oy+y*sy,vr:{left:ox+vr.x*sx,top:oy+vr.y*sy,right:ox+(vr.x+vr.w)*sx,bottom:oy+(vr.y+vr.h)*sy}};
 }
 function labelRectsOverlap(a,b,pad=3){return!(a.r+pad<=b.l||b.r+pad<=a.l||a.b+pad<=b.t||b.b+pad<=a.t)}
-function distributeChartRail(items,top,bottom){
-  if(!items.length)return[];items=[...items].sort((a,b)=>a.cy-b.cy);const room=Math.max(1,bottom-top),gap=items.length>1?clamp(room/(items.length-1),16,22):0,ys=items.map(x=>clamp(x.cy,top,bottom));
-  for(let i=1;i<ys.length;i++)ys[i]=Math.max(ys[i],ys[i-1]+gap);if(ys[ys.length-1]>bottom){ys[ys.length-1]=bottom;for(let i=ys.length-2;i>=0;i--)ys[i]=Math.min(ys[i],ys[i+1]-gap)}
-  if(ys[0]<top){const d=top-ys[0];for(let i=0;i<ys.length;i++)ys[i]+=d}return items.map((item,i)=>({...item,labelY:ys[i]}));
-}
 let chartLabelSignature='';
 function updateChartLabelOverlay(nodes,you,vr){
   const layer=$('#chartLabels');if(!layer)return;if(state.activeView!=='chart'||minigame){layer.classList.remove('show');return}layer.classList.add('show');const cg=chartCssGeometry(vr),v=cg.vr,mobile=window.matchMedia('(max-width:900px)').matches,z=chartView.zoom;
@@ -2886,7 +2803,7 @@ function drawChartCompassRose(vr,mobile=false){
   circle(roseX,roseY,R,paper,ink,1.4);circle(roseX,roseY,R-4,'rgba(255,255,255,0)',faint,1);
   for(let i=0;i<16;i++){const a=-Math.PI/2+i*Math.PI/8,major=i%4===0,mid=i%2===0,len=major?R-7:mid?R-10:R-13;line(roseX+Math.cos(a)*(R-4),roseY+Math.sin(a)*(R-4),roseX+Math.cos(a)*len,roseY+Math.sin(a)*len,major?ink:faint,major?1.2:.8)}
   line(roseX-R+7,roseY,roseX+R-7,roseY,faint,.8);line(roseX,roseY-R+7,roseX,roseY+R-7,faint,.8);
-  // Four-point star: north is the only coloured leaf, like a printed chart rose.
+  // Compact four-point chart compass rose.
   poly([[roseX,roseY-R+5],[roseX+4*scale,roseY-3*scale],[roseX,roseY-8*scale],[roseX-4*scale,roseY-3*scale]],'#c85f52',ink,.9);
   poly([[roseX+R-7,roseY],[roseX+3*scale,roseY+4*scale],[roseX+8*scale,roseY],[roseX+3*scale,roseY-4*scale]],'#e6cf98',ink,.8);
   poly([[roseX,roseY+R-7],[roseX-4*scale,roseY+3*scale],[roseX,roseY+8*scale],[roseX+4*scale,roseY+3*scale]],'#e6cf98',ink,.8);
@@ -2916,9 +2833,7 @@ function chartStaticSignature(g,visible,recentBundle){
     Math.round(chartView.zoom*1000),Math.round(chartView.panX*10),Math.round(chartView.panY*10)
   ].join(':');
   const t=performance.now();
-  // World/development data changes slowly. Re-hash it a few times per second, while
-  // camera changes still invalidate immediately. This keeps the cached chart cheap
-  // even with a large archipelago.
+  // Recheck slow-changing world data periodically; camera changes invalidate immediately.
   if(!chartStaticCache.dataKey||t-chartStaticCache.lastDataCheckAt>450){
     chartStaticCache.dataKey=chartStaticDataSignature(visible,recentBundle);
     chartStaticCache.lastDataCheckAt=t;
@@ -2990,7 +2905,7 @@ function drawChart(){
   const mapXY=g.mapXY;
   ctx.save();ctx.beginPath();ctx.rect(vr.x+14,vr.y+14,Math.max(1,vr.w-28),Math.max(1,vr.h-28));ctx.clip();
 
-  // Live layer: only the marked course, moving vessels and player position redraw each frame.
+  // Live chart layer redraws only the active course, moving vessels and player marker.
   if(state.phase==='ashore'&&state.selectedDestinationId!=='uncharted'){
     const path=chartMarkedCoursePath();
     if(path){ctx.strokeStyle='rgba(197,92,87,.84)';ctx.lineWidth=1.8;ctx.setLineDash([3,5]);ctx.beginPath();path.forEach((p,n)=>{const q=mapXY(p.x,p.y);n?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y)});ctx.stroke();ctx.setLineDash([])}
@@ -3051,8 +2966,6 @@ function drawArcadeSceneSprite(kind,x,y,s=1,ax=.5,ay=.5){drawPixelSprite(arcadeS
 function drawArcadeSprite(kind,x,y,s=1,variant=0,ax=.5,ay=.72){drawPixelSprite(arcadeSprite(kind,variant),x,y,s,ax,ay)}
 function drawArcadeFreighter(x,y,s=1){drawArcadeSprite('freighter',x,y,s,0,.5,.68)}
 function drawArcadeDredger(x,y,s=1){drawArcadeSprite('dredger',x,y,s,0,.5,.68)}
-function drawArcadeFerry(x,y,s=1){drawArcadeSprite('ferry',x,y,s,0,.5,.68)}
-function drawArcadeBarge(x,y,s=1){drawArcadeSprite('barge',x,y,s,0,.5,.68)}
 function drawArcadeBag(x,y,kind=0,s=1){drawArcadeSprite('bag',x,y,s,kind,.5,.72)}
 function drawArcadeCup(x,y,kind=0,s=1){drawArcadeSprite('cup',x,y,s,kind,.5,.72)}
 function drawArcadeBucket(x,y,s=1){drawArcadeSprite('bucket',x,y,s,0,.5,.58)}
@@ -3061,7 +2974,6 @@ function drawArcadeCargo(x,y,kind=0,scale=1){drawArcadeSprite('crate',x,y,scale,
 function drawArcadeFish(x,y,kind=0,scale=1){const cols=['#df7c68','#e5b54e','#527da0'];poly([[x-20*scale,y],[x+7*scale,y-11*scale],[x+18*scale,y],[x+7*scale,y+11*scale]],cols[kind],'#18313a',2*scale);poly([[x-18*scale,y],[x-30*scale,y-10*scale],[x-30*scale,y+10*scale]],cols[kind],'#18313a',1*scale);circle(x+6*scale,y-3*scale,2.5*scale,'#18313a')}
 function drawArcadeLifeRing(x,y,s=1){circle(x,y,13*s,'#fff7de','#18313a',2*s);circle(x,y,8*s,'rgba(0,0,0,0)','#df7c68',5*s);line(x-10*s,y-9*s,x-5*s,y-5*s,'#527da0',2*s);line(x+10*s,y+9*s,x+5*s,y+5*s,'#527da0',2*s)}
 function drawArcadeCrew(x,y,outfit='#527da0',accent='#e5b54e',s=.85){drawTopVillager(x,y,outfit,accent,s)}
-function drawDeckArrow(x,y,dir=1,s=1,col='rgba(24,49,58,.28)'){poly([[x-16*s*dir,y-8*s],[x+3*s*dir,y-8*s],[x+3*s*dir,y-15*s],[x+17*s*dir,y],[x+3*s*dir,y+15*s],[x+3*s*dir,y+8*s],[x-16*s*dir,y+8*s]],col)}
 function drawHazardStripe(x,y,w,h){rect(x,y,w,h,'#e5b54e','#18313a',1);for(let xx=x-w;xx<x+w*2;xx+=18)line(xx,y+h,xx+18,y,'#18313a',4)}
 function drawArcadeContainer(x,y,w,h,col){roundedRect(x,y,w,h,3,col,'#18313a',2);for(let xx=x+8;xx<x+w-5;xx+=12)line(xx,y+3,xx,y+h-3,'rgba(24,49,58,.25)',1);rect(x+3,y+3,4,h-6,'rgba(255,255,255,.25)')}
 function drawArcadeBollard(x,y,s=1){circle(x,y,8*s,'#704630','#18313a',2*s);rect(x-5*s,y-8*s,10*s,10*s,'#a86d45','#18313a',1*s)}
@@ -3183,11 +3095,8 @@ function drawVoyageSceneEvent(e,ts,bx,by){if(!e)return;const age=ts-(e.started||
 
 function animationLoop(ts){lastTs=ts;ensureArrived();mfUpdateVoyageStowaway();processVoyageEvents();adaptiveMusicSync(false);const mobile=window.matchMedia('(max-width:900px)').matches,minGap=(mobile||state.activeView==='chart')?33:16;if(ts-lastPaintAt>=minGap){lastPaintAt=ts;updateHeader();updateVoyageStatus();updateFastingLiveUI();updateVoyageEncounterOverlay();updateAtmosphereUI();if(state.activeView==='settings'&&$('#musicNowText'))$('#musicNowText').textContent=audioNowPlaying();renderScene(ts);updateBoatFitoutLivePreview(ts);updateAnimalDialogue(ts);updateWorldInteractionAvatar(ts);positionFloatingOverlays()}requestAnimationFrame(animationLoop)}
 
-// ============================================================
-// MAKEFAST v0.23.5 — PEOPLE, TRADES, FAVOURS + VOYAGE VARIETY
-// Social systems: relationships, trades, favours and shared voyage memories.
-// Fasting and voyage timing remain owned by the core voyage system.
-// ============================================================
+// Social systems
+// Relationships, trades, favours, errands and shared voyage memories.
 const MF_SOCIAL_VERSION=2;
 const MF_RELATIONSHIP_TIERS=[
   {name:'New face',min:0,next:2,discount:0,copy:'You have only just begun to know one another.'},
@@ -3395,51 +3304,50 @@ function mfArrivalItems(dest,v,errandNotes=[],passengerNotes=[]){
   const seen=new Set();return items.filter(x=>{const k=x.text;if(seen.has(k))return false;seen.add(k);return true}).slice(0,7)
 }
 let mfPendingArrival=null;
-function mfShowArrivalRecap(isl,data){const items=data?.items||[];if(!items.length){mfOriginalOpenDocksideBoard(isl,true);return}const home=isl.home,title=home?'Back in harbour':`Alongside · ${isl.name}`,intro=home?'The harbour has been busy in your absence.':'A few things have changed around the island since you set out.';showModal(`<h2>${title}</h2><p>${intro}</p><div class="mf-homecoming-list">${items.map(x=>`<div class="mf-homecoming-item"><i>${x.icon}</i><span>${x.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn secondary" id="mfOpenIslandBoard">OPEN ISLAND BOARD</button><button class="big-btn ghost" data-close>CLOSE</button></div>`,false);$('#mfOpenIslandBoard').onclick=()=>{closeModal();mfOriginalOpenDocksideBoard(isl,true)}}
+function mfShowArrivalRecap(isl,data){const items=data?.items||[];if(!items.length){openDocksideBoardBase(isl,true);return}const home=isl.home,title=home?'Back in harbour':`Alongside · ${isl.name}`,intro=home?'The harbour has been busy in your absence.':'A few things have changed around the island since you set out.';showModal(`<h2>${title}</h2><p>${intro}</p><div class="mf-homecoming-list">${items.map(x=>`<div class="mf-homecoming-item"><i>${x.icon}</i><span>${x.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn secondary" id="mfOpenIslandBoard">OPEN ISLAND BOARD</button><button class="big-btn ghost" data-close>CLOSE</button></div>`,false);$('#mfOpenIslandBoard').onclick=()=>{closeModal();openDocksideBoardBase(isl,true)}}
 
 function mfRecordVoyageCompany(v,mode='quiet'){
   if(!v||v.mfCompanyBonded)return false;const passengers=(state.boatPassengers||[]).map(x=>x.person).filter(Boolean);if(!passengers.length)return false;v.mfCompanyBonded=true;const event=activeVoyageEvent()||sceneEvent,title=event?.title||(mode==='quiet'?'a quiet crossing':'a moment at sea');passengers.forEach(p=>{const s=mfEnsureSocialData(p);s.sharedVoyages++;s.lastSharedVoyage=title;mfAddRelationship(p,1)});save();return true
 }
 
-// Migration-safe social state for present and future residents.
-const mfOriginalEnsureResidentData=ensureResidentData;
-ensureResidentData=function(...args){const p=mfOriginalEnsureResidentData(...args);mfEnsureSocialData(p);return p};
+// Attach social state after base save migration has completed.
+const ensureResidentDataBase=ensureResidentData;
+ensureResidentData=function(...args){const p=ensureResidentDataBase(...args);mfEnsureSocialData(p);return p};
 if(!Array.isArray(state.socialErrands))state.socialErrands=[];
 try{rootPersonRefs(state).forEach(p=>mfEnsureSocialData(p))}catch(e){console.warn('MakeFast social migration note',e)}
 
-// Player-completed passenger travel builds familiarity without depending on voyage choices.
+// Passenger deliveries update resident familiarity.
 let mfRecentPassengerCompletions=[];
-const mfOriginalDeliverPassengers=deliverPassengers;
-deliverPassengers=function(dest){const delivered=mfOriginalDeliverPassengers(dest)||[];mfRecentPassengerCompletions=delivered.map(p=>({personId:p.id,text:`${p.name} came ashore at ${dest.name} after travelling with you, and is settling in.`}));delivered.forEach(p=>{const s=mfEnsureSocialData(p);s.liftCount++;mfAddRelationship(p,2+boatPassengerBondBonus())});return delivered};
+const deliverPassengersBase=deliverPassengers;
+deliverPassengers=function(dest){const delivered=deliverPassengersBase(dest)||[];mfRecentPassengerCompletions=delivered.map(p=>({personId:p.id,text:`${p.name} came ashore at ${dest.name} after travelling with you, and is settling in.`}));delivered.forEach(p=>{const s=mfEnsureSocialData(p);s.liftCount++;mfAddRelationship(p,2+boatPassengerBondBonus())});return delivered};
 
-// Sharing a one-time resident story is another gentle way to become familiar.
-const mfOriginalShareResidentRumour=shareResidentRumour;
-shareResidentRumour=function(id){const p=residentById(id),wasShared=!!p?.rumourShared;mfOriginalShareResidentRumour(id);if(p&&!wasShared&&p.rumourShared){mfAddRelationship(p,1);save();openResidentDetails(id,{skipTalk:true})}};
+// One-time resident stories update familiarity.
+const shareResidentRumourBase=shareResidentRumour;
+shareResidentRumour=function(id){const p=residentById(id),wasShared=!!p?.rumourShared;shareResidentRumourBase(id);if(p&&!wasShared&&p.rumourShared){mfAddRelationship(p,1);save();openResidentDetails(id,{skipTalk:true})}};
 
-// Any voyage behaviour — investigate, sail on, or simply reach land — can become a shared memory.
-const mfOriginalInvestigateVoyageEvent=investigateVoyageEvent;
-investigateVoyageEvent=function(id){mfRecordVoyageCompany(state.voyage,'look');return mfOriginalInvestigateVoyageEvent(id)};
-const mfOriginalLetVoyageEventPass=letVoyageEventPass;
-letVoyageEventPass=function(id){mfRecordVoyageCompany(state.voyage,'pass');return mfOriginalLetVoyageEventPass(id)};
-const mfOriginalEnsureArrived=ensureArrived;
-ensureArrived=function(){const v=state.voyage,was=state.phase;mfOriginalEnsureArrived();if(v&&was==='fasting'&&state.phase==='arrived')mfRecordVoyageCompany(v,'quiet')};
+// Record shared voyage memories for travelling companions.
+const investigateVoyageEventBase=investigateVoyageEvent;
+investigateVoyageEvent=function(id){mfRecordVoyageCompany(state.voyage,'look');return investigateVoyageEventBase(id)};
+const letVoyageEventPassBase=letVoyageEventPass;
+letVoyageEventPass=function(id){mfRecordVoyageCompany(state.voyage,'pass');return letVoyageEventPassBase(id)};
+const ensureArrivedBase=ensureArrived;
+ensureArrived=function(){const v=state.voyage,was=state.phase;ensureArrivedBase();if(v&&was==='fasting'&&state.phase==='arrived')mfRecordVoyageCompany(v,'quiet')};
 
-// Snapshot the destination when a voyage begins so arrival can describe changes at landfall.
-const mfOriginalStartVoyage=startVoyage;
-startVoyage=function(){const was=state.phase;mfOriginalStartVoyage();if(was==='ashore'&&state.voyage){state.voyage.mfDepartureSnapshot=mfMakeArrivalSnapshot(getIsland(state.voyage.destinationId));const errands=mfEnsureErrands().filter(e=>e.status==='carried'&&e.targetId===state.voyage.destinationId);if(errands.length)state.voyage.seaLog.unshift({at:gameNow(),icon:'▣',title:'Favour parcel aboard',text:`${errands.length===1?'A small errand is':'Small errands are'} headed for ${state.voyage.destinationName}.`});save()}};
+// Snapshot destination state for the arrival recap.
+const startVoyageCore=startVoyage;
+startVoyage=function(){const origin=state.phase==='ashore'?currentIsland():null,was=state.phase;startVoyageCore();if(was==='ashore'&&state.voyage){state.voyage.mfDepartureSnapshot=mfMakeArrivalSnapshot(getIsland(state.voyage.destinationId));const errands=mfEnsureErrands().filter(e=>e.status==='carried'&&e.targetId===state.voyage.destinationId);if(errands.length)state.voyage.seaLog.unshift({at:gameNow(),icon:'▣',title:'Favour parcel aboard',text:`${errands.length===1?'A small errand is':'Small errands are'} headed for ${state.voyage.destinationName}.`});if(state.phase==='fasting')mfPlanStowaway(state.voyage,origin);save()}};
 
-// Arrival resolves carried errands and prepares the homecoming recap before the island board.
-const mfOriginalOpenDocksideBoard=openDocksideBoard;
-openDocksideBoard=function(isl,arrival=false){if(arrival&&mfPendingArrival?.destId===isl.id){const data=mfPendingArrival;mfPendingArrival=null;mfShowArrivalRecap(isl,data);return}return mfOriginalOpenDocksideBoard(isl,arrival)};
-const mfOriginalDock=dock;
-dock=function(early=false){const v=state.voyage;if(!v)return;mfRecentPassengerCompletions=[];mfOriginalDock(early);const dest=currentIsland(),errandNotes=mfResolveErrandsAt(dest),passengerNotes=[...mfRecentPassengerCompletions];mfRecentPassengerCompletions=[];const items=mfArrivalItems(dest,v,errandNotes,passengerNotes);mfPendingArrival={destId:dest.id,items};save();renderUI()};
+// Resolve errands and build the arrival recap before opening the island board.
+const openDocksideBoardBase=openDocksideBoard;
+openDocksideBoard=function(isl,arrival=false){if(arrival&&mfPendingArrival?.destId===isl.id){const data=mfPendingArrival;mfPendingArrival=null;mfShowArrivalRecap(isl,data);return}return openDocksideBoardBase(isl,arrival)};
+const dockCore=dock;
+dock=function(early=false){const v=state.voyage;if(!v)return;const stow=v.stowaway?.id?{...v.stowaway}:null;mfRecentPassengerCompletions=[];dockCore(early);const dest=currentIsland(),errandNotes=mfResolveErrandsAt(dest),passengerNotes=[...mfRecentPassengerCompletions];mfRecentPassengerCompletions=[];const items=mfArrivalItems(dest,v,errandNotes,passengerNotes);mfPendingArrival={destId:dest.id,items};if(stow&&state.phase==='ashore')mfLandStowaway(dest,stow);else state.boatAnimals=[];save();renderUI()};
 
-// If MakeFast reopens during an active fast, keep world-summary notes for the eventual
-// arrival instead of interrupting the fasting view. Ashore behaviour is unchanged.
-const mfOriginalShowOfflineWorldSummary=showOfflineWorldSummary;
-showOfflineWorldSummary=function(){if(state.phase!=='ashore')return;return mfOriginalShowOfflineWorldSummary()};
+// Defer offline-world summaries until the player is ashore.
+const showOfflineWorldSummaryBase=showOfflineWorldSummary;
+showOfflineWorldSummary=function(){if(state.phase!=='ashore')return;return showOfflineWorldSummaryBase()};
 
-// Enrich resident cards without changing their layout or click targets.
+// Resident cards include relationship and favour status.
 residentHTML=function(p){
   mfEnsureSocialData(p);const isl=residentHomeIsland(p.id),cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),req=residentWaitingRequest(p),story=residentCanShareRumour(p),where=away?.kind==='captain'?`Away aboard ${away.vessel.name}`:away?.kind==='passenger'?'Away between islands':cap?`Captain of ${cap.name}`:'Ashore';const tier=mfRelationshipTier(p),favour=mfCurrentFavour(p),errand=mfResidentErrand(p,isl,false),unlocked=mfResidentTradeOffers(p).filter(o=>o.minTier<=mfRelationshipTierIndex(p)).length;const hints=[req?'! REQUEST':'',story?'? STORY':'',favour?'★ FAVOUR':'',errand&&errand.status==='carried'?'▣ ABOARD':errand&&errand.status==='offered'?'▣ DELIVERY':'',`♡ ${tier.name.toUpperCase()}`,`⇄ ${unlocked}`].filter(Boolean).join(' · ');return `<div class="resident" data-resident-id="${p.id}"><span class="outfit-dot" style="background:linear-gradient(135deg,${p.outfit} 0 55%,${p.accent||p.outfit} 55% 100%)"></span><span><b>${p.name}</b><span class="item-sub">${p.occupation||'Island resident'} · ${where}</span>${hints?`<span class="item-hint">${hints}</span>`:''}</span></div>`
 };
@@ -3457,12 +3365,8 @@ openVesselDetails=function(id){
   $('[data-vessel-rumour]')?.addEventListener('click',e=>{shareVesselRumour(e.currentTarget.dataset.vesselRumour);openVesselDetails(id)});$('[data-vessel-chart]')?.addEventListener('click',()=>{closeModal();setView('chart');chartView.selection={kind:'vessel',id};requestAnimationFrame(updateMapInfoOverlay)})
 };
 
-// ============================================================
-// v0.24.0 ISLAND LIFE PASS
-// Animated structures, ambient animals, varied seeded routes, structure visits,
-// and lightweight tap reactions. This layer is visual/social only: fasting and
-// voyage timing are deliberately untouched.
-// ============================================================
+// Island life
+// Animated structures, ambient animals, seeded resident routes and tap interactions.
 const MF_LIFE_ANIMAL_TYPES=['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'];
 const MF_LIFE_ANIMAL_LABELS={cat:'Harbour cat',dog:'Island dog',duck:'Duck',goose:'Goose',chicken:'Chicken',sheep:'Sheep',goat:'Goat',rabbit:'Rabbit',crab:'Shore crab'};
 const MF_LIFE_ANIMAL_NAMES={
@@ -3566,8 +3470,7 @@ function mfDrawBuildingLifeOverlay(x,y,kind,s=1,motion=0){
 }
 function drawTopHouse(x,y,kind='house',s=1){const variant=Math.abs(hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`))%4,motion=mfBuildingMotion(kind,x,y),spr=kind==='windmill'?mfWindmillSprite(variant,motion):kind==='boatyard'?mfBoatyardSprite(variant,motion):buildingSprite(kind,variant);drawPixelSprite(spr,x,y,s,0.5,.86);mfDrawBuildingLifeOverlay(x,y,kind,s,motion)}
 
-// One-pixel ambient vegetation movement. It is deliberately tiny so coast-safe
-// placement remains visually stable and the island never looks like it is wobbling.
+// Subtle vegetation sway keeps settlement anchors visually stable.
 function drawTopTree(x,y,s=1,kind='broadleaf'){const seed=hashString(`${kind}:${Math.round(x)}:${Math.round(y)}`),phase=mfLifePhase(900,4,seed),sway=state.reducedMotion?0:[-0.45,0,.45,0][phase]*s;drawPixelSprite(propSprite(kind,Math.abs(seed)%3),x+sway,y,s,0.5,.86)}
 function drawFlowerPatch(x,y){const seed=hashString(`flowers:${Math.round(x)}:${Math.round(y)}`),phase=mfLifePhase(820,4,seed),sway=state.reducedMotion?0:[-.5,0,.5,0][phase];drawPixelSprite(propSprite('flowers',Math.abs(seed)%3),x+6+sway,y+7,1,0.5,.78)}
 
@@ -3634,7 +3537,6 @@ function updateAnimalDialogue(ts=performance.now()){
 function interactWithAnimal(id){const a=animalById(id);if(!a)return;const prev=mfAnimalReactions.get(id),count=(prev?.count||0)+1,text=mfAnimalReactionText(a,count-1),glyph=['♥','♪','!'][Math.abs(hashString(`${id}:${count}`))%3];mfAnimalReactions.set(id,{until:performance.now()+1800,count,text,glyph});showAnimalDialogue(a,text,count)}
 function drawIslandAnimal(isl,a,pose){
   const reaction=mfAnimalReaction(a.id),tapPhase=reaction?Math.sin((reaction.until-performance.now())*.012):0,bounce=reaction?Math.max(0,tapPhase)*2.2:0,phase=mfLifePhase(a.species==='rabbit'?220:300,4,a.seed),sc={cat:.92,dog:1.05,duck:.82,goose:.95,chicken:.82,sheep:1.08,goat:1.02,rabbit:.82,crab:.78}[a.species]||.9,spr=animalSprite(a.species,phase,pose.facing<0);drawPixelSprite(spr,pose.x,pose.y-bounce,sc,.5,.88);if(reaction){roundedRect(pose.x+7,pose.y-23-bounce,13,12,4,'rgba(255,247,222,.94)','#18313a',1);pxText(reaction.glyph,pose.x+13.5,pose.y-14-bounce,reaction.glyph==='♥'?'#c55c57':'#18313a',7,'center')}}
-function mfAnimalInfoHTML(a){return `<button class="world-info-close" data-world-close aria-label="Close">×</button><b>♣ ${a.name}</b><span>${MF_LIFE_ANIMAL_LABELS[a.species]||'Island animal'} · just part of island life.</span><div class="world-info-actions"><button data-world-animal="${a.id}">SAY HELLO</button></div>`}
 
 worldSelectionHTML=function(sel){
   if(!sel)return'';
@@ -3680,48 +3582,7 @@ drawIslandScene=function(isl){
 function mfIslandLifeStats(isl=currentIsland()){const residents=(isl.residents||[]).filter(p=>!residentAwayAssignment(p.id)),animals=islandAnimals(isl),structures=mfIslandLifeStructures(isl);return{population:population(isl),residentTotal:residents.length,residentVisibleCap:visibleResidentLimit(isl),animalCount:animals.length,animalSpecies:animals.map(a=>a.species),structureAnchors:structures.length,spriteCache:worldSpriteCache.size}}
 
 
-// Reduced project requirements can leave an old in-progress project already complete.
-// Reconcile that once, quietly, so existing saves never get stuck at 100%.
-try{const priorSim=worldSimulating;worldSimulating=true;state.islands.forEach(isl=>(isl.projects||[]).filter(p=>!p.complete&&projectProgress(p)>=.999).forEach(p=>completeIslandProject(isl,p)));worldSimulating=priorSim}catch(e){console.warn('MakeFast v0.23.4 project reconciliation note',e)}
-
-save();
-
-// UI events
-$$('.navbtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
-$('#panelBody').addEventListener('click',e=>{const r=e.target.closest('[data-resident-id]');if(r){openResidentDetails(r.dataset.residentId);return}const v=e.target.closest('[data-vessel-id]');if(v){openVesselDetails(v.dataset.vesselId)}});$('#chartLabels').addEventListener('click',e=>{const l=e.target.closest('[data-chart-label-id]');if(!l)return;e.stopPropagation();chartView.selection={kind:'island',id:l.dataset.chartLabelId};updateMapInfoOverlay()});
-$('#modal').addEventListener('click',e=>{const r=e.target.closest('[data-resident-id]');if(r){openResidentDetails(r.dataset.residentId);return}const v=e.target.closest('[data-vessel-id]');if(v){openVesselDetails(v.dataset.vesselId)}});
-$('#sheetToggle').onclick=e=>{e.stopPropagation();if(panelDrag.suppressToggleClick){panelDrag.suppressToggleClick=false;return}toggleMobilePanel()};$('#panelHead').addEventListener('pointerdown',beginPanelDrag);window.addEventListener('pointermove',e=>{if(panelDrag.active)movePanelDrag(e)});window.addEventListener('pointerup',e=>{if(panelDrag.active)endPanelDrag(e)});window.addEventListener('pointercancel',e=>{if(panelDrag.active)endPanelDrag(e)});
-$('#mapZoomIn').onclick=()=>zoomChart(chartView.zoom>2?.5:.25);$('#mapZoomOut').onclick=()=>zoomChart(chartView.zoom>2?-.5:-.25);$('#mapReset').onclick=()=>{resetChartView();fitChartToKnown();updateMapInfoOverlay()};
-$('#quickPhaseBtn').onclick=()=>{if(minigame)endMinigame('leave');if(state.phase==='ashore')startVoyage();else if(state.phase==='arrived')dock(false);else earlyDockPrompt()};
-$('#atmosphereBox').onclick=()=>{if(minigame)return;setView('settings');setTimeout(()=>$('#weatherSettingsSection')?.scrollIntoView({block:'start'}),60)};
-$('#voyagePeek').onclick=openVoyageFromOverlay;$('#voyageNote').onclick=e=>{if(e.target.closest('.voyage-note-actions'))return;if($('#voyageNote').dataset.eventId)return;openVoyageFromOverlay()};$('#voyageNoteLook').onclick=e=>{e.stopPropagation();const id=$('#voyageNote').dataset.eventId;if(id)investigateVoyageEvent(id)};$('#voyageNotePass').onclick=e=>{e.stopPropagation();const id=$('#voyageNote').dataset.eventId;if(id)letVoyageEventPass(id)};
-window.addEventListener('resize',()=>{fitResponsiveStage();syncMobilePanel()});
-window.addEventListener('beforeunload',()=>{simulateWorldTo(nowReal(),false);save()});
-setInterval(()=>{simulateWorldTo(nowReal(),false);save();if(['harbour','chart','log','voyage'].includes(state.activeView))renderUI()},60000);
-setInterval(()=>{if(state.sim?.active&&state.phase!=='ashore'){/* preview uses real time */}},1000);
-setInterval(()=>refreshLocalWeather(false),10*60000);
-let makeFastAudioUnlocked=false;
-const unlockMakeFastAudio=()=>{
-  if(!state.sound)return;
-  AdaptiveMusic.wake().then(ok=>{if(ok)makeFastAudioUnlocked=true});
-};
-// Safari/iOS can be picky about which gesture is allowed to resume Web Audio.
-// Keep retrying on ordinary user gestures until the context genuinely reports running.
-document.addEventListener('pointerdown',unlockMakeFastAudio,{passive:true});
-document.addEventListener('touchend',unlockMakeFastAudio,{passive:true});
-document.addEventListener('click',unlockMakeFastAudio,{passive:true});
-document.addEventListener('keydown',unlockMakeFastAudio);
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'){refreshLocalWeather(false);if(state.sound)AdaptiveMusic.wake().then(ok=>{if(ok){makeFastAudioUnlocked=true;AdaptiveMusic.state.nextTime=AdaptiveMusic.state.ctx.currentTime+.08;adaptiveMusicSync(true)}})}
-  else if(AdaptiveMusic.state.ctx?.state==='running')AdaptiveMusic.state.ctx.suspend();
-});
-
-window.__MakeFastAudio={status:()=>AdaptiveMusic.status(),state:AdaptiveMusic.state,sync:(force=true)=>adaptiveMusicSync(force),wake:()=>AdaptiveMusic.wake(),director:()=>AdaptiveMusic.state.playing?AdaptiveMusic.status():AdaptiveMusic.status()};
-window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES,holdCapacity:playerBoatCapacity,passengerCapacity:playerPassengerCapacity,parcelCapacity:playerParcelCapacity,helpLoad:()=>({passengers:playerPassengerCount(),parcels:playerParcelCount()}),stats:boatEffectiveStats,findChanceBonus:boatFindChanceBonus,rewardThreshold:boatRewardThreshold,seaFinds:()=>ensureSeaFinds()};
-window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit,islandAnimals,lifeStats:mfIslandLifeStats};
-window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
-window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
-window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
+// Voyage stowaways
 const MF_STOWAWAY_FLAVOUR={
   cat:a=>`${a.name} unfolds from behind a coil of rope and behaves as though passage was arranged weeks ago.`,
   dog:a=>`${a.name} emerges from under the bench, tail going like a signal flag.`,
@@ -3736,30 +3597,53 @@ const MF_STOWAWAY_FLAVOUR={
 function mfPlanStowaway(v,origin){if(!v)return;state.boatAnimals=[];const rr=rng(hashString(`${v.id}:stowaway-v2413`));if(rr()>=.18){v.stowawayPlan=null;return}const localSpecies=[...new Set((origin?islandAnimals(origin):[]).map(a=>a.species).filter(s=>MF_STOWAWAY_FLAVOUR[s]))],fallback=['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'],species=localSpecies.length?localSpecies[Math.floor(rr()*localSpecies.length)]:fallback[Math.floor(rr()*fallback.length)],names=MF_LIFE_ANIMAL_NAMES[species]||['Stowaway'],name=names[Math.floor(rr()*names.length)],seed=hashString(`${v.id}:${species}:${name}`);v.stowawayPlan={species,name,seed,revealAtReal:(v.startedAtReal||nowReal())+(90+Math.floor(rr()*300))*1000,revealAtProgress:.035+rr()*.035,revealed:false}}
 function mfUpdateVoyageStowaway(){const v=state.voyage,plan=v?.stowawayPlan;if(!v||!plan||plan.revealed||state.phase!=='fasting')return;const ready=v.simulated||state.settings.demoMode?voyageProgress()>=plan.revealAtProgress:nowReal()>=plan.revealAtReal;if(!ready||minigame||state.activeView==='chart')return;plan.revealed=true;const a={id:`stowaway_${Math.abs(hashString(v.id+plan.name))}`,species:plan.species,name:plan.name,seed:plan.seed,index:0,flavour:''};a.flavour=(MF_STOWAWAY_FLAVOUR[a.species]||MF_STOWAWAY_FLAVOUR.cat)(a);v.stowaway=a;state.boatAnimals=[a];v.seaLog.unshift({at:gameNow(),icon:'✦',title:'Stowaway aboard',text:a.flavour});save();beep('soft');showAnimalDialogue(a,a.flavour,1,{context:'voyage',duration:5200,kind:'Stowaway aboard'});renderUI()}
 function mfLandStowaway(dest,a){if(!dest||!a)return;ensureIslandData(dest);if(!dest.animalGuests.some(x=>x.id===a.id)){dest.animalGuests.push({id:a.id,species:a.species,name:a.name,seed:a.seed,arrivedAt:nowReal()});if(dest.animalGuests.length>4)dest.animalGuests.splice(0,dest.animalGuests.length-4)}state.boatAnimals=[];const line=`${a.name} came ashore at ${dest.name} after stowing away aboard ${state.boat.name}.`;state.journal.unshift(line);if(mfPendingArrival?.destId===dest.id)mfPendingArrival.items=[{icon:'✦',text:line},...(mfPendingArrival.items||[])].slice(0,7)}
-const mf2413StartVoyage=startVoyage;
-startVoyage=function(){const origin=state.phase==='ashore'?currentIsland():null;mf2413StartVoyage();if(state.voyage&&state.phase==='fasting'){mfPlanStowaway(state.voyage,origin);save()}};
-const mf2413Dock=dock;
-dock=function(early=false){const stow=state.voyage?.stowaway?.id?{...state.voyage.stowaway}:null;mf2413Dock(early);if(stow&&state.phase==='ashore')mfLandStowaway(currentIsland(),stow);else state.boatAnimals=[];save();renderUI()};
+// Reconcile legacy projects whose saved contributions already meet current requirements.
+try{const priorSim=worldSimulating;worldSimulating=true;state.islands.forEach(isl=>(isl.projects||[]).filter(p=>!p.complete&&projectProgress(p)>=.999).forEach(p=>completeIslandProject(isl,p)));worldSimulating=priorSim}catch(e){console.warn('MakeFast project reconciliation note',e)}
+
+save();
+
+// UI event wiring
+$$('.navbtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('#panelBody').addEventListener('click',e=>{const r=e.target.closest('[data-resident-id]');if(r){openResidentDetails(r.dataset.residentId);return}const v=e.target.closest('[data-vessel-id]');if(v){openVesselDetails(v.dataset.vesselId)}});$('#chartLabels').addEventListener('click',e=>{const l=e.target.closest('[data-chart-label-id]');if(!l)return;e.stopPropagation();chartView.selection={kind:'island',id:l.dataset.chartLabelId};updateMapInfoOverlay()});
+$('#modal').addEventListener('click',e=>{const r=e.target.closest('[data-resident-id]');if(r){openResidentDetails(r.dataset.residentId);return}const v=e.target.closest('[data-vessel-id]');if(v){openVesselDetails(v.dataset.vesselId)}});
+$('#sheetToggle').onclick=e=>{e.stopPropagation();if(panelDrag.suppressToggleClick){panelDrag.suppressToggleClick=false;return}toggleMobilePanel()};$('#panelHead').addEventListener('pointerdown',beginPanelDrag);window.addEventListener('pointermove',e=>{if(panelDrag.active)movePanelDrag(e)});window.addEventListener('pointerup',e=>{if(panelDrag.active)endPanelDrag(e)});window.addEventListener('pointercancel',e=>{if(panelDrag.active)endPanelDrag(e)});
+$('#mapZoomIn').onclick=()=>zoomChart(chartView.zoom>2?.5:.25);$('#mapZoomOut').onclick=()=>zoomChart(chartView.zoom>2?-.5:-.25);$('#mapReset').onclick=()=>{resetChartView();fitChartToKnown();updateMapInfoOverlay()};
+$('#quickPhaseBtn').onclick=()=>{if(minigame)endMinigame('leave');if(state.phase==='ashore')startVoyage();else if(state.phase==='arrived')dock(false);else earlyDockPrompt()};
+$('#atmosphereBox').onclick=()=>{if(minigame)return;setView('settings');setTimeout(()=>$('#weatherSettingsSection')?.scrollIntoView({block:'start'}),60)};
+$('#voyagePeek').onclick=openVoyageFromOverlay;$('#voyageNote').onclick=e=>{if(e.target.closest('.voyage-note-actions'))return;if($('#voyageNote').dataset.eventId)return;openVoyageFromOverlay()};$('#voyageNoteLook').onclick=e=>{e.stopPropagation();const id=$('#voyageNote').dataset.eventId;if(id)investigateVoyageEvent(id)};$('#voyageNotePass').onclick=e=>{e.stopPropagation();const id=$('#voyageNote').dataset.eventId;if(id)letVoyageEventPass(id)};
+window.addEventListener('resize',()=>{fitResponsiveStage();syncMobilePanel()});
+window.addEventListener('beforeunload',()=>{simulateWorldTo(nowReal(),false);save()});
+setInterval(()=>{simulateWorldTo(nowReal(),false);save();if(['harbour','chart','log','voyage'].includes(state.activeView))renderUI()},60000);
+setInterval(()=>refreshLocalWeather(false),10*60000);
+let makeFastAudioUnlocked=false;
+const unlockMakeFastAudio=()=>{
+  if(!state.sound)return;
+  AdaptiveMusic.wake().then(ok=>{if(ok)makeFastAudioUnlocked=true});
+};
+// Resume Web Audio from normal user gestures when required by the browser.
+document.addEventListener('pointerdown',unlockMakeFastAudio,{passive:true});
+document.addEventListener('touchend',unlockMakeFastAudio,{passive:true});
+document.addEventListener('click',unlockMakeFastAudio,{passive:true});
+document.addEventListener('keydown',unlockMakeFastAudio);
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){refreshLocalWeather(false);if(state.sound)AdaptiveMusic.wake().then(ok=>{if(ok){makeFastAudioUnlocked=true;AdaptiveMusic.state.nextTime=AdaptiveMusic.state.ctx.currentTime+.08;adaptiveMusicSync(true)}})}
+  else if(AdaptiveMusic.state.ctx?.state==='running')AdaptiveMusic.state.ctx.suspend();
+});
+
+// Diagnostics and test hooks
+window.__MakeFastAudio={status:()=>AdaptiveMusic.status(),state:AdaptiveMusic.state,sync:(force=true)=>adaptiveMusicSync(force),wake:()=>AdaptiveMusic.wake(),director:()=>AdaptiveMusic.status()};
+window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES,holdCapacity:playerBoatCapacity,passengerCapacity:playerPassengerCapacity,parcelCapacity:playerParcelCapacity,helpLoad:()=>({passengers:playerPassengerCount(),parcels:playerParcelCount()}),stats:boatEffectiveStats,findChanceBonus:boatFindChanceBonus,rewardThreshold:boatRewardThreshold,seaFinds:()=>ensureSeaFinds()};
+window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit,islandAnimals,lifeStats:mfIslandLifeStats};
+window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
+window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
+window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
 
 window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length,cacheBuilds:chartStaticCache.builds,cacheBuildMs:+chartStaticCache.buildMs.toFixed(2),cacheReady:!!chartStaticCache.canvas}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),demoRouteTraffic:()=>JSON.parse(JSON.stringify(state.demoRouteTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),recentCrossings:(limit=9)=>recentChartCrossings(limit),recentRouteBundle:(limit=6)=>recentChartRouteBundle(limit),recentRouteStyle:(rank,total)=>recentRouteVisualStyle(rank,total),chartDetailScale:(tile)=>chartIslandDetailScale(tile),chartDetailPoint:(q,x,y,tile)=>chartIslandDetailPoint(q,x,y,tile),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
 
-// v0.23.6 scene geometry pass: proportional chart zoom, coast-safe assets,
-// structure-only chart/approach views, and scaled passenger deck walkers.
-// v0.23.10 logo refresh: replaced the original CSS brandmark with the new inline SVG mast-and-sails mark.
-// v0.24.2 settlement-spacing pass: collision-aware project anchors prevent large structures from stacking on top of each other.
-// v0.24.1 harbour/tap polish: water-clear player docking and direct animal reactions without the world-info panel.
-// v0.24.7 audio/life polish: transition-safe adaptive music requests, duplicate-instrument morph suppression, restored audio-node cleanup/routing, and animated animal dialogue portraits.
-// v0.24.9 UI quieting: unavailable actions hide, completed builds collapse, and docked people/boats use persistent animated portrait talk cards.
-// v0.24.10 chart-performance pass: static cartography is cached between camera/world changes; compass rose moved to the lower-left.
-// v0.24.6 chart-clarity pass: semantic zoom, familiar-lane casing, deduplicated recent trail and coral active course.
-// Start
+// Startup
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
 })();
 </script>
 </body>
 </html>
-
-// v0.24.6 chart-clarity pass: minor links recede at overview scale and reveal with zoom; recent hops use waypoint rings without stacked duplicate strokes.
-
-<!-- v0.24.8 arrival-copy pass -->
