@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.15';
+const VERSION_LABEL='0.26.16';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4042,7 +4042,7 @@ function arcadeV26CraneInput(g){
   g.release={x,y,vx:Math.cos(C.angle)*tangential,vy:-Math.sin(C.angle)*tangential,gravity:load.fall,rot:C.angle*.12,spin:C.omega*.55,landed:false,lockedRoll,lockedWind:C.wind,lockedDeckY:shipY-shipH*.16,lockedBayW:bayW,lockedTargetX:bayX0+g.targetCol*(bayW+gap)+bayW/2};
   g.cool=now+380;arcadeV26SetFeedback(g,'LOAD AWAY · TARGET LOCKED','good',520)
 }
-function arcadeV26ContainerDrop(g){const col=Math.floor(clamp(g.stackCursor*5,0,4.999)),w=g.piece.width,start=Math.min(col,5-w),base=Math.max(...g.cols.slice(start,start+w)),next=base+1;if(next>8){arcadeV26Strike(g,'STACK TOO HIGH',70);arcadeV26NewContainerPiece(g);return}for(let i=0;i<w;i++){g.cols[start+i]=next;g.colWeights[start+i]+=g.piece.weight/w}const moment=g.colWeights.reduce((sum,v,i)=>sum+v*(i-2),0),spread=Math.max(...g.cols)-Math.min(...g.cols);if(Math.abs(moment)>8+g.round*.35){arcadeV26Strike(g,'SHIP LISTING',50);g.colWeights=g.colWeights.map(v=>v*.76)}else arcadeV26Progress(g,1,Math.max(100,310-spread*32-Math.abs(moment)*6),spread<=1?'EVEN DECK':'STOWED');arcadeV26NewContainerPiece(g)}
+function arcadeV26ContainerDrop(g){arcadeStackV2614BeginDrop(g)}
 function arcadeV26TetrisDrop(g,nx){const piece=g.tetrisPiece.cells,col=Math.floor(clamp(nx*7,0,6.999)),maxX=Math.max(...piece.map(p=>p[0]));let x0=Math.min(col,6-maxX),bestY=null;for(let y=0;y<8;y++){let ok=true;for(const [px,py] of piece){const gy=y+py;if(gy>=8||g.grid[gy][x0+px]){ok=false;break}}if(ok)bestY=y;else if(bestY!==null)break}if(bestY===null){arcadeV26Strike(g,'NO ROOM THERE',55);arcadeV26NewTetrisPiece(g);return}for(const [px,py] of piece)g.grid[bestY+py][x0+px]=g.tetrisPiece.kind+1;arcadeV26Progress(g,1,180+piece.length*45,'PACKED');arcadeV26NewTetrisPiece(g)}
 function arcadeV26SortDrop(g,nx,ny){const o=g.drag;if(!o)return;if(o.kind===3&&g.theme==='trawler'){if(ny<.25)arcadeV26Progress(g,1,190,'RETURNED');else arcadeV26Strike(g,'BYCATCH TO SEA',30)}else{const zone=Math.floor(clamp(nx*3,0,2.999)),kind=g.zoneOrder[zone];if(ny>.75&&kind===o.kind)arcadeV26Progress(g,1,205,'SORTED');else arcadeV26Strike(g,ny<=.75?'DRAG TO A BIN':'WRONG BIN',35)}g.items=g.items.filter(x=>x!==o);g.drag=null}
 function arcadeV26LanesDrop(g,nx,ny){const o=g.drag;if(!o)return;const lane=Math.floor(clamp(nx*3,0,2.999));if(ny<=.75){arcadeV26Strike(g,'DROP IT IN A BAY',20)}else if(g.baySpace[lane]<o.width){arcadeV26Strike(g,'BAY FULL',35)}else{g.baySpace[lane]-=o.width;g.bayLoads[lane]+=o.weight;const list=Math.abs(g.bayLoads[0]-g.bayLoads[2]);if(list>7+g.round*.35){arcadeV26Strike(g,'DANGEROUS LIST',45);g.bayLoads[lane]=Math.max(0,g.bayLoads[lane]-o.weight);g.baySpace[lane]+=o.width}else arcadeV26Progress(g,1,Math.max(100,285-list*22),list<=1?'EVEN KEEL':'STOWED')}g.items=g.items.filter(x=>x!==o);g.drag=null}
