@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.13';
+const VERSION_LABEL='0.26.14';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -516,7 +516,7 @@ const CONTENT={
     ferry_galley:{title:'GALLEY SWAY',icon:'☕',group:'Passenger Ferry',engine:'balance',desc:'Keep a tea tray level while the ferry rolls through a lumpy crossing.',instruction:'DRAG THE BLUE HANDLE AGAINST THE ROLL • KEEP THE CUPS ON THE TRAY',duration:23,rewardThreshold:520,benchmark:1700,theme:'ferry'},
     ferry_bags:{title:'BAGGAGE SCRAMBLE',icon:'▣',group:'Passenger Ferry',engine:'catch',desc:'Loose bags are rolling down the deck. Catch them in the baggage trolley before they reach the rail.',instruction:'DRAG THE BAGGAGE TROLLEY LEFT / RIGHT TO CATCH THE ROLLING BAGS',duration:24,rewardThreshold:540,benchmark:1750,theme:'ferry'},
     container_crane:{title:'CRANE SWING',icon:'▥',group:'Container Ship',engine:'crane',desc:'Catch the swing and drop containers precisely into marked bays.',instruction:'TAP ANYWHERE WHEN THE HOOK IS ABOVE THE GREEN TARGET BAY',duration:26,rewardThreshold:550,benchmark:1750,theme:'container'},
-    container_stack:{title:'STACK THE DECK',icon:'▦',group:'Container Ship',engine:'stack',desc:'Build clean container stacks without making the ship list.',instruction:'TAP A COLUMN TO DROP • KEEP THE STACKS EVEN',duration:28,rewardThreshold:600,benchmark:1900,theme:'container'},
+    container_stack:{title:'STACK THE DECK',icon:'▦',group:'Container Ship',engine:'stack',desc:'Load a working container deck while keeping weight, support and ship list under control.',instruction:'DROP FROM THE MOVING GANTRY • BALANCE PORT / STARBOARD • SUPPORT LONG AND HEAVY LOADS',duration:28,rewardThreshold:600,benchmark:1900,theme:'container'},
     cruise_buffet:{title:'BUFFET BALANCE',icon:'◫',group:'Cruise Ship',engine:'balance',desc:'Stop plates and drinks skittering off a rolling buffet trolley.',instruction:'COUNTER THE ROLL • KEEP THE PLATES ON THE TRAY',duration:22,rewardThreshold:500,benchmark:1550,theme:'cruise'},
     cruise_deckchairs:{title:'DECKCHAIR DASH',icon:'▧',group:'Cruise Ship',engine:'sort',desc:'Sort wandering deckchairs and pool toys back into the right zones.',instruction:'DRAG EACH ITEM INTO THE MATCHING COLOURED ZONE',duration:25,rewardThreshold:550,benchmark:1700,theme:'cruise'},
     trawler_net:{title:'HAUL THE NET',icon:'⌇',group:'Fishing Trawler',engine:'meter',desc:'Keep the winch tension in the safe band while the catch comes aboard.',instruction:'HOLD TO PULL • RELEASE TO EASE THE TENSION',duration:24,rewardThreshold:550,benchmark:1650,theme:'trawler'},
@@ -2228,7 +2228,10 @@ function arcadePointer(g,type,x,y){if(!g.started)return;const e=g.engine,G=arcad
   else if(e==='balance'){if(type==='down'||type==='move')g.control=nx}
   else if(e==='timing'&&type==='down'&&performance.now()>g.cool){const d=Math.abs(g.phasePos-g.target),wrapped=Math.min(d,1-d);if(wrapped<g.window)arcadeReward(g,Math.round(310*(1-wrapped/g.window))+90,wrapped<g.window*.3?'PERFECT':'GOOD');else arcadeMiss(g,35,'TOO EARLY / LATE');g.target=.16+Math.random()*.68;g.speed=.38+Math.random()*.28;g.cool=performance.now()+330}
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool){const hook=.08+g.swing*.84,target=(g.targetCol+.5)/4,d=Math.abs(hook-target);const good=d<.095;if(good)arcadeReward(g,Math.round(430*(1-d/.095))+80,d<.025?'PERFECT DROP':'LANDED');else arcadeMiss(g,60,'MISSED THE BAY');g.drops.push({x:hook,target:g.targetCol,good,at:performance.now()});g.targetCol=Math.floor(Math.random()*4);g.cool=performance.now()+720}
-  else if(e==='stack'&&type==='down'&&performance.now()>g.cool){const col=Math.floor(clamp((g.theme==='container'?g.stackCursor:nx)*5,0,4.999));g.cols[col]+=g.piece;const spread=Math.max(...g.cols)-Math.min(...g.cols),peak=Math.max(...g.cols);if(peak>8){g.cols[col]-=g.piece;arcadeMiss(g,90,'TOO HIGH')}else{const pts=Math.max(70,260-spread*38);arcadeReward(g,pts,spread<=1?'EVEN DECK':'STACKED')}g.piece=1+(Math.random()<.32?1:0);g.cool=performance.now()+230}
+  else if(e==='stack'&&type==='down'&&performance.now()>g.cool){
+    if(g.theme==='container')arcadeStackV2614BeginDrop(g);
+    else{const col=Math.floor(clamp(nx*5,0,4.999));g.cols[col]+=g.piece;const spread=Math.max(...g.cols)-Math.min(...g.cols),peak=Math.max(...g.cols);if(peak>8){g.cols[col]-=g.piece;arcadeMiss(g,90,'TOO HIGH')}else{const pts=Math.max(70,260-spread*38);arcadeReward(g,pts,spread<=1?'EVEN DECK':'STACKED')}g.piece=1+(Math.random()<.32?1:0);g.cool=performance.now()+230}
+  }
   else if(e==='sort'){
     if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<42){g.drag=o;break}}}
     else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}
@@ -3388,10 +3391,73 @@ function arcadeV26SetupCrane(g,r,d){
   g.crane={angle:arcadeV26Rand(g,-.34,.34),omega:arcadeV26Rand(g,-.18,.18),wind:0,length:1,load:null,slots,occupied:[],landed:[],rollPhase:arcadeV26Rand(g,0,6.28),rollAmp:.035+Math.min(.07,(r-1)*.006)+arcadeV26Rand(g,0,.018),boomSway:arcadeV26Rand(g,0,6.28),readyAt:performance.now()+350,trolley:.47,trolleyV:0,control:0};
   g.targetCol=0;g.drops=[];g.release=null;g.cool=0;arcadeCraneV2610ResetLift(g)
 }
-function arcadeV26NewContainerPiece(g){g.piece={width:arcadeV26Rand(g,0,1)<.28?2:1,weight:1+Math.floor(arcadeV26Rand(g,0,Math.min(3,1+g.round/3))),kind:Math.floor(arcadeV26Rand(g,0,3))}}
+const ARCADE_STACK_V2614_LOADS=[
+  {id:'empty',label:'EMPTY 20',width:1,weight:7,kind:0,col:'#d6b269'},
+  {id:'standard',label:'20FT BOX',width:1,weight:14,kind:1,col:'#527da0'},
+  {id:'reefer',label:'REEFER',width:1,weight:18,kind:2,col:'#e6eee9'},
+  {id:'heavy',label:'HEAVY 20',width:1,weight:27,kind:3,col:'#b95d50'},
+  {id:'forty',label:'40FT BOX',width:2,weight:24,kind:4,col:'#6f8f6a'}
+];
+function arcadeV26NewContainerPiece(g){
+  const r=g.round||1,pool=ARCADE_STACK_V2614_LOADS.filter(p=>p.id!=='heavy'||r>=2).filter(p=>p.id!=='forty'||r>=2).filter(p=>p.id!=='reefer'||r>=3);
+  let base=arcadeV26Choice(g,pool);if(r===1&&arcadeV26Rand(g,0,1)<.64)base=ARCADE_STACK_V2614_LOADS[arcadeV26Rand(g,0,1)<.5?0:1];
+  g.piece={...base,variant:Math.floor(arcadeV26Rand(g,0,3)),weight:Math.round(base.weight*(.92+arcadeV26Rand(g,0,.17)))}
+}
+function arcadeStackV2614List(g){
+  let total=0,moment=0;
+  for(let c=0;c<5;c++)for(const item of (g.stackLoads?.[c]||[])){const w=item.weight/(item.width||1);total+=w;moment+=w*(c-2)}
+  return total?clamp(moment/(total*2.15),-.62,.62):0
+}
+function arcadeStackV2614DrawLoad(load,x,y,w,h,alpha=1){
+  ctx.save();ctx.globalAlpha=alpha;const ink='#17313a';
+  if(load.id==='forty'){
+    roundedRect(x-w/2,y-h,w,h,2,load.col,ink,2);for(let q=-3;q<=3;q++)line(x+q*w*.11,y-h+3,x+q*w*.11,y-3,'rgba(255,247,222,.32)',1);
+    rect(x-w*.43,y-h*.75,w*.10,h*.50,'rgba(23,49,58,.13)')
+  }else if(load.id==='reefer'){
+    roundedRect(x-w/2,y-h,w,h,2,'#e6eee9',ink,2);rect(x-w*.43,y-h*.72,w*.17,h*.48,'#9bc5d1',ink,1);
+    for(let q=0;q<4;q++)line(x-w*.18,y-h*.68+q*h*.12,x+w*.38,y-h*.68+q*h*.12,'#6d8a91',1)
+  }else{
+    const col=load.id==='heavy'?(load.variant%2?'#a9574f':'#b95d50'):load.id==='empty'?(load.variant%2?'#d6b269':'#c9975d'):(load.variant%2?'#527da0':'#4e8890');
+    roundedRect(x-w/2,y-h,w,h,2,col,ink,2);
+    for(let q=-2;q<=2;q++)line(x+q*w*.15,y-h+3,x+q*w*.15,y-3,'rgba(255,247,222,.34)',1);
+    if(load.id==='heavy'){rect(x-w*.39,y-h*.78,w*.78,h*.14,'#e5b54e',ink,1);pxText('H',x,y-h*.34,'#fff7de',7,'center')}
+    if(load.id==='empty')pxText('MT',x,y-h*.34,'#17313a',6,'center')
+  }
+  ctx.restore()
+}
+function arcadeStackV2614CanLand(g,col,piece){
+  if(piece.width===1)return{ok:true,base:(g.stackLoads[col]||[]).length,cols:[col]};
+  if(col>=4)return{ok:false,why:'NO ROOM FOR 40FT'};
+  const a=(g.stackLoads[col]||[]).length,b=(g.stackLoads[col+1]||[]).length;
+  if(Math.abs(a-b)>0)return{ok:false,why:'40FT NEEDS LEVEL SUPPORT'};
+  return{ok:true,base:a,cols:[col,col+1]}
+}
+function arcadeStackV2614BeginDrop(g){
+  if(g.stackDrop||performance.now()<(g.cool||0))return;
+  let col=Math.floor(clamp((g.stackCursor-.12)/.76*5,0,4.999));
+  if(g.piece.width===2&&col===4)col=3;
+  g.stackDrop={piece:{...g.piece},col,start:performance.now(),resolved:false};g.cool=performance.now()+540
+}
+function arcadeStackV2614ResolveDrop(g){
+  const D=g.stackDrop;if(!D||D.resolved)return;D.resolved=true;
+  const piece=D.piece,col=D.col,fit=arcadeStackV2614CanLand(g,col,piece),maxH=Math.max(...g.stackLoads.map(a=>a.length));
+  if(!fit.ok){arcadeV26Strike(g,fit.why,55);g.stackDrop=null;arcadeV26NewContainerPiece(g);return}
+  if(fit.base>=Math.min(6,4+Math.floor((g.round||1)/3))){arcadeV26Strike(g,'STACK TOO HIGH',65);g.stackDrop=null;arcadeV26NewContainerPiece(g);return}
+  for(const c of fit.cols)g.stackLoads[c].push({...piece,span:piece.width,anchor:col,level:fit.base});
+  const list=arcadeStackV2614List(g),limit=Math.max(.16,.31-(g.round-1)*.012);
+  if(Math.abs(list)>limit){
+    for(const c of fit.cols)g.stackLoads[c].pop();
+    arcadeV26Strike(g,list<0?'TOO MUCH WEIGHT PORT':'TOO MUCH WEIGHT STARBOARD',70);g.stackDrop=null;arcadeV26NewContainerPiece(g);return
+  }
+  g.cols=g.stackLoads.map(a=>a.length);g.colWeights=g.stackLoads.map(a=>Math.round(a.reduce((n,x)=>n+x.weight/(x.width||1),0)));
+  const heightSpread=Math.max(...g.cols)-Math.min(...g.cols),balanceBonus=Math.round((1-Math.abs(list)/limit)*120),pts=Math.max(150,260+balanceBonus-heightSpread*18+(piece.id==='heavy'?55:0)+(piece.id==='forty'?45:0));
+  arcadeV26Progress(g,1,pts,Math.abs(list)<limit*.35?'SHIP TRIM':'LOAD SECURED');
+  if(!g.failed&&g.roundProgress<g.roundGoal){g.stackDrop=null;arcadeV26NewContainerPiece(g)}
+}
 function arcadeV26NewTetrisPiece(g){const shape=ARCADE_V26_PIECES[Math.floor(arcadeV26Rand(g,0,Math.min(ARCADE_V26_PIECES.length,3+g.round)))];g.tetrisPiece={cells:shape.map(p=>[p[0],p[1]]),kind:Math.floor(arcadeV26Rand(g,0,3))}}
 function arcadeV26SetupStack(g,r,d){
-  arcadeV26ResetCommon(g,7+Math.min(7,r));g.stackCursor=arcadeV26Rand(g,.18,.82);g.stackDir=arcadeV26Rand(g,0,1)>.5?1:-1;g.stackSpeed=.27+Math.min(.55,r*.035);g.cols=[0,0,0,0,0];g.colWeights=[0,0,0,0,0];g.grid=Array.from({length:8},()=>Array(7).fill(0));g.placed=0;if(g.theme==='container')arcadeV26NewContainerPiece(g);else arcadeV26NewTetrisPiece(g)
+  arcadeV26ResetCommon(g,7+Math.min(7,r));g.stackCursor=arcadeV26Rand(g,.18,.82);g.stackDir=arcadeV26Rand(g,0,1)>.5?1:-1;g.stackSpeed=.24+Math.min(.42,r*.026);g.cols=[0,0,0,0,0];g.colWeights=[0,0,0,0,0];g.grid=Array.from({length:8},()=>Array(7).fill(0));g.placed=0;
+  if(g.theme==='container'){g.stackLoads=Array.from({length:5},()=>[]);g.stackDrop=null;g.stackSeaPhase=arcadeV26Rand(g,0,6.28);arcadeV26NewContainerPiece(g)}else arcadeV26NewTetrisPiece(g)
 }
 function arcadeV26SpawnSort(g,ts){
   const bycatch=g.theme==='trawler'&&g.round>=3&&arcadeV26Rand(g,0,1)<Math.min(.28,.07*g.round),kind=bycatch?3:Math.floor(arcadeV26Rand(g,0,3));g.items.push({x:arcadeV26Rand(g,.15,.85),y:arcadeV26Rand(g,.18,.55),vx:arcadeV26Rand(g,-.018,.018)*arcadeV26Difficulty(g),vy:arcadeV26Rand(g,.004,.017),kind,born:ts,dragging:false});g.spawn=ts
@@ -3571,7 +3637,73 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
   pxText(`${g.roundProgress}/${g.roundGoal} CLEAN LIFTS · USE THE CONTROL BAR BELOW`,G.cx,G.y(.95),'#fff7de',8,'center')
 }
 function arcadeV26RenderContainerStack(g,ts,G,dt,running){
-  if(running){g.stackCursor+=g.stackDir*g.stackSpeed*arcadeV26Difficulty(g)*dt/1000;if(g.stackCursor>.84){g.stackCursor=.84;g.stackDir=-1}else if(g.stackCursor<.16){g.stackCursor=.16;g.stackDir=1}}const start=G.x(.20),colW=G.w*.15,base=G.y(.72),sc=clamp(G.w/410,.92,1.18);for(let c=0;c<5;c++){for(let h=0;h<g.cols[c];h++)drawArcadeSprite('crate',start+c*colW,base-h*25*sc,sc,(c+h)%3,.5,.72);pxText(`${g.colWeights[c]}t`,start+c*colW,G.y(.80),'#fff7de',8,'center')}const cx=G.x(g.stackCursor);line(G.x(.15),G.y(.23),G.x(.85),G.y(.23),'#704630',8);line(cx,G.y(.23),cx,G.y(.38),'#704630',3);for(let i=0;i<g.piece.width;i++)drawArcadeSprite('crate',cx+(i-(g.piece.width-1)/2)*25,G.y(.41),sc,g.piece.kind,.5,.72);pxText(`${g.piece.width}× CONTAINER · ${g.piece.weight}t`,G.cx,G.y(.89),'#fff7de',9,'center')
+  const sec=dt/1000;
+  if(running&&!g.stackDrop){
+    g.stackCursor+=g.stackDir*g.stackSpeed*arcadeV26Difficulty(g)*sec;
+    if(g.stackCursor>.88){g.stackCursor=.88;g.stackDir=-1}else if(g.stackCursor<.12){g.stackCursor=.12;g.stackDir=1}
+  }
+  const list=arcadeStackV2614List(g),roll=list*.12+Math.sin(ts*.0011+g.stackSeaPhase)*.012;
+  const sea=ctx.createLinearGradient(0,G.top,0,G.bottom);sea.addColorStop(0,'#4f92a4');sea.addColorStop(1,'#1d5c73');rect(G.left,G.top,G.w,G.h,sea);
+  for(let i=0;i<10;i++){const y=G.y(.12+i*.075)+Math.sin(ts*.0015+i)*2;line(G.left,y,G.right,y,'rgba(255,255,255,.10)',1)}
+  // distant harbour silhouettes
+  rect(G.x(.03),G.y(.17),G.w*.18,G.h*.04,'#60747a');rect(G.x(.79),G.y(.15),G.w*.16,G.h*.06,'#60747a');
+  line(G.x(.06),G.y(.17),G.x(.06),G.y(.08),'#475f67',4);line(G.x(.87),G.y(.15),G.x(.87),G.y(.06),'#475f67',4);
+
+  const shipX=G.x(.08),shipY=G.y(.72),shipW=G.w*.84,shipH=G.h*.27;
+  ctx.save();ctx.translate(G.cx,shipY);ctx.rotate(roll);ctx.translate(-G.cx,-shipY);
+  // hull / deck
+  poly([[shipX,shipY+shipH*.12],[shipX+shipW,shipY+shipH*.12],[shipX+shipW*.92,shipY+shipH*.36],[shipX+shipW*.08,shipY+shipH*.36]],'#425d67','#17313a',3);
+  rect(shipX+8,shipY-shipH*.15,shipW-16,shipH*.28,'#a77450','#17313a',2);
+  const start=shipX+shipW*.08,colW=shipW*.168,boxW=colW*.86,boxH=22*clamp(G.w/410,.92,1.16),base=shipY-shipH*.14;
+  for(let c=0;c<5;c++){
+    const cx=start+c*colW+colW*.5;
+    roundedRect(start+c*colW+2,base-4,colW-5,8,2,'rgba(255,247,222,.16)','#704630',1);
+    pxText(`${g.colWeights[c]||0}t`,cx,shipY+shipH*.05,'rgba(255,247,222,.82)',6,'center')
+  }
+  // draw each unique physical load once. 40ft loads are duplicated in arrays but anchor marks the left column.
+  for(let c=0;c<5;c++){
+    const arr=g.stackLoads?.[c]||[];
+    for(let h=0;h<arr.length;h++){
+      const item=arr[h];if(item.width===2&&item.anchor!==c)continue;
+      const cx=start+c*colW+colW*.5+(item.width===2?colW*.5:0),w=item.width===2?boxW*2+colW*.14:boxW;
+      arcadeStackV2614DrawLoad(item,cx,base-h*boxH,w,boxH*.88)
+    }
+  }
+  // bridge and fittings
+  roundedRect(shipX+shipW*.78,shipY-shipH*.32,shipW*.12,shipH*.17,4,'#fff7de','#17313a',2);
+  for(let q=0;q<3;q++)rect(shipX+shipW*(.795+q*.027),shipY-shipH*.285,shipW*.018,shipH*.055,'#9bc5d1','#17313a',1);
+  ctx.restore();
+
+  // gantry, rails and moving spreader
+  const railY=G.y(.20),left=G.x(.10),right=G.x(.90),cx=G.x(g.stackCursor);
+  line(left,railY,right,railY,'#d7b56a',10);line(left,railY,right,railY,'#17313a',2);
+  for(const gx of [left+9,right-9]){line(gx,railY,gx,G.y(.58),'#d7b56a',8);line(gx,railY,gx,G.y(.58),'#17313a',2)}
+  for(let x=left+20;x<right-15;x+=36)line(x,railY-12,x+25,railY+12,'rgba(23,49,58,.42)',2);
+  roundedRect(cx-13,railY-8,26,16,3,'#e5b54e','#17313a',2);circle(cx-7,railY+10,3,'#273f46','#17313a',1);circle(cx+7,railY+10,3,'#273f46','#17313a',1);
+
+  const piece=g.stackDrop?.piece||g.piece,dropT=g.stackDrop?clamp((ts-g.stackDrop.start)/520,0,1):0;
+  const col=g.stackDrop?.col??Math.floor(clamp((g.stackCursor-.12)/.76*5,0,4.999));
+  const targetCx=start+col*colW+colW*.5+(piece.width===2?colW*.5:0);
+  const support=g.stackLoads?.[col]?.length||0,targetY=base-support*boxH-4;
+  const loadY=g.stackDrop?lerp(G.y(.36),targetY,1-Math.pow(1-dropT,2.2)):G.y(.37);
+  const cableEnd=loadY-(boxH*.92);
+  line(cx,railY+8,cx,cableEnd,'#574538',3);
+  line(cx-18,cableEnd,cx+18,cableEnd,'#704630',4);
+  arcadeStackV2614DrawLoad(piece,g.stackDrop?lerp(cx,targetCx,dropT*.18):cx,loadY,piece.width===2?boxW*1.8:boxW,boxH*.88);
+  if(g.stackDrop&&dropT>=1&&!g.stackDrop.resolved&&running)arcadeStackV2614ResolveDrop(g);
+
+  // list / weight instrumentation
+  const limit=Math.max(.16,.31-(g.round-1)*.012),meterX=G.x(.24),meterY=G.y(.84),meterW=G.w*.52;
+  roundedRect(meterX,meterY,meterW,24,7,'rgba(255,247,222,.90)','#17313a',2);
+  rect(meterX+meterW*.5-2,meterY+3,4,18,'#17313a');
+  const safe=meterW*(limit/.62)*.5;rect(meterX+meterW*.5-safe,meterY+4,safe*2,16,'rgba(131,191,106,.45)');
+  const needle=meterX+meterW*.5+(list/.62)*meterW*.47;rect(needle-3,meterY-6,6,36,Math.abs(list)>limit?'#df7c68':'#e5b54e','#17313a',1);
+  pxText('PORT',meterX-7,meterY+16,'#fff7de',7,'right');pxText('STARBOARD',meterX+meterW+7,meterY+16,'#fff7de',7,'left');
+  roundedRect(G.left+8,G.y(.055),164,45,7,'rgba(255,247,222,.91)','#17313a',2);
+  pxText(`${piece.label} · ${piece.weight}t`,G.left+18,G.y(.055)+15,'#17313a',8,'left');
+  pxText(piece.width===2?'40FT · NEEDS LEVEL SUPPORT':'20FT · SINGLE CELL',G.left+18,G.y(.055)+29,'#42616a',7,'left');
+  pxText(`LIST ${Math.abs(list*10).toFixed(1)}° ${list<-.02?'PORT':list>.02?'STARBOARD':'LEVEL'}`,G.left+18,G.y(.055)+41,'#42616a',6,'left');
+  pxText(`${g.roundProgress}/${g.roundGoal} LOADS · KEEP THE NEEDLE IN THE GREEN`,G.cx,G.y(.95),'#fff7de',8,'center')
 }
 function arcadeV26RenderTetris(g,ts,G,dt,running){
   const cell=Math.min(G.w/10,G.h/12),ox=G.cx-cell*3.5,oy=G.y(.16);roundedRect(ox-8,oy-8,cell*7+16,cell*8+16,8,'rgba(23,49,58,.70)','#fff7de',2);for(let y=0;y<8;y++)for(let x=0;x<7;x++){const v=g.grid[y][x];rect(ox+x*cell,oy+y*cell,cell-2,cell-2,v?['#df7c68','#e5b54e','#527da0'][(v-1)%3]:'rgba(255,247,222,.10)',v?'#18313a':null,1)}const pc=g.tetrisPiece.cells;for(const [x,y] of pc)rect(G.cx+(x-1)*cell,G.y(.06)+y*cell,cell-2,cell-2,['#df7c68','#e5b54e','#527da0'][g.tetrisPiece.kind],'#18313a',1);pxText('TAP A COLUMN · PIECES AUTO-ROTATE BETWEEN LOADS',G.cx,G.y(.92),'#fff7de',8,'center')
