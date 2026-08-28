@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.20';
+const VERSION_LABEL='0.26.21';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3846,7 +3846,7 @@ function arcadeRadarV2620Resolve(g,choice){
 function arcadeV26SetupRadar(g,r,d){
   arcadeV26ResetCommon(g,4+Math.min(6,Math.floor((r-1)/2)));
   g.blips=[];g.radarId=0;g.radarSelected=null;g.sweepRate=.00072+Math.min(.00028,(r-1)*.000025);
-  g.spawn=performance.now();g.radarSea=Math.min(.34,.08+(r-1)*.025);
+  g.spawn=performance.now();g.radarSeed=arcadeV26Rand(g,0,6.28);g.radarSea=Math.min(.34,.08+(r-1)*.025);
   g.radarWeather=Array.from({length:Math.min(4,1+Math.floor((r-1)/3))},()=>arcadeRadarV2620NewWeatherPatch(g));
   for(let i=0;i<4;i++)arcadeV26NewRadarContact(g,performance.now()-i*450,i===0?true:null)
 }
@@ -4342,7 +4342,7 @@ function arcadeV26RenderRadar(g,ts,G,dt,running){
   // Sea clutter around own ship and outer range.
   const clutterN=Math.round(16+g.radarSea*42);
   for(let i=0;i<clutterN;i++){
-    const a=i*2.399+g.courseSeed||0,rr=(i%3===0?.18:.78)+((i*17)%19)/100;
+    const a=i*2.399+(g.radarSeed||0),rr=(i%3===0?.18:.78)+((i*17)%19)/100;
     const r=clamp(rr,0,1)*scopeR;
     const alpha=.07+((i*7)%8)/100;
     circle(scopeCx+Math.cos(a)*r,scopeCy+Math.sin(a)*r,1+(i%3===0),`rgba(131,191,106,${alpha})`)
@@ -4737,7 +4737,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.7',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.21',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
