@@ -249,7 +249,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.7';
+const VERSION_LABEL='0.26.8';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3024,6 +3024,30 @@ function drawArcadeTugV267(x,y,scale,heading=0){drawArcadeRotatedPixelV267(arcad
 function drawArcadeTowV267(profile,x,y,scale,heading=0,alpha=1){drawArcadeRotatedPixelV267(arcadeTugV267Sprite('tow',profile),x,y,scale,heading,alpha)}
 function arcadeAngleDiffV267(a,b){return Math.atan2(Math.sin(a-b),Math.cos(a-b))}
 function arcadeTugProjectedExtentV267(profile,heading,axis='x'){const L=profile.length/2,B=profile.beam/2;return axis==='x'?Math.abs(Math.cos(heading))*L+Math.abs(Math.sin(heading))*B:Math.abs(Math.sin(heading))*L+Math.abs(Math.cos(heading))*B}
+function arcadeTugV268HarbourState(g){
+  if(!g.tugHarbour)g.tugHarbour={parked:[],cycle:1,buoys:[],slotsUsed:0};return g.tugHarbour
+}
+function arcadeTugV268MakeBuoys(g,count){
+  const H=arcadeTugV268HarbourState(g),spots=[[.50,.22],[.50,.78],[.34,.50],[.66,.50],[.50,.50],[.31,.27],[.69,.73]];H.buoys=[];
+  for(let i=0;i<count;i++){const base=spots[i%spots.length],j=(i/ spots.length|0)*.035;H.buoys.push({x:clamp(base[0]+arcadeV26Rand(g,-.035,.035)+j,.20,.80),y:clamp(base[1]+arcadeV26Rand(g,-.035,.035)-j,.16,.84),r:.026})}
+}
+function arcadeTugV268SlotFree(g,side,y,profile){
+  const H=arcadeTugV268HarbourState(g),x=side==='right'?.915-profile.beam*.58:.085+profile.beam*.58;
+  return !H.parked.some(p=>Math.abs(p.y-y)<Math.max(.14,(p.profile.length+profile.length)*.58)&&Math.abs(p.x-x)<.12)
+}
+function arcadeTugV268ChooseBerthY(g,side,profile){
+  const candidates=[.22,.36,.50,.64,.78].sort(()=>arcadeV26Rand(g,-1,1));for(const y of candidates)if(arcadeTugV268SlotFree(g,side,y,profile))return y;
+  return arcadeV26Rand(g,.25,.75)
+}
+function arcadeTugV268ParkCurrent(g){
+  const H=arcadeTugV268HarbourState(g),S=g.ship,P=g.profile;H.parked.push({x:S.x,y:S.y,heading:g.berth.heading,profile:P});H.slotsUsed++;
+}
+function arcadeTugV268Advance(g){
+  if(!g||g.failed)return;arcadeTugV268ParkCurrent(g);const H=arcadeTugV268HarbourState(g);g.score+=220+Math.min(700,(g.round||1)*55);g.round=(g.round||1)+1;g.bestRound=Math.max(g.bestRound||1,g.round);g.rewardQualified=g.rewardQualified||g.round>=3;
+  if(H.parked.length>=5){H.cycle++;H.parked=[];H.slotsUsed=0;arcadeTugV268MakeBuoys(g,Math.min(5,H.cycle-1));arcadeV26SetFeedback(g,`HARBOUR FULL · WATCH THE NEW BUOY`,'good',1250)}else arcadeV26SetFeedback(g,`VESSEL MOORED · JOB ${g.round}`,'good',1050);
+  g.roundPauseUntil=performance.now()+760;arcadeV26SetupTug(g,g.round,arcadeV26Difficulty(g))
+}
+function arcadeTugV268CircleHit(x,y,r,ox,oy,or){return Math.hypot(x-ox,y-oy)<r+or}
 function drawArcadeRescueBoat(x,y,s=1){const a={...defaultBoatAppearance('cutter'),hull:'#c75f52',trim:'#fff3cf',role:'tender',pennant:'#527da0',upgrades:{lanterns:true}};drawTopBoat(x,y,s*1.05,0,'cutter',a)}
 function drawArcadeTanker(x,y,s=1){drawArcadeSprite('tanker',x,y,s,0,.5,.68)}
 const arcadeDepthSpriteCache=new Map();
@@ -3282,12 +3306,13 @@ function arcadeV26SetupSteer(g,r,d){
   arcadeV26ResetCommon(g,g.meta.heavy?Math.round((9+Math.min(8,r*.6))*1000):5+Math.min(8,r));g.x=.5;g.vx=0;g.inputX=.5;g.distance=0;g.gates=[];g.hazards=[];g.speed=(g.meta.heavy?.14:.23)*Math.min(1.85,d);g.courseSeed=arcadeV26Rand(g,0,99);g.bankCool=0;g.spawn=performance.now();g.hazardSpawn=performance.now();
 }
 function arcadeV26SetupTug(g,r,d){
-  arcadeV26ResetCommon(g,1000);
+  arcadeV26ResetCommon(g,1000);const harbour=arcadeTugV268HarbourState(g);
   const unlocked=TUG_V267_PROFILES.filter(p=>p.unlock<=Math.max(1,r));
   let profile=arcadeV26Choice(g,unlocked);
   if(r===1)profile=arcadeV26Choice(g,TUG_V267_PROFILES.slice(0,2));
-  const side=arcadeV26Rand(g,0,1)>.5?'right':'left',facing=arcadeV26Rand(g,0,1)>.5?1:-1;
-  const targetHeading=facing*Math.PI/2,berthY=arcadeV26Rand(g,.32,.68),berthX=side==='right'?.915-profile.beam*.58:.085+profile.beam*.58;
+  let side=arcadeV26Rand(g,0,1)>.5?'right':'left';const facing=arcadeV26Rand(g,0,1)>.5?1:-1;
+  let berthY=arcadeTugV268ChooseBerthY(g,side,profile);if(!arcadeTugV268SlotFree(g,side,berthY,profile)){side=side==='right'?'left':'right';berthY=arcadeTugV268ChooseBerthY(g,side,profile)}
+  const targetHeading=facing*Math.PI/2,berthX=side==='right'?.915-profile.beam*.58:.085+profile.beam*.58;
   g.berth={x:berthX,y:berthY,side,heading:targetHeading};g.profile=profile;
   const startX=side==='right'?arcadeV26Rand(g,.40,.58):arcadeV26Rand(g,.42,.60),startY=clamp(berthY+arcadeV26Rand(g,-.23,.23),.25,.75);
   const headingSpread=Math.min(1.35,.38+(r-1)*.10);const startHeading=targetHeading+arcadeV26Rand(g,-headingSpread,headingSpread);
@@ -3295,7 +3320,7 @@ function arcadeV26SetupTug(g,r,d){
   const tugX=clamp(startX+(side==='right'?-.18:.18),.16,.84),tugY=clamp(startY+.16,.18,.82);
   g.tug={x:tugX,y:tugY,vx:0,vy:0,heading:side==='right'?0:Math.PI,throttle:0};g.aim={x:tugX,y:tugY};
   const currentStrength=Math.min(.026,.006+(r-1)*.0017),a=arcadeV26Rand(g,-Math.PI,Math.PI);g.current={x:Math.cos(a)*arcadeV26Rand(g,.003,currentStrength),y:Math.sin(a)*arcadeV26Rand(g,.003,currentStrength)};
-  g.secureMs=0;g.roundProgress=0;g.bumpCool=0;g.escapeCool=0;g.contactFlash=0;g.jobStartedAt=performance.now();g.wakes=[];
+  g.secureMs=0;g.roundProgress=0;g.bumpCool=0;g.escapeCool=0;g.contactFlash=0;g.obstacleCool=0;g.jobStartedAt=performance.now();g.wakes=[];
   g.dockTolerance={posX:Math.max(.035,.052-(r-1)*.0012),posY:Math.max(.050,.072-(r-1)*.0015),angle:Math.max(.17,.34-(r-1)*.012),speed:Math.max(.024,.042-(r-1)*.0010)};
 }
 function arcadeV26NewRadarContact(g,ts,forcedReal=null){
@@ -3427,11 +3452,15 @@ function arcadeV26RenderTug(g,ts,G,dt,running){
     }
     if(S.y-yExtent<.08||S.y+yExtent>.92){S.y=clamp(S.y,.08+yExtent,.92-yExtent);S.vy*=-.18;S.omega*=.82}
 
+    const H=arcadeTugV268HarbourState(g),shipRadius=Math.max(P.beam*.58,P.length*.24),tugRadius=.040;
+    for(const parked of H.parked){const pr=Math.max(parked.profile.beam*.58,parked.profile.length*.24),ds=Math.hypot(S.x-parked.x,S.y-parked.y),dtug=Math.hypot(T.x-parked.x,T.y-parked.y);if(ds<shipRadius+pr){const nx=(S.x-parked.x)/(ds||1),ny=(S.y-parked.y)/(ds||1);S.x=parked.x+nx*(shipRadius+pr);S.y=parked.y+ny*(shipRadius+pr);S.vx+=nx*.025;S.vy+=ny*.025;S.omega*=.72;if(ts>g.obstacleCool){g.obstacleCool=ts+850;arcadeV26Strike(g,'MOORED VESSEL',45)}}if(dtug<tugRadius+pr){const nx=(T.x-parked.x)/(dtug||1),ny=(T.y-parked.y)/(dtug||1);T.x=parked.x+nx*(tugRadius+pr);T.y=parked.y+ny*(tugRadius+pr);T.vx+=nx*.035;T.vy+=ny*.035;if(ts>g.obstacleCool){g.obstacleCool=ts+650;arcadeV26Strike(g,'WATCH THE MOORED BOATS',25)}}}
+    for(const buoy of H.buoys){for(const obj of [[S,shipRadius,'BUOY STRIKE',35],[T,tugRadius,'CLIPPED BUOY',20]]){const O=obj[0],rr=obj[1],dd=Math.hypot(O.x-buoy.x,O.y-buoy.y);if(dd<rr+buoy.r){const nx=(O.x-buoy.x)/(dd||1),ny=(O.y-buoy.y)/(dd||1);O.x=buoy.x+nx*(rr+buoy.r);O.y=buoy.y+ny*(rr+buoy.r);O.vx=(O.vx||0)*-.18+nx*.018;O.vy=(O.vy||0)*-.18+ny*.018;if(O===S)O.omega*=.75;if(ts>g.obstacleCool){g.obstacleCool=ts+700;arcadeV26Strike(g,obj[2],obj[3])}}}}
+
     const ex=(S.x-B.x)/tol.posX,ey=(S.y-B.y)/tol.posY,posErr=Math.hypot(ex,ey),angleErr=Math.abs(arcadeAngleDiffV267(S.heading,B.heading));
     const posOK=posErr<1,angleOK=angleErr<tol.angle,speedOK=shipSpeed<tol.speed;
     g.dockState={posErr,angleErr,speed:shipSpeed,posOK,angleOK,speedOK};
     if(posOK&&angleOK&&speedOK){g.secureMs+=dt;g.roundProgress=clamp(g.secureMs,0,1000)}else{g.secureMs=Math.max(0,g.secureMs-dt*(posOK?.20:.65));g.roundProgress=g.secureMs}
-    if(g.secureMs>=1000){const quality=clamp(1-posErr*.35-angleErr*.8-shipSpeed*4,0,1),points=Math.round(250+P.tonnes*.85+quality*320);arcadeV26Reward(g,points,'VESSEL SECURED');arcadeV26Advance(g,'NEXT HARBOUR JOB');return}
+    if(g.secureMs>=1000){const quality=clamp(1-posErr*.35-angleErr*.8-shipSpeed*4,0,1),points=Math.round(250+P.tonnes*.85+quality*320);arcadeV26Reward(g,points,'VESSEL SECURED');arcadeTugV268Advance(g);return}
     if(S.x+xExtent<-.04||S.x-xExtent>1.04||S.y+yExtent<.02||S.y-yExtent>.98){if(ts>g.escapeCool){g.escapeCool=ts+1000;arcadeV26Strike(g,'TOW GOT AWAY',60);if(!g.failed)arcadeV26SetupTug(g,g.round,arcadeV26Difficulty(g));return}}
 
     if((Math.hypot(T.vx,T.vy)>.045||Math.hypot(S.vx,S.vy)>.025)&&ts-(g.lastWakeAt||0)>95){g.lastWakeAt=ts;g.wakes.push({tx:T.x,ty:T.y,tvx:T.vx,tvy:T.vy,sx:S.x,sy:S.y,svx:S.vx,svy:S.vy,at:ts})}g.wakes=g.wakes.filter(w=>ts-w.at<900).slice(-14);
@@ -3451,11 +3480,13 @@ function arcadeV26RenderTug(g,ts,G,dt,running){
   ctx.save();ctx.translate(targetX,targetY);ctx.rotate(B.heading);ctx.strokeStyle='rgba(79,139,86,.85)';ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.strokeRect(-G.w*P.length*.55,-G.w*P.beam*.62,G.w*P.length*1.10,G.w*P.beam*1.24);ctx.restore();
   const arrowLen=G.w*.055;line(targetX-Math.cos(B.heading)*arrowLen,targetY-Math.sin(B.heading)*arrowLen,targetX+Math.cos(B.heading)*arrowLen,targetY+Math.sin(B.heading)*arrowLen,'rgba(79,139,86,.82)',3);poly([[targetX+Math.cos(B.heading)*arrowLen,targetY+Math.sin(B.heading)*arrowLen],[targetX+Math.cos(B.heading+.42)*arrowLen*.72,targetY+Math.sin(B.heading+.42)*arrowLen*.72],[targetX+Math.cos(B.heading-.42)*arrowLen*.72,targetY+Math.sin(B.heading-.42)*arrowLen*.72]],'#83bf6a','#17313a',1);
 
+  const H=arcadeTugV268HarbourState(g);for(const parked of H.parked){const ps=(G.w*parked.profile.length)/126;drawArcadeTowV267(parked.profile,G.x(parked.x),G.y(parked.y),ps,parked.heading,.96);const qx=parked.x>.5?G.x(.915):G.x(.085);line(G.x(parked.x),G.y(parked.y)-9,qx,G.y(parked.y-parked.profile.length*.20),'rgba(255,247,222,.58)',1);line(G.x(parked.x),G.y(parked.y)+9,qx,G.y(parked.y+parked.profile.length*.20),'rgba(255,247,222,.58)',1)}
+  for(const buoy of H.buoys){const bx=G.x(buoy.x),by=G.y(buoy.y);line(bx,by+7,bx+Math.sin(ts*.001+buoy.x*8)*3,by+18,'rgba(23,49,58,.55)',1);circle(bx,by,9,'#e5b54e','#17313a',2);rect(bx-2,by-13,4,8,'#c75f52','#17313a',1);circle(bx,by-15,2,'#fff3cf','#17313a',1)}
   const towX=G.x(S.x),towY=G.y(S.y),tugX=G.x(T.x),tugY=G.y(T.y);drawArcadeTowV267(P,towX,towY,towScale,S.heading,1);drawArcadeTugV267(tugX,tugY,tugScale,T.heading);
   if(ts<(g.contactFlash||0))circle(tugX,tugY,16,'rgba(229,181,78,.18)','#e5b54e',2);if(pointer.down)line(tugX,tugY,G.x(g.aim.x),G.y(g.aim.y),'rgba(255,247,222,.58)',2);
   if((g.secureMs||0)>350){const bollardY1=G.y(B.y-P.length*.27),bollardY2=G.y(B.y+P.length*.27);line(towX,towY-12,edgeX,bollardY1,'rgba(255,247,222,.70)',2);line(towX,towY+12,edgeX,bollardY2,'rgba(255,247,222,.70)',2)}
 
-  const D=g.dockState||{posOK:false,angleOK:false,speedOK:false,posErr:9,angleErr:9,speed:9};roundedRect(G.left+8,G.y(.065),G.w*.36,46,8,'rgba(255,247,222,.90)','#17313a',2);pxText(`JOB ${g.round} · ${P.label}`,G.left+16,G.y(.065)+14,'#17313a',8,'left');pxText(`${P.tonnes}t · CURRENT ${flowMag<.005?'SLACK':`${(flowMag*80).toFixed(1)} kt ${Math.abs(g.current.x)>Math.abs(g.current.y)?(g.current.x>0?'E':'W'):(g.current.y>0?'S':'N')}`}`,G.left+16,G.y(.065)+29,'#42616a',7,'left');
+  const D=g.dockState||{posOK:false,angleOK:false,speedOK:false,posErr:9,angleErr:9,speed:9};roundedRect(G.left+8,G.y(.065),G.w*.36,46,8,'rgba(255,247,222,.90)','#17313a',2);pxText(`JOB ${g.round} · ${P.label}`,G.left+16,G.y(.065)+14,'#17313a',8,'left');pxText(`${P.tonnes}t · BERTH ${H.parked.length+1}/5 · CYCLE ${H.cycle}`,G.left+16,G.y(.065)+27,'#42616a',7,'left');pxText(`${flowMag<.005?'SLACK WATER':`CURRENT ${(flowMag*80).toFixed(1)} kt ${Math.abs(g.current.x)>Math.abs(g.current.y)?(g.current.x>0?'E':'W'):(g.current.y>0?'S':'N')}`} · ${H.buoys.length?`${H.buoys.length} BUOY${H.buoys.length===1?'':'S'}`:'CLEAR BASIN'}`,G.left+16,G.y(.065)+39,'#42616a',6,'left');
   const statusY=G.y(.895),labels=[['POSITION',D.posOK],['SPEED',D.speedOK],['HEADING',D.angleOK]];for(let i=0;i<3;i++){const x=G.x(.18+i*.22);roundedRect(x,statusY,94,22,6,labels[i][1]?'#dff1cf':'rgba(255,247,222,.88)',labels[i][1]?'#4f8b56':'#17313a',2);pxText(labels[i][0],x+47,statusY+14,labels[i][1]?'#315b42':'#17313a',7,'center')}
   pxText(D.posOK&&D.angleOK&&D.speedOK?'HOLD HER ON THE FENDERS':D.posOK&&!D.angleOK?'WORK THE BOW OR STERN TO LINE HER UP':!D.speedOK&&D.posOK?'EASE OFF — TOO MUCH WAY ON':'PUSH AT THE HULL WHERE YOU NEED THE MOVEMENT',G.cx,G.y(.855),'#fff7de',8,'center');
 }
