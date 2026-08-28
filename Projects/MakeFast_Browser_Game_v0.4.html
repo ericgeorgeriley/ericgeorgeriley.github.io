@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.17';
+const VERSION_LABEL='0.26.18';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3537,31 +3537,67 @@ function arcadeV26SetupMeter(g,r,d){
   arcadeV26ResetCommon(g,1000);g.value=.5;g.velocity=0;g.hold=false;g.target=.5;g.goodMs=0;g.badMs=0;g.leg=0;g.haul=0;g.catchWeight=1+(r-1)*.13;g.windPhase=arcadeV26Rand(g,0,6.28);g.roundGoal=1000
 }
 const ARCADE_SPEED_V2617_COLS=['#df7c68','#e5b54e','#83bf6a','#7c78a8','#d27a9a','#5aa8a2'];
-function arcadeSpeedV2617RaceLength(g){return 1.0+Math.min(.42,(g.round-1)*.035)}
+function arcadeSpeedV2617RaceLength(g){return 1.55+Math.min(.75,(g.round-1)*.055)}
 function arcadeSpeedV2617MakeGate(g,i,count){
   const p=.13+i*(.76/Math.max(1,count-1)),wave=Math.sin(g.courseSeed*.73+i*1.37),j=arcadeV26Rand(g,-.055,.055);
   return{progress:p,x:clamp(.50+wave*.24+j,.20,.80),w:Math.max(.24,.38-(g.round-1)*.010),scored:false,index:i}
 }
 function arcadeSpeedV2617Setup(g,r,d){
   arcadeV26ResetCommon(g,1);
-  g.x=.5;g.vx=0;g.inputX=.5;g.courseSeed=arcadeV26Rand(g,0,99);g.raceProgress=0;g.raceFinish=arcadeSpeedV2617RaceLength(g);
-  g.raceSpeed=.205+Math.min(.095,(r-1)*.008);g.raceSpeedNow=g.raceSpeed;g.raceBoost=0;g.raceBumpCool=0;g.raceWakeCool=0;g.raceFinishAt=0;g.racePlace=0;
-  const gateCount=Math.min(9,5+Math.floor((r-1)/2));g.raceGates=Array.from({length:gateCount},(_,i)=>arcadeSpeedV2617MakeGate(g,i,gateCount));
+  g.x=.5;g.vx=0;g.inputX=.5;g.courseSeed=arcadeV26Rand(g,0,99);g.raceProgress=.025;g.raceFinish=arcadeSpeedV2617RaceLength(g);
+  g.raceSpeed=.195+Math.min(.090,(r-1)*.0075);g.raceSpeedNow=g.raceSpeed;g.raceBoost=0;g.raceBumpCool=0;g.raceWakeCool=0;g.raceFinishAt=0;g.racePlace=0;
+  const gateCount=Math.min(12,7+Math.floor((r-1)/2));g.raceGates=Array.from({length:gateCount},(_,i)=>arcadeSpeedV2617MakeGate(g,i,gateCount));
   const rivals=Math.min(6,3+Math.floor((r-1)/2));
-  g.racers=Array.from({length:rivals},(_,i)=>({
-    id:i,x:clamp(.18+(i+1)/(rivals+1)*.64+arcadeV26Rand(g,-.05,.05),.10,.90),vx:0,
-    progress:arcadeV26Rand(g,-.035,.045),speed:g.raceSpeed*arcadeV26Rand(g,.90,1.055+Math.min(.05,r*.004)),
-    targetX:arcadeV26Rand(g,.20,.80),phase:arcadeV26Rand(g,0,6.28),col:ARCADE_SPEED_V2617_COLS[i%ARCADE_SPEED_V2617_COLS.length],
-    wakePhase:arcadeV26Rand(g,0,6.28),bump:0
-  }));
+  const grid=[
+    {x:.28,p:-.055},{x:.72,p:-.055},
+    {x:.18,p:-.135},{x:.50,p:-.135},{x:.82,p:-.135},
+    {x:.35,p:-.215},{x:.65,p:-.215}
+  ];
+  g.racers=Array.from({length:rivals},(_,i)=>{
+    const q=grid[i%grid.length];
+    return{
+      id:i,x:clamp(q.x+arcadeV26Rand(g,-.025,.025),.10,.90),vx:0,
+      progress:q.p+arcadeV26Rand(g,-.012,.012),speed:g.raceSpeed*arcadeV26Rand(g,.91,1.045+Math.min(.045,r*.0035)),
+      targetX:arcadeV26Rand(g,.20,.80),phase:arcadeV26Rand(g,0,6.28),col:ARCADE_SPEED_V2617_COLS[i%ARCADE_SPEED_V2617_COLS.length],
+      wakePhase:arcadeV26Rand(g,0,6.28),bump:0,boatType:i%4
+    }
+  });
   g.raceWakes=[];g.roundProgress=0;g.roundGoal=1
 }
-function arcadeSpeedV2617Boat(x,y,s,col='#df7c68',lean=0){
+function arcadeSpeedV2617Boat(x,y,s,col='#df7c68',lean=0,player=false,type=0){
   ctx.save();ctx.translate(x,y);ctx.rotate(lean);
-  poly([[-31*s,12*s],[-23*s,-14*s],[18*s,-19*s],[34*s,0],[17*s,18*s],[-20*s,18*s]],col,'#18313a',2*s);
-  roundedRect(-10*s,-13*s,26*s,18*s,5*s,'#fff7de','#18313a',2*s);
-  rect(-4*s,-10*s,15*s,7*s,'#65bdd1','#18313a',1*s);
-  line(-24*s,20*s,-40*s,27*s,'rgba(255,255,255,.52)',2*s);line(-15*s,22*s,-32*s,33*s,'rgba(255,255,255,.36)',2*s);
+  const ink='#17313a',cream='#fff7de',glass='#7fc2d2';
+  // hull silhouette variants
+  if(type%4===0){
+    poly([[-32*s,13*s],[-25*s,-13*s],[8*s,-21*s],[31*s,-8*s],[38*s,2*s],[18*s,19*s],[-22*s,19*s]],col,ink,2*s);
+    poly([[-21*s,-5*s],[8*s,-14*s],[26*s,-4*s],[8*s,3*s],[-18*s,4*s]],cream,ink,1.5*s);
+  }else if(type%4===1){
+    poly([[-34*s,11*s],[-20*s,-18*s],[13*s,-18*s],[37*s,0],[20*s,18*s],[-23*s,18*s]],col,ink,2*s);
+    roundedRect(-13*s,-15*s,30*s,16*s,4*s,cream,ink,1.5*s);
+  }else if(type%4===2){
+    poly([[-30*s,15*s],[-28*s,-8*s],[-5*s,-22*s],[26*s,-15*s],[38*s,0],[21*s,20*s],[-21*s,20*s]],col,ink,2*s);
+    roundedRect(-7*s,-16*s,25*s,18*s,3*s,cream,ink,1.5*s);
+  }else{
+    poly([[-35*s,9*s],[-22*s,-16*s],[15*s,-20*s],[40*s,1*s],[18*s,17*s],[-28*s,17*s]],col,ink,2*s);
+    poly([[-10*s,-15*s],[15*s,-13*s],[27*s,-2*s],[8*s,4*s],[-13*s,2*s]],cream,ink,1.5*s);
+  }
+  // cockpit / windscreen
+  roundedRect(-3*s,-11*s,18*s,9*s,3*s,glass,ink,1*s);
+  line(4*s,-11*s,4*s,-2*s,'rgba(255,247,222,.55)',1*s);
+  // engine / transom details
+  rect(-27*s,7*s,8*s,8*s,'#273f46',ink,1*s);
+  line(-20*s,20*s,-38*s,29*s,'rgba(255,255,255,.58)',2*s);line(-12*s,22*s,-30*s,35*s,'rgba(255,255,255,.38)',2*s);
+  // bow stripe and race number
+  line(16*s,-12*s,30*s,-3*s,cream,2*s);
+  pxText(String((type%9)+1),-10*s,7*s,ink,Math.max(5,7*s),'center');
+  if(player){
+    // unmistakable player pennant + halo + "YOU"
+    circle(0,0,31*s,'rgba(255,247,222,.10)',cream,1.6*s);
+    line(-2*s,-19*s,-2*s,-36*s,ink,2*s);
+    poly([[-2*s,-36*s],[13*s,-31*s],[-2*s,-27*s]],'#e5b54e',ink,1*s);
+    roundedRect(-16*s,-53*s,32*s,13*s,5*s,'rgba(255,247,222,.94)',ink,1.3*s);
+    pxText('YOU',0,-44*s,ink,7*s,'center')
+  }
   ctx.restore()
 }
 function arcadeSpeedV2617ScreenY(g,progress){return .82-(progress-g.raceProgress)*1.18}
@@ -3929,13 +3965,13 @@ function arcadeV26RenderSteer(g,ts,G,dt,running){
   for(const r of g.racers){
     const sy=arcadeSpeedV2617ScreenY(g,r.progress);if(sy<-.12||sy>1.10)continue;
     const depthScale=clamp(1.05+(sy-.82)*.22,.82,1.15),lean=clamp(r.vx*1.9,-.20,.20);
-    arcadeSpeedV2617Boat(G.x(r.x),G.y(sy),depthScale,r.col,lean)
+    arcadeSpeedV2617Boat(G.x(r.x),G.y(sy),depthScale,r.col,lean,false,r.boatType||0)
   }
 
   // Player wake and boat.
   const px=G.x(g.x),py=G.y(.82);
   line(px-7,py+17,px-31,py+G.h*.13,'rgba(255,255,255,.48)',3);line(px+7,py+17,px+31,py+G.h*.13,'rgba(255,255,255,.48)',3);
-  arcadeSpeedV2617Boat(px,py,1.15,'#df7c68',clamp(g.vx*1.7,-.22,.22));
+  arcadeSpeedV2617Boat(px,py,1.18,'#2f8fa5',clamp(g.vx*1.7,-.22,.22),true,3);
 
   // Position / race progress HUD.
   const all=[{player:true,progress:g.raceProgress},...g.racers].sort((a,b)=>b.progress-a.progress),place=1+all.findIndex(x=>x.player);
@@ -3945,7 +3981,7 @@ function arcadeV26RenderSteer(g,ts,G,dt,running){
   pxText(`${clean}/${total} CLEAN GATES`,G.left+18,G.y(.055)+31,'#42616a',7,'left');
   const barX=G.x(.24),barY=G.y(.91),barW=G.w*.52;roundedRect(barX,barY,barW,10,5,'rgba(255,247,222,.28)','#17313a',1);
   rect(barX+2,barY+2,(barW-4)*clamp(g.raceProgress/g.raceFinish,0,1),6,'#e5b54e');
-  pxText('RACE THE PACK · CONTACT BOUNCES · WAKES PUSH',G.cx,G.y(.965),'#fff7de',8,'center')
+  pxText('YOU = BLUE PENNANT BOAT · CONTACT BOUNCES · WAKES PUSH',G.cx,G.y(.965),'#fff7de',8,'center')
 }
 function arcadeV26RenderTug(g,ts,G,dt,running){
   const sec=dt/1000,S=g.ship,T=g.tug,B=g.berth,P=g.profile||TUG_V267_PROFILES[0],tol=g.dockTolerance,waterL=.085,waterR=.915;
