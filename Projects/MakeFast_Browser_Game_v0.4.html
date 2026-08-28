@@ -249,7 +249,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.4';
+const VERSION_LABEL='0.26.5';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3003,6 +3003,13 @@ function arcadeDepthSprite(kind,variant=0){
     [c,g]=pixelCanvas(34,28);g.imageSmoothingEnabled=false;const fill=['#3d4d54','#465861','#536970','#43565d'][variant%4],hi=shadeHex(fill,14),lo=shadeHex(fill,-18);
     const shapes=[[[4,22],[8,12],[17,6],[27,9],[31,17],[28,24],[18,26],[8,25]],[[4,20],[9,9],[20,5],[28,8],[30,18],[24,25],[12,25],[6,23]],[[3,18],[8,8],[16,4],[28,6],[31,15],[29,24],[18,26],[7,23]],[[4,21],[10,10],[19,6],[29,11],[31,20],[25,26],[11,25],[6,24]]][variant%4];
     psPoly(g,shapes,fill);psLine(g,6,20,16,9,hi,1);psLine(g,15,8,27,14,hi,1);psLine(g,10,24,25,22,lo,1);psLine(g,20,13,17,24,lo,1);
+  }else if(kind==='rock_slab'){
+    [c,g]=pixelCanvas(38,24);g.imageSmoothingEnabled=false;const fill=['#596e75','#486067','#687d84','#51656b'][variant%4],hi=shadeHex(fill,12),lo=shadeHex(fill,-20);
+    psPoly(g,[[3,18],[9,10],[18,7],[29,8],[35,12],[33,19],[25,22],[12,22],[6,20]],fill);psLine(g,8,18,18,10,hi,1);psLine(g,18,10,31,13,hi,1);psLine(g,8,21,27,20,lo,1);psLine(g,24,9,18,21,lo,1);
+  }else if(kind==='kelp'){
+    [c,g]=pixelCanvas(18,36);g.imageSmoothingEnabled=false;const stem=['#6da989','#77b595','#5f9b7d'][variant%3],edge=shadeHex(stem,-18),tip=shadeHex(stem,10);
+    psLine(g,9,34,8,25,edge,1);psLine(g,8,25,9,16,edge,1);psLine(g,9,16,8,5,edge,1);
+    psPoly(g,[[8,26],[3,22],[5,18],[9,20]],stem);psPoly(g,[[9,19],[13,16],[14,10],[9,12]],tip);psPoly(g,[[8,13],[3,10],[4,5],[8,7]],stem);psPoly(g,[[9,29],[13,25],[14,21],[9,22]],tip);
   }else if(kind==='fish'){
     [c,g]=pixelCanvas(28,18);g.imageSmoothingEnabled=false;const col=['#77b6c7','#d7a948','#c96b58','#89c6a5'][variant%4];psPoly(g,[[4,9],[10,4],[18,4],[23,9],[18,14],[10,14]],col);psPoly(g,[[22,9],[27,4],[27,14]],shadeHex(col,-12));psCircle(g,9,8,2,'#17313a');psLine(g,11,4,14,1,shadeHex(col,10),1);psLine(g,13,14,16,17,shadeHex(col,-18),1);
   }else if(kind==='jelly'){
@@ -3029,16 +3036,16 @@ function arcadeDepthTunnelNode(g,prev=null){
   let top=centre-gap/2,bottom=centre+gap/2;
   if(top<.045){bottom+=.045-top;top=.045}
   if(bottom>.955){top-=bottom-.955;bottom=.955}
-  return{top:clamp(top,.045,.72),bottom:clamp(bottom,.28,.955),variant:Math.floor(arcadeV26Rand(g,0,4)),detail:Math.floor(arcadeV26Rand(g,0,5))}
+  return{top:clamp(top,.045,.72),bottom:clamp(bottom,.28,.955),variant:Math.floor(arcadeV26Rand(g,0,4)),detail:Math.floor(arcadeV26Rand(g,0,8))}
 }
 function arcadeDepthTunnelReset(g){
-  g.tunnelStep=.055;g.tunnelOffset=0;g.tunnel=[];let prev=null;
-  for(let i=0;i<24;i++){const node=arcadeDepthTunnelNode(g,prev);g.tunnel.push(node);prev=node}
+  g.tunnelStep=.05;g.tunnelOffset=0;g.tunnel=[];let prev=null;
+  for(let i=0;i<30;i++){const node=arcadeDepthTunnelNode(g,prev);g.tunnel.push(node);prev=node}
 }
 function arcadeDepthTunnelAdvance(g,amount){
   if(!g.tunnel?.length)arcadeDepthTunnelReset(g);
   g.tunnelOffset=(g.tunnelOffset||0)+Math.max(0,amount);
-  const step=g.tunnelStep||.055;
+  const step=g.tunnelStep||.05;
   while(g.tunnelOffset>=step){
     g.tunnelOffset-=step;
     const previous=g.tunnel[g.tunnel.length-1];
@@ -3048,12 +3055,14 @@ function arcadeDepthTunnelAdvance(g,amount){
 }
 function arcadeV26SpawnDepthCritter(g,ts,first=false){
   const kind=arcadeV26Choice(g,['fish','fish','jelly','turtle','crab']);
-  const x=first?arcadeV26Rand(g,.18,1.02):1.08+arcadeV26Rand(g,0,.28);
+  const x=first?arcadeV26Rand(g,.18,1.02):1.14+arcadeV26Rand(g,0,.32);
   const bounds=arcadeV26CaveBounds(g,clamp(x,0,1));
   const floor=bounds.bottom-.03;
   const y=kind==='crab'?floor:kind==='turtle'?arcadeV26Rand(g,bounds.top+.10,bounds.bottom-.09):arcadeV26Rand(g,bounds.top+.08,bounds.bottom-.08);
-  g.critters.push({kind,x,y,homeY:y,vx:-(kind==='turtle'?arcadeV26Rand(g,.040,.060):kind==='crab'?arcadeV26Rand(g,.020,.032):arcadeV26Rand(g,.050,.085)),phase:arcadeV26Rand(g,0,6.28),variant:Math.floor(arcadeV26Rand(g,0,4)),mirror:arcadeV26Rand(g,0,1)>.5});
-  g.nextCritter=ts+arcadeV26Rand(g,1100,2400)
+  const baseDrift=kind==='crab'?-arcadeV26Rand(g,.010,.018):kind==='turtle'?-arcadeV26Rand(g,.018,.032):-arcadeV26Rand(g,.024,.040);
+  const swim=kind==='crab'?arcadeV26Rand(g,-.003,.004):kind==='jelly'?arcadeV26Rand(g,-.010,.014):kind==='turtle'?arcadeV26Rand(g,-.008,.022):arcadeV26Rand(g,-.018,.055);
+  g.critters.push({kind,x,y,homeY:y,drift:baseDrift,swimVx:swim,phase:arcadeV26Rand(g,0,6.28),variant:Math.floor(arcadeV26Rand(g,0,4)),mirror:arcadeV26Rand(g,0,1)>.5,linger:arcadeV26Rand(g,0,1)<(kind==='fish'?.35:kind==='jelly'?.20:kind==='turtle'?.15:.02)});
+  g.nextCritter=ts+arcadeV26Rand(g,1000,2200)
 }
 function drawArcadeWaterDetail(G,ts,underwater=false){
   if(!underwater){for(let i=0;i<9;i++){const y=G.y(.08+i*.105)+Math.sin(ts*.0015+i)*4;for(let x=G.left-20+(i%2)*28;x<G.right+20;x+=92){line(x,y,x+28,y,'rgba(255,255,255,.12)',2);line(x+10,y+5,x+23,y+5,'rgba(28,93,122,.18)',1)}}}
@@ -3361,7 +3370,7 @@ function arcadeV26CaveBounds(g,x){
   return{top:lerp(a.top,b.top,t),bottom:lerp(a.bottom,b.bottom,t)}
 }
 function arcadeV26RenderDepth(g,ts,G,dt,running){
-  const sec=dt/1000,pressure=arcadeV26DepthDifficulty(g),subX=.24;
+  const sec=dt/1000,pressure=arcadeV26DepthDifficulty(g),subX=.24,travel=.22+pressure*.035;
   if(running){
     g.vy+=(g.targetY-g.y)*(1.10+pressure*.34)*sec;
     g.vy+=Math.sin(ts*.0012+g.caveSeed)*.010*pressure*sec;
@@ -3373,57 +3382,74 @@ function arcadeV26RenderDepth(g,ts,G,dt,running){
     g.bestRound=Math.max(g.bestRound||1,Math.round(g.depthMeters));
     g.depthBand=arcadeV26DepthBand(g);
     g.rewardQualified=g.rewardQualified||g.depthMeters>=180;
-    arcadeDepthTunnelAdvance(g,(.22+pressure*.035)*sec);
-    if(ts>g.nextCritter&&g.critters.length<6)arcadeV26SpawnDepthCritter(g,ts,false);
-    if((g.depthScroll%115)<dt)g.silt.push({x:1.04+arcadeV26Rand(g,0,.10),y:arcadeV26Rand(g,.12,.90),r:arcadeV26Rand(g,1,2.6),vx:arcadeV26Rand(g,.20,.36),drift:arcadeV26Rand(g,-.007,.007),alpha:arcadeV26Rand(g,.07,.18)})
+    arcadeDepthTunnelAdvance(g,travel*sec);
+    if(ts>g.nextCritter&&g.critters.length<7)arcadeV26SpawnDepthCritter(g,ts,false);
+    if((g.depthScroll%115)<dt)g.silt.push({x:1.08+arcadeV26Rand(g,0,.12),y:arcadeV26Rand(g,.12,.90),r:arcadeV26Rand(g,1,2.6),vx:arcadeV26Rand(g,.20,.36),drift:arcadeV26Rand(g,-.007,.007),alpha:arcadeV26Rand(g,.07,.18)});
   }
 
   const waterGrad=ctx.createLinearGradient(0,G.top,0,G.bottom);
   waterGrad.addColorStop(0,'#0d2732');waterGrad.addColorStop(.45,'#123442');waterGrad.addColorStop(1,'#18313a');rect(G.left,G.top,G.w,G.h,waterGrad);
 
-  const particleSpan=G.w+50,particleTravel=(g.depthScroll||0)*.014;
+  const particleSpan=G.w+90,particleTravel=(g.depthScroll||0)*.014;
   for(let i=0;i<18;i++){
     const raw=((i*83-particleTravel)%particleSpan+particleSpan)%particleSpan;
-    const px=G.left-25+raw,py=G.top+14+((i*53+Math.floor(g.caveSeed*23))%Math.max(40,G.h-28));
+    const px=G.left-45+raw,py=G.top+14+((i*53+Math.floor(g.caveSeed*23))%Math.max(40,G.h-28));
     circle(px,py,1+(i%5===0?1:0),`rgba(155,216,226,${i%5===0?.10:.04})`)
   }
   for(const p of g.silt||[]){if(running){p.x-=p.vx*sec;p.y=clamp(p.y+p.drift*sec,.08,.92)}circle(G.x(p.x),G.y(p.y),p.r,`rgba(223,247,255,${p.alpha})`)}
-  g.silt=(g.silt||[]).filter(p=>p.x>-.08).slice(-36);
+  g.silt=(g.silt||[]).filter(p=>p.x>-.14).slice(-40);
 
-  const topPts=[[G.left,G.top]],bottomPts=[[G.left,G.bottom]],step=g.tunnelStep||.055,offset=g.tunnelOffset||0;
+  const step=g.tunnelStep||.05,offset=g.tunnelOffset||0,edgePad=.16;
+  const topPts=[[G.x(-edgePad),G.top]],bottomPts=[[G.x(-edgePad),G.bottom]],vis=[];
   for(let i=0;i<g.tunnel.length;i++){
-    const nx=i*step-offset;if(nx<-.08||nx>1.08)continue;const node=g.tunnel[i];
-    topPts.push([G.x(nx),G.y(node.top)]);bottomPts.push([G.x(nx),G.y(node.bottom)])
+    const nx=i*step-offset;if(nx<-edgePad||nx>1+edgePad)continue;const node=g.tunnel[i];
+    vis.push([nx,node]);topPts.push([G.x(nx),G.y(node.top)]);bottomPts.push([G.x(nx),G.y(node.bottom)])
   }
-  topPts.push([G.right,G.top]);bottomPts.push([G.right,G.bottom]);
-  poly(topPts,'#2d434b','#17313a',2);poly(bottomPts,'#314952','#17313a',2);
+  topPts.push([G.x(1+edgePad),G.top]);bottomPts.push([G.x(1+edgePad),G.bottom]);
+  poly(topPts,'#314851',null,0);poly(bottomPts,'#36515b',null,0);
 
-  for(let i=0;i<g.tunnel.length;i++){
-    const node=g.tunnel[i],nx=i*step-offset;if(nx<-.06||nx>1.06)continue;
-    const x=G.x(nx),topY=G.y(node.top),bottomY=G.y(node.bottom),v=node.variant||0;
-    drawArcadeDepthSprite('rock',x,topY+2,1.22,v,.5,0,false);
-    drawArcadeDepthSprite('rock',x+7,bottomY-1,1.28,(v+1)%4,.5,1,false);
-    if(node.detail===1)drawArcadeDepthSprite('rock',x+5,topY+16,.70,(v+2)%4,.5,.35,false);
-    if(node.detail===2)drawArcadeDepthSprite('rock',x-3,bottomY-14,.75,(v+3)%4,.5,.72,false);
-    if(node.detail===3){line(x-5,bottomY-13,x-7,bottomY-3,'rgba(110,168,129,.42)',1);line(x+1,bottomY-16,x+2,bottomY-3,'rgba(110,168,129,.36)',1)}
+  // dense embedded wall dressing
+  for(const [nx,node] of vis){
+    const x=G.x(nx),topY=G.y(node.top),bottomY=G.y(node.bottom),v=node.variant||0,d=node.detail||0;
+    drawArcadeDepthSprite('rock',x-6,topY+6,1.05,v,.5,0,false);
+    drawArcadeDepthSprite('rock_slab',x+7,topY+13,.90,(v+1)%4,.5,.18,false);
+    drawArcadeDepthSprite('rock',x+5,bottomY-6,1.12,(v+2)%4,.5,1,false);
+    drawArcadeDepthSprite('rock_slab',x-8,bottomY-11,.95,(v+3)%4,.5,.86,false);
+    if(d===1||d===5)drawArcadeDepthSprite('rock',x+11,topY+20,.68,(v+2)%4,.5,.28,false);
+    if(d===2||d===6)drawArcadeDepthSprite('rock_slab',x-2,bottomY-18,.70,(v+1)%4,.5,.72,false);
+    if(d===3||d===7){drawArcadeDepthSprite('kelp',x+3,bottomY-4,.95,v,.5,1,false);drawArcadeDepthSprite('kelp',x-7,bottomY-2,.72,(v+1)%3,.5,1,false)}
+    if(d===4)drawArcadeDepthSprite('kelp',x+1,bottomY-3,.82,(v+2)%3,.5,1,false)
   }
+
+  // redraw wall rims over embedded textures so they sit in the rock face
+  const topRim=vis.map(([nx,node])=>[G.x(nx),G.y(node.top)]),bottomRim=vis.map(([nx,node])=>[G.x(nx),G.y(node.bottom)]);
+  for(let i=1;i<topRim.length;i++)line(topRim[i-1][0],topRim[i-1][1],topRim[i][0],topRim[i][1],'#17313a',2);
+  for(let i=1;i<bottomRim.length;i++)line(bottomRim[i-1][0],bottomRim[i-1][1],bottomRim[i][0],bottomRim[i][1],'#17313a',2);
 
   const sx=G.x(subX),sy=G.y(g.y),beamLeft=sx+G.w*.035,beamRight=G.x(.96),beamHalf=G.h*(.11+.02*Math.sin(ts*.0011));
   ctx.save();ctx.beginPath();ctx.moveTo(beamLeft,sy);ctx.lineTo(G.x(.58),sy-beamHalf*.75);ctx.lineTo(beamRight,sy);ctx.lineTo(G.x(.58),sy+beamHalf*.75);ctx.closePath();
   const beam=ctx.createLinearGradient(beamLeft,sy,beamRight,sy);beam.addColorStop(0,'rgba(255,243,207,.22)');beam.addColorStop(.55,'rgba(255,232,166,.10)');beam.addColorStop(1,'rgba(255,232,166,0)');ctx.fillStyle=beam;ctx.fill();ctx.restore();
   const glow=ctx.createRadialGradient(sx+G.w*.075,sy,2,sx+G.w*.075,sy,G.w*.14);glow.addColorStop(0,'rgba(255,245,214,.32)');glow.addColorStop(.45,'rgba(255,232,166,.12)');glow.addColorStop(1,'rgba(255,232,166,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(sx+G.w*.075,sy,G.w*.14,0,Math.PI*2);ctx.fill();
 
+  const sceneFlow=travel;
   for(const c of g.critters){
     if(running){
-      c.phase+=sec*(c.kind==='jelly'?1.4:1.0);c.x+=c.vx*sec*(1+.10*Math.min(1.6,pressure));
+      c.phase+=sec*(c.kind==='jelly'?1.3:c.kind==='crab'?.8:1.0);
+      const pace=(c.linger&&c.kind!=='crab')?sceneFlow*.90:0;
+      const swim=c.swimVx+Math.sin(c.phase)*(c.kind==='crab'?.0015:c.kind==='jelly'?.004:.007);
+      c.x+=(-sceneFlow+pace+swim+c.drift)*sec;
       const cb=arcadeV26CaveBounds(g,clamp(c.x,0,1));
       if(c.kind==='crab')c.y=lerp(c.y,cb.bottom-.028,.08);
-      else{c.homeY=clamp(c.homeY,cb.top+.06,cb.bottom-.07);c.y=clamp(c.homeY+Math.sin(c.phase)*(c.kind==='turtle'?.010:.016),cb.top+.05,cb.bottom-.06)}
+      else{
+        c.homeY=clamp(c.homeY,cb.top+.06,cb.bottom-.07);
+        c.y=clamp(c.homeY+Math.sin(c.phase)*(c.kind==='turtle'?.010:.016),cb.top+.05,cb.bottom-.06)
+      }
+      c.mirror=swim<=0;
     }
     const cx=G.x(c.x),cy=G.y(c.y),scale=c.kind==='turtle'?1.05:c.kind==='crab'?.95:c.kind==='jelly'?.92:.9;
     drawArcadeDepthSprite(c.kind,cx,cy,scale,c.variant,.5,c.kind==='jelly'?.35:.62,c.mirror)
   }
-  g.critters=g.critters.filter(c=>c.x>-0.20&&c.x<1.30);
+  g.critters=g.critters.filter(c=>c.x>-0.26&&c.x<1.30);
 
   if(running){
     if((g.depthScroll%180)<dt)g.bubbles.push({x:sx-G.w*.035,y:sy+8,r:2+Math.random()*3,vy:arcadeV26Rand(g,.028,.05)});
@@ -3439,11 +3465,18 @@ function arcadeV26RenderDepth(g,ts,G,dt,running){
 
   drawArcadeDepthSprite('submarine',sx,sy,1.05,0,.5,.62,false);
 
-  const panelX=G.right-54,panelY=G.y(.08),panelH=G.h*.60;
-  roundedRect(panelX,panelY,40,panelH,8,'rgba(255,247,222,.84)','#17313a',3);pxText('DEPTH',panelX+20,panelY+12,'#17313a',7,'center');
-  const gp=clamp(((g.depthMeters||0)%120)/120,0,1);rect(panelX+14,panelY+22,12,panelH-42,'rgba(24,49,58,.18)','#17313a',1);rect(panelX+15,panelY+23+(panelH-44)*(1-gp),10,(panelH-44)*gp,'#65bdd1');
-  for(let i=0;i<=4;i++){const yy=panelY+23+i*(panelH-44)/4;line(panelX+28,yy,panelX+33,yy,'#17313a',1)}
-  pxText(`${Math.round(g.depthMeters)}m`,panelX+20,panelY+panelH-12,'#17313a',8,'center');
+  const panelX=G.right-62,panelY=G.y(.07),panelH=G.h*.66,panelW=52;
+  roundedRect(panelX,panelY,panelW,panelH,8,'rgba(255,247,222,.88)','#17313a',3);
+  pxText('DEPTH',panelX+panelW/2,panelY+12,'#17313a',7,'center');
+  const windowTop=panelY+24,windowH=panelH-42,midY=windowTop+windowH*.54,current=Math.max(0,g.depthMeters||0),tickStep=25,pxPerMeter=.18;
+  rect(panelX+10,windowTop,panelW-20,windowH,'rgba(24,49,58,.10)','#17313a',1);
+  const firstTick=Math.floor((current-((midY-windowTop)/pxPerMeter))/tickStep)*tickStep;
+  for(let m=firstTick;m<=current+((windowH-(midY-windowTop))/pxPerMeter)+tickStep;m+=tickStep){
+    const yy=midY+(m-current)*pxPerMeter;if(yy<windowTop-8||yy>windowTop+windowH+8)continue;
+    const major=m%100===0;line(panelX+14,yy,panelX+(major?34:28),yy,'#17313a',1);if(major&&m>=0)pxText(String(m),panelX+37,yy+3,'#17313a',6,'left')
+  }
+  poly([[panelX+6,midY],[panelX+13,midY-4],[panelX+13,midY+4]],'#c55c57','#17313a',1);
+  pxText(`${Math.round(current)}m`,panelX+panelW/2,panelY+panelH-10,'#17313a',8,'center');
   roundedRect(G.left+8,G.y(.07),108,32,7,'rgba(255,247,222,.88)','#17313a',2);pxText(`PRESSURE ×${pressure.toFixed(2)}`,G.left+62,G.y(.07)+13,'#17313a',8,'center');pxText(`DEEP BAND ${g.depthBand}`,G.left+62,G.y(.07)+24,'#17313a',7,'center');
   const caveSpan=Math.round((bottomLimit-topLimit)*100);pxText(`KEEP CENTRED • ${caveSpan}% CLEARANCE`,G.cx,G.y(.94),'#9bd8e2',9,'center')
 }
