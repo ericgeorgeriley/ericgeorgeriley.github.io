@@ -88,6 +88,8 @@
   .choice{border:3px solid var(--ink);background:#fff;border-radius:7px;padding:9px;margin-top:7px;cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}.choice:hover{background:#edf7dc}.choice b{font-size:10px;display:block}.choice span{font-size:8px;color:var(--ink-soft);display:block;margin-top:3px;line-height:1.4}
 
   .game-hud{position:absolute;left:8px;right:8px;top:8px;background:rgba(255,247,222,.96);border:3px solid var(--ink);border-radius:9px;padding:7px 8px 6px;font-size:9px;box-shadow:3px 3px 0 var(--shadow);display:none;z-index:20}.game-hud.show{display:block}.arcade-hud-row{display:grid;grid-template-columns:minmax(0,1fr) auto 30px 30px;gap:6px;align-items:center}.arcade-hud-title{min-width:0}.arcade-hud-title b{display:block;font-size:11px;line-height:1.12;white-space:normal;overflow:visible}.arcade-hud-title span{display:block;font-size:8px;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.arcade-hud-score{font-weight:1000;font-size:10px;white-space:nowrap}.arcade-pause,.arcade-exit{width:29px;height:29px;border:2px solid var(--ink);border-radius:6px;background:var(--cream);font-size:13px;line-height:18px;font-weight:1000;color:var(--ink);padding:0;cursor:pointer}.arcade-pause{background:#dff1cf}.game-hud .gamebar{width:100%;height:10px;border:2px solid var(--ink);background:#fff;margin-top:5px;border-radius:4px;overflow:hidden}.game-hud .gamebar i{display:block;height:100%;background:var(--coral);width:100%}
+  .app.arcade-active,.app.arcade-active *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .app.arcade-active .stage-wrap,.app.arcade-active #game{touch-action:none}
   .arcade-controls{display:none;grid-row:3;align-items:stretch;justify-content:center;gap:5px;padding:6px max(7px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));background:var(--paper);border-top:4px solid var(--ink);z-index:23;min-height:50px}.app.arcade-active .bottomnav{display:none}.app.arcade-active .arcade-controls.show{display:flex}.arcade-control-btn{min-width:52px;min-height:36px;padding:6px 9px;border:2px solid var(--ink);border-radius:7px;background:#fff7de;color:var(--ink);font-weight:1000;font-size:9px;box-shadow:2px 2px 0 var(--shadow);touch-action:none;user-select:none}.arcade-control-btn.primary{background:#dff1cf}.arcade-control-btn.pause{margin-left:auto;background:#f2e7c5}.arcade-control-btn.compact{min-width:34px;padding:6px 5px}.arcade-control-btn:active,.arcade-control-btn.held{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--shadow);background:#cfe8ee}.arcade-control-hint{display:block;font-size:6px;color:var(--ink-soft);margin-top:1px}
   @media (max-width:520px){.arcade-hud-row{grid-template-columns:minmax(0,1fr) 29px 29px;gap:5px;row-gap:3px}.arcade-hud-title{grid-column:1;grid-row:1}.arcade-hud-title b{font-size:10px;letter-spacing:-.25px}.arcade-hud-title span{display:none}.arcade-hud-score{grid-column:1/-1;grid-row:2;font-size:8px;white-space:normal;line-height:1.15}.arcade-pause{grid-column:2;grid-row:1}.arcade-exit{grid-column:3;grid-row:1}.game-hud .gamebar{margin-top:4px;height:9px}.arcade-controls{justify-content:stretch;overflow-x:auto}.arcade-control-btn{flex:1 0 auto;min-width:46px;padding:6px 7px;font-size:8px}.arcade-control-btn.compact{min-width:32px;flex:0 0 34px}}
   .arcade-intro{position:absolute;inset:0;display:none;place-items:center;padding:84px 14px 18px;z-index:21;background:rgba(17,55,70,.28);backdrop-filter:blur(1px)}.arcade-intro.show{display:grid}.arcade-intro-card{width:min(440px,100%);background:rgba(255,247,222,.98);border:4px solid var(--ink);border-radius:12px;box-shadow:6px 6px 0 rgba(22,49,58,.24);padding:15px;text-align:center}.arcade-intro-kicker{font-size:8px;font-weight:1000;letter-spacing:.8px;color:var(--sea-dark)}.arcade-intro h2{margin:5px 0 6px;font-size:18px;letter-spacing:-.6px}.arcade-intro p{font-size:9px;line-height:1.45;color:var(--ink-soft);margin:0 auto 10px;max-width:360px}.arcade-how{background:#fff;border:3px solid var(--ink);border-radius:8px;padding:9px 10px;text-align:left}.arcade-how b{display:block;font-size:8px;color:var(--coral);margin-bottom:4px}.arcade-how span{display:block;font-size:10px;line-height:1.35;font-weight:900}.arcade-intro-best{font-size:8px;color:var(--ink-soft);font-weight:900;margin:9px 0}.arcade-start,.arcade-back{width:100%;border:3px solid var(--ink);border-radius:8px;padding:10px;font-weight:1000;font-size:10px;cursor:pointer}.arcade-start{background:var(--grass);box-shadow:3px 3px 0 var(--shadow)}.arcade-back{margin-top:6px;background:var(--cream)}
@@ -249,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.11';
+const VERSION_LABEL='0.26.13';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -2258,7 +2260,7 @@ function pointerCanvasXY(e){const r=canvas.getBoundingClientRect();return{x:(e.c
 function chartPinchSnapshot(){const pts=[...chartView.pointers.values()];if(pts.length<2)return null;const a=pts[0],b=pts[1],dx=b.x-a.x,dy=b.y-a.y;return{dist:Math.max(12,Math.hypot(dx,dy)),midX:(a.x+b.x)/2,midY:(a.y+b.y)/2,zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY}}
 canvas.addEventListener('pointerdown',e=>{
   const q=pointerCanvasXY(e);canvasPointerIds.add(e.pointerId);pointer.x=q.x;pointer.y=q.y;pointer.startX=q.x;pointer.startY=q.y;pointer.down=true;
-  if(minigame){minigamePointer('down',pointer.x,pointer.y);return}
+  if(minigame){e.preventDefault();try{canvas.setPointerCapture?.(e.pointerId)}catch(_){}minigamePointer('down',pointer.x,pointer.y);return}
   if(state.activeView==='chart'){
     chartView.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});try{canvas.setPointerCapture?.(e.pointerId)}catch(_){}chartView.moved=false;
     if(chartView.pointers.size===1){chartView.dragging=true;chartView.lastX=e.clientX;chartView.lastY=e.clientY;chartView.downX=e.clientX;chartView.downY=e.clientY;chartView.pinch=null}
@@ -3337,10 +3339,53 @@ function arcadeCraneV2610ShipY(g,ts,G,rollOverride=null){
   const roll=rollOverride===null?arcadeCraneV2610DeckRoll(g,ts):rollOverride;
   return G.y(.72)+roll*G.h*.12
 }
+function arcadeCraneV2613BoomGeometry(g,ts,G,roll){
+  const root={x:G.x(.12),y:G.y(.12)},tip={x:G.x(.76),y:G.y(.16)+roll*G.h*.035};
+  const t=clamp(((g.crane.trolley??.47)-.12)/(.76-.12),0,1);
+  const x=root.x+(tip.x-root.x)*t,y=root.y+(tip.y-root.y)*t;
+  return{root,tip,t,x,y,angle:Math.atan2(tip.y-root.y,tip.x-root.x)}
+}
+function arcadeCraneV2613DrawTower(g,ts,G,boom,wind){
+  const baseX=G.x(.095),topY=G.y(.085),baseY=G.y(.655),w=G.w*.072,ink='#17313a',yellow='#d7b56a';
+  // tapered lattice tower
+  poly([[baseX,baseY],[baseX+w,baseY],[baseX+w*.80,topY],[baseX+w*.20,topY]],yellow,ink,3);
+  const tiers=7;
+  for(let i=0;i<tiers;i++){
+    const y1=topY+(baseY-topY)*i/tiers,y2=topY+(baseY-topY)*(i+1)/tiers;
+    const inset1=(w*.20)*(1-i/tiers),inset2=(w*.20)*(1-(i+1)/tiers);
+    const lx1=baseX+inset1,rx1=baseX+w-inset1,lx2=baseX+inset2,rx2=baseX+w-inset2;
+    line(lx1,y1,rx2,y2,'rgba(23,49,58,.52)',2);line(rx1,y1,lx2,y2,'rgba(23,49,58,.52)',2);
+    line(lx2,y2,rx2,y2,'rgba(255,247,222,.30)',1)
+  }
+  // machinery platform and operator cab
+  roundedRect(baseX-w*.08,topY-8,w*1.18,18,3,'#b98359',ink,2);
+  roundedRect(baseX+w*.18,topY-34,w*.68,28,4,'#fff7de',ink,2);
+  rect(baseX+w*.27,topY-29,w*.22,12,'#9bc5d1',ink,1);rect(baseX+w*.54,topY-29,w*.22,12,'#9bc5d1',ink,1);
+  rect(baseX+w*.06,topY+15,5,baseY-topY-34,'#704630',ink,1);
+  for(let y=topY+23;y<baseY-10;y+=17)line(baseX+w*.03,y,baseX+w*.16,y,'#fff7de',2);
+  // head sheaves
+  const hx=boom.root.x,hy=boom.root.y;
+  circle(hx-4,hy-2,7,'#e5b54e',ink,2);circle(hx+9,hy,6,'#e5b54e',ink,2);
+  circle(hx-4,hy-2,2,'#273f46',ink,1);circle(hx+9,hy,2,'#273f46',ink,1);
+  // integrated mast + weather vane / windsock
+  const mastX=baseX+w*.53,mastTop=topY-57;
+  line(mastX,topY-34,mastX,mastTop,ink,2);circle(mastX,mastTop,3,'#e5b54e',ink,1);
+  const dir=wind>=0?1:-1,len=18+Math.min(15,Math.abs(wind)*150);
+  line(mastX,mastTop,mastX+dir*len,mastTop+2,'#704630',2);
+  poly([[mastX+dir*7,mastTop-4],[mastX+dir*(len+9),mastTop+2],[mastX+dir*7,mastTop+7]],'#df7c68',ink,1);
+  const tailX=mastX-dir*11;poly([[tailX,mastTop],[tailX-dir*8,mastTop-5],[tailX-dir*8,mastTop+5]],'#fff7de',ink,1)
+}
+function arcadeCraneV2613DrawLanded(g,shipY,shipH,bayX0,bayW,gap){
+  for(const item of (g.crane.landed||[])){
+    const x=bayX0+item.slot*(bayW+gap)+bayW/2;
+    const y=shipY-shipH*.16-(item.stack||0)*19;
+    arcadeCraneV2610DrawLoad(item.load,x,y,Math.min(.88,bayW/48),0,.98)
+  }
+}
 function arcadeV26SetupCrane(g,r,d){
   arcadeV26ResetCommon(g,3+Math.min(4,Math.floor((r-1)/2)));
   const slots=Math.min(7,5+Math.floor((r-1)/3));
-  g.crane={angle:arcadeV26Rand(g,-.34,.34),omega:arcadeV26Rand(g,-.18,.18),wind:0,length:1,load:null,slots,occupied:[],rollPhase:arcadeV26Rand(g,0,6.28),rollAmp:.035+Math.min(.07,(r-1)*.006)+arcadeV26Rand(g,0,.018),boomSway:arcadeV26Rand(g,0,6.28),readyAt:performance.now()+350,trolley:.47,trolleyV:0,control:0};
+  g.crane={angle:arcadeV26Rand(g,-.34,.34),omega:arcadeV26Rand(g,-.18,.18),wind:0,length:1,load:null,slots,occupied:[],landed:[],rollPhase:arcadeV26Rand(g,0,6.28),rollAmp:.035+Math.min(.07,(r-1)*.006)+arcadeV26Rand(g,0,.018),boomSway:arcadeV26Rand(g,0,6.28),readyAt:performance.now()+350,trolley:.47,trolleyV:0,control:0};
   g.targetCol=0;g.drops=[];g.release=null;g.cool=0;arcadeCraneV2610ResetLift(g)
 }
 function arcadeV26NewContainerPiece(g){g.piece={width:arcadeV26Rand(g,0,1)<.28?2:1,weight:1+Math.floor(arcadeV26Rand(g,0,Math.min(3,1+g.round/3))),kind:Math.floor(arcadeV26Rand(g,0,3))}}
@@ -3458,10 +3503,11 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
   rect(shipX+8,shipY-shipH*.22,shipW-16,shipH*.44,'#b98359','#17313a',2);
   const slots=C.slots||5,gap=5,bayW=(shipW-38-gap*(slots-1))/slots,bayX0=shipX+19;
   for(let i=0;i<slots;i++){
-    const bx=bayX0+i*(bayW+gap),target=i===g.targetCol,occupied=C.occupied.includes(i);
-    roundedRect(bx,shipY-shipH*.15,bayW,shipH*.30,3,target?'rgba(131,191,106,.38)':'rgba(255,247,222,.12)',target?'#83bf6a':'#704630',target?3:1);
-    if(occupied){rect(bx+3,shipY-shipH*.11,bayW-6,shipH*.22,i%2?'#c96b58':'#527da0','#17313a',1);for(let q=1;q<3;q++)line(bx+q*bayW/3,shipY-shipH*.10,bx+q*bayW/3,shipY+shipH*.10,'rgba(255,247,222,.30)',1)}
+    const bx=bayX0+i*(bayW+gap),target=i===g.targetCol;
+    roundedRect(bx,shipY-shipH*.15,bayW,shipH*.30,3,target?'rgba(131,191,106,.38)':'rgba(255,247,222,.08)',target?'#83bf6a':'#704630',target?3:1);
+    line(bx+4,shipY, bx+bayW-4,shipY,'rgba(112,70,48,.34)',1)
   }
+  arcadeCraneV2613DrawLanded(g,shipY,shipH,bayX0,bayW,gap);
   roundedRect(shipX+shipW*.72,shipY-shipH*.31,shipW*.13,shipH*.20,4,'#fff7de','#17313a',2);
   rect(shipX+shipW*.75,shipY-shipH*.39,shipW*.07,shipH*.09,'#d9eef2','#17313a',1);
   for(let i=0;i<5;i++)drawArcadeBollard(shipX+18+i*(shipW-36)/4,shipY+shipH*.26,.58);
@@ -3480,14 +3526,14 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
   }else if(!g.release){
     C.trolleyV*=Math.pow(.82,dt/16.7)
   }
-  const pivotX=G.x(C.trolley??.47)+Math.sin(ts*.00083+C.boomSway)*G.w*.008,pivotY=G.y(.16)+roll*G.h*.035;
+  const boom=arcadeCraneV2613BoomGeometry(g,ts,G,roll),pivotX=boom.x,pivotY=boom.y;
 
-  rect(G.x(.095),G.y(.09),G.w*.055,G.h*.55,'#d7b56a','#17313a',3);
-  for(let yy=G.y(.12);yy<G.y(.60);yy+=28){line(G.x(.10),yy,G.x(.14),yy+22,'rgba(24,49,58,.48)',2);line(G.x(.14),yy,G.x(.10),yy+22,'rgba(24,49,58,.48)',2)}
-  const railY=G.y(.16)+roll*G.h*.035;
-  line(G.x(.12),G.y(.12),G.x(.76),railY,'#d7b56a',9);line(G.x(.12),G.y(.12),G.x(.76),railY,'#17313a',2);
-  line(G.x(.12),G.y(.12),G.x(.23),G.y(.04),'#704630',3);line(G.x(.23),G.y(.04),G.x(.76),railY,'#704630',2);
-  roundedRect(pivotX-9,pivotY-6,18,12,3,'#e5b54e','#17313a',2);circle(pivotX-5,pivotY+7,3,'#273f46','#17313a',1);circle(pivotX+5,pivotY+7,3,'#273f46','#17313a',1);
+  arcadeCraneV2613DrawTower(g,ts,G,boom,C.wind);
+  line(boom.root.x,boom.root.y,boom.tip.x,boom.tip.y,'#d7b56a',11);line(boom.root.x,boom.root.y,boom.tip.x,boom.tip.y,'#17313a',2);
+  line(boom.root.x,boom.root.y,G.x(.23),G.y(.035),'#704630',3);line(G.x(.23),G.y(.035),boom.tip.x,boom.tip.y,'#704630',2);
+  ctx.save();ctx.translate(pivotX,pivotY);ctx.rotate(boom.angle);
+  roundedRect(-11,-7,22,14,3,'#e5b54e','#17313a',2);circle(-6,8,3,'#273f46','#17313a',1);circle(6,8,3,'#273f46','#17313a',1);rect(-4,-2,8,8,'#b98359','#17313a',1);
+  ctx.restore();
 
   const ropePx=G.h*(.28+.22*C.length),hookX=pivotX+Math.sin(C.angle)*ropePx,hookY=pivotY+Math.cos(C.angle)*ropePx;
   if(!g.release){line(pivotX,pivotY,hookX,hookY,'#574538',3);line(pivotX+2,pivotY,hookX+2,hookY,'rgba(255,247,222,.28)',1);line(hookX,hookY,hookX,hookY+8,'#17313a',2);arcadeCraneV2610DrawLoad(load,hookX,hookY+13,1.0,C.angle*.12)}
@@ -3502,6 +3548,8 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
         if(inside&&impact<.66){
           const quality=clamp(1-dx/(R.lockedBayW*.42)-Math.abs(R.vx)/(G.w*.40),0,1),pts=Math.round(330+load.mass*120+quality*300);
           if(!C.occupied.includes(g.targetCol))C.occupied.push(g.targetCol);
+          const stack=(C.landed||[]).filter(x=>x.slot===g.targetCol).length;
+          C.landed.push({slot:g.targetCol,stack,load:{...load}});
           arcadeV26Progress(g,1,pts,quality>.72?'SQUARE IN THE BAY':'LOAD LANDED');
           if(!g.failed&&g.roundProgress<g.roundGoal)arcadeCraneV2610ResetLift(g,ts+720)
         }else{
@@ -3513,8 +3561,6 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
     arcadeCraneV2610DrawLoad(load,R.x,R.y,1.0,R.rot,R.landed?.94:1)
   }
 
-  const windX=G.right-74,windY=G.y(.09);line(windX,windY,windX,windY+25,'#17313a',2);line(windX,windY+4,windX+clamp(C.wind*130,-34,34),windY+4,'#fff7de',3);
-  poly([[windX+clamp(C.wind*130,-34,34),windY],[windX+clamp(C.wind*130,-34,34)+(C.wind>=0?8:-8),windY+4],[windX+clamp(C.wind*130,-34,34),windY+8]],'#df7c68','#17313a',1);
   roundedRect(G.left+8,G.y(.055),168,42,7,'rgba(255,247,222,.90)','#17313a',2);
   pxText(`${load.label} · ${load.mass.toFixed(1)}t`,G.left+18,G.y(.055)+14,'#17313a',8,'left');
   pxText(`WIRE ${Math.round(C.length*22)}m · WIND ${Math.abs(C.wind*18).toFixed(1)}kt ${C.wind>0?'→':C.wind<0?'←':'·'}`,G.left+18,G.y(.055)+28,'#42616a',7,'left');
@@ -3522,12 +3568,7 @@ function arcadeV26RenderCrane(g,ts,G,dt,running){
 
   const targetCentre=bayX0+g.targetCol*(bayW+gap)+bayW/2;
   if(!g.release)line(hookX,hookY+30,targetCentre,shipY-shipH*.20,'rgba(131,191,106,.18)',1);
-  const ctlY=G.y(.895),ctlH=G.h*.062,ctlW=G.w*.19;
-  roundedRect(G.cx-ctlW*1.62,ctlY,ctlW,ctlH,7,C.control<0?'rgba(229,181,78,.95)':'rgba(255,247,222,.88)','#17313a',2);
-  roundedRect(G.cx-ctlW*.50,ctlY,ctlW,ctlH,7,'rgba(131,191,106,.94)','#17313a',2);
-  roundedRect(G.cx+ctlW*.62,ctlY,ctlW,ctlH,7,C.control>0?'rgba(229,181,78,.95)':'rgba(255,247,222,.88)','#17313a',2);
-  pxText('◀ LEFT',G.cx-ctlW*1.12,ctlY+ctlH*.58,'#17313a',8,'center');pxText('RELEASE',G.cx,ctlY+ctlH*.58,'#17313a',8,'center');pxText('RIGHT ▶',G.cx+ctlW*1.12,ctlY+ctlH*.58,'#17313a',8,'center');
-  pxText(`${g.roundProgress}/${g.roundGoal} CLEAN LIFTS`,G.cx,G.y(.985),'#fff7de',8,'center')
+  pxText(`${g.roundProgress}/${g.roundGoal} CLEAN LIFTS · USE THE CONTROL BAR BELOW`,G.cx,G.y(.95),'#fff7de',8,'center')
 }
 function arcadeV26RenderContainerStack(g,ts,G,dt,running){
   if(running){g.stackCursor+=g.stackDir*g.stackSpeed*arcadeV26Difficulty(g)*dt/1000;if(g.stackCursor>.84){g.stackCursor=.84;g.stackDir=-1}else if(g.stackCursor<.16){g.stackCursor=.16;g.stackDir=1}}const start=G.x(.20),colW=G.w*.15,base=G.y(.72),sc=clamp(G.w/410,.92,1.18);for(let c=0;c<5;c++){for(let h=0;h<g.cols[c];h++)drawArcadeSprite('crate',start+c*colW,base-h*25*sc,sc,(c+h)%3,.5,.72);pxText(`${g.colWeights[c]}t`,start+c*colW,G.y(.80),'#fff7de',8,'center')}const cx=G.x(g.stackCursor);line(G.x(.15),G.y(.23),G.x(.85),G.y(.23),'#704630',8);line(cx,G.y(.23),cx,G.y(.38),'#704630',3);for(let i=0;i<g.piece.width;i++)drawArcadeSprite('crate',cx+(i-(g.piece.width-1)/2)*25,G.y(.41),sc,g.piece.kind,.5,.72);pxText(`${g.piece.width}× CONTAINER · ${g.piece.weight}t`,G.cx,G.y(.89),'#fff7de',9,'center')
@@ -3788,7 +3829,7 @@ function arcadeV26TimingInput(g){
 function arcadeV26CraneInput(g){
   if(g.release||performance.now()<(g.crane.readyAt||0))return;
   const now=performance.now(),G=arcadeGeom(),C=g.crane,load=C.load||ARCADE_CRANE_V2610_LOADS[1],lockedRoll=arcadeCraneV2610DeckRoll(g,now);
-  const pivotX=G.x(C.trolley??.47)+Math.sin(now*.00083+C.boomSway)*G.w*.008,pivotY=G.y(.16)+lockedRoll*G.h*.035,ropePx=G.h*(.28+.22*C.length);
+  const boom=arcadeCraneV2613BoomGeometry(g,now,G,lockedRoll),pivotX=boom.x,pivotY=boom.y,ropePx=G.h*(.28+.22*C.length);
   const x=pivotX+Math.sin(C.angle)*ropePx,y=pivotY+Math.cos(C.angle)*ropePx+13,tangential=C.omega*ropePx;
   const shipY=arcadeCraneV2610ShipY(g,now,G,lockedRoll),shipX=G.x(.12),shipW=G.w*.79,shipH=G.h*.26,slots=C.slots||5,gap=5,bayW=(shipW-38-gap*(slots-1))/slots,bayX0=shipX+19;
   g.release={x,y,vx:Math.cos(C.angle)*tangential,vy:-Math.sin(C.angle)*tangential,gravity:load.fall,rot:C.angle*.12,spin:C.omega*.55,landed:false,lockedRoll,lockedWind:C.wind,lockedDeckY:shipY-shipH*.16,lockedBayW:bayW,lockedTargetX:bayX0+g.targetCol*(bayW+gap)+bayW/2};
@@ -3802,15 +3843,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   if(e==='timing'&&type==='down'&&performance.now()>g.cool)arcadeV26TimingInput(g);
   else if(e==='balance'&&(type==='down'||type==='move'))g.control=nx;
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
-  else if(e==='crane'){
-    if(type==='down'){
-      if(ny>=.86&&nx<.40)g.crane.control=-1;
-      else if(ny>=.86&&nx>.60)g.crane.control=1;
-      else if(performance.now()>g.cool)arcadeV26CraneInput(g)
-    }else if(type==='move'&&g.crane.control){
-      if(ny>=.82)g.crane.control=nx<.45?-1:nx>.55?1:0
-    }else if(type==='up')g.crane.control=0
-  }
+  else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeV26CraneInput(g);
   else if(e==='stack'&&type==='down'&&performance.now()>g.cool){g.theme==='container'?arcadeV26ContainerDrop(g):arcadeV26TetrisDrop(g,nx);g.cool=performance.now()+180}
   else if(e==='sort'){
     if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;o.dragging=true;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeV26SortDrop(g,nx,ny)
@@ -3862,7 +3895,7 @@ function arcadeControlSpec(g){
   if(e==='depth'||e==='landing')return[{a:'up',l:'↑',k:'W / ↑'},{a:'down',l:'↓',k:'S / ↓'}];
   if(e==='tug')return[{a:'left',l:'←',k:'A'},{a:'up',l:'↑',k:'W'},{a:'down',l:'↓',k:'S'},{a:'right',l:'→',k:'D'}];
   if(e==='timing')return[{a:'action',l:g.meta.id==='yacht_tack'?'TACK':'ACTION',k:'SPACE',primary:true}];
-  if(e==='crane')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
+  if(e==='crane')return[{a:'left',l:'← LEFT',k:'A / ←',hold:true},{a:'action',l:'RELEASE',k:'SPACE',primary:true},{a:'right',l:'RIGHT →',k:'D / →',hold:true}];
   if(e==='stack'&&g.theme==='container')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
   if(e==='stack')return[1,2,3,4,5].map(n=>({a:`slot${n}`,l:String(n),k:String(n),compact:true}));
   if(e==='rigging')return[1,2,3,4,5,6,7].map(n=>({a:`rope${n}`,l:String(n),k:String(n),compact:true}));
@@ -3872,8 +3905,8 @@ function arcadeControlSpec(g){
 function arcadeApplyControl(action,pressed=true){
   const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(action==='action'&&pressed){beginArcadeRound();return true}return false}
   const step=.075;
-  if(action==='left'){if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX-step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket-step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control-.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value-.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x-.06,.05,.95);return true}
-  if(action==='right'){if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX+step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket+step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control+.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value+.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x+.06,.05,.95);return true}
+  if(action==='left'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?-1:(g.crane.control<0?0:g.crane.control);return true}return false}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX-step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket-step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control-.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value-.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x-.06,.05,.95);return true}
+  if(action==='right'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?1:(g.crane.control>0?0:g.crane.control);return true}return false}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX+step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket+step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control+.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value+.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x+.06,.05,.95);return true}
   if(action==='up'){if(g.engine==='depth')g.targetY=clamp(g.targetY-.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY-.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y-.06,.08,.92);return true}
   if(action==='down'){if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
   if(action==='pull'){if(g.engine==='meter'&&g.theme!=='yacht'){g.hold=!!pressed;return true}return false}
@@ -3916,8 +3949,10 @@ function arcadeShellKeydown(e){
   else if(/^[1-7]$/.test(key)&&g.engine==='rigging')handled=arcadeApplyControl(`rope${key}`,true);
   if(handled){e.preventDefault();e.stopImmediatePropagation()}
 }
-function arcadeShellKeyup(e){const g=minigame;if(!g||g.paused)return;if((e.key===' '||e.key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht'){arcadeApplyControl('pull',false);e.preventDefault();e.stopImmediatePropagation()}}
+function arcadeShellKeyup(e){const g=minigame;if(!g||g.paused)return;let handled=false;if((e.key===' '||e.key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',false);else if(g.engine==='crane'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='crane'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);if(handled){e.preventDefault();e.stopImmediatePropagation()}}
 window.addEventListener('keydown',arcadeShellKeydown,true);window.addEventListener('keyup',arcadeShellKeyup,true);
+document.addEventListener('selectstart',e=>{if(minigame)e.preventDefault()},{capture:true});
+document.addEventListener('dragstart',e=>{if(minigame)e.preventDefault()},{capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&minigame?.started&&!minigame.paused){arcadeSetPaused(true)}else if(!document.hidden&&minigame?.paused&&!$('#modalBack').classList.contains('show'))arcadePauseMenu('pause')});
 
 // More recognisable gulls for voyage and arcade scenes.
