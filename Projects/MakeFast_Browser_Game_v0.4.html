@@ -249,7 +249,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.8';
+const VERSION_LABEL='0.26.9';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3027,24 +3027,26 @@ function arcadeTugProjectedExtentV267(profile,heading,axis='x'){const L=profile.
 function arcadeTugV268HarbourState(g){
   if(!g.tugHarbour)g.tugHarbour={parked:[],cycle:1,buoys:[],slotsUsed:0};return g.tugHarbour
 }
+function arcadeTugV269Capacity(g){const H=arcadeTugV268HarbourState(g);return Math.min(8,4+H.cycle)}
+function arcadeTugV269BerthCandidates(g){const n=arcadeTugV269Capacity(g),top=.18,bottom=.82,step=(bottom-top)/Math.max(1,n-1);return Array.from({length:n},(_,i)=>top+i*step)}
 function arcadeTugV268MakeBuoys(g,count){
   const H=arcadeTugV268HarbourState(g),spots=[[.50,.22],[.50,.78],[.34,.50],[.66,.50],[.50,.50],[.31,.27],[.69,.73]];H.buoys=[];
   for(let i=0;i<count;i++){const base=spots[i%spots.length],j=(i/ spots.length|0)*.035;H.buoys.push({x:clamp(base[0]+arcadeV26Rand(g,-.035,.035)+j,.20,.80),y:clamp(base[1]+arcadeV26Rand(g,-.035,.035)-j,.16,.84),r:.026})}
 }
 function arcadeTugV268SlotFree(g,side,y,profile){
-  const H=arcadeTugV268HarbourState(g),x=side==='right'?.915-profile.beam*.58:.085+profile.beam*.58;
-  return !H.parked.some(p=>Math.abs(p.y-y)<Math.max(.14,(p.profile.length+profile.length)*.58)&&Math.abs(p.x-x)<.12)
+  const H=arcadeTugV268HarbourState(g),x=side==='right'?.915-profile.beam*.58:.085+profile.beam*.58,cycleTight=Math.max(.085,.145-(H.cycle-1)*.013);
+  return !H.parked.some(p=>Math.abs(p.y-y)<Math.max(cycleTight,(p.profile.length+profile.length)*(.52-Math.min(.10,(H.cycle-1)*.018)))&&Math.abs(p.x-x)<.12)
 }
 function arcadeTugV268ChooseBerthY(g,side,profile){
-  const candidates=[.22,.36,.50,.64,.78].sort(()=>arcadeV26Rand(g,-1,1));for(const y of candidates)if(arcadeTugV268SlotFree(g,side,y,profile))return y;
-  return arcadeV26Rand(g,.25,.75)
+  const candidates=arcadeTugV269BerthCandidates(g).slice().sort(()=>arcadeV26Rand(g,-1,1));for(const y of candidates)if(arcadeTugV268SlotFree(g,side,y,profile))return y;
+  return arcadeV26Choice(g,candidates)
 }
 function arcadeTugV268ParkCurrent(g){
   const H=arcadeTugV268HarbourState(g),S=g.ship,P=g.profile;H.parked.push({x:S.x,y:S.y,heading:g.berth.heading,profile:P});H.slotsUsed++;
 }
 function arcadeTugV268Advance(g){
   if(!g||g.failed)return;arcadeTugV268ParkCurrent(g);const H=arcadeTugV268HarbourState(g);g.score+=220+Math.min(700,(g.round||1)*55);g.round=(g.round||1)+1;g.bestRound=Math.max(g.bestRound||1,g.round);g.rewardQualified=g.rewardQualified||g.round>=3;
-  if(H.parked.length>=5){H.cycle++;H.parked=[];H.slotsUsed=0;arcadeTugV268MakeBuoys(g,Math.min(5,H.cycle-1));arcadeV26SetFeedback(g,`HARBOUR FULL · WATCH THE NEW BUOY`,'good',1250)}else arcadeV26SetFeedback(g,`VESSEL MOORED · JOB ${g.round}`,'good',1050);
+  const capacity=arcadeTugV269Capacity(g);if(H.parked.length>=capacity){H.cycle++;H.parked=[];H.slotsUsed=0;arcadeTugV268MakeBuoys(g,Math.min(5,H.cycle-1));arcadeV26SetFeedback(g,`HARBOUR FULL · ${arcadeTugV269Capacity(g)} TIGHTER BERTHS`,'good',1250)}else arcadeV26SetFeedback(g,`VESSEL MOORED · ${H.parked.length}/${capacity} BERTHS FILLED`,'good',1050);
   g.roundPauseUntil=performance.now()+760;arcadeV26SetupTug(g,g.round,arcadeV26Difficulty(g))
 }
 function arcadeTugV268CircleHit(x,y,r,ox,oy,or){return Math.hypot(x-ox,y-oy)<r+or}
@@ -3454,7 +3456,7 @@ function arcadeV26RenderTug(g,ts,G,dt,running){
 
     const H=arcadeTugV268HarbourState(g),shipRadius=Math.max(P.beam*.58,P.length*.24),tugRadius=.040;
     for(const parked of H.parked){const pr=Math.max(parked.profile.beam*.58,parked.profile.length*.24),ds=Math.hypot(S.x-parked.x,S.y-parked.y),dtug=Math.hypot(T.x-parked.x,T.y-parked.y);if(ds<shipRadius+pr){const nx=(S.x-parked.x)/(ds||1),ny=(S.y-parked.y)/(ds||1);S.x=parked.x+nx*(shipRadius+pr);S.y=parked.y+ny*(shipRadius+pr);S.vx+=nx*.025;S.vy+=ny*.025;S.omega*=.72;if(ts>g.obstacleCool){g.obstacleCool=ts+850;arcadeV26Strike(g,'MOORED VESSEL',45)}}if(dtug<tugRadius+pr){const nx=(T.x-parked.x)/(dtug||1),ny=(T.y-parked.y)/(dtug||1);T.x=parked.x+nx*(tugRadius+pr);T.y=parked.y+ny*(tugRadius+pr);T.vx+=nx*.035;T.vy+=ny*.035;if(ts>g.obstacleCool){g.obstacleCool=ts+650;arcadeV26Strike(g,'WATCH THE MOORED BOATS',25)}}}
-    for(const buoy of H.buoys){for(const obj of [[S,shipRadius,'BUOY STRIKE',35],[T,tugRadius,'CLIPPED BUOY',20]]){const O=obj[0],rr=obj[1],dd=Math.hypot(O.x-buoy.x,O.y-buoy.y);if(dd<rr+buoy.r){const nx=(O.x-buoy.x)/(dd||1),ny=(O.y-buoy.y)/(dd||1);O.x=buoy.x+nx*(rr+buoy.r);O.y=buoy.y+ny*(rr+buoy.r);O.vx=(O.vx||0)*-.18+nx*.018;O.vy=(O.vy||0)*-.18+ny*.018;if(O===S)O.omega*=.75;if(ts>g.obstacleCool){g.obstacleCool=ts+700;arcadeV26Strike(g,obj[2],obj[3])}}}}
+    for(const buoy of H.buoys){for(const obj of [[S,shipRadius],[T,tugRadius]]){const O=obj[0],rr=obj[1],dd=Math.hypot(O.x-buoy.x,O.y-buoy.y);if(dd<rr+buoy.r){const nx=(O.x-buoy.x)/(dd||1),ny=(O.y-buoy.y)/(dd||1);O.x=buoy.x+nx*(rr+buoy.r);O.y=buoy.y+ny*(rr+buoy.r);O.vx=(O.vx||0)*-.28+nx*.022;O.vy=(O.vy||0)*-.28+ny*.022;if(O===S)O.omega*=.82;if(ts>g.obstacleCool){g.obstacleCool=ts+520;arcadeV26SetFeedback(g,'BUOY BUMP','neutral',520);beep('soft')}}}}
 
     const ex=(S.x-B.x)/tol.posX,ey=(S.y-B.y)/tol.posY,posErr=Math.hypot(ex,ey),angleErr=Math.abs(arcadeAngleDiffV267(S.heading,B.heading));
     const posOK=posErr<1,angleOK=angleErr<tol.angle,speedOK=shipSpeed<tol.speed;
@@ -3486,7 +3488,7 @@ function arcadeV26RenderTug(g,ts,G,dt,running){
   if(ts<(g.contactFlash||0))circle(tugX,tugY,16,'rgba(229,181,78,.18)','#e5b54e',2);if(pointer.down)line(tugX,tugY,G.x(g.aim.x),G.y(g.aim.y),'rgba(255,247,222,.58)',2);
   if((g.secureMs||0)>350){const bollardY1=G.y(B.y-P.length*.27),bollardY2=G.y(B.y+P.length*.27);line(towX,towY-12,edgeX,bollardY1,'rgba(255,247,222,.70)',2);line(towX,towY+12,edgeX,bollardY2,'rgba(255,247,222,.70)',2)}
 
-  const D=g.dockState||{posOK:false,angleOK:false,speedOK:false,posErr:9,angleErr:9,speed:9};roundedRect(G.left+8,G.y(.065),G.w*.36,46,8,'rgba(255,247,222,.90)','#17313a',2);pxText(`JOB ${g.round} · ${P.label}`,G.left+16,G.y(.065)+14,'#17313a',8,'left');pxText(`${P.tonnes}t · BERTH ${H.parked.length+1}/5 · CYCLE ${H.cycle}`,G.left+16,G.y(.065)+27,'#42616a',7,'left');pxText(`${flowMag<.005?'SLACK WATER':`CURRENT ${(flowMag*80).toFixed(1)} kt ${Math.abs(g.current.x)>Math.abs(g.current.y)?(g.current.x>0?'E':'W'):(g.current.y>0?'S':'N')}`} · ${H.buoys.length?`${H.buoys.length} BUOY${H.buoys.length===1?'':'S'}`:'CLEAR BASIN'}`,G.left+16,G.y(.065)+39,'#42616a',6,'left');
+  const D=g.dockState||{posOK:false,angleOK:false,speedOK:false,posErr:9,angleErr:9,speed:9};roundedRect(G.left+8,G.y(.065),G.w*.36,46,8,'rgba(255,247,222,.90)','#17313a',2);pxText(`JOB ${g.round} · ${P.label}`,G.left+16,G.y(.065)+14,'#17313a',8,'left');pxText(`${P.tonnes}t · BERTH ${H.parked.length+1}/${arcadeTugV269Capacity(g)} · CYCLE ${H.cycle}`,G.left+16,G.y(.065)+27,'#42616a',7,'left');pxText(`${flowMag<.005?'SLACK WATER':`CURRENT ${(flowMag*80).toFixed(1)} kt ${Math.abs(g.current.x)>Math.abs(g.current.y)?(g.current.x>0?'E':'W'):(g.current.y>0?'S':'N')}`} · ${H.buoys.length?`${H.buoys.length} BUOY${H.buoys.length===1?'':'S'}`:'CLEAR BASIN'}`,G.left+16,G.y(.065)+39,'#42616a',6,'left');
   const statusY=G.y(.895),labels=[['POSITION',D.posOK],['SPEED',D.speedOK],['HEADING',D.angleOK]];for(let i=0;i<3;i++){const x=G.x(.18+i*.22);roundedRect(x,statusY,94,22,6,labels[i][1]?'#dff1cf':'rgba(255,247,222,.88)',labels[i][1]?'#4f8b56':'#17313a',2);pxText(labels[i][0],x+47,statusY+14,labels[i][1]?'#315b42':'#17313a',7,'center')}
   pxText(D.posOK&&D.angleOK&&D.speedOK?'HOLD HER ON THE FENDERS':D.posOK&&!D.angleOK?'WORK THE BOW OR STERN TO LINE HER UP':!D.speedOK&&D.posOK?'EASE OFF — TOO MUCH WAY ON':'PUSH AT THE HULL WHERE YOU NEED THE MOVEMENT',G.cx,G.y(.855),'#fff7de',8,'center');
 }
