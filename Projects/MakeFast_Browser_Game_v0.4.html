@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.23';
+const VERSION_LABEL='0.26.24';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4818,7 +4818,14 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
     if(best){g.radarSelected=best.id;arcadeV26SetFeedback(g,arcadeRadarV2620TrackQuality(best)<2&&best.kind!=='clutter'?'TRACK SELECTED · WATCH THE NEXT SWEEP':'TRACK SELECTED','neutral',420)}
     else{g.radarSelected=null;arcadeV26SetFeedback(g,'NO PAINT THERE','neutral',300)}
   }
-  else if(e==='sonar'&&type==='down'){const S=sonarGeometryV26(G,g);if(x>=S.left&&x<S.right&&y>=S.top&&y<S.bottom){const gx=Math.floor((x-S.left)/S.cw),gy=Math.floor((y-S.top)/S.ch),dist=Math.hypot(gx-g.target.x,gy-g.target.y);g.pings.push({gx,gy,d:dist});g.pingsLeft--;if(dist<.5){arcadeV26Progress(g,1,380,'FOUND IT');if(!g.failed&&g.roundProgress<g.roundGoal)arcadeV26NewSonarTarget(g)}else{g.hint=dist<1.5?'Very strong — one square away.':dist<2.7?'Warm echo — getting closer.':`Cold echo — ${g.pingsLeft} pings left.`;arcadeV26SetFeedback(g,g.hint,dist<2.7?'good':'neutral');if(g.pingsLeft<=0){arcadeV26Strike(g,'PING BUDGET USED',25);arcadeV26NewSonarTarget(g)}}}}
+  else if(e==='sonar'){
+    const S=sonarGeometryV26(G,g);
+    if((type==='down'||type==='move')&&x>=S.left&&x<=S.right&&y>=S.top&&y<=S.bottom){
+      g.sonar.targetX=clamp((x-S.left)/S.w,.05,.95);
+      g.sonar.targetY=clamp((y-S.top)/S.h,.05,.92);
+      if(type==='down')arcadeV26SetFeedback(g,'TOWFISH COURSE SET','neutral',260)
+    }
+  }
   else if(e==='aim'){const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.14;if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadeV26SetFeedback(g,'GRAB THE RING BY THE BOAT','neutral')}else if(type==='move'&&g.dragging){const dx=nx-g.origin.x,dy=ny-g.origin.y,dist=Math.max(.001,Math.hypot(dx,dy)),m=Math.min(.25,dist);g.pull={x:g.origin.x+dx/dist*m,y:g.origin.y+dy/dist*m}}else if(type==='up'&&g.dragging){g.dragging=false;const dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,p=Math.hypot(dx,dy);if(p<.055){arcadeV26SetFeedback(g,'PULL BACK FARTHER','neutral');g.pull={...g.origin};return}g.projectile={x:g.origin.x,y:g.origin.y,vx:dx*3.15,vy:dy*3.15,z:.01,vz:1.58,at:performance.now()};g.pull={...g.origin}}}
   else if(e==='dredge'){if(type==='down'){g.bucket.dragging=true;g.bucket.targetX=clamp(nx,.08,.94);g.bucket.targetY=clamp(ny,.12,.94)}else if(type==='move'&&g.bucket.dragging){g.bucket.targetX=clamp(nx,.08,.94);g.bucket.targetY=clamp(ny,.12,.94)}else if(type==='up')g.bucket.dragging=false}
   else if(e==='lanes'){if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeV26LanesDrop(g,nx,ny)}
@@ -4936,7 +4943,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.23',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.24',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
