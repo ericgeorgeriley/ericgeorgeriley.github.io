@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.29';
+const VERSION_LABEL='0.26.30';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4089,43 +4089,56 @@ function arcadeLandingV2626Update(g,ts,dt,running){
 const ARCADE_LANDING_V2629_PLANE_CACHE=new Map();
 function arcadeLandingV2629PlaneSprite(frame=0){
   const key=frame%4;if(ARCADE_LANDING_V2629_PLANE_CACHE.has(key))return ARCADE_LANDING_V2629_PLANE_CACHE.get(key);
-  const [c,g]=pixelCanvas(96,88),ink='#17313a',cream='#efe3bd',creamHi='#fff3cf',gold='#d7a94c',goldShade='#b77c47',red='#c95f50',redShade='#9f4e46',glass='#5f9eaa',metal='#8c9b96';
-  spriteShadow(g,13,76,70,5,.16);
-  // Broad fabric wing from the rear, with stepped pixel outline and visible ribs.
-  psOutlinePoly(g,[[8,42],[18,34],[38,31],[48,33],[58,31],[78,34],[88,42],[82,50],[59,46],[37,46],[14,50]],cream,ink,1);
-  psPoly(g,[[14,42],[23,36],[38,34],[38,43],[17,47]],creamHi);
-  psPoly(g,[[58,34],[74,36],[84,42],[79,47],[58,43]],'#d9cea9');
-  for(const x of [22,31,40,56,65,74])psLine(g,x,35,x+(x<48?-4:4),46,'#c7b98f',1);
-  // Central fuselage, shaded like the main-game boat sprites rather than a flat polygon.
-  psOutlinePoly(g,[[41,68],[38,42],[40,22],[44,12],[48,8],[52,12],[56,22],[58,42],[55,68],[50,76],[46,76]],gold,ink,1);
-  psPoly(g,[[49,12],[53,18],[55,42],[52,67],[49,72]],goldShade);
-  psRect(g,42,43,13,4,creamHi);psRect(g,44,48,9,2,red);
-  // Cockpit, pilot and windscreen highlights.
-  psOutlinePoly(g,[[42,29],[43,19],[48,14],[53,19],[54,29]],glass,ink,1);
-  psPoly(g,[[44,20],[48,16],[51,20],[50,25],[44,25]],'#8dc2c5');
-  psCircle(g,48,21,3,ink);psRect(g,47,18,3,3,'#d7a57c');
-  // Tailplane and fin nearest camera.
-  psOutlinePoly(g,[[21,63],[37,57],[48,59],[59,57],[75,63],[68,70],[54,67],[42,67],[28,70]],red,ink,1);
-  psPoly(g,[[27,63],[39,59],[43,62],[29,67]],'#df7966');
-  psPoly(g,[[53,62],[59,59],[69,63],[66,67]],redShade);
-  psOutlinePoly(g,[[43,65],[46,48],[50,48],[54,65],[52,75],[44,75]],red,ink,1);
-  psRect(g,47,54,3,13,creamHi);
-  // Wing struts and braces.
-  psLine(g,31,44,42,61,metal,2);psLine(g,65,44,54,61,metal,2);
-  psLine(g,32,45,42,48,'#704630',1);psLine(g,64,45,54,48,'#704630',1);
+  const [c,g]=pixelCanvas(124,92),ink='#17313a',cream='#efe3bd',creamHi='#fff3cf',gold='#d7a94c',goldShade='#b77c47',red='#c95f50',redShade='#9f4e46',glass='#5f9eaa',metal='#8c9b96';
+  spriteShadow(g,13,80,98,5,.16);
+
+  // Long, slender fabric wing — more like a proper light aircraft than the stubby previous silhouette.
+  psOutlinePoly(g,[[5,43],[13,36],[35,32],[55,31],[62,34],[69,31],[89,32],[111,36],[119,43],[113,50],[84,47],[62,46],[40,47],[11,50]],cream,ink,1);
+  psPoly(g,[[11,42],[18,37],[38,34],[55,33],[55,43],[38,44],[14,47]],creamHi);
+  psPoly(g,[[69,33],[88,34],[106,37],[114,42],[110,47],[86,44],[69,43]],'#d9cea9');
+  // Fabric ribs and spars, matching the textured boat-sprite approach.
+  for(const x of [17,27,38,49,75,86,97,107])psLine(g,x,35+(Math.abs(62-x)>.28?1:0),x+(x<62?-5:5),46,'#c7b98f',1);
+  psLine(g,12,44,54,42,'rgba(112,70,48,.45)',1);psLine(g,70,42,112,44,'rgba(112,70,48,.45)',1);
+
+  // Central fuselage with asymmetric highlight/shadow.
+  psOutlinePoly(g,[[55,72],[52,44],[54,23],[58,13],[62,9],[66,13],[70,23],[72,44],[69,72],[64,80],[60,80]],gold,ink,1);
+  psPoly(g,[[63,13],[67,19],[69,43],[66,70],[63,76]],goldShade);
+  psRect(g,56,45,13,4,creamHi);psRect(g,58,50,9,2,red);
+
+  // Cockpit, pilot and glazing.
+  psOutlinePoly(g,[[56,30],[57,20],[62,15],[67,20],[68,30]],glass,ink,1);
+  psPoly(g,[[58,21],[62,17],[65,21],[64,26],[58,26]],'#8dc2c5');
+  psCircle(g,62,22,3,ink);psRect(g,61,19,3,3,'#d7a57c');
+
+  // Tailplane remains broad but clearly smaller than main wing.
+  psOutlinePoly(g,[[32,67],[50,60],[62,62],[74,60],[92,67],[84,74],[69,70],[55,70],[40,74]],red,ink,1);
+  psPoly(g,[[38,67],[52,62],[57,65],[40,71]],'#df7966');
+  psPoly(g,[[67,65],[74,62],[86,67],[82,71]],redShade);
+  psOutlinePoly(g,[[57,69],[60,50],[64,50],[68,69],[66,79],[58,79]],red,ink,1);
+  psRect(g,61,56,3,13,creamHi);
+
+  // Wing struts now reach much farther out, reinforcing the long-span construction.
+  psLine(g,35,45,56,64,metal,2);psLine(g,89,45,68,64,metal,2);
+  psLine(g,36,46,54,49,'#704630',1);psLine(g,88,46,70,49,'#704630',1);
+
   // Taildragger undercarriage.
-  psLine(g,39,60,34,74,ink,2);psLine(g,57,60,62,74,ink,2);
-  psCircle(g,33,75,4,ink);psCircle(g,63,75,4,ink);psCircle(g,33,74,2,'#59605d');psCircle(g,63,74,2,'#59605d');
-  // Navigation lights and little registration marks.
-  psRect(g,10,42,3,3,'#df7c68');psRect(g,84,42,3,3,'#83bf6a');
-  psRect(g,23,39,7,2,red);psRect(g,66,39,7,2,red);
-  psRect(g,45,50,6,2,'#fff7de');
+  psLine(g,53,62,47,77,ink,2);psLine(g,71,62,77,77,ink,2);
+  psCircle(g,46,78,4,ink);psCircle(g,78,78,4,ink);psCircle(g,46,77,2,'#59605d');psCircle(g,78,77,2,'#59605d');
+
+  // Navigation lights, wing markings and registration.
+  psRect(g,6,42,3,3,'#df7c68');psRect(g,115,42,3,3,'#83bf6a');
+  psRect(g,24,39,10,2,red);psRect(g,90,39,10,2,red);
+  psRect(g,59,52,6,2,'#fff7de');
+  psRect(g,15,45,9,2,'#d6c89f');psRect(g,100,45,9,2,'#b9ad8d');
+
   // Arrestor hook.
-  psLine(g,48,72,48,82,ink,2);psLine(g,48,82,40,85,ink,2);psRect(g,39,84,4,2,metal);
-  // Propeller at the nose: four pixel frames give real animation.
-  psCircle(g,48,9,3,'#704630');
-  if(key===0||key===2){psLine(g,33,9,63,9,'#fff7de',2);psRect(g,31,8,4,3,metal);psRect(g,61,8,4,3,metal)}
-  else{psLine(g,48,2,48,16,'#fff7de',2);psRect(g,47,0,3,4,metal);psRect(g,47,14,3,4,metal)}
+  psLine(g,62,76,62,86,ink,2);psLine(g,62,86,54,89,ink,2);psRect(g,53,88,4,2,metal);
+
+  // Animated propeller at the distant nose.
+  psCircle(g,62,10,3,'#704630');
+  if(key===0||key===2){psLine(g,47,10,77,10,'#fff7de',2);psRect(g,45,9,4,3,metal);psRect(g,75,9,4,3,metal)}
+  else{psLine(g,62,3,62,17,'#fff7de',2);psRect(g,61,1,3,4,metal);psRect(g,61,15,3,4,metal)}
+
   ARCADE_LANDING_V2629_PLANE_CACHE.set(key,c);return c
 }
 function arcadeLandingV2626DrawJet(x,y,scale,bank=0,hook=true,ts=0){
@@ -5062,7 +5075,24 @@ function arcadeV26RenderLanding(g,ts,G,dt,running){
   ctx.save();ctx.translate(deckCx,carrierPivotY+heave);ctx.rotate(deckPitch);
   const farY=farY0-carrierPivotY,nearY=nearY0-carrierPivotY;
 
-  poly([[-farW*.72,farY-7],[farW*.78,farY-7],[nearW*.64,nearY+15],[-nearW*.66,nearY+15]],'#3d555a','#17313a',3);
+  // Full carrier hull beneath the flight deck: bow, flared sides, waterline and stern volume.
+  const hullNear=nearY+18,hullBottom=nearY+46+close*18;
+  // water shadow / displacement
+  poly([[-nearW*.56,hullNear+8],[nearW*.56,hullNear+8],[nearW*.42,hullBottom+10],[-nearW*.42,hullBottom+10]],'rgba(23,49,58,.18)',null,0);
+  // dark lower hull
+  poly([[-farW*.62,farY-2],[farW*.64,farY-2],[nearW*.61,hullNear],[nearW*.43,hullBottom],[-nearW*.43,hullBottom],[-nearW*.62,hullNear]],'#334d52','#17313a',3);
+  // lighter upper hull / hangar side
+  poly([[-farW*.67,farY-7],[farW*.70,farY-7],[nearW*.66,hullNear],[nearW*.57,hullNear+18],[-nearW*.58,hullNear+18],[-nearW*.68,hullNear]],'#465f63','#17313a',2);
+  // stern transom and waterline stripe
+  poly([[-nearW*.58,hullNear+18],[nearW*.57,hullNear+18],[nearW*.43,hullBottom],[-nearW*.43,hullBottom]],'#2c474e','#17313a',2);
+  line(-nearW*.56,hullNear+22,nearW*.55,hullNear+22,'#d7d0b5',2);
+  // hangar openings / side detail
+  for(let i=0;i<5;i++){const xx=-nearW*.34+i*nearW*.17;roundedRect(xx-6,hullNear+5,12,7,2,'#263f45','#17313a',1)}
+  for(let i=0;i<6;i++){const xx=-nearW*.40+i*nearW*.16;circle(xx,hullNear+25,1.8,'#8c9b96','#17313a',1)}
+  // pronounced bow shoulder so the deck reads as mounted on a ship, not a floating runway.
+  poly([[-farW*.72,farY-8],[farW*.76,farY-8],[farW*.60,farY+8],[-farW*.58,farY+8]],'#536b6e','#17313a',2);
+
+  // Flight deck sits on the hull.
   poly([[-farW*.58,farY],[farW*.58,farY],[nearW*.54,nearY],[-nearW*.54,nearY]],'#5c6f72','#d8d4c2',2);
   // deck plating texture
   for(let i=1;i<7;i++){const t=i/7,yy=lerp(farY,nearY,t),half=lerp(farW*.55,nearW*.52,t);line(-half,yy,half,yy,'rgba(23,49,58,.14)',1)}
@@ -5090,6 +5120,16 @@ function arcadeV26RenderLanding(g,ts,G,dt,running){
   for(let i=-2;i<=2;i++)circle(olsX+i*6,olsY,2.4,'#83bf6a','#17313a',1);
   circle(olsX+19,olsY-ball*18,4,Math.abs(ball)<.22?'#e5b54e':'#df7c68','#17313a',1);
   ctx.restore();
+
+  // Wake outside the transformed hull: broad V and stern churn make the carrier feel underway.
+  const wakeY=carrierPivotY+heave+nearY0-carrierPivotY+38+close*12;
+  const wakeHalf=nearW*.48;
+  for(let i=0;i<4;i++){
+    const off=i*10+Math.sin(ts*.002+i)*3,alpha=.18-i*.025;
+    line(deckCx-wakeHalf*.72-off,wakeY+off*.45,deckCx-G.w*(.17+.025*i),G.y(.90),`rgba(255,247,222,${alpha})`,2);
+    line(deckCx+wakeHalf*.72+off,wakeY+off*.45,deckCx+G.w*(.17+.025*i),G.y(.90),`rgba(255,247,222,${alpha})`,2)
+  }
+  for(let i=0;i<9;i++)circle(deckCx+Math.sin(ts*.004+i)*nearW*.32,wakeY+8+i*5,2+(i%3),`rgba(255,247,222,${.16-i*.01})`);
 
   // Successful trap animation: aircraft transitions from chase view onto the actual deck and decelerates under the caught wire.
   let planeX=G.cx,planeY=G.y(.79),planeScale=1.16,planeBank=P.bank,planeTs=ts;
@@ -5325,7 +5365,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.29',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.30',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
