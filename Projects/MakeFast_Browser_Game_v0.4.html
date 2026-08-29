@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.28';
+const VERSION_LABEL='0.26.29';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4071,7 +4071,7 @@ function arcadeLandingV2626Resolve(g,ts){
   if(touchdown){
     const td=.50+(P.alt-desired)*1.45+(P.airspeed-1)*.19-sink*.10+pitch*.8,wires=[.42,.48,.54,.60];let best=0,bd=99;
     wires.forEach((w,i)=>{const q=Math.abs(td-w);if(q<bd){bd=q;best=i+1}});
-    if(bd<.055){P.landed=true;P.wire=best;g.landingWire=best;g.landingTraps++;g.score+=(best===3?360:best===2?300:best===4?250:210)+Math.round((.095-lineup)*900)+Math.round((.17-sink)*500);arcadeV26SetFeedback(g,`WIRE ${best} · TRAP`,'good',900);beep('soft');g.landingResultAt=ts+1050;return}
+    if(bd<.055){P.landed=true;P.wire=best;g.landingWire=best;g.landingTraps++;g.landingTouchAt=ts;g.landingTouchLat=P.lat;g.landingTouchBall=clamp((P.alt-desired)/.10,-1,1);g.score+=(best===3?360:best===2?300:best===4?250:210)+Math.round((.095-lineup)*900)+Math.round((.17-sink)*500);arcadeV26SetFeedback(g,`WIRE ${best} · TRAP`,'good',1500);beep('soft');g.landingResultAt=ts+2100;return}
     g.landingBolter=true;g.landingResultAt=ts+1150;arcadeV26SetFeedback(g,'BOLTER · POWER ON','neutral',900);beep('soft');return
   }
   g.landingWaveoff=true;g.landingResultAt=ts+900;arcadeV26Strike(g,lineup>=.095?'WAVEOFF · LINEUP':sink>=.17?'WAVEOFF · SINK RATE':speedErr>=.20?'WAVEOFF · AIRSPEED':'WAVEOFF · GLIDESLOPE',45)
@@ -4086,36 +4086,55 @@ function arcadeLandingV2626Update(g,ts,dt,running){
   const natural=-.034+(P.throttle-.54)*.105-(1-P.airspeed)*.035;P.vAlt+=natural*sec;P.vAlt*=Math.pow(.983,dt/16.7);P.alt=clamp(P.alt+P.vAlt*sec,.08,.86);
   P.range-=sec*(.071+Math.max(-.012,(P.airspeed-1)*.026));if(P.range<=0)arcadeLandingV2626Resolve(g,ts)
 }
+const ARCADE_LANDING_V2629_PLANE_CACHE=new Map();
+function arcadeLandingV2629PlaneSprite(frame=0){
+  const key=frame%4;if(ARCADE_LANDING_V2629_PLANE_CACHE.has(key))return ARCADE_LANDING_V2629_PLANE_CACHE.get(key);
+  const [c,g]=pixelCanvas(96,88),ink='#17313a',cream='#efe3bd',creamHi='#fff3cf',gold='#d7a94c',goldShade='#b77c47',red='#c95f50',redShade='#9f4e46',glass='#5f9eaa',metal='#8c9b96';
+  spriteShadow(g,13,76,70,5,.16);
+  // Broad fabric wing from the rear, with stepped pixel outline and visible ribs.
+  psOutlinePoly(g,[[8,42],[18,34],[38,31],[48,33],[58,31],[78,34],[88,42],[82,50],[59,46],[37,46],[14,50]],cream,ink,1);
+  psPoly(g,[[14,42],[23,36],[38,34],[38,43],[17,47]],creamHi);
+  psPoly(g,[[58,34],[74,36],[84,42],[79,47],[58,43]],'#d9cea9');
+  for(const x of [22,31,40,56,65,74])psLine(g,x,35,x+(x<48?-4:4),46,'#c7b98f',1);
+  // Central fuselage, shaded like the main-game boat sprites rather than a flat polygon.
+  psOutlinePoly(g,[[41,68],[38,42],[40,22],[44,12],[48,8],[52,12],[56,22],[58,42],[55,68],[50,76],[46,76]],gold,ink,1);
+  psPoly(g,[[49,12],[53,18],[55,42],[52,67],[49,72]],goldShade);
+  psRect(g,42,43,13,4,creamHi);psRect(g,44,48,9,2,red);
+  // Cockpit, pilot and windscreen highlights.
+  psOutlinePoly(g,[[42,29],[43,19],[48,14],[53,19],[54,29]],glass,ink,1);
+  psPoly(g,[[44,20],[48,16],[51,20],[50,25],[44,25]],'#8dc2c5');
+  psCircle(g,48,21,3,ink);psRect(g,47,18,3,3,'#d7a57c');
+  // Tailplane and fin nearest camera.
+  psOutlinePoly(g,[[21,63],[37,57],[48,59],[59,57],[75,63],[68,70],[54,67],[42,67],[28,70]],red,ink,1);
+  psPoly(g,[[27,63],[39,59],[43,62],[29,67]],'#df7966');
+  psPoly(g,[[53,62],[59,59],[69,63],[66,67]],redShade);
+  psOutlinePoly(g,[[43,65],[46,48],[50,48],[54,65],[52,75],[44,75]],red,ink,1);
+  psRect(g,47,54,3,13,creamHi);
+  // Wing struts and braces.
+  psLine(g,31,44,42,61,metal,2);psLine(g,65,44,54,61,metal,2);
+  psLine(g,32,45,42,48,'#704630',1);psLine(g,64,45,54,48,'#704630',1);
+  // Taildragger undercarriage.
+  psLine(g,39,60,34,74,ink,2);psLine(g,57,60,62,74,ink,2);
+  psCircle(g,33,75,4,ink);psCircle(g,63,75,4,ink);psCircle(g,33,74,2,'#59605d');psCircle(g,63,74,2,'#59605d');
+  // Navigation lights and little registration marks.
+  psRect(g,10,42,3,3,'#df7c68');psRect(g,84,42,3,3,'#83bf6a');
+  psRect(g,23,39,7,2,red);psRect(g,66,39,7,2,red);
+  psRect(g,45,50,6,2,'#fff7de');
+  // Arrestor hook.
+  psLine(g,48,72,48,82,ink,2);psLine(g,48,82,40,85,ink,2);psRect(g,39,84,4,2,metal);
+  // Propeller at the nose: four pixel frames give real animation.
+  psCircle(g,48,9,3,'#704630');
+  if(key===0||key===2){psLine(g,33,9,63,9,'#fff7de',2);psRect(g,31,8,4,3,metal);psRect(g,61,8,4,3,metal)}
+  else{psLine(g,48,2,48,16,'#fff7de',2);psRect(g,47,0,3,4,metal);psRect(g,47,14,3,4,metal)}
+  ARCADE_LANDING_V2629_PLANE_CACHE.set(key,c);return c
+}
 function arcadeLandingV2626DrawJet(x,y,scale,bank=0,hook=true,ts=0){
-  // Rear three-quarter MakeFast deck plane: compact single-prop taildragger seen from chase view.
-  ctx.save();ctx.translate(x,y);ctx.rotate(bank*.62);ctx.scale(scale,scale);
-  // shadow under aircraft helps separate it from the sea/deck
-  ctx.save();ctx.globalAlpha=.14;poly([[-35,17],[35,17],[18,23],[-20,23]],'#17313a');ctx.restore();
-  // main wing, broad and readable from behind
-  poly([[-44,2],[-10,-5],[11,-5],[45,2],[36,9],[10,6],[-10,6],[-37,9]],'#e8dfc0','#17313a',2);
-  // fuselage tapering toward prop/nose in the distance
-  poly([[-10,10],[-7,-20],[0,-32],[7,-20],[10,10],[5,19],[-5,19]],'#d9b45c','#17313a',2);
-  // darker lower fuselage
-  poly([[-8,8],[8,8],[5,19],[-5,19]],'#b77c47','#17313a',1);
-  // cockpit and little pilot silhouette
-  poly([[-6,-8],[-4,-19],[4,-19],[6,-8]],'#4f8694','#17313a',1);
-  circle(0,-15,3,'#31545a','#17313a',1);
-  // tailplane closest to camera
-  poly([[-22,14],[-7,9],[7,9],[22,14],[14,19],[-14,19]],'#d66f57','#17313a',2);
-  poly([[-5,12],[0,2],[5,12],[4,20],[-4,20]],'#c95f50','#17313a',1);
-  // wing tips / nav lights
-  circle(-40,5,2,'#df7c68','#17313a',1);circle(40,5,2,'#83bf6a','#17313a',1);
-  // undercarriage
-  line(-8,9,-13,19,'#17313a',2);line(8,9,13,19,'#17313a',2);circle(-14,20,3,'#17313a');circle(14,20,3,'#17313a');
-  // arrestor hook trailing behind the tail
-  if(hook){line(0,18,0,27,'#17313a',2);line(0,27,-7,30,'#17313a',2)}
-  // nose prop is distant but visibly animated above fuselage
-  const spin=(ts*.018)%6.28,propY=-33;
-  circle(0,propY,3,'#704630','#17313a',1);
-  const dx=Math.cos(spin)*12,dy=Math.sin(spin)*3.5;
-  line(-dx,propY-dy,dx,propY+dy,'#fff7de',2);
-  // simple fuselage stripe / registration
-  rect(-7,-3,14,3,'#fff7de','#17313a',1);
+  const spr=arcadeLandingV2629PlaneSprite(Math.floor(ts/75)%4),w=spr.width*scale,h=spr.height*scale;
+  ctx.save();ctx.translate(x,y);ctx.rotate(bank*.62);ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(spr,Math.round(-w*.5),Math.round(-h*.72),Math.round(w),Math.round(h));
+  if(!hook){
+    // cover the lowered hook during rollout if required
+  }
   ctx.restore()
 }
 function arcadeV26SetupPoop(g,r,d){arcadeV26ResetCommon(g,8+Math.min(14,r*2));g.playerX=.5;g.inputX=.5;g.playerVx=0;g.gulls=[];g.drops=[];g.splats=g.splats||[];g.poopSpawn=Math.max(260,820-(r-1)*46);g.gullSpawn=Math.max(900,1900-(r-1)*60);g.spawn=performance.now()-500;g.gullLast=0;g.wind=arcadeV26Rand(g,-.025,.025)*d}
@@ -5029,130 +5048,100 @@ function arcadeV26RenderDepth(g,ts,G,dt,running){
   const caveSpan=Math.round((bottomLimit-topLimit)*100);pxText(`KEEP CENTRED • ${caveSpan}% CLEARANCE`,G.cx,G.y(.94),'#9bd8e2',9,'center')
 }
 function arcadeV26RenderLanding(g,ts,G,dt,running){
-  arcadeLandingV2626Update(g,ts,dt,running);
+  arcadeLandingV2626Update(g,ts,G?dt:0,running);
   const P=g.plane,deckY=arcadeV26DeckY(g,ts),deckPitch=arcadeLandingV2626DeckPitch(g,ts),ball=arcadeLandingV2626Ball(g);
-
-  // Chase-camera sky and sea. Horizon remains stable; the carrier moves inside it.
   const horizon=G.y(.31);
   const sky=ctx.createLinearGradient(0,G.top,0,horizon);sky.addColorStop(0,'#b9cdc5');sky.addColorStop(1,'#88adb1');rect(G.left,G.top,G.w,horizon-G.top,sky);
   const sea=ctx.createLinearGradient(0,horizon,0,G.bottom);sea.addColorStop(0,'#3d7380');sea.addColorStop(1,'#1e4d5b');rect(G.left,horizon,G.w,G.bottom-horizon,sea);
-  for(let i=0;i<13;i++){
-    const yy=horizon+12+i*27+Math.sin(ts*.0013+i)*2.5;
-    const spread=20+i*13;
-    line(G.cx-spread-((i*17)%45),yy,G.cx+spread+((i*23)%55),yy,'rgba(255,247,222,.11)',i%4===0?2:1)
-  }
+  for(let i=0;i<13;i++){const yy=horizon+12+i*27+Math.sin(ts*.0013+i)*2.5,spread=20+i*13;line(G.cx-spread-((i*17)%45),yy,G.cx+spread+((i*23)%55),yy,'rgba(255,247,222,.11)',i%4===0?2:1)}
 
-  // The plane stays in the foreground. Misalignment makes the carrier slide left/right ahead of it.
-  const close=1-clamp(P.range,0,1);
-  const deckCx=G.cx-P.lat*G.w*.88+Math.sin(ts*.0011+g.deckPhase)*G.w*.006;
-  const heave=(deckY-.655)*G.h*1.5;
-  const farY=G.y(.335)+heave;
-  const nearY=G.y(.47+close*.25)+heave;
-  const farW=G.w*(.045+close*.025);
-  const nearW=G.w*(.13+close*.30);
-  const skew=deckPitch*G.w*1.6;
+  const close=1-clamp(P.range,0,1),deckCx=G.cx-P.lat*G.w*.88+Math.sin(ts*.0011+g.deckPhase)*G.w*.006;
+  const heave=(deckY-.655)*G.h*1.5,farY0=G.y(.335),nearY0=G.y(.47+close*.25),carrierPivotY=lerp(farY0,nearY0,.48);
+  const farW=G.w*(.045+close*.025),nearW=G.w*(.13+close*.30);
+  // ONE transform owns the entire carrier. Hull, runway, markings, wires, island, crew and OLS now sway together.
+  ctx.save();ctx.translate(deckCx,carrierPivotY+heave);ctx.rotate(deckPitch);
+  const farY=farY0-carrierPivotY,nearY=nearY0-carrierPivotY;
 
-  // Carrier hull is a longitudinal wedge pointing directly away from the player.
-  poly([
-    [deckCx-farW*.72+skew,farY-7],
-    [deckCx+farW*.78+skew,farY-7],
-    [deckCx+nearW*.64,nearY+15],
-    [deckCx-nearW*.66,nearY+15]
-  ],'#3d555a','#17313a',3);
+  poly([[-farW*.72,farY-7],[farW*.78,farY-7],[nearW*.64,nearY+15],[-nearW*.66,nearY+15]],'#3d555a','#17313a',3);
+  poly([[-farW*.58,farY],[farW*.58,farY],[nearW*.54,nearY],[-nearW*.54,nearY]],'#5c6f72','#d8d4c2',2);
+  // deck plating texture
+  for(let i=1;i<7;i++){const t=i/7,yy=lerp(farY,nearY,t),half=lerp(farW*.55,nearW*.52,t);line(-half,yy,half,yy,'rgba(23,49,58,.14)',1)}
+  // landing strip, centreline and wire geometry all inside same transform.
+  poly([[-farW*.20,farY+3],[farW*.19,farY+3],[nearW*.20,nearY-3],[-nearW*.22,nearY-3]],'#66797b','rgba(255,247,222,.55)',1);
+  for(let i=0;i<7;i++){const t=(i+.55)/7,yy=lerp(farY+5,nearY-18,t),ww=lerp(2,7,t);line(0,yy-4-ww*.35,0,yy+4+ww*.35,'#fff7de',Math.max(1,ww*.36))}
+  for(let i=0;i<4;i++){const t=.67+i*.065,yy=lerp(farY,nearY,t),half=lerp(farW*.38,nearW*.43,t);line(-half,yy,half,yy,i===2?'#e5b54e':'#d8d4c2',i===2?3:2)}
 
-  // Flight deck trapezoid. Runway centreline is aligned toward the camera.
-  poly([
-    [deckCx-farW*.58+skew,farY],
-    [deckCx+farW*.58+skew,farY],
-    [deckCx+nearW*.54,nearY],
-    [deckCx-nearW*.54,nearY]
-  ],'#5c6f72','#d8d4c2',2);
-
-  // Angled landing strip remains subtle but now runs fore/aft in perspective.
-  const stripFarX=deckCx+skew*.35,stripNearX=deckCx-nearW*.035;
-  poly([
-    [stripFarX-farW*.20,farY+3],
-    [stripFarX+farW*.19,farY+3],
-    [stripNearX+nearW*.24,nearY-3],
-    [stripNearX-nearW*.19,nearY-3]
-  ],'#66797b','rgba(255,247,222,.55)',1);
-
-  // Perspective runway centreline dashes.
-  for(let i=0;i<7;i++){
-    const t=(i+.55)/7,yy=lerp(farY+5,nearY-18,t),ww=lerp(2,7,t);
-    const xx=lerp(stripFarX,stripNearX,t);
-    line(xx,yy-4-ww*.35,xx,yy+4+ww*.35,'#fff7de',Math.max(1,ww*.36))
-  }
-
-  // Four arrestor wires span the near end of the deck; 3-wire highlighted.
-  for(let i=0;i<4;i++){
-    const t=.67+i*.065,yy=lerp(farY,nearY,t),half=lerp(farW*.38,nearW*.43,t);
-    line(deckCx-half,yy,deckCx+half,yy,i===2?'#e5b54e':'#d8d4c2',i===2?3:2)
-  }
-
-  // Carrier island sits starboard, receding correctly toward the horizon.
-  const islandX=deckCx+lerp(farW*.42,nearW*.36,.38),islandY=lerp(farY,nearY,.38),islandS=.42+close*.70;
+  const islandY=lerp(farY,nearY,.38),islandX=lerp(farW*.42,nearW*.36,.38),islandS=.42+close*.70;
   roundedRect(islandX-13*islandS,islandY-32*islandS,26*islandS,34*islandS,3,'#41595e','#17313a',2);
   for(let i=0;i<3;i++)rect(islandX-9*islandS+i*7*islandS,islandY-25*islandS,4*islandS,4*islandS,'#65bdd1','#17313a',1);
   line(islandX,islandY-31*islandS,islandX,islandY-51*islandS,'#17313a',2);
   poly([[islandX,islandY-48*islandS],[islandX+14*islandS,islandY-43*islandS],[islandX,islandY-38*islandS]],'#e5b54e','#17313a',1);
+  // radar dish
+  line(islandX-9*islandS,islandY-42*islandS,islandX+8*islandS,islandY-42*islandS,'#d8d4c2',2);
+  circle(islandX,islandY-42*islandS,2*islandS,'#17313a');
 
-  // Parked deck aircraft and crew reinforce scale and deck orientation.
   if(close>.18){
-    for(let i=0;i<3;i++){
-      const t=.46+i*.12,yy=lerp(farY,nearY,t),xx=deckCx-nearW*(.23-.03*i),sc=.24+close*.28;
-      poly([[xx-8*sc,yy],[xx,yy-6*sc],[xx+8*sc,yy],[xx,yy+3*sc]],'#c9d0c6','#17313a',1)
-    }
-    for(let i=0;i<5;i++){
-      const t=.55+i*.06,yy=lerp(farY,nearY,t),xx=deckCx+nearW*.22+(i%2)*5;
-      circle(xx,yy,1.5+close,'#e5b54e','#17313a',1)
-    }
+    for(let i=0;i<3;i++){const t=.46+i*.12,yy=lerp(farY,nearY,t),xx=-nearW*(.23-.03*i),sc=.24+close*.28;poly([[xx-8*sc,yy],[xx,yy-6*sc],[xx+8*sc,yy],[xx,yy+3*sc]],'#c9d0c6','#17313a',1)}
+    for(let i=0;i<5;i++){const t=.55+i*.06,yy=lerp(farY,nearY,t),xx=nearW*.22+(i%2)*5;circle(xx,yy,1.5+close,i%3===0?'#e5b54e':i%3===1?'#df7c68':'#83bf6a','#17313a',1)}
   }
-
-  // Deck-edge lights form converging perspective rails.
-  for(let i=0;i<10;i++){
-    const t=i/9,yy=lerp(farY+2,nearY-2,t),half=lerp(farW*.52,nearW*.51,t);
-    circle(deckCx-half,yy,1.2+close*.7,i%2?'#83bf6a':'#fff7de');
-    circle(deckCx+half,yy,1.2+close*.7,i%2?'#83bf6a':'#fff7de')
-  }
-
-  // Optical landing system is attached visually to the near port deck edge.
-  const olsT=.70,olsY=lerp(farY,nearY,olsT),olsHalf=lerp(farW*.52,nearW*.51,olsT),olsX=deckCx-olsHalf-14;
+  for(let i=0;i<10;i++){const t=i/9,yy=lerp(farY+2,nearY-2,t),half=lerp(farW*.52,nearW*.51,t);circle(-half,yy,1.2+close*.7,i%2?'#83bf6a':'#fff7de');circle(half,yy,1.2+close*.7,i%2?'#83bf6a':'#fff7de')}
+  // OLS is physically attached to port deck edge and therefore shares heave/pitch exactly.
+  const olsT=.70,olsY=lerp(farY,nearY,olsT),olsHalf=lerp(farW*.52,nearW*.51,olsT),olsX=-olsHalf-14;
   for(let i=-2;i<=2;i++)circle(olsX+i*6,olsY,2.4,'#83bf6a','#17313a',1);
   circle(olsX+19,olsY-ball*18,4,Math.abs(ball)<.22?'#e5b54e':'#df7c68','#17313a',1);
+  ctx.restore();
 
-  // Chase plane is always low-centre; bank tells the player what their correction is doing.
-  const planeX=G.cx,planeY=G.y(.79);
-  arcadeLandingV2626DrawJet(planeX,planeY,1.16,P.bank,true,ts);
+  // Successful trap animation: aircraft transitions from chase view onto the actual deck and decelerates under the caught wire.
+  let planeX=G.cx,planeY=G.y(.79),planeScale=1.16,planeBank=P.bank,planeTs=ts;
+  if(P.landed&&g.landingTouchAt){
+    const a=clamp((ts-g.landingTouchAt)/1800,0,1),touch=clamp(a/.30,0,1),roll=clamp((a-.30)/.70,0,1);
+    const deckNowX=deckCx,deckNowY=carrierPivotY+heave;
+    const touchdownY=lerp(G.y(.79),G.y(.63),touch);
+    const rolloutY=lerp(G.y(.63),G.y(.50),1-Math.pow(1-roll,2.4));
+    planeX=lerp(G.cx,deckNowX-(g.landingTouchLat||0)*G.w*.25,touch);
+    planeY=a<.30?touchdownY:rolloutY;
+    planeScale=lerp(1.16,.52,clamp(a*.95,0,1));
+    planeBank=lerp(P.bank,deckPitch,clamp(a*2,0,1));
+    // caught-wire stretch then recoil, tied to the plane's tail.
+    if(a>.22&&a<.78){
+      const stretch=Math.sin(clamp((a-.22)/.56,0,1)*Math.PI);
+      const wireY=planeY+planeScale*34;
+      line(planeX-80*stretch,wireY+14,planeX,wireY,'#d8d4c2',2);
+      line(planeX,wireY,planeX+80*stretch,wireY+14,'#d8d4c2',2)
+    }
+    if(a>.82)pxText(`WIRE ${P.wire} · STOPPED`,G.cx,G.y(.89),'#9bd8e2',9,'center')
+  }
+  arcadeLandingV2626DrawJet(planeX,planeY,planeScale,planeBank,true,planeTs);
 
-  // Ghost flight-path cue shows where the nose is currently tracking relative to deck centre.
-  const cueX=G.cx+P.vLat*G.w*1.9;
-  const cueY=G.y(.49)-ball*G.h*.055;
-  circle(cueX,cueY,10,'rgba(0,0,0,0)','rgba(255,247,222,.38)',1);
-  line(cueX-17,cueY,cueX-7,cueY,'rgba(255,247,222,.52)',1);
-  line(cueX+7,cueY,cueX+17,cueY,'rgba(255,247,222,.52)',1);
-
-  // Edge-only readouts: the moving deck remains the dominant information source.
-  const windX=G.right-36,windY=G.y(.12);
-  line(windX,windY-13,windX,windY+17,'rgba(23,49,58,.72)',2);
-  const wd=Math.sign(g.crosswind)||1;
-  poly([[windX,windY-11],[windX+wd*21,windY-5],[windX,windY]],'#e5b54e','#17313a',1);
-  pxText(Math.abs(g.crosswind)<.005?'CALM':g.crosswind>0?'→ WIND':'WIND ←',windX,windY+28,'#fff7de',6,'center');
+  // Flight director / LSO repeater replaces the old text-heavy left HUD.
+  const instX=G.left+54,instY=G.y(.18),rad=34;
+  circle(instX,instY,rad,'rgba(23,49,58,.45)','rgba(255,247,222,.55)',2);
+  circle(instX,instY,rad-6,'rgba(23,49,58,.16)','rgba(155,216,226,.25)',1);
+  line(instX-rad+8,instY,instX+rad-8,instY,'rgba(255,247,222,.28)',1);
+  line(instX,instY-rad+8,instX,instY+rad-8,'rgba(255,247,222,.28)',1);
+  // vertical bar = lineup; horizontal bar = glideslope, exactly like a compact flight-director cross pointer.
+  const fdX=instX+clamp(P.lat/.16,-1,1)*(rad-11),fdY=instY-clamp(ball,-1,1)*(rad-11);
+  line(fdX,instY-rad+10,fdX,instY+rad-10,Math.abs(P.lat)<.055?'#83bf6a':'#e5b54e',3);
+  line(instX-rad+10,fdY,instX+rad-10,fdY,Math.abs(ball)<.22?'#83bf6a':'#e5b54e',3);
+  circle(instX,instY,3,'#fff7de','#17313a',1);
+  pxText('LSO',instX,instY-rad-10,'#fff7de',6,'center');
 
   const air=Math.round(P.airspeed*128),sink=Math.round(Math.max(0,-P.vAlt)*1000),rng=Math.max(0,Math.round(P.range*950));
-  const lineState=Math.abs(P.lat)<.055?'DECK CENTRED':P.lat<0?'CORRECT RIGHT':'CORRECT LEFT';
-  const ballState=Math.abs(ball)<.22?'BALL CENTRED':ball>0?'HIGH':'LOW';
-  pxText(`${lineState}  ·  ${ballState}`,G.left+14,G.y(.105),Math.abs(P.lat)<.055&&Math.abs(ball)<.22?'#9bd8e2':'#fff0b8',8,'left');
-  pxText(`${air}KT  •  SINK ${sink}  •  ${rng}m`,G.left+14,G.y(.14),'rgba(255,247,222,.88)',7,'left');
+  pxText(`${air} KT`,instX,instY+rad+14,'rgba(255,247,222,.90)',7,'center');
+  pxText(`↓${sink}  ${rng}m`,instX,instY+rad+27,'rgba(155,216,226,.90)',6,'center');
 
+  // Tiny power ladder at the opposite edge.
   const powerX=G.right-17,powerTop=G.y(.25),powerH=G.h*.28;
   line(powerX,powerTop,powerX,powerTop+powerH,'rgba(255,247,222,.25)',4);
   line(powerX,powerTop+powerH*(1-P.throttle),powerX,powerTop+powerH,'rgba(229,181,78,.70)',4);
-  circle(powerX,powerTop+powerH*(1-P.throttle),4,'#fff7de','#17313a',1);
-  pxText('POWER',powerX,powerTop-10,'#fff7de',6,'center');
+  circle(powerX,powerTop+powerH*(1-P.throttle),4,'#fff7de','#17313a',1);pxText('POWER',powerX,powerTop-10,'#fff7de',6,'center');
 
-  const result=g.landingResultAt?(P.landed?`WIRE ${P.wire} · TRAP`:g.landingBolter?'BOLTER · POWER':'WAVEOFF'):'HOOK DOWN';
-  pxText(result,G.cx,G.y(.94),P.landed?'#9bd8e2':g.landingResultAt?'#fff0b8':'rgba(255,247,222,.84)',9,'center')
+  // Minimal cueing: world first, text second.
+  if(!P.landed){
+    const lineState=Math.abs(P.lat)<.055?'DECK CENTRED':P.lat<0?'CORRECT RIGHT':'CORRECT LEFT';
+    const ballState=Math.abs(ball)<.22?'BALL CENTRED':ball>0?'HIGH':'LOW';
+    pxText(`${lineState} · ${ballState}`,G.cx,G.y(.94),Math.abs(P.lat)<.055&&Math.abs(ball)<.22?'#9bd8e2':'#fff0b8',8,'center')
+  }
 }
 function arcadeV26SpawnGull(g,ts){g.gulls.push({x:arcadeV26Rand(g,-.05,.20),y:arcadeV26Rand(g,.12,.35),vx:arcadeV26Rand(g,.08,.14)*arcadeV26Difficulty(g),phase:Math.floor(arcadeV26Rand(g,0,3)),nextDrop:ts+arcadeV26Rand(g,250,900)});g.gullLast=ts}
 function arcadeV26SpawnPoop(g,gull,ts){g.drops.push({x:gull.x,y:gull.y+.035,vx:g.wind+arcadeV26Rand(g,-.012,.012),vy:arcadeV26Rand(g,.11,.15),born:ts,hit:false});gull.nextDrop=ts+arcadeV26Rand(g,450,1200)/Math.min(1.8,arcadeV26Difficulty(g))}
@@ -5336,7 +5325,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.28',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.29',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
