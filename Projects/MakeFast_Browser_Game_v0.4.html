@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.22';
+const VERSION_LABEL='0.26.23';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -527,7 +527,7 @@ const CONTENT={
     tug_dock:{title:'TUG DUTY',icon:'●',group:'Tugboat',engine:'tug',desc:'Work an endless harbour watch, bringing vessels of very different size and inertia safely alongside.',instruction:'DRAG OR USE WASD / ARROWS TO DRIVE THE TUG • PUSH BOW, STERN OR MIDSHIPS • MATCH POSITION, SPEED AND HEADING',duration:28,rewardThreshold:550,benchmark:1800,theme:'tug'},
     tanker_channel:{title:'NARROW CHANNEL',icon:'═',group:'Oil Tanker',engine:'steer',desc:'Guide a huge slow tanker between channel buoys without touching the banks.',instruction:'SMALL STEERING MOVES • THINK AHEAD',duration:30,rewardThreshold:650,benchmark:2100,theme:'tanker',heavy:true},
     naval_radar:{title:'RADAR WATCH',icon:'◎',group:'Naval Vessel',engine:'radar',desc:'Read a live radar picture, watch vessel tracks develop and alert the bridge when a projected course enters your danger ring.',instruction:'TAP A VESSEL TO TRACK IT • WATCH THE PROJECTED COURSE • ALERT BRIDGE IF IT ENTERS THE RED RING',duration:0,rewardThreshold:550,benchmark:1800,theme:'naval'},
-    research_sonar:{title:'SONAR HUNT',icon:'◉',group:'Research Ship',engine:'sonar',desc:'Ping a survey grid and home in on the strongest seabed return.',instruction:'PING THE GRID • FOLLOW THE WARMER RETURNS',duration:26,rewardThreshold:450,benchmark:1550,theme:'research'},
+    research_sonar:{title:'SONAR HUNT',icon:'◉',group:'Research Ship',engine:'sonar',desc:'Run a live research-sonar survey: steer the towfish through a submerged canyon, listen for bearing echoes and classify real seabed targets among wreckage, rock and marine life.',instruction:'STEER THE TOWFISH • PING TO READ BEARING AND RANGE • CLOSE ON THE RETURN • MARK THE TARGET WHEN THE IMAGE RESOLVES',duration:0,rewardThreshold:450,benchmark:1550,theme:'research'},
     rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Pull back the lifering, judge the wind and throw it beside the survivor.',instruction:'GRAB THE RING BY THE BOAT • PULL BACK • RELEASE TO THROW',duration:22,rewardThreshold:450,benchmark:1500,theme:'rescue'},
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'timing',desc:'Match the larger ship and make the transfer at the safe moment.',instruction:'TAP WHEN BOTH VESSELS ALIGN',duration:21,rewardThreshold:450,benchmark:1500,theme:'pilot'},
     dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Work the crane bucket through the seabed, lift clean material and swing it back into the hopper.',instruction:'DRAG THE BUCKET • SCOOP GOLD SEABED • DELIVER IT TO THE HOPPER • AVOID PIPES',duration:25,rewardThreshold:550,benchmark:1750,theme:'dredger'},
@@ -2256,7 +2256,12 @@ function arcadePointer(g,type,x,y){if(!g.started)return;const e=g.engine,G=arcad
       g.radarSelected=null;arcadeV26SetFeedback(g,'NO FRESH RETURN THERE','neutral',320)
     }
   }
-  else if(e==='sonar'&&type==='down'){const S=sonarGeometry(G);if(x>=S.left&&x<S.right&&y>=S.top&&y<S.bottom){const gx=Math.floor((x-S.left)/S.cw),gy=Math.floor((y-S.top)/S.ch),d=Math.hypot(gx-g.target.x,gy-g.target.y);g.pings.push({gx,gy,d});if(d<.5){arcadeReward(g,380,'FOUND IT');g.hint='Strong return! New target.';g.target={x:Math.floor(Math.random()*6),y:Math.floor(Math.random()*5)};g.pings=[]}else{g.hint=d<1.5?'Very strong — one square away.':d<2.7?'Warm echo — getting closer.':'Cold echo — try farther away.';arcadePop(g,g.hint,d<2.7?'good':'neutral')}}}
+  else if(e==='sonar'){
+    const S=sonarGeometryV26(G,g);
+    if((type==='down'||type==='move')&&x>=S.left&&x<=S.right&&y>=S.top&&y<=S.bottom){
+      g.sonar.targetX=clamp((x-S.left)/S.w,.05,.95);g.sonar.targetY=clamp((y-S.top)/S.h,.05,.92)
+    }
+  }
   else if(e==='aim'){
     const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.14;
     if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadePop(g,'GRAB THE RING BY THE BOAT','neutral')}
@@ -3868,9 +3873,65 @@ function arcadeV26SetupRadar(g,r,d){
   g.radarWeather=Array.from({length:weatherCount},()=>arcadeRadarV2622NewWeatherPatch(g));
   for(let i=0;i<Math.min(4,goal);i++)arcadeV26NewRadarContact(g,performance.now()-i*350,true)
 }
-function sonarGeometryV26(G,g){const cols=g.sonarCols||6,rows=g.sonarRows||5,left=G.x(.07),right=G.x(.93),top=G.y(.15),bottom=G.y(.75);return{left,right,top,bottom,cols,rows,cw:(right-left)/cols,ch:(bottom-top)/rows}}
-function arcadeV26NewSonarTarget(g){g.target={x:Math.floor(arcadeV26Rand(g,0,g.sonarCols)),y:Math.floor(arcadeV26Rand(g,0,g.sonarRows))};g.pings=[];g.pingsLeft=Math.max(4,8-Math.floor((g.round-1)/2));g.hint=`${g.pingsLeft} pings available.`}
-function arcadeV26SetupSonar(g,r,d){arcadeV26ResetCommon(g,2+Math.floor(r/4));g.sonarCols=Math.min(8,6+Math.floor((r-1)/3));g.sonarRows=Math.min(7,5+Math.floor((r-1)/4));arcadeV26NewSonarTarget(g)}
+function sonarGeometryV26(G,g){
+  const left=G.x(.055),right=G.x(.945),top=G.y(.105),bottom=G.y(.805);
+  return{left,right,top,bottom,w:right-left,h:bottom-top,cx:(left+right)/2,cy:(top+bottom)/2}
+}
+function arcadeSonarV2623NewTarget(g,index=0){
+  const kinds=['wreck','vent','whale','rock','crates','ray'];
+  const kind=kinds[Math.floor(arcadeV26Rand(g,0,kinds.length))%kinds.length];
+  const research=kind==='wreck'||kind==='vent'||kind==='crates';
+  const x=arcadeV26Rand(g,.20,.86),y=arcadeV26Rand(g,.15,.82);
+  return{id:++g.sonarId,x,y,kind,research,marked:false,phase:arcadeV26Rand(g,0,6.28),drift:kind==='whale'||kind==='ray'?arcadeV26Rand(g,-.012,.012):0}
+}
+function arcadeSonarV2623Canyon(g,y){
+  const bend=Math.sin(y*8.2+g.sonarSeed)*.075+Math.sin(y*3.7+g.sonarSeed*.4)*.045;
+  const half=Math.max(.19,.32-(g.round-1)*.008)+Math.sin(y*10.1+g.sonarSeed)*.025;
+  return{c:.5+bend,l:.5+bend-half,r:.5+bend+half}
+}
+function arcadeSonarV2623Nearest(g){
+  let best=null,bd=99;
+  for(const t of g.sonarTargets){if(t.marked)continue;const d=Math.hypot(t.x-g.sonar.x,t.y-g.sonar.y);if(d<bd){bd=d;best=t}}
+  return best?{t:best,d:bd}:null
+}
+function arcadeSonarV2623Ping(g){
+  if(g.sonarPing>0||g.sonarMarkFlash>0)return;
+  g.sonarPing=.001;g.sonarPingAt=performance.now();g.sonarPings++;
+  const n=arcadeSonarV2623Nearest(g);
+  if(!n){g.sonarRead='NO RETURN';return}
+  const dx=n.t.x-g.sonar.x,dy=n.t.y-g.sonar.y;
+  g.sonarBearing=Math.atan2(dx,-dy);
+  g.sonarRange=n.d;
+  g.sonarLock=n.t.id;
+  g.sonarRead=n.d<.10?'IMAGE RESOLVING':n.d<.22?'STRONG RETURN':n.d<.38?'CLEAR RETURN':'FAINT RETURN';
+  arcadeV26SetFeedback(g,g.sonarRead,n.d<.22?'good':'neutral',420);beep('soft')
+}
+function arcadeSonarV2623Mark(g){
+  const t=g.sonarTargets.find(x=>x.id===g.sonarLock&&!x.marked);
+  if(!t){arcadeV26SetFeedback(g,'PING A CONTACT FIRST','neutral',450);return}
+  const d=Math.hypot(t.x-g.sonar.x,t.y-g.sonar.y);
+  if(d>.115){arcadeV26SetFeedback(g,'MOVE CLOSER · IMAGE NOT RESOLVED','neutral',500);return}
+  t.marked=true;g.sonarMarkFlash=.8;
+  if(t.research){
+    arcadeV26Progress(g,1,420,t.kind==='wreck'?'WRECK LOGGED':t.kind==='vent'?'VENT LOGGED':'CARGO DEBRIS LOGGED');
+    g.sonarFinds++;g.sonarLock=null;g.sonarRead='TARGET LOGGED'
+  }else{
+    arcadeV26Strike(g,t.kind==='whale'?'MARINE LIFE · NOT A SURVEY TARGET':t.kind==='ray'?'RAY · LET IT PASS':'ROCK OUTCROP',35);
+    g.sonarLock=null;g.sonarRead='CONTACT DISMISSED'
+  }
+}
+function arcadeV26NewSonarTarget(g){const t=arcadeSonarV2623NewTarget(g,g.sonarTargets?.length||0);g.sonarTargets.push(t);return t}
+function arcadeV26SetupSonar(g,r,d){
+  arcadeV26ResetCommon(g,3+Math.min(4,Math.floor((r-1)/2)));
+  g.sonar={x:.50,y:.78,vx:0,vy:0,targetX:.50,targetY:.78};
+  g.sonarId=0;g.sonarTargets=[];g.sonarSeed=arcadeV26Rand(g,0,20);g.sonarPing=0;g.sonarPingAt=0;g.sonarPings=0;
+  g.sonarBearing=0;g.sonarRange=0;g.sonarLock=null;g.sonarRead='PING TO SEARCH';g.sonarFinds=0;g.sonarMarkFlash=0;g.sonarBottom=.86;
+  const count=Math.min(10,5+Math.floor(r/2));
+  // Guarantee enough research targets to complete the round.
+  for(let i=0;i<count;i++)g.sonarTargets.push(arcadeSonarV2623NewTarget(g,i));
+  let good=g.sonarTargets.filter(t=>t.research).length;
+  while(good<g.roundGoal){const t=arcadeSonarV2623NewTarget(g,g.sonarTargets.length);t.kind=['wreck','vent','crates'][good%3];t.research=true;g.sonarTargets.push(t);good++}
+}
 function arcadeV26NewAimTarget(g){g.target={x:arcadeV26Rand(g,.66,.90),y:arcadeV26Rand(g,.20,.54),vx:arcadeV26Rand(g,-.012,.012)*arcadeV26Difficulty(g),vy:arcadeV26Rand(g,-.005,.005)};g.wind=arcadeV26Rand(g,-.10,.10)*Math.min(2,arcadeV26Difficulty(g));g.projectile=null;g.dragging=false;g.pull={...g.origin};g.readyAt=0}
 function arcadeV26SetupAim(g,r,d){arcadeV26ResetCommon(g,2+Math.floor(r/4));g.origin={x:.20,y:.79};g.throws=[];arcadeV26NewAimTarget(g)}
 function arcadeV26SetupDredge(g,r,d){
@@ -4464,7 +4525,110 @@ function arcadeV26RenderRadar(g,ts,G,dt,running){
   pxText(`${g.roundProgress}/${g.roundGoal} CONTACTS RESOLVED`,G.cx,G.y(.965),'#fff7de',8,'center')
 }
 function arcadeV26RenderSonar(g,ts,G,dt,running){
-  const S=sonarGeometryV26(G,g);roundedRect(S.left-20,S.top-30,S.right-S.left+40,S.bottom-S.top+82,12,'#31545a','#18313a',4);roundedRect(S.left-8,S.top-8,S.right-S.left+16,S.bottom-S.top+16,7,'#163c43','#83bf6a',2);for(let yy=0;yy<S.rows;yy++)for(let xx=0;xx<S.cols;xx++){rect(S.left+xx*S.cw,S.top+yy*S.ch,S.cw-2,S.ch-2,(xx+yy)%2?'#234c50':'#2a5558');if(S.cw>35)pxText(`${xx+1}${String.fromCharCode(65+yy)}`,S.left+xx*S.cw+4,S.top+yy*S.ch+12,'#9fd0b0',7)}for(const p of g.pings){const col=p.d<1.5?'#df7c68':p.d<2.7?'#e5b54e':'#65bdd1';circle(S.left+(p.gx+.5)*S.cw,S.top+(p.gy+.5)*S.ch,Math.min(10,S.cw*.16),col,'#18313a',1)}roundedRect(G.x(.14),G.y(.83),G.w*.72,G.h*.09,7,'rgba(255,247,222,.92)','#18313a',2);pxText(`${g.hint.toUpperCase()} · ${g.roundProgress}/${g.roundGoal} RETURNS`,G.cx,G.y(.885),'#18313a',8,'center')
+  const S=sonarGeometryV26(G,g),sec=dt/1000,F=g.sonar;
+  if(running){
+    F.vx+=(F.targetX-F.x)*2.6*sec;F.vy+=(F.targetY-F.y)*2.2*sec;
+    F.vx*=Math.pow(.92,dt/16.7);F.vy*=Math.pow(.92,dt/16.7);
+    F.x=clamp(F.x+F.vx*sec,.07,.93);F.y=clamp(F.y+F.vy*sec,.08,.90);
+    const c=arcadeSonarV2623Canyon(g,F.y);
+    if(F.x<c.l+.025){F.x=c.l+.025;F.vx=Math.abs(F.vx)*.35;arcadeV26SetFeedback(g,'TOWFISH NEAR CANYON WALL','neutral',280)}
+    if(F.x>c.r-.025){F.x=c.r-.025;F.vx=-Math.abs(F.vx)*.35;arcadeV26SetFeedback(g,'TOWFISH NEAR CANYON WALL','neutral',280)}
+    for(const t of g.sonarTargets){if(!t.marked&&t.drift){t.x+=t.drift*sec;if(t.x<.12||t.x>.88)t.drift*=-1}}
+    if(g.sonarPing>0){g.sonarPing+=sec*.72;if(g.sonarPing>1.05)g.sonarPing=0}
+    g.sonarMarkFlash=Math.max(0,g.sonarMarkFlash-sec)
+  }
+
+  // Deep-water survey scene with a seabed canyon rather than a board/grid.
+  rect(S.left,S.top,S.w,S.h,'#123b46');
+  for(let i=0;i<18;i++){
+    const yy=S.top+((i*47+ts*.008)%(S.h+30))-15;
+    line(S.left+10+(i*83)%Math.max(20,S.w-30),yy,S.left+35+(i*83)%Math.max(20,S.w-30),yy+5,'rgba(101,189,209,.08)',1)
+  }
+  const lp=[],rp=[];
+  for(let i=0;i<=24;i++){
+    const ny=i/24,c=arcadeSonarV2623Canyon(g,ny);
+    lp.push([S.left,S.top+ny*S.h],[S.left+c.l*S.w,S.top+ny*S.h]);
+    rp.push([S.left+c.r*S.w,S.top+ny*S.h],[S.right,S.top+ny*S.h])
+  }
+  // Draw rocky canyon banks as layered slabs.
+  const leftEdge=[],rightEdge=[];
+  for(let i=0;i<=28;i++){
+    const ny=i/28,c=arcadeSonarV2623Canyon(g,ny);
+    leftEdge.push([S.left+c.l*S.w,S.top+ny*S.h]);rightEdge.push([S.left+c.r*S.w,S.top+ny*S.h])
+  }
+  poly([[S.left,S.top],...leftEdge,[S.left,S.bottom]],'#294c4e','#17313a',2);
+  poly([[S.right,S.top],...rightEdge,[S.right,S.bottom]],'#294c4e','#17313a',2);
+  for(let i=0;i<18;i++){
+    const ny=(i+.4)/18,c=arcadeSonarV2623Canyon(g,ny),side=i%2?c.l:c.r;
+    const x=S.left+side*S.w+(i%2?-1:1)*8,y=S.top+ny*S.h;
+    circle(x,y,5+(i%4)*2,i%3?'#3e5b55':'#52675b','#17313a',1)
+  }
+
+  // Targets exist in the world. They are dim silhouettes until close/ping-resolved.
+  for(const t of g.sonarTargets){
+    if(t.marked)continue;
+    const x=S.left+t.x*S.w,y=S.top+t.y*S.h,d=Math.hypot(t.x-F.x,t.y-F.y);
+    const revealed=(g.sonarLock===t.id&&g.sonarRange<.23)||d<.075;
+    ctx.save();ctx.globalAlpha=revealed?.92:.20;
+    if(t.kind==='wreck'){
+      poly([[x-17,y+7],[x-11,y-7],[x+11,y-8],[x+19,y+5],[x+5,y+9]],'#7a6650','#17313a',1);rect(x-3,y-14,10,7,'#6b5948','#17313a',1);line(x+3,y-14,x+3,y-23,'#8d795f',1)
+    }else if(t.kind==='vent'){
+      poly([[x-12,y+10],[x-6,y-8],[x+2,y-14],[x+11,y+10]],'#4e6259','#17313a',1);
+      for(let k=0;k<3;k++)circle(x+Math.sin(ts*.002+k)*5,y-18-k*7,3+k,'rgba(160,201,187,.35)')
+    }else if(t.kind==='crates'){
+      rect(x-14,y-7,12,12,'#8a704f','#17313a',1);rect(x+1,y-10,14,15,'#735f48','#17313a',1);line(x-12,y-5,x-4,y+3,'#c0a373',1)
+    }else if(t.kind==='whale'){
+      poly([[x-18,y],[x-7,y-7],[x+10,y-5],[x+18,y],[x+8,y+5],[x-8,y+5]],'#5e8290','#17313a',1);poly([[x-17,y],[x-25,y-6],[x-22,y+5]],'#5e8290','#17313a',1)
+    }else if(t.kind==='ray'){
+      poly([[x-17,y],[x,y-9],[x+17,y],[x,y+8]],'#567879','#17313a',1);line(x,y+7,x+2,y+19,'#567879',2)
+    }else{
+      poly([[x-14,y+8],[x-9,y-8],[x+4,y-13],[x+15,y+6],[x+4,y+11]],'#56665b','#17313a',1)
+    }
+    ctx.restore()
+  }
+
+  const fx=S.left+F.x*S.w,fy=S.top+F.y*S.h;
+  // Ping ring and directional return.
+  if(g.sonarPing>0){
+    const pr=g.sonarPing*Math.max(S.w,S.h)*.52;
+    circle(fx,fy,pr,'rgba(0,0,0,0)',`rgba(101,189,209,${Math.max(0,.65-g.sonarPing*.55)})`,2);
+  }
+  if(g.sonarLock){
+    const t=g.sonarTargets.find(q=>q.id===g.sonarLock&&!q.marked);
+    if(t){
+      const tx=S.left+t.x*S.w,ty=S.top+t.y*S.h,alpha=clamp(1-(ts-g.sonarPingAt)/4200,.12,.82);
+      line(fx,fy,tx,ty,`rgba(229,181,78,${alpha})`,1);
+      if(g.sonarRange<.23)circle(tx,ty,14,'rgba(229,181,78,.08)','#e5b54e',2)
+    }
+  }
+
+  // Detailed research towfish: cable, fins, nose transducer, lamps and bubbles.
+  line(fx,fy-19,fx-28,fy-55,'rgba(207,220,199,.65)',2);
+  ctx.save();ctx.translate(fx,fy);ctx.rotate(clamp(F.vx*2,-.25,.25));
+  poly([[-22,4],[-15,-8],[12,-9],[24,-1],[15,8],[-14,9]],'#d5b455','#17313a',2);
+  poly([[-8,-8],[-17,-17],[1,-10]],'#c89d45','#17313a',1);poly([[-7,8],[-16,17],[2,9]],'#c89d45','#17313a',1);
+  circle(17,-1,5,'#65bdd1','#17313a',1);rect(-18,-4,7,8,'#485e61','#17313a',1);
+  line(3,-9,3,-17,'#fff7de',1);circle(3,-18,2,'#df7c68');
+  ctx.restore();
+  for(let i=0;i<3;i++)circle(fx-20-i*7,fy+8+Math.sin(ts*.004+i)*4,2+i,'rgba(255,255,255,.25)');
+
+  // Sonar console instruments.
+  roundedRect(G.x(.07),G.y(.825),G.w*.86,G.h*.115,9,'rgba(255,247,222,.94)','#17313a',2);
+  const n=arcadeSonarV2623Nearest(g),lock=g.sonarTargets.find(q=>q.id===g.sonarLock&&!q.marked);
+  pxText(g.sonarRead,G.x(.10),G.y(.852),'#17313a',8,'left');
+  if(lock){
+    const deg=(Math.atan2(lock.x-F.x,-(lock.y-F.y))*180/Math.PI+360)%360;
+    pxText(`BEARING ${String(Math.round(deg)).padStart(3,'0')}°`,G.x(.10),G.y(.880),'#42616a',7,'left');
+    pxText(`RANGE ${(Math.hypot(lock.x-F.x,lock.y-F.y)*900).toFixed(0)}m`,G.x(.10),G.y(.904),'#42616a',7,'left')
+  }else{
+    pxText('ACTIVE SONAR READY',G.x(.10),G.y(.883),'#42616a',7,'left')
+  }
+  const statusX=G.x(.67);
+  pxText(`${g.roundProgress}/${g.roundGoal} LOGGED`,statusX,G.y(.855),'#17313a',8,'center');
+  pxText(`PINGS ${g.sonarPings}`,statusX,G.y(.881),'#42616a',7,'center');
+  const close=lock&&Math.hypot(lock.x-F.x,lock.y-F.y)<.115;
+  roundedRect(G.x(.79),G.y(.845),G.w*.11,30,5,close?'#83bf6a':'#c7c2ad','#17313a',1);
+  pxText(close?'IMAGE':'SEARCH',G.x(.845),G.y(.864),'#17313a',6,'center')
 }
 function arcadeV26RenderAim(g,ts,G,dt,running){
   const sec=dt/1000,T=g.target;if(running){T.x+=T.vx*sec;T.y+=T.vy*sec;if(T.x<.62||T.x>.93)T.vx*=-1;if(T.y<.17||T.y>.58)T.vy*=-1}const ox=G.x(g.origin.x),oy=G.y(g.origin.y),bob=Math.sin(ts*.004)*.012,tx=G.x(T.x),ty=G.y(T.y+bob);drawArcadeRescueBoat(ox,oy,1.44);drawArcadeCrew(ox-5,oy-26,'#e5b54e','#c75f52',1.0);circle(tx,ty+5,24,'rgba(101,189,209,.18)','#9bd8e2',2);drawTopVillager(tx,ty-9,'#df7c68','#e5b54e',1.45);if(running&&g.projectile){const p=g.projectile;p.vx+=g.wind*sec;p.x+=p.vx*sec;p.y+=p.vy*sec;p.z+=p.vz*sec;p.vz-=3.35*sec;if(p.z<=0&&ts-p.at>280){const dist=Math.hypot(p.x-T.x,p.y-(T.y+bob));g.throws.push({x:p.x,y:p.y,good:dist<.12,at:ts});if(dist<.12){arcadeV26Progress(g,1,Math.round(520*(1-dist/.12))+100,dist<.035?'PERFECT THROW':'SAFE THROW');arcadeV26NewAimTarget(g)}else{arcadeV26Strike(g,dist<.20?'JUST WIDE':'SHORT / WIDE');g.projectile=null;g.readyAt=ts+320}}}if(g.dragging){const px=G.x(g.pull.x),py=G.y(g.pull.y),dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,pow=clamp(Math.hypot(dx,dy)/.25,0,1);line(ox,oy,px,py,'#fff7de',3);circle(px,py,18,'rgba(0,0,0,0)','#e5b54e',3);roundedRect(G.x(.12),G.y(.88),G.w*.42,18,6,'rgba(255,255,255,.35)','#18313a',2);rect(G.x(.12)+3,G.y(.88)+3,(G.w*.42-6)*pow,12,pow>.78?'#df7c68':'#e5b54e')}if(g.projectile){const p=g.projectile;drawArcadeLifeRing(G.x(p.x),G.y(p.y)-p.z*G.h*.08,.72)}const windTxt=Math.abs(g.wind)<.02?'CALM':g.wind>0?'WIND →':'← WIND';pxText(`${windTxt} · ${g.roundProgress}/${g.roundGoal} RESCUES`,G.cx,G.y(.95),'#fff7de',9,'center')
@@ -4699,6 +4863,7 @@ function arcadeControlSpec(g){
   if(e==='timing')return[{a:'action',l:g.meta.id==='yacht_tack'?'TACK':'ACTION',k:'SPACE',primary:true}];
   if(e==='crane')return[{a:'left',l:'← LEFT',k:'A / ←',hold:true},{a:'action',l:'RELEASE',k:'SPACE',primary:true},{a:'right',l:'RIGHT →',k:'D / →',hold:true}];
   if(e==='radar')return[{a:'radarAlert',l:'ALERT BRIDGE',k:'SPACE',primary:true}];
+  if(e==='sonar')return[{a:'sonarPing',l:'PING',k:'SPACE',primary:true},{a:'sonarMark',l:'MARK TARGET',k:'M'}];
   if(e==='stack'&&g.theme==='container')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
   if(e==='stack')return[1,2,3,4,5].map(n=>({a:`slot${n}`,l:String(n),k:String(n),compact:true}));
   if(e==='rigging')return[1,2,3,4,5,6,7].map(n=>({a:`rope${n}`,l:String(n),k:String(n),compact:true}));
@@ -4714,6 +4879,8 @@ function arcadeApplyControl(action,pressed=true){
   if(action==='down'){if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
   if(action==='pull'){if(g.engine==='meter'&&g.theme!=='yacht'){g.hold=!!pressed;return true}return false}
   if(action==='radarAlert'&&pressed&&g.engine==='radar'){arcadeRadarV2622Alert(g);return true}
+  if(action==='sonarPing'&&pressed&&g.engine==='sonar'){arcadeSonarV2623Ping(g);return true}
+  if(action==='sonarMark'&&pressed&&g.engine==='sonar'){arcadeSonarV2623Mark(g);return true}
   if(action==='action'&&pressed){if(['timing','crane'].includes(g.engine)||(g.engine==='stack'&&g.theme==='container')){arcadePointer(g,'down',canvas.width/2,canvas.height/2);return true}}
   const slot=action.match(/^slot([1-5])$/);if(slot&&pressed&&g.engine==='stack'&&g.theme!=='container'){const n=+slot[1],G=arcadeGeom();arcadePointer(g,'down',G.x((n-.5)/5),G.y(.5));return true}
   const rope=action.match(/^rope([1-7])$/);if(rope&&pressed&&g.engine==='rigging'){const n=+rope[1]-1,node=g.nodes?.[n];if(node){const G=arcadeGeom();arcadePointer(g,'down',G.x(node[0]),G.y(node[1]));return true}}
@@ -4748,6 +4915,8 @@ function arcadeShellKeydown(e){
   else if(['ArrowUp','w','W'].includes(key))handled=arcadeApplyControl('up');
   else if(['ArrowDown','s','S'].includes(key))handled=arcadeApplyControl('down');
   else if((key===' '||key==='Enter')&&g.engine==='radar')handled=arcadeApplyControl('radarAlert',true);
+  else if((key===' '||key==='Enter')&&g.engine==='sonar')handled=arcadeApplyControl('sonarPing',true);
+  else if((key==='m'||key==='M')&&g.engine==='sonar')handled=arcadeApplyControl('sonarMark',true);
   else if((key===' '||key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',true);
   else if(key===' '||key==='Enter')handled=arcadeApplyControl('action',true);
   else if(/^[1-5]$/.test(key)&&g.engine==='stack'&&g.theme!=='container')handled=arcadeApplyControl(`slot${key}`,true);
@@ -4767,7 +4936,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.22',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.23',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
