@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.24';
+const VERSION_LABEL='0.26.25';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -519,7 +519,7 @@ const CONTENT={
     container_stack:{title:'STACK THE DECK',icon:'▦',group:'Container Ship',engine:'stack',desc:'Load a live cargo deck where every landed box changes the ship’s balance and can shift as the vessel lists.',instruction:'DROP FROM THE GANTRY • WATCH THE DECK LIGHTS • CARGO FALLS, STACKS AND CAN SLIDE AS THE SHIP TIPS',duration:28,rewardThreshold:600,benchmark:1900,theme:'container'},
     cruise_buffet:{title:'BUFFET BALANCE',icon:'◫',group:'Cruise Ship',engine:'balance',desc:'Stop plates and drinks skittering off a rolling buffet trolley.',instruction:'COUNTER THE ROLL • KEEP THE PLATES ON THE TRAY',duration:22,rewardThreshold:500,benchmark:1550,theme:'cruise'},
     cruise_deckchairs:{title:'DECKCHAIR DASH',icon:'▧',group:'Cruise Ship',engine:'sort',desc:'Sort wandering deckchairs and pool toys back into the right zones.',instruction:'DRAG EACH ITEM INTO THE MATCHING COLOURED ZONE',duration:25,rewardThreshold:550,benchmark:1700,theme:'cruise'},
-    trawler_net:{title:'HAUL THE NET',icon:'⌇',group:'Fishing Trawler',engine:'meter',desc:'Keep the winch tension in the safe band while the catch comes aboard.',instruction:'HOLD TO PULL • RELEASE TO EASE THE TENSION',duration:24,rewardThreshold:550,benchmark:1650,theme:'trawler'},
+    trawler_net:{title:'HAUL THE NET',icon:'⌇',group:'Fishing Trawler',engine:'meter',desc:'Work a live trawl warp through swell, catch weight and seabed snags, easing the winch when the load comes hard.',instruction:'HOLD HAUL TO WINCH IN • RELEASE TO EASE TENSION • CLEAR SNAGS • BRING THE COD-END SAFELY TO THE RAIL',duration:0,rewardThreshold:550,benchmark:1650,theme:'trawler'},
     trawler_sort:{title:'SORT THE CATCH',icon:'><>',group:'Fishing Trawler',engine:'sort',desc:'Send the catch into the right crates before the gulls get interested.',instruction:'DRAG EACH FISH INTO THE MATCHING COLOURED CRATE',duration:26,rewardThreshold:600,benchmark:1850,theme:'trawler'},
     yacht_trim:{title:'YACHT TRIM',icon:'◢',group:'Sailing Yacht',engine:'meter',desc:'Keep the sail loaded in the sweet spot as the breeze shifts.',instruction:'DRAG THE RED TRIM MARKER INTO THE MOVING GREEN BAND',duration:24,rewardThreshold:550,benchmark:1650,theme:'yacht'},
     yacht_tack:{title:'TACK!',icon:'↗',group:'Sailing Yacht',engine:'timing',desc:'Turn through the wind exactly as the bow reaches the tack window.',instruction:'TAP AS THE BOW ENTERS THE GREEN ARC',duration:20,rewardThreshold:450,benchmark:1500,theme:'yacht'},
@@ -3259,7 +3259,7 @@ const ARCADE_V26_COPY={
   container_stack:{desc:'Build a balanced manifest from containers with changing width and weight.',instruction:'DROP THE LOAD • CONTROL STACK HEIGHT AND THE SHIP’S LIST'},
   cruise_buffet:{desc:'Keep differently weighted plates, cups and bottles on a rolling trolley through sudden wakes.',instruction:'COUNTER THE ROLL • EACH OBJECT HAS ITS OWN INERTIA'},
   cruise_deckchairs:{desc:'Sort drifting deck gear into changing storage zones before it reaches the rail.',instruction:'DRAG EACH ITEM TO ITS MATCHING ZONE • THE DECK GETS BUSIER'},
-  trawler_net:{desc:'Haul successive catches while balancing line tension against weight, snags and waves.',instruction:'HOLD TO HAUL • RELEASE TO EASE • LAND THE CATCH WITHOUT SNAPPING THE WARP'},
+  trawler_net:{desc:'Haul a physical net from the seabed while swell, catch weight and snagged gear continuously change the load on the warp.',instruction:'HOLD HAUL TO WINCH • RELEASE TO EASE • IF THE WARP COMES HARD, GIVE IT LINE • LAND THE COD-END UNDER CONTROL'},
   trawler_sort:{desc:'Sort a moving catch while gulls close in and later rounds add bycatch to return.',instruction:'SORT THE FISH • RETURN BYCATCH OVERBOARD • DON’T LEAVE IT FOR THE GULLS'},
   yacht_trim:{desc:'Trim through changing points of sail and gusts; good shape drives each leg forward.',instruction:'FOLLOW THE WIND MARK • KEEP THE SAIL WORKING UNTIL THE LEG IS COMPLETE'},
   yacht_tack:{desc:'Link helm timing and sheet timing through a growing sequence of clean tacks.',instruction:'CATCH THE HELM WINDOW • THEN CATCH THE SHEET WINDOW'},
@@ -3553,7 +3553,109 @@ function arcadeV26SpawnSort(g,ts){
   const bycatch=g.theme==='trawler'&&g.round>=3&&arcadeV26Rand(g,0,1)<Math.min(.28,.07*g.round),kind=bycatch?3:Math.floor(arcadeV26Rand(g,0,3));g.items.push({x:arcadeV26Rand(g,.15,.85),y:arcadeV26Rand(g,.18,.55),vx:arcadeV26Rand(g,-.018,.018)*arcadeV26Difficulty(g),vy:arcadeV26Rand(g,.004,.017),kind,born:ts,dragging:false});g.spawn=ts
 }
 function arcadeV26SetupSort(g,r,d){arcadeV26ResetCommon(g,7+Math.min(8,r));g.items=[];g.drag=null;g.sortSpawn=Math.max(360,850-(r-1)*42);g.zoneOrder=[0,1,2];for(let i=g.zoneOrder.length-1;i>0;i--){const j=Math.floor(arcadeV26Rand(g,0,i+1));[g.zoneOrder[i],g.zoneOrder[j]]=[g.zoneOrder[j],g.zoneOrder[i]]}for(let i=0;i<3;i++)arcadeV26SpawnSort(g,performance.now()-i*180)}
+const ARCADE_TRAWL_V2625_CATCHES=[
+  {name:'HERRING',mass:.82,drag:.16,fish:8,col:'#65bdd1'},
+  {name:'MACKEREL',mass:1.02,drag:.20,fish:7,col:'#83bf6a'},
+  {name:'MIXED CATCH',mass:1.28,drag:.25,fish:9,col:'#e5b54e'},
+  {name:'HEAVY COD-END',mass:1.58,drag:.31,fish:10,col:'#d8caa1'}
+];
+function arcadeTrawlV2625Profile(g){
+  const max=Math.min(ARCADE_TRAWL_V2625_CATCHES.length,2+Math.floor((g.round-1)/2));
+  return ARCADE_TRAWL_V2625_CATCHES[Math.floor(arcadeV26Rand(g,0,max))%max]
+}
+function arcadeTrawlV2625Setup(g,r,d){
+  arcadeV26ResetCommon(g,1);
+  g.value=.30;g.velocity=0;g.hold=false;g.goodMs=0;g.badMs=0;
+  g.trawlCatch=arcadeTrawlV2625Profile(g);
+  g.trawlProgress=0;g.haul=0;g.trawlWarp=78+Math.round(arcadeV26Rand(g,0,18));
+  g.trawlTension=.30;g.trawlTensionV=0;g.trawlWinch=0;g.trawlRoll=0;g.trawlRollV=0;
+  g.trawlSea=arcadeV26Rand(g,0,6.28);g.trawlSeed=arcadeV26Rand(g,0,30);
+  g.trawlSnags=[];g.trawlSnag=null;g.trawlSnagEase=0;g.trawlSnapMs=0;g.trawlRailMs=0;
+  const snagCount=Math.min(3,Math.max(0,r-1));
+  for(let i=0;i<snagCount;i++)g.trawlSnags.push({at:.16+(i+1)*(.50/(snagCount+1))+arcadeV26Rand(g,-.035,.035),cleared:false,side:i%2?1:-1});
+  g.roundGoal=1;g.roundProgress=0
+}
+function arcadeTrawlV2625Update(g,ts,dt,running){
+  if(!running)return;
+  const sec=dt/1000,d=arcadeV26Difficulty(g),C=g.trawlCatch;
+  const swell=Math.sin(ts*.00135+g.trawlSea)*(.035+.008*Math.min(5,g.round-1));
+  const chop=Math.sin(ts*.0037+g.trawlSea*.43)*.015;
+  const demand=.22+C.mass*.095+C.drag*.16+swell+chop;
+  const hauling=g.hold?1:0;
+  g.trawlWinch+=(hauling?1:-1.7)*sec*2.5;
+  g.trawlWinch=clamp(g.trawlWinch,0,1);
+  const nextSnag=g.trawlSnags.find(x=>!x.cleared&&g.trawlProgress>=x.at-.018);
+  if(nextSnag&&!g.trawlSnag&&g.trawlProgress<nextSnag.at+.055){
+    g.trawlSnag=nextSnag;g.trawlSnagEase=0;arcadeV26SetFeedback(g,'GEAR FAST · EASE THE WARP','neutral',650);beep('soft')
+  }
+  let snagLoad=0;
+  if(g.trawlSnag){
+    snagLoad=.30+.055*Math.min(4,g.round-1);
+    if(!g.hold&&g.trawlTension<.48)g.trawlSnagEase+=sec*(.72+.08/d);
+    else if(g.hold)g.trawlSnagEase=Math.max(0,g.trawlSnagEase-sec*.30);
+    if(g.trawlSnagEase>=1){
+      g.trawlSnag.cleared=true;g.trawlSnag=null;g.trawlSnagEase=0;
+      g.score+=180;arcadeV26SetFeedback(g,'GEAR CAME FREE','good',520);beep('soft')
+    }
+  }
+  const targetTension=clamp(demand+g.trawlWinch*(.46+C.mass*.05)+snagLoad,0,1.08);
+  g.trawlTensionV+=(targetTension-g.trawlTension)*sec*5.3;
+  g.trawlTensionV*=Math.pow(.88,dt/16.7);
+  g.trawlTension=clamp(g.trawlTension+g.trawlTensionV*sec,0,1.08);
+  g.value=g.trawlTension;
+
+  // The winch only gains useful ground while hauling; easing is never punished.
+  const safe=g.trawlTension>.34&&g.trawlTension<.84&&!g.trawlSnag;
+  if(g.hold&&!g.trawlSnag){
+    const strain=g.trawlTension>.84?Math.max(.10,1-(g.trawlTension-.84)*4.4):1;
+    g.trawlProgress=clamp(g.trawlProgress+sec*(.075+.012*d)*g.trawlWinch*strain,0,1);
+    if(safe)g.score+=dt*.021
+  }
+  g.haul=g.trawlProgress;
+
+  if(g.trawlTension>.94){
+    g.trawlSnapMs+=dt*(1+(g.trawlTension-.94)*4);
+    if(g.trawlSnapMs>520){
+      arcadeV26Strike(g,'WARP PARTED · NEW BIGHT SHACKLED IN',85);
+      g.trawlSnapMs=0;g.trawlTension=.34;g.trawlTensionV=0;g.trawlWinch=0;g.hold=false;
+      g.trawlProgress=Math.max(0,g.trawlProgress-.08)
+    }
+  }else g.trawlSnapMs=Math.max(0,g.trawlSnapMs-dt*1.7);
+
+  // Heavy load and swell physically work the vessel.
+  const rollTarget=Math.sin(ts*.00115+g.trawlSea)*(.035+.008*C.mass)+(g.trawlTension-.40)*.075;
+  g.trawlRollV+=(rollTarget-g.trawlRoll)*sec*2.1;
+  g.trawlRollV*=Math.pow(.94,dt/16.7);
+  g.trawlRoll=clamp(g.trawlRoll+g.trawlRollV*sec,-.14,.18);
+
+  // At the rail, hauling hard is deliberately not an instant win: ease the load under control.
+  if(g.trawlProgress>=.985){
+    if(g.trawlTension<.70)g.trawlRailMs+=dt;
+    else g.trawlRailMs=Math.max(0,g.trawlRailMs-dt*.6);
+    if(g.trawlRailMs>600){
+      g.roundProgress=1;
+      const pts=Math.round(420+C.mass*110+Math.max(0,120-g.trawlSnapMs*.1));
+      g.score+=pts;
+      arcadeV26Advance(g,`${C.name} ABOARD`)
+    }else if(g.hold&&g.trawlTension>.72)arcadeV26SetFeedback(g,'EASE HER AT THE RAIL','neutral',300)
+  }
+}
+function arcadeTrawlV2625DrawTrawler(g,ts,G,x,y,scale=1){
+  ctx.save();ctx.translate(x,y);ctx.rotate(g.trawlRoll||0);ctx.scale(scale,scale);
+  // working hull, wheelhouse, mast, stern gantry and winch
+  poly([[-92,3],[-70,22],[56,22],[88,9],[72,-2],[-74,-5]],'#31545a','#17313a',3);
+  poly([[-55,-6],[-42,-30],[7,-30],[20,-5]],'#fff7de','#17313a',2);
+  rect(-36,-24,12,9,'#65bdd1','#17313a',1);rect(-19,-24,12,9,'#65bdd1','#17313a',1);
+  rect(-8,-41,4,13,'#704630','#17313a',1);line(-6,-42,-6,-61,'#704630',3);line(-6,-57,25,-43,'#704630',2);
+  // stern A-frame
+  line(49,-5,65,-48,'#704630',4);line(79,-4,65,-48,'#704630',4);line(57,-30,74,-30,'#704630',3);
+  circle(43,4,12,'#c58d47','#17313a',2);circle(43,4,4,'#704630');
+  for(let i=0;i<3;i++)line(-78+i*28,23,-60+i*28,29,'rgba(255,255,255,.35)',2);
+  pxText('MF',-54,12,'#fff7de',7,'center');
+  ctx.restore()
+}
 function arcadeV26SetupMeter(g,r,d){
+  if(g.theme==='trawler'){arcadeTrawlV2625Setup(g,r,d);return}
   arcadeV26ResetCommon(g,1000);g.value=.5;g.velocity=0;g.hold=false;g.target=.5;g.goodMs=0;g.badMs=0;g.leg=0;g.haul=0;g.catchWeight=1+(r-1)*.13;g.windPhase=arcadeV26Rand(g,0,6.28);g.roundGoal=1000
 }
 const ARCADE_SPEED_V2617_COLS=['#df7c68','#e5b54e','#83bf6a','#7c78a8','#d27a9a','#5aa8a2'];
@@ -4156,12 +4258,86 @@ function arcadeV26RenderSort(g,ts,G,dt,running){
   if(running&&ts-g.spawn>g.sortSpawn&&g.items.length<Math.min(10,5+g.round))arcadeV26SpawnSort(g,ts);for(const o of g.items){if(running&&o!==g.drag){o.x+=o.vx*dt/1000;o.y+=o.vy*dt/1000;o.x=clamp(o.x,.06,.94)}if(running&&ts-o.born>Math.max(2600,5600-g.round*120)&&o!==g.drag){o.expired=true;arcadeV26Strike(g,g.theme==='trawler'?'A GULL GOT IT':'OVER THE RAIL')}const x=G.x(o.x),y=G.y(o.y);if(g.theme==='trawler'){if(o.kind===3){drawSeaSprite('gull',x,y,.95,false,Math.floor(ts/180)%3);pxText('BYCATCH',x,y+24,'#fff7de',7,'center')}else drawArcadeFish(x,y,o.kind,1.0)}else{o.kind===0?rect(x-18,y-18,36,36,'#df7c68','#18313a',2):o.kind===1?circle(x,y,20,'rgba(0,0,0,0)','#e5b54e',8):roundedRect(x-24,y-13,48,26,5,'#527da0','#18313a',2)}}g.items=g.items.filter(o=>!o.expired);const cols=['#df7c68','#e5b54e','#527da0'];for(let zone=0;zone<3;zone++){const kind=g.zoneOrder[zone],x=G.x(zone/3+.015),w=G.w*.303;roundedRect(x,G.y(.78),w,G.h*.17,8,cols[kind],'#18313a',3);pxText(g.theme==='trawler'?['RED FISH','GOLD FISH','BLUE FISH'][kind]:['CHAIRS','RINGS','TOWELS'][kind],x+w/2,G.y(.88),'#fff7de',10,'center')}if(g.theme==='trawler'&&g.round>=3)pxText('BYCATCH → RETURN OVER THE TOP RAIL',G.cx,G.y(.72),'#fff7de',8,'center')
 }
 function arcadeV26RenderMeter(g,ts,G,dt,running){
-  const sec=dt/1000,d=arcadeV26Difficulty(g);if(g.theme==='trawler'){
-    if(running){const pull=g.hold?1.30:-.72,catchPull=Math.sin(ts*.0012+g.round)*.34*d;g.velocity+=(pull+catchPull)*sec;g.velocity*=Math.pow(.955,dt/16.7);g.value=clamp(g.value+g.velocity*sec,0,1);g.target=.48+Math.sin(ts*.00085+g.round)*(.10+.018*d);const err=Math.abs(g.value-g.target);if(err<.11){g.haul+=sec*(.10+.035*d);g.score+=dt*.020}else if(g.value<g.target-.20)g.haul=Math.max(0,g.haul-sec*.035);if(g.value>.94){g.badMs+=dt;if(g.badMs>360){arcadeV26Strike(g,'WARP SNAPPED',80);g.value=.45;g.velocity=0;g.haul=0;g.badMs=0}}else g.badMs=Math.max(0,g.badMs-dt*.8);if(g.haul>=1){g.roundProgress=1000;arcadeV26Advance(g,'CATCH ABOARD')}}
-    line(G.x(.20),G.y(.18),G.x(.42),G.y(.39),'#704630',6);circle(G.x(.21),G.y(.18),24,'#704630','#18313a',3);for(let i=0;i<5;i++)drawArcadeFish(G.x(.62+i*.052),G.y(.28+Math.sin(i)*.03),i%3,.55)
-  }else{
-    if(running){g.target=clamp(.5+Math.sin(ts*.0009+g.windPhase)*(.24+.03*d)+Math.sin(ts*.0022)*.05,.12,.88);if(!pointer.down)g.value=lerp(g.value,.5,.018);const err=Math.abs(g.value-g.target);if(err<Math.max(.055,.105-g.round*.003)){g.leg+=sec*(.10+.02*d);g.score+=dt*.022;g.badMs=Math.max(0,g.badMs-dt)}else if(err>.28){g.badMs+=dt;if(g.badMs>1100){arcadeV26Strike(g,'SAIL LUFFING',45);g.badMs=0}}if(g.leg>=1){g.roundProgress=1000;arcadeV26Advance(g,'LEG TRIMMED')}}rect(G.cx-5,G.y(.08),10,G.h*.33,'#704630','#18313a',1);poly([[G.cx+5,G.y(.10)],[G.x(.82),G.y(.25)],[G.cx+5,G.y(.38)]],'#fff7de','#18313a',2)
-  }const sy=G.y(.56),sx=G.x(.10),sw=G.w*.80,tx=sx+g.target*sw,x=sx+g.value*sw;roundedRect(sx,sy,sw,42,9,'#fff','#18313a',3);rect(tx-sw*.075,sy-5,sw*.15,52,'rgba(131,191,106,.72)');rect(x-7,sy-18,14,78,'#df7c68','#18313a',1);const prog=g.theme==='trawler'?g.haul:g.leg;roundedRect(G.x(.18),G.y(.76),G.w*.64,18,6,'rgba(255,255,255,.30)','#18313a',2);rect(G.x(.18)+3,G.y(.76)+3,(G.w*.64-6)*clamp(prog,0,1),12,'#83bf6a');pxText(g.theme==='trawler'?(g.hold?'PULLING · RELEASE TO EASE':'HOLD TO HAUL'):'FOLLOW THE SHIFTING WIND',G.cx,G.y(.88),'#fff7de',9,'center')
+  const sec=dt/1000,d=arcadeV26Difficulty(g);
+  if(g.theme==='trawler'){
+    arcadeTrawlV2625Update(g,ts,dt,running);
+    const C=g.trawlCatch,waterY=G.y(.31),bottomY=G.y(.79);
+    // sky / sea / seabed
+    rect(G.left,G.top,G.w,waterY-G.top,'#7faab1');
+    rect(G.left,waterY,G.w,bottomY-waterY,'#184956');
+    rect(G.left,bottomY,G.w,G.bottom-bottomY,'#685b48');
+    for(let i=0;i<9;i++){
+      const yy=waterY+18+i*32+Math.sin(ts*.0012+i)*5;
+      line(G.x(.04+(i%2)*.05),yy,G.x(.62+(i%3)*.10),yy,'rgba(101,189,209,.12)',2)
+    }
+    // seabed rocks / kelp form visible snag context
+    for(let i=0;i<8;i++){
+      const x=G.x(.08+i*.12),h=8+(i*13)%18;
+      poly([[x-15,bottomY+4],[x-9,bottomY-h],[x+3,bottomY-h-6],[x+16,bottomY+4]],i%3?'#776a53':'#5f604f','#17313a',1);
+      if(i%2===0){line(x+7,bottomY,x+3,bottomY-24,'#4f785a',2);line(x+3,bottomY-20,x-5,bottomY-31,'#4f785a',2)}
+    }
+
+    const boatX=G.x(.50),boatY=waterY-5;
+    arcadeTrawlV2625DrawTrawler(g,ts,G,boatX,boatY,.84);
+
+    // Net rises in world space with haul progress and trails aft of the stern.
+    const sternX=boatX+56,sternY=boatY-24;
+    const p=g.trawlProgress;
+    const netX=lerp(G.x(.79),G.x(.67),p)+Math.sin(ts*.0011+g.trawlSeed)*8*(1-p);
+    const netY=lerp(bottomY-22,waterY+42,p);
+    const snag=g.trawlSnag;
+    const warpCol=g.trawlTension>.88?'#df7c68':g.trawlTension>.72?'#e5b54e':'#d8caa1';
+    line(sternX,sternY,netX,netY,warpCol,3);
+
+    // cod-end mesh and actual catch
+    ctx.save();ctx.translate(netX,netY);ctx.rotate(Math.sin(ts*.0016)*.08*(1-p));
+    poly([[-27,-17],[24,-13],[33,4],[20,23],[-18,21],[-34,4]],'rgba(86,119,105,.46)','#c4b48f',2);
+    for(let i=-18;i<=18;i+=9)line(i,-14,i+5,18,'rgba(216,202,161,.48)',1);
+    for(let j=-8;j<=12;j+=8)line(-25,j,26,j+3,'rgba(216,202,161,.42)',1);
+    const fishN=Math.min(10,C.fish);
+    for(let i=0;i<fishN;i++)drawArcadeFish(-18+(i%4)*11,-7+Math.floor(i/4)*10,i%3,.34);
+    ctx.restore();
+
+    // Snag tether / rock hook shows why tension suddenly spikes.
+    if(snag){
+      const rockX=netX+snag.side*32,rockY=Math.max(netY+18,bottomY-15);
+      line(netX,netY+12,rockX,rockY,'#df7c68',2);
+      circle(rockX,rockY,9,'#5f604f','#17313a',2);
+      pxText('SNAG',rockX,rockY-16,'#df7c68',7,'center')
+    }
+
+    // deck crew and winch activity
+    const crewBob=Math.sin(ts*.006)*2;
+    drawArcadeCrew(boatX+28,boatY-34+crewBob,'#e5b54e','#31545a',.75);
+    if(g.hold){
+      for(let i=0;i<3;i++)circle(boatX+43+Math.sin(ts*.009+i)*8,boatY+2+i*2,2,'rgba(255,247,222,.45)')
+    }
+
+    // Instrument console: qualitative tension gauge plus real warp/load state.
+    const panelY=G.y(.835);
+    roundedRect(G.x(.07),panelY,G.w*.86,G.h*.105,9,'rgba(255,247,222,.95)','#17313a',2);
+    const gx=G.x(.105),gw=G.w*.37,gy=panelY+19;
+    pxText('WARP TENSION',gx,gy-7,'#17313a',7,'left');
+    roundedRect(gx,gy,gw,18,5,'#d8d4c2','#17313a',1);
+    rect(gx+gw*.34,gy+2,gw*.50,14,'rgba(131,191,106,.72)');
+    rect(gx+gw*.84,gy+2,gw*.10,14,'rgba(229,181,78,.78)');
+    rect(gx+gw*.94,gy+2,gw*.06,14,'rgba(223,124,104,.82)');
+    const needle=gx+gw*clamp(g.trawlTension,0,1);
+    rect(needle-3,gy-5,6,28,'#17313a');
+    const status=g.trawlSnag?'GEAR FAST':g.trawlTension>.90?'EASE NOW':g.trawlProgress>.97?'AT THE RAIL':g.hold?'HAULING':'EASING';
+    pxText(status,gx+gw/2,gy+39,g.trawlSnag||g.trawlTension>.90?'#b8574f':'#42616a',7,'center');
+
+    const rx=G.x(.58);
+    pxText(`${Math.round((1-p)*g.trawlWarp)}m WARP`,rx,panelY+22,'#17313a',8,'left');
+    pxText(`${C.name} · ${(C.mass*1.15).toFixed(1)}t`,rx,panelY+43,'#42616a',7,'left');
+    pxText(`${Math.round(p*100)}% ABOARD`,G.x(.89),panelY+22,'#17313a',8,'right');
+    pxText(g.trawlSnag?`EASE ${Math.round(g.trawlSnagEase*100)}%`:`ROUND ${g.round}`,G.x(.89),panelY+43,'#42616a',7,'right');
+    return
+  }
+
+  if(running){g.target=clamp(.5+Math.sin(ts*.0009+g.windPhase)*(.24+.03*d)+Math.sin(ts*.0022)*.05,.12,.88);if(!pointer.down)g.value=lerp(g.value,.5,.018);const err=Math.abs(g.value-g.target);if(err<Math.max(.055,.105-g.round*.003)){g.leg+=sec*(.10+.02*d);g.score+=dt*.022;g.badMs=Math.max(0,g.badMs-dt)}else if(err>.28){g.badMs+=dt;if(g.badMs>1100){arcadeV26Strike(g,'SAIL LUFFING',45);g.badMs=0}}if(g.leg>=1){g.roundProgress=1000;arcadeV26Advance(g,'LEG TRIMMED')}}
+  rect(G.cx-5,G.y(.08),10,G.h*.33,'#704630','#18313a',1);poly([[G.cx+5,G.y(.10)],[G.x(.82),G.y(.25)],[G.cx+5,G.y(.38)]],'#fff7de','#18313a',2);
+  const sy=G.y(.56),sx=G.x(.10),sw=G.w*.80,tx=sx+g.target*sw,x=sx+g.value*sw;roundedRect(sx,sy,sw,42,9,'#fff','#18313a',3);rect(tx-sw*.075,sy-5,sw*.15,52,'rgba(131,191,106,.72)');rect(x-7,sy-18,14,78,'#df7c68','#18313a',1);roundedRect(G.x(.18),G.y(.76),G.w*.64,18,6,'rgba(255,255,255,.30)','#18313a',2);rect(G.x(.18)+3,G.y(.76)+3,(G.w*.64-6)*clamp(g.leg,0,1),12,'#83bf6a');pxText('FOLLOW THE SHIFTING WIND',G.cx,G.y(.88),'#fff7de',9,'center')
 }
 function arcadeV26SpawnGate(g,ts){g.gates.push({y:.06,x:arcadeV26Rand(g,.20,.80),w:Math.max(.19,(g.meta.heavy?.34:.38)-(g.round-1)*.012),scored:false});g.spawn=ts}
 function arcadeV26RenderSteer(g,ts,G,dt,running){
@@ -4874,7 +5050,7 @@ function arcadeControlSpec(g){
   if(e==='stack'&&g.theme==='container')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
   if(e==='stack')return[1,2,3,4,5].map(n=>({a:`slot${n}`,l:String(n),k:String(n),compact:true}));
   if(e==='rigging')return[1,2,3,4,5,6,7].map(n=>({a:`rope${n}`,l:String(n),k:String(n),compact:true}));
-  if(e==='meter'&&g.theme!=='yacht')return[{a:'pull',l:'PULL',k:'HOLD SPACE',primary:true,hold:true}];
+  if(e==='meter'&&g.theme!=='yacht')return[{a:'pull',l:g.theme==='trawler'?'HAUL':'PULL',k:'HOLD SPACE',primary:true,hold:true}];
   return[]
 }
 function arcadeApplyControl(action,pressed=true){
@@ -4943,7 +5119,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.24',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.25',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
