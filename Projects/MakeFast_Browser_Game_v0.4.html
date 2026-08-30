@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.27.8';
+const VERSION_LABEL='0.27.9';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4185,38 +4185,45 @@ function arcadeSpeedFinish(g,ts){
 }
 
 function arcadeTankerCourse(g,p){
-  const T=g.tanker||{},r=g.round||1;
-  const a=(T.seed||0);
-  const bend1=Math.sin((p*2.15+a)*Math.PI)*(.050+.008*Math.min(6,r));
-  const bend2=Math.sin((p*4.7+a*.63)*Math.PI)*(.025+.005*Math.min(7,r));
-  const dog=Math.tanh(Math.sin((p*1.18+a*.31)*Math.PI*2)*2.1)*(.010*Math.max(0,r-2));
+  const T=g.tanker||{},r=g.round||1,a=(T.seed||0);
+  // Long-wave bends plus a smaller secondary set. p now spans several channel-length units.
+  const bend1=Math.sin((p*.72+a)*Math.PI)*(.044+.006*Math.min(6,r));
+  const bend2=Math.sin((p*1.63+a*.63)*Math.PI)*(.020+.0035*Math.min(7,r));
+  const dog=Math.tanh(Math.sin((p*.43+a*.31)*Math.PI*2)*2.0)*(.007*Math.max(0,r-2));
   return clamp(.5+bend1+bend2+dog,.30,.70)
 }
 function arcadeTankerWidth(g,p){
-  const r=g.round||1,T=g.tanker||{};
-  const base=Math.max(.205,.315-.012*Math.min(8,r));
-  const pinch1=Math.exp(-Math.pow((p-.38-(T.pinch||0))/.10,2))*(.040+.004*r);
-  const pinch2=Math.exp(-Math.pow((p-.73+(T.pinch||0)*.5)/.085,2))*Math.max(0,r-2)*.0055;
-  return Math.max(.145,base-pinch1-pinch2)
+  const r=g.round||1,T=g.tanker||{},finish=T.finish||2.8;
+  const base=Math.max(.215,.325-.0105*Math.min(8,r));
+  // Repeating but broad pinches, never a sudden trap immediately after a bend.
+  const phase=(p/finish);
+  const pinch1=Math.exp(-Math.pow((phase-.34-(T.pinch||0))/.105,2))*(.032+.0032*r);
+  const pinch2=Math.exp(-Math.pow((phase-.72+(T.pinch||0)*.45)/.095,2))*Math.max(0,r-2)*.0042;
+  return Math.max(.158,base-pinch1-pinch2)
 }
 function arcadeTankerCurrent(g,p){
   const T=g.tanker||{},r=g.round||1;
-  return Math.sin((p*3.2+(T.currentPhase||0))*Math.PI*2)*(.006+.0017*Math.min(8,r))
+  return Math.sin((p*.78+(T.currentPhase||0))*Math.PI*2)*(.0045+.00125*Math.min(8,r))
 }
 function arcadeTankerBuildMarks(g){
-  const T=g.tanker;T.marks=[];
-  const count=10+Math.min(8,g.round||1);
+  const T=g.tanker,finish=T.finish||2.8;T.marks=[];
+  const count=24+Math.min(16,(g.round||1)*2);
   for(let i=1;i<=count;i++){
-    const p=i/(count+1),c=arcadeTankerCourse(g,p),w=arcadeTankerWidth(g,p);
+    const p=finish*i/(count+1),c=arcadeTankerCourse(g,p),w=arcadeTankerWidth(g,p);
     T.marks.push({p,side:-1,x:c-w*.94,phase:arcadeRand(g,0,6.28),hit:false});
     T.marks.push({p,side:1,x:c+w*.94,phase:arcadeRand(g,0,6.28),hit:false})
   }
   T.traffic=[];
   if((g.round||1)>=3){
-    const n=Math.min(3,1+Math.floor(((g.round||1)-3)/2));
+    const n=Math.min(4,1+Math.floor(((g.round||1)-3)/2));
     for(let i=0;i<n;i++){
-      const p=.30+i*(.42/Math.max(1,n-1||1))+arcadeRand(g,-.045,.045),c=arcadeTankerCourse(g,p);
-      T.traffic.push({p,x:c+arcadeRand(g,-.055,.055),dir:i%2?1:-1,speed:.025+arcadeRand(g,0,.012)+g.round*.0015,kind:i%3,phase:arcadeRand(g,0,6.28),passed:false})
+      // Traffic starts well ahead, with large longitudinal spacing and on its own starboard side.
+      const p=finish*(.28+(i+.5)*(.62/n))+arcadeRand(g,-.035,.035)*finish;
+      const c=arcadeTankerCourse(g,p),w=arcadeTankerWidth(g,p);
+      T.traffic.push({
+        p,x:c-w*.34,dir:-1,speed:.038+arcadeRand(g,0,.010)+g.round*.0012,
+        kind:i%3,phase:arcadeRand(g,0,6.28),passed:false,nearMiss:false
+      })
     }
   }
 }
@@ -4257,12 +4264,13 @@ function arcadeSetupSteer(g,r,d){
   if(g.theme==='tanker'){
     arcadeResetCommon(g,1);
     g.x=.5;g.vx=0;g.inputX=.5;g.distance=0;
+    const finish=2.75+Math.min(.65,(r-1)*.08);
     g.tanker={
-      x:.5,heading:0,yaw:0,rudder:0,rudderTarget:0,progress:0,
-      speed:.090+Math.min(.025,r*.0025),baseSpeed:.090+Math.min(.025,r*.0025),
-      length:.105,seed:arcadeRand(g,.05,.95),pinch:arcadeRand(g,-.035,.035),
+      x:.5,heading:0,yaw:0,rudder:0,rudderTarget:0,progress:0,finish,
+      speed:.066+Math.min(.012,r*.0015),baseSpeed:.066+Math.min(.012,r*.0015),
+      length:.105,seed:arcadeRand(g,.05,.95),pinch:arcadeRand(g,-.025,.025),
       currentPhase:arcadeRand(g,0,1),marks:[],traffic:[],hitCool:0,bankAlarm:0,
-      scoreTick:0,lastMargin:1,damage:0
+      scoreTick:0,lastMargin:1,damage:0,trafficWarn:0
     };
     arcadeTankerBuildMarks(g);g.continuous=true;g.roundGoal=1;g.roundProgress=0;return
   }
@@ -4977,11 +4985,11 @@ function arcadeRenderSteer(g,ts,G,dt,running){
   if(g.theme==='tanker'){
     const T=g.tanker,r=g.round||1;
     if(running){
-      const response=.72,rate=.36+Math.min(.18,r*.018);
-      T.rudder+=(T.rudderTarget-T.rudder)*Math.min(1,sec*1.7);
+      const response=.92,rate=.62+Math.min(.20,r*.020);
+      T.rudder+=(T.rudderTarget-T.rudder)*Math.min(1,sec*2.15);
       // Huge ship: rudder builds yaw slowly and the hull keeps swinging after midships.
       T.yaw+=T.rudder*rate*T.speed*sec;
-      T.yaw*=Math.pow(.986,dt/16.7);
+      T.yaw*=Math.pow(.982,dt/16.7);
       const current=arcadeTankerCurrent(g,T.progress);
       const clear=arcadeTankerHullClearance(g);
       // Bank suction becomes meaningful near an edge and increases with later-round speed/current.
@@ -4989,7 +4997,7 @@ function arcadeRenderSteer(g,ts,G,dt,running){
       if(clear.left<.085)bank-=Math.pow(clamp((.085-clear.left)/.085,0,1),2)*(.010+.001*r);
       if(clear.right<.085)bank+=Math.pow(clamp((.085-clear.right)/.085,0,1),2)*(.010+.001*r);
       T.yaw+=bank*sec;
-      T.heading=clamp(T.heading+T.yaw*sec,-.62,.62);
+      T.heading=clamp(T.heading+T.yaw*sec,-.68,.68);
       T.x+=Math.sin(T.heading)*T.speed*sec+current*sec+bank*.20*sec;
       T.progress+=T.speed*sec;
       T.lastMargin=clear.margin;T.bankAlarm=Math.max(0,.075-clear.margin)/.075;
@@ -5003,20 +5011,30 @@ function arcadeRenderSteer(g,ts,G,dt,running){
           if(Math.abs(T.x-m.x)<shipHalf+.014*(1-along)){m.hit=true;arcadeTankerStrike(g,'CHANNEL MARK STRUCK',ts)}
         }
       }
-      // Later rounds add opposing/coasting traffic that must be anticipated through bends.
+      // Later rounds add properly moving oncoming traffic. It follows its own side of the channel,
+      // is visible far in advance, and only becomes a collision risk if the player crosses into it.
       for(const v of T.traffic){
-        v.p+=v.dir*T.speed*sec*.18;
-        const dp=v.p-T.progress;
-        if(Math.abs(dp)<.055&&Math.abs(v.x-T.x)<.060){arcadeTankerStrike(g,'CLOSE-QUARTERS CONTACT',ts);v.x+=v.x<T.x?-.06:.06}
+        v.p-=v.speed*sec;
+        const vc=arcadeTankerCourse(g,v.p),vw=arcadeTankerWidth(g,v.p);
+        v.x+=(vc-vw*.34-v.x)*Math.min(1,sec*1.8);
+        const dp=v.p-T.progress,lat=Math.abs(v.x-T.x);
+        if(dp>0&&dp<.34)T.trafficWarn=Math.max(T.trafficWarn,1-dp/.34);
+        if(Math.abs(dp)<.048&&lat<.057){
+          arcadeTankerStrike(g,'CLOSE-QUARTERS CONTACT',ts);
+          v.x=vc-vw*.48
+        }else if(!v.nearMiss&&Math.abs(dp)<.042&&lat<.085){
+          v.nearMiss=true;g.score+=45;arcadeSetFeedback(g,'CLOSE PASS','neutral',320)
+        }
       }
+      T.trafficWarn=Math.max(0,T.trafficWarn-sec*.8);
       T.scoreTick+=dt;if(T.scoreTick>500){T.scoreTick=0;g.score+=Math.round(12+Math.max(0,T.lastMargin)*180)}
-      g.roundProgress=clamp(T.progress,0,1);
-      if(T.progress>=1){g.score+=Math.round(520+Math.max(0,T.lastMargin)*900);arcadeAdvance(g,'CHANNEL CLEARED')}
+      g.roundProgress=clamp(T.progress/T.finish,0,1);
+      if(T.progress>=T.finish){g.score+=Math.round(520+Math.max(0,T.lastMargin)*900);arcadeAdvance(g,'CHANNEL CLEARED')}
     }
 
     // Moving chart-like channel world.
     rect(G.left,G.top,G.w,G.h,'#4d9bad');
-    const shipY=.76,look=.68;
+    const shipY=.76,look=.94;
     for(let i=0;i<18;i++){const y=G.y((i/17));line(G.left,y,G.right,y,'rgba(255,255,255,.055)',1)}
     const leftPts=[],rightPts=[];
     for(let q=0;q<=28;q++){
@@ -5061,9 +5079,9 @@ function arcadeRenderSteer(g,ts,G,dt,running){
     const rx=G.left+18,ry=G.y(.17),rh=G.h*.27;line(rx,ry,rx,ry+rh,'rgba(255,247,222,.25)',3);
     const rudY=ry+rh*(.5-T.rudder*.45);line(rx-7,rudY,rx+7,rudY,'#fff7de',3);pxText('RUDDER',rx,ry-10,'#fff7de',6,'center');
     pxText(T.rudderTarget<-.08?'PORT':T.rudderTarget>.08?'STARBOARD':'MIDSHIPS',G.left+34,G.y(.10),'#fff7de',8,'left');
-    pxText(`${Math.round(T.progress*100)}% CHANNEL`,G.right-14,G.y(.10),'#fff7de',8,'right');
-    const clear=arcadeTankerHullClearance(g),cue=clear.margin<.035?'SHOAL WATER — EASE AWAY':Math.abs(T.yaw)>.11&&Math.abs(T.rudder)<.12?'SWING STILL BUILDING':Math.abs(T.rudder)>.55?'RUDDER ON':'CONN THE NEXT BEND';
-    pxText(cue,G.cx,G.y(.95),clear.margin<.035?'#fff0b8':'rgba(255,247,222,.90)',9,'center');return
+    pxText(`${Math.round(clamp(T.progress/T.finish,0,1)*100)}% CHANNEL`,G.right-14,G.y(.10),'#fff7de',8,'right');
+    const clear=arcadeTankerHullClearance(g),cue=T.trafficWarn>.35?'ONCOMING TRAFFIC — KEEP STARBOARD':clear.margin<.035?'SHOAL WATER — EASE AWAY':Math.abs(T.yaw)>.11&&Math.abs(T.rudder)<.12?'SWING STILL BUILDING':Math.abs(T.rudder)>.55?'RUDDER ON':'CONN THE NEXT BEND';
+    pxText(cue,G.cx,G.y(.95),(clear.margin<.035||T.trafficWarn>.35)?'#fff0b8':'rgba(255,247,222,.90)',9,'center');return
   }
 
   if(!g.racers){arcadeSpeedSetup(g,g.round||1,d)}
@@ -6307,7 +6325,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.27.8',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.27.9',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
