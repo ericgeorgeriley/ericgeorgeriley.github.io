@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.27.6';
+const VERSION_LABEL='0.27.7';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -4435,6 +4435,18 @@ function arcadeRiggingBuild(r){
   const seqLen=Math.min(workNodes.length,3+Math.floor((r-1)/2));
   return{nodes,edges,workNodes,level,yardY,half,mast,seqLen,rows}
 }
+function arcadeRiggingHoist(R){
+  const open=clamp(R?.sailLoose||0,0,1);
+  return open*(.026+.004*(R?.level||0))
+}
+function arcadeRiggingNodePoint(R,G,node){
+  const n=typeof node==='number'?R.nodes[node]:node,hoist=arcadeRiggingHoist(R);
+  if(!n)return{x:G.cx,y:G.y(.84)};
+  // Lower shrouds barely move; upper rig, mast and yard rise together as the sail is worked.
+  const liftWeight=n.kind==='deck'?0:n.kind==='yard'||n.kind==='mast'?1:clamp((.82-n.y)/Math.max(.08,.82-R.yardY),.10,1);
+  return{x:G.x(n.x),y:G.y(n.y-hoist*liftWeight)}
+}
+
 function arcadeRiggingConnected(R,a,b){return R.edges.some(e=>(e[0]===a&&e[1]===b)||(e[1]===a&&e[0]===b))}
 function arcadeRiggingPath(R,start,target){
   if(start===target)return[];const q=[start],prev=new Map([[start,-1]]);
@@ -5585,30 +5597,33 @@ function arcadeRenderRigging(g,ts,G,dt,running){
 
   const deckY=.79;
   roundedRect(G.x(.19),G.y(deckY),G.w*.62,G.h*.13,16,'#8b5a3c','#17313a',4);rect(G.x(.23),G.y(deckY),G.w*.54,G.h*.035,'#c59a62','#17313a',2);
-  const mastX=G.cx,mastTop=G.y(.095),mastBottom=G.y(.84);rect(mastX-8,mastTop,16,mastBottom-mastTop,'#704630','#17313a',2);rect(mastX-3,mastTop+5,4,mastBottom-mastTop-8,'#a86d45');
-  line(mastX-5,G.y(.23),G.x(.29),G.y(.82),'#463426',4);line(mastX+5,G.y(.23),G.x(.71),G.y(.82),'#463426',4);
+  const hoist=arcadeRiggingHoist(R),mastX=G.cx,mastTop=G.y(.095-hoist*.48),mastBottom=G.y(.84);
+  rect(mastX-8,mastTop,16,mastBottom-mastTop,'#704630','#17313a',2);rect(mastX-3,mastTop+5,4,mastBottom-mastTop-8,'#a86d45');
+  line(mastX-5,G.y(.23-hoist*.62),G.x(.29),G.y(.82),'#463426',4);line(mastX+5,G.y(.23-hoist*.62),G.x(.71),G.y(.82),'#463426',4);
 
-  // Navigation rig: denser rounds add real ratlins/cross-braces.
-  for(const [a,b] of R.edges){const A=R.nodes[a],B=R.nodes[b];line(G.x(A.x),G.y(A.y),G.x(B.x),G.y(B.y),(A.kind==='yard'||B.kind==='yard')?'#4b3527':'#6f5134',A.kind==='yard'||B.kind==='yard'?3:2)}
+  // Navigation rig rises with the mast/yard as the sequence is made fast.
+  for(const [a,b] of R.edges){const A=R.nodes[a],B=R.nodes[b],pa=arcadeRiggingNodePoint(R,G,A),pb=arcadeRiggingNodePoint(R,G,B);line(pa.x,pa.y,pb.x,pb.y,(A.kind==='yard'||B.kind==='yard')?'#4b3527':'#6f5134',A.kind==='yard'||B.kind==='yard'?3:2)}
 
-  const yy=G.y(R.yardY),yardL=G.w*R.half*2;
+  const yy=G.y(R.yardY-hoist),yardL=G.w*R.half*2;
   ctx.save();ctx.translate(mastX,yy);ctx.rotate(R.sway*.035);
   roundedRect(-yardL*.5,-7,yardL,14,5,'#805334','#17313a',2);rect(-yardL*.46,-3,yardL*.92,5,'#a86d45');
   ctx.beginPath();ctx.moveTo(-yardL*.46,9);ctx.quadraticCurveTo(0,31+Math.abs(R.sway)*8,yardL*.46,9);ctx.strokeStyle='#4b3527';ctx.lineWidth=3;ctx.stroke();
 
-  // Sail can never pass the deck. Sequence progress controls how much canvas is actually released.
+  // The sail begins gathered near the mast rather than as a short, very wide rectangle.
+  // Working the pattern both hoists the yard and progressively releases canvas to each side.
   const open=clamp(R.sailLoose,0,1),maxDrop=Math.max(22,G.y(deckY-.018)-yy);
   const seqLeft=R.sequence.filter(n=>R.nodes[n].x<.485).length,seqRight=R.sequence.filter(n=>R.nodes[n].x>.515).length;
   const doneLeft=R.completedPattern.filter(n=>R.nodes[n].x<.485).length,doneRight=R.completedPattern.filter(n=>R.nodes[n].x>.515).length;
-  const leftOpen=open>=.999?1:clamp(.20*open+.80*(seqLeft?doneLeft/seqLeft:open),0,1);
-  const rightOpen=open>=.999?1:clamp(.20*open+.80*(seqRight?doneRight/seqRight:open),0,1);
-  const topW=yardL*.84,leftW=yardL*(.12+.34*open+.24*leftOpen),rightW=yardL*(.12+.34*open+.24*rightOpen);
-  const leftDrop=Math.min(maxDrop,10+maxDrop*(.18*open+.82*leftOpen)),rightDrop=Math.min(maxDrop,10+maxDrop*(.18*open+.82*rightOpen));
+  const leftOpen=open>=.999?1:clamp(.16*open+.84*(seqLeft?doneLeft/seqLeft:open),0,1);
+  const rightOpen=open>=.999?1:clamp(.16*open+.84*(seqRight?doneRight/seqRight:open),0,1);
+  const topLeft=yardL*(.09+.14*open+.19*leftOpen),topRight=yardL*(.09+.14*open+.19*rightOpen);
+  const bottomLeft=yardL*(.06+.12*open+.17*leftOpen),bottomRight=yardL*(.06+.12*open+.17*rightOpen);
+  const leftDrop=Math.min(maxDrop,9+maxDrop*(.12*open+.88*leftOpen)),rightDrop=Math.min(maxDrop,9+maxDrop*(.12*open+.88*rightOpen));
   if(open>.005){
     const flutter=Math.sin(ts*.006+R.sway)*3*(1-open*.42),belly=Math.sin(ts*.0032+R.phase)*5*open;
-    poly([[-topW*.5,8],[topW*.5,8],[rightW+flutter+belly,rightDrop],[-leftW+flutter-belly,leftDrop]],'rgba(255,247,222,.94)','#704630',2);
-    for(let j=1;j<6;j++){const t=j/6,x=-topW*.5+topW*t,bx=lerp(-leftW,rightW,t)+flutter,by=lerp(leftDrop,rightDrop,t);line(x,10,bx,by,'rgba(112,70,48,.20)',1)}
-    if(open>=.999){line(-leftW*.95,leftDrop-2,rightW*.95,rightDrop-2,'rgba(112,70,48,.30)',2)}
+    poly([[-topLeft,8],[topRight,8],[bottomRight+flutter+belly,rightDrop],[-bottomLeft+flutter-belly,leftDrop]],'rgba(255,247,222,.94)','#704630',2);
+    for(let j=1;j<6;j++){const t=j/6,x=lerp(-topLeft,topRight,t),bx=lerp(-bottomLeft,bottomRight,t)+flutter,by=lerp(leftDrop,rightDrop,t);line(x,10,bx,by,'rgba(112,70,48,.20)',1)}
+    if(open>=.999)line(-bottomLeft*.96,leftDrop-2,bottomRight*.96,rightDrop-2,'rgba(112,70,48,.30)',2)
   }
   ctx.restore();
 
@@ -5616,7 +5631,7 @@ function arcadeRenderRigging(g,ts,G,dt,running){
   if(R.mode==='demo'&&R.demoPathVisible&&R.sequence.length){
     ctx.save();ctx.setLineDash([5,6]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,247,222,.72)';
     ctx.beginPath();
-    for(let j=0;j<R.sequence.length;j++){const n=R.nodes[R.sequence[j]],x=G.x(n.x),y=G.y(n.y);if(j===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
+    for(let j=0;j<R.sequence.length;j++){const p=arcadeRiggingNodePoint(R,G,R.sequence[j]);if(j===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)}
     ctx.stroke();ctx.restore()
   }
 
@@ -5624,7 +5639,7 @@ function arcadeRenderRigging(g,ts,G,dt,running){
   if(R.completedPattern.length){
     let from=R.mast;
     for(let j=0;j<R.completedPattern.length;j++){
-      const to=R.completedPattern[j],A=R.nodes[from],B=R.nodes[to],ax=G.x(A.x),ay=G.y(A.y),bx=G.x(B.x),by=G.y(B.y);
+      const to=R.completedPattern[j],A=R.nodes[from],B=R.nodes[to],pa=arcadeRiggingNodePoint(R,G,A),pb=arcadeRiggingNodePoint(R,G,B),ax=pa.x,ay=pa.y,bx=pb.x,by=pb.y;
       const dist=Math.hypot(bx-ax,by-ay),phase=(R.tasks.find(t=>t.node===to)?.ropePhase||0),wind=R.sway*(5+dist*.025)+Math.sin(ts*.0035+phase)*4;
       const sag=Math.min(30,7+dist*.08),mx=(ax+bx)/2+wind,my=(ay+by)/2+sag+Math.abs(R.sway)*4;
       ctx.beginPath();ctx.moveTo(ax,ay);ctx.quadraticCurveTo(mx,my,bx,by);ctx.strokeStyle='#d9c79b';ctx.lineWidth=3;ctx.stroke();
@@ -5634,21 +5649,22 @@ function arcadeRenderRigging(g,ts,G,dt,running){
 
   const flashNode=R.mode==='demo'&&R.demoStep>=0&&R.demoStep<R.sequence.length?R.sequence[R.demoStep]:-1;
   for(let i=0;i<R.nodes.length;i++){
-    const n=R.nodes[i],task=R.tasks.find(t=>t.node===i),x=G.x(n.x),y=G.y(n.y),flash=i===flashNode;
+    const n=R.nodes[i],task=R.tasks.find(t=>t.node===i),pt=arcadeRiggingNodePoint(R,G,n),x=pt.x,y=pt.y,flash=i===flashNode;
     if(n.work){
       const done=!!task?.done;
-      circle(x,y,flash?13:done?6:7,flash?'rgba(229,181,78,.30)':done?'rgba(131,191,106,.16)':'rgba(255,247,222,.08)',flash?'#e5b54e':done?'#83bf6a':'rgba(255,247,222,.62)',flash?3:1);
-      if(flash)pxText(String(R.demoStep+1),x,y-18,'#fff7de',8,'center')
-    }else circle(x,y,3,'rgba(255,247,222,.20)','rgba(255,247,222,.36)',1)
+      // Darker teal/ink nodes remain legible over cream sail canvas.
+      circle(x,y,flash?13:done?6:7,flash?'rgba(229,181,78,.24)':done?'rgba(63,116,98,.24)':'rgba(23,49,58,.18)',flash?'#8a5c2c':done?'#376f5a':'#17313a',flash?3:2);
+      if(flash)pxText(String(R.demoStep+1),x,y-18,'#17313a',8,'center')
+    }else circle(x,y,3,'rgba(23,49,58,.12)','#31545a',1)
   }
 
   let px,py,ang=0,walk=Math.floor(ts/180)%4;
-  if(R.fallAt){const A=R.nodes[R.fallFrom]||R.nodes[R.current],ft=clamp((ts-R.fallAt)/850,0,1);px=G.x(A.x)+Math.sin(ft*7)*12;py=G.y(A.y)+Math.sin(ft*Math.PI)*G.h*.14;ang=Math.sin(ft*8)*.28}
-  else if(R.moving){const A=R.nodes[R.moving.from],B=R.nodes[R.moving.to],t=clamp((ts-R.moving.at)/R.moving.duration,0,1);px=lerp(G.x(A.x),G.x(B.x),t);py=lerp(G.y(A.y),G.y(B.y),t)-Math.sin(t*Math.PI)*4;ang=R.sway*.025}
-  else{const A=R.nodes[R.current];px=G.x(A.x);py=G.y(A.y);ang=A.kind==='yard'?R.sway*.03:0}
+  if(R.fallAt){const A=R.nodes[R.fallFrom]||R.nodes[R.current],ap=arcadeRiggingNodePoint(R,G,A),ft=clamp((ts-R.fallAt)/850,0,1);px=ap.x+Math.sin(ft*7)*12;py=ap.y+Math.sin(ft*Math.PI)*G.h*.14;ang=Math.sin(ft*8)*.28}
+  else if(R.moving){const A=arcadeRiggingNodePoint(R,G,R.moving.from),B=arcadeRiggingNodePoint(R,G,R.moving.to),t=clamp((ts-R.moving.at)/R.moving.duration,0,1);px=lerp(A.x,B.x,t);py=lerp(A.y,B.y,t)-Math.sin(t*Math.PI)*4;ang=R.sway*.025}
+  else{const N=R.nodes[R.current],A=arcadeRiggingNodePoint(R,G,N);px=A.x;py=A.y;ang=N.kind==='yard'?R.sway*.03:0}
   drawArcadeRiggingPerson(px,py,1.12,walk,ang);
 
-  if(R.working){const n=R.nodes[R.current],x=G.x(n.x),y=G.y(n.y),p=R.working.progress||0;line(x+4,y-4,x+13,y+12+Math.sin(ts*.02)*4,'#d9c79b',2);circle(x,y,10+p*5,'rgba(229,181,78,.08)','#e5b54e',2)}
+  if(R.working){const pt=arcadeRiggingNodePoint(R,G,R.current),x=pt.x,y=pt.y,p=R.working.progress||0;line(x+4,y-4,x+13,y+12+Math.sin(ts*.02)*4,'#d9c79b',2);circle(x,y,10+p*5,'rgba(229,181,78,.08)','#e5b54e',2)}
   ctx.restore();
 
   const gx=G.right-23,gy=G.y(.23),gh=G.h*.34;line(gx,gy,gx,gy+gh,'rgba(255,247,222,.20)',4);line(gx-7,gy+gh*(1-R.grip),gx+7,gy+gh*(1-R.grip),R.grip<.32?'#df7c68':'#fff7de',3);pxText('GRIP',gx,gy-10,'#fff7de',6,'center');
@@ -5977,7 +5993,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='lanes'){if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeLanesDrop(g,nx,ny)}
   else if(e==='rigging'&&type==='down'){
     const R=g.rig;if(!R||R.mode!=='input')return;let best=-1,bestD=38;
-    for(let i=0;i<R.nodes.length;i++){const n=R.nodes[i],dist=Math.hypot(x-G.x(n.x),y-G.y(n.y));if(dist<bestD){best=i;bestD=dist}}
+    for(let i=0;i<R.nodes.length;i++){const p=arcadeRiggingNodePoint(R,G,i),dist=Math.hypot(x-p.x,y-p.y);if(dist<bestD){best=i;bestD=dist}}
     if(best>=0)arcadeRiggingQueueTarget(g,best,performance.now())
   }
   else if(e==='depth'&&(type==='down'||type==='move'))g.targetY=clamp(ny,.07,.93);
@@ -6116,7 +6132,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.27.6',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.27.7',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
