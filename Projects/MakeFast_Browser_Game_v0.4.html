@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.26.31';
+const VERSION_LABEL='0.26.32';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -530,7 +530,7 @@ const CONTENT={
     research_sonar:{title:'SONAR HUNT',icon:'◉',group:'Research Ship',engine:'sonar',desc:'Run a live research-sonar survey: steer the towfish through a submerged canyon, listen for bearing echoes and classify real seabed targets among wreckage, rock and marine life.',instruction:'STEER THE TOWFISH • PING TO READ BEARING AND RANGE • CLOSE ON THE RETURN • MARK THE TARGET WHEN THE IMAGE RESOLVES',duration:0,rewardThreshold:450,benchmark:1550,theme:'research'},
     rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Pull back the lifering, judge the wind and throw it beside the survivor.',instruction:'GRAB THE RING BY THE BOAT • PULL BACK • RELEASE TO THROW',duration:22,rewardThreshold:450,benchmark:1500,theme:'rescue'},
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'timing',desc:'Match the larger ship and make the transfer at the safe moment.',instruction:'TAP WHEN BOTH VESSELS ALIGN',duration:21,rewardThreshold:450,benchmark:1500,theme:'pilot'},
-    dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Work the crane bucket through the seabed, lift clean material and swing it back into the hopper.',instruction:'DRAG THE BUCKET • SCOOP GOLD SEABED • DELIVER IT TO THE HOPPER • AVOID PIPES',duration:25,rewardThreshold:550,benchmark:1750,theme:'dredger'},
+    dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Work a suspended grab through a living seabed, dig clean material and bring each load safely back to the hopper.',instruction:'DRAG TO POSITION THE TROLLEY AND CABLE • SETTLE THE GRAB INTO GOLD SEDIMENT • PRESS GRAB / DUMP • LIFT CLEAR OF PIPES • DUMP OVER THE HOPPER',duration:0,rewardThreshold:550,benchmark:1750,theme:'dredger'},
     barge_balance:{title:'BARGE BALANCE',icon:'▰',group:'Cargo Barge',engine:'lanes',desc:'Choose where each load goes and keep the barge from listing to port or starboard.',instruction:'DRAG EACH LOAD TO ANY BAY • KEEP PORT AND STARBOARD WEIGHTS CLOSE',duration:27,rewardThreshold:600,benchmark:1900,theme:'barge'},
     cargo_tetris:{title:'HOLD PACKER',icon:'▦',group:'Cargo Barge',engine:'stack',desc:'Pack awkward cargo blocks into a tight hold without building a dangerous tower.',instruction:'TAP A COLUMN TO DROP • FLAT STACKS SCORE MORE',duration:28,rewardThreshold:600,benchmark:1950,theme:'barge'},
     tallship_rigging:{title:'ALOFT!',icon:'⚑',group:'Tall Ship',engine:'rigging',desc:'Follow the bosun’s rope sequence and raise sail without tangling the rig.',instruction:'WATCH THE FLASHING ROPES, THEN TAP THEM BACK IN THE SAME ORDER',duration:26,rewardThreshold:500,benchmark:1700,theme:'tallship'},
@@ -3270,7 +3270,7 @@ const ARCADE_V26_COPY={
   research_sonar:{desc:'Find successive seabed returns with larger survey grids and tighter ping budgets.',instruction:'PING EFFICIENTLY • FOLLOW THE ECHO • FIND EACH TARGET BEFORE PINGS RUN OUT'},
   rescue_throw:{desc:'Place rings beside drifting survivors as wind and range change from rescue to rescue.',instruction:'PULL BACK AND THROW • LEAD THE DRIFT • ALLOW FOR THE WIND'},
   pilot_transfer:{desc:'Match moving vessels through heave and changing relative speed for repeated safe transfers.',instruction:'TAP WHEN RELATIVE POSITION AND DECK HEIGHT ALIGN'},
-  dredger_scoop:{desc:'Work procedural seabeds with moving bucket inertia, valuable patches and denser live pipes.',instruction:'SCOOP CLEAN MATERIAL • LIFT CLEAR • SWING TO THE HOPPER'},
+  dredger_scoop:{desc:'Operate a real suspended dredging grab through layered sediment, rock and live seabed services as the crane and vessel move in the swell.',instruction:'POSITION THE GRAB • LET IT SETTLE • CLOSE INTO CLEAN SEDIMENT • LIFT CLEAR • OPEN OVER THE HOPPER'},
   barge_balance:{desc:'Stow a growing manifest of loads with different weight and footprint without capsizing.',instruction:'PLACE EACH LOAD • WATCH SPACE AND PORT/STARBOARD WEIGHT'},
   cargo_tetris:{desc:'Pack rotating irregular cargo into a real hold grid and keep making room for the next load.',instruction:'TAP A COLUMN TO DROP • FIT THE SHAPES • DON’T BOX YOURSELF IN'},
   tallship_rigging:{desc:'Repeat longer rope calls on changing rig layouts as the bosun’s demonstration speeds up.',instruction:'WATCH THE ROPE ORDER • REPEAT IT • EACH ROUND ADDS PRESSURE'},
@@ -4081,7 +4081,44 @@ function arcadeV26SetupSonar(g,r,d){
 function arcadeV26NewAimTarget(g){g.target={x:arcadeV26Rand(g,.66,.90),y:arcadeV26Rand(g,.20,.54),vx:arcadeV26Rand(g,-.012,.012)*arcadeV26Difficulty(g),vy:arcadeV26Rand(g,-.005,.005)};g.wind=arcadeV26Rand(g,-.10,.10)*Math.min(2,arcadeV26Difficulty(g));g.projectile=null;g.dragging=false;g.pull={...g.origin};g.readyAt=0}
 function arcadeV26SetupAim(g,r,d){arcadeV26ResetCommon(g,2+Math.floor(r/4));g.origin={x:.20,y:.79};g.throws=[];arcadeV26NewAimTarget(g)}
 function arcadeV26SetupDredge(g,r,d){
-  arcadeV26ResetCommon(g,3+Math.floor(r/3));g.bucket={x:.55,y:.34,targetX:.55,targetY:.34,vx:0,vy:0,load:0,dragging:false};g.hopper={x:arcadeV26Rand(g,.22,.34),y:.115};const patchCount=Math.min(11,7+Math.floor(r/2));g.patches=Array.from({length:patchCount},()=>({x:arcadeV26Rand(g,.13,.88),y:arcadeV26Rand(g,.72,.91),taken:false,respawnAt:0}));const pipeCount=Math.min(4,2+Math.floor((r-1)/4));g.pipes=Array.from({length:pipeCount},(_,i)=>{const x1=arcadeV26Rand(g,.28,.70),y1=arcadeV26Rand(g,.76,.91),len=arcadeV26Rand(g,.22,.38);return{x1,y1,x2:clamp(x1+(i%2? -len:len),.10,.92),y2:clamp(y1+arcadeV26Rand(g,-.08,.08),.70,.94)}});g.pipeCool=0
+  arcadeV26ResetCommon(g,3+Math.min(4,Math.floor((r-1)/2)));
+  g.dredge={
+    trolley:.58,targetTrolley:.58,trolleyV:0,
+    cable:.46,targetCable:.46,cableV:0,
+    angle:0,omega:0,
+    open:true,load:0,loadKind:'clean',fill:0,
+    grabAt:0,dumpAt:0,settleMs:0,pipeHitAt:0,
+    cutX:.68+arcadeV26Rand(g,-.08,.08),silt:[],drops:[],splash:[]
+  };
+  g.hopper={x:.245,y:.335,w:.16,h:.065,fill:0};
+  const patchCount=Math.min(9,5+Math.floor(r/2));
+  g.patches=Array.from({length:patchCount},(_,i)=>({
+    x:arcadeV26Rand(g,.16,.89),
+    y:.805+arcadeV26Rand(g,-.012,.035),
+    r:arcadeV26Rand(g,.055,.095),
+    richness:arcadeV26Rand(g,.72,1.0),
+    remaining:1,
+    col:i%3===0?'#c9ad69':i%3===1?'#d6c287':'#bda66c'
+  }));
+  const pipeCount=Math.min(4,1+Math.floor((r-1)/2));
+  g.pipes=Array.from({length:pipeCount},(_,i)=>{
+    const y=.79+arcadeV26Rand(g,.015,.10),x1=arcadeV26Rand(g,.18,.65),len=arcadeV26Rand(g,.18,.30),dir=i%2?-1:1;
+    return{x1,y1:y,x2:clamp(x1+dir*len,.10,.91),y2:clamp(y+arcadeV26Rand(g,-.035,.035),.77,.91),warn:i%2?'WATER':'CABLE'}
+  });
+  // Clean dig patches are deliberately separated from live services.
+  for(const patch of g.patches){
+    for(let tries=0;tries<14;tries++){
+      let clear=true;
+      for(const pipe of g.pipes){
+        const vx=pipe.x2-pipe.x1,vy=pipe.y2-pipe.y1,wx=patch.x-pipe.x1,wy=patch.y-pipe.y1,t=clamp((wx*vx+wy*vy)/(vx*vx+vy*vy),0,1);
+        if(Math.hypot(patch.x-(pipe.x1+vx*t),patch.y-(pipe.y1+vy*t))<patch.r+.045){clear=false;break}
+      }
+      if(clear)break;
+      patch.x=arcadeV26Rand(g,.14,.90);patch.y=.805+arcadeV26Rand(g,-.012,.035)
+    }
+  }
+  g.dredgeRocks=Array.from({length:Math.min(8,3+r)},(_,i)=>({x:arcadeV26Rand(g,.09,.94),y:.84+arcadeV26Rand(g,0,.07),v:i%4}));
+  g.pipeCool=0;g.dredgeLoaded=0;g.dredgeSpills=0
 }
 function arcadeV26SetupLanes(g,r,d){arcadeV26ResetCommon(g,6+Math.min(8,r));g.items=[];g.drag=null;g.bayLoads=[0,0,0];g.baySpace=[6+Math.floor(r/3),6+Math.floor(r/3),6+Math.floor(r/3)];g.laneSpawn=Math.max(420,900-(r-1)*40)}
 function arcadeV26SetupRigging(g,r,d){
@@ -4946,8 +4983,179 @@ function arcadeV26RenderSonar(g,ts,G,dt,running){
 function arcadeV26RenderAim(g,ts,G,dt,running){
   const sec=dt/1000,T=g.target;if(running){T.x+=T.vx*sec;T.y+=T.vy*sec;if(T.x<.62||T.x>.93)T.vx*=-1;if(T.y<.17||T.y>.58)T.vy*=-1}const ox=G.x(g.origin.x),oy=G.y(g.origin.y),bob=Math.sin(ts*.004)*.012,tx=G.x(T.x),ty=G.y(T.y+bob);drawArcadeRescueBoat(ox,oy,1.44);drawArcadeCrew(ox-5,oy-26,'#e5b54e','#c75f52',1.0);circle(tx,ty+5,24,'rgba(101,189,209,.18)','#9bd8e2',2);drawTopVillager(tx,ty-9,'#df7c68','#e5b54e',1.45);if(running&&g.projectile){const p=g.projectile;p.vx+=g.wind*sec;p.x+=p.vx*sec;p.y+=p.vy*sec;p.z+=p.vz*sec;p.vz-=3.35*sec;if(p.z<=0&&ts-p.at>280){const dist=Math.hypot(p.x-T.x,p.y-(T.y+bob));g.throws.push({x:p.x,y:p.y,good:dist<.12,at:ts});if(dist<.12){arcadeV26Progress(g,1,Math.round(520*(1-dist/.12))+100,dist<.035?'PERFECT THROW':'SAFE THROW');arcadeV26NewAimTarget(g)}else{arcadeV26Strike(g,dist<.20?'JUST WIDE':'SHORT / WIDE');g.projectile=null;g.readyAt=ts+320}}}if(g.dragging){const px=G.x(g.pull.x),py=G.y(g.pull.y),dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,pow=clamp(Math.hypot(dx,dy)/.25,0,1);line(ox,oy,px,py,'#fff7de',3);circle(px,py,18,'rgba(0,0,0,0)','#e5b54e',3);roundedRect(G.x(.12),G.y(.88),G.w*.42,18,6,'rgba(255,255,255,.35)','#18313a',2);rect(G.x(.12)+3,G.y(.88)+3,(G.w*.42-6)*pow,12,pow>.78?'#df7c68':'#e5b54e')}if(g.projectile){const p=g.projectile;drawArcadeLifeRing(G.x(p.x),G.y(p.y)-p.z*G.h*.08,.72)}const windTxt=Math.abs(g.wind)<.02?'CALM':g.wind>0?'WIND →':'← WIND';pxText(`${windTxt} · ${g.roundProgress}/${g.roundGoal} RESCUES`,G.cx,G.y(.95),'#fff7de',9,'center')
 }
-function arcadeV26RenderDredge(g,ts,G,dt,running){
-  const B=g.bucket,sec=dt/1000;if(running){B.vx+=(B.targetX-B.x)*5.2*sec;B.vy+=(B.targetY-B.y)*4.4*sec;B.vx*=Math.pow(.90,dt/16.7);B.vy*=Math.pow(.90,dt/16.7);B.x=clamp(B.x+B.vx*sec,.08,.94);B.y=clamp(B.y+B.vy*sec,.12,.94)}for(const p of g.patches){if(p.taken&&ts>p.respawnAt){p.taken=false;p.x=arcadeV26Rand(g,.13,.88);p.y=arcadeV26Rand(g,.72,.91)}}if(running&&B.load===0){for(const p of g.patches){if(!p.taken&&Math.hypot(B.x-p.x,B.y-p.y)<.06){p.taken=true;p.respawnAt=ts+arcadeV26Rand(g,700,1400);B.load=1;arcadeV26SetFeedback(g,'BUCKET FULL · LIFT CLEAR','good');break}}}if(running&&B.load&&Math.hypot(B.x-g.hopper.x,B.y-g.hopper.y)<.10){B.load=0;arcadeV26Progress(g,1,285,'HOPPER LOAD')}if(running&&ts>g.pipeCool){for(const p of g.pipes){const vx=p.x2-p.x1,vy=p.y2-p.y1,wx=B.x-p.x1,wy=B.y-p.y1,t=clamp((wx*vx+wy*vy)/(vx*vx+vy*vy),0,1),dist=Math.hypot(B.x-(p.x1+vx*t),B.y-(p.y1+vy*t));if(dist<.041){g.pipeCool=ts+750;arcadeV26Strike(g,'PIPE STRIKE',70);B.load=0;B.targetY=.45;break}}}for(const p of g.pipes){line(G.x(p.x1),G.y(p.y1),G.x(p.x2),G.y(p.y2),'#b84f4c',18);line(G.x(p.x1),G.y(p.y1),G.x(p.x2),G.y(p.y2),'#f1d7bb',3)}for(const p of g.patches)if(!p.taken){const x=G.x(p.x),y=G.y(p.y);for(let k=0;k<7;k++)circle(x-18+(k%4)*11,y+Math.floor(k/4)*8,5,'#d6c287','#6f5b3f',1)}const hx=G.x(g.hopper.x),hy=G.y(g.hopper.y);roundedRect(hx-48,hy-26,96,50,7,'#554a3d','#18313a',3);pxText('HOPPER',hx,hy+5,'#f2e5c2',9,'center');const bx=G.x(B.x),by=G.y(B.y);line(G.x(.56),G.y(.105),bx,by-12,'#4e3829',3);drawArcadeBucket(bx,by,B.load?1.20:1.04);pxText(`${g.roundProgress}/${g.roundGoal} CLEAN LOADS · ${g.pipes.length} LIVE PIPES`,G.cx,G.y(.95),'#fff7de',9,'center')
+const ARCADE_DREDGE_V2632_BOAT_CACHE=new Map();
+function arcadeDredgeV2632BoatSprite(frame=0){
+  const key=((frame%4)+4)%4;if(ARCADE_DREDGE_V2632_BOAT_CACHE.has(key))return ARCADE_DREDGE_V2632_BOAT_CACHE.get(key);
+  const [c,g]=pixelCanvas(188,112),ink='#17313a',hull='#3b6064',hullHi='#52777a',hullDark='#29494f',cream='#efe4bf',wood='#805334',gold='#d6a84d',red='#c95f50',glass='#65bdd1',metal='#8c9b96';
+  spriteShadow(g,12,94,164,6,.18);
+  psOutlinePoly(g,[[7,72],[20,88],[48,96],[145,95],[180,78],[171,67],[131,62],[30,64]],hull,ink,1);
+  psPoly(g,[[16,72],[38,68],[137,67],[166,72],[146,86],[49,88],[27,83]],hullHi);
+  psPoly(g,[[47,88],[146,86],[137,95],[49,96]],hullDark);
+  psLine(g,21,76,163,75,cream,2);
+  // wheelhouse
+  psOutlinePoly(g,[[20,63],[27,37],[71,37],[80,64]],cream,ink,1);
+  psPoly(g,[[59,39],[71,40],[77,63],[63,63]],'#d7cca7');
+  for(const x of [30,44,58]){psRect(g,x,42,10,9,ink);psRect(g,x+1,43,8,7,glass)}
+  psRect(g,25,33,51,5,ink);psRect(g,29,31,43,3,cream);
+  // stack / lamps
+  psRect(g,34,22,7,11,hullDark);psRect(g,35,19,5,4,ink);psRect(g,17,55,4,4,gold);psRect(g,73,54,4,4,red);
+  // crane kingpost and lattice boom
+  psRect(g,86,54,10,24,ink);psRect(g,88,50,6,28,gold);
+  psLine(g,91,52,153,18,metal,4);psLine(g,94,59,156,24,metal,3);
+  for(let i=0;i<5;i++){const t=i/5,x=lerp(96,151,t),y=lerp(56,22,t);psLine(g,x,y,x+10,y+8,ink,1)}
+  psCircle(g,91,57,8,ink);psCircle(g,91,57,5,gold);
+  // hopper amidships
+  psOutlinePoly(g,[[104,68],[138,68],[145,85],[99,85]],'#6e604b',ink,1);
+  psPoly(g,[[105,70],[137,70],[140,78],[102,78]],'#8f7956');
+  // deck machinery / bollards
+  psRect(g,77,69,12,8,wood);psCircle(g,81,65,4,metal,ink,1);
+  for(const x of [15,164]){psRect(g,x,67,4,6,ink);psRect(g,x-1,65,6,3,metal)}
+  // registration/rivets
+  psRect(g,43,76,17,6,cream);psRect(g,46,78,3,2,ink);psRect(g,51,78,3,2,ink);psRect(g,56,78,2,2,ink);
+  for(const x of [117,126,135,144])psRect(g,x,89,2,2,metal);
+  ARCADE_DREDGE_V2632_BOAT_CACHE.set(key,c);return c
+}
+function arcadeDredgeV2632GrabPoint(g){
+  const D=g.dredge,pivotX=D.trolley,pivotY=.245,len=D.cable;
+  return{x:pivotX+Math.sin(D.angle)*len*.42,y:pivotY+Math.cos(D.angle)*len}
+}
+function arcadeDredgeV2632PipeDistance(B,p){
+  const vx=p.x2-p.x1,vy=p.y2-p.y1,wx=B.x-p.x1,wy=B.y-p.y1,t=clamp((wx*vx+wy*vy)/(vx*vx+vy*vy),0,1);
+  return Math.hypot(B.x-(p.x1+vx*t),B.y-(p.y1+vy*t))
+}
+function arcadeDredgeV2632Action(g,ts=performance.now()){
+  const D=g.dredge,B=arcadeDredgeV2632GrabPoint(g);
+  if(D.grabAt||D.dumpAt)return;
+  if(D.load>0){
+    const over=Math.abs(B.x-g.hopper.x)<g.hopper.w*.55&&B.y<g.hopper.y-.015;
+    if(!over){arcadeV26SetFeedback(g,'BRING THE LOAD OVER THE HOPPER','neutral',420);return}
+    D.open=true;D.dumpAt=ts;D.drops=Array.from({length:12},(_,i)=>({x:B.x+arcadeV26Rand(g,-.018,.018),y:B.y+.015,vx:arcadeV26Rand(g,-.025,.025),vy:arcadeV26Rand(g,.04,.11),r:arcadeV26Rand(g,2,5)}));
+    arcadeV26SetFeedback(g,'HOPPER LOAD','good',720);beep('soft');return
+  }
+  if(!D.open){D.open=true;arcadeV26SetFeedback(g,'GRAB OPEN','neutral',260);return}
+  if(B.y<.76){arcadeV26SetFeedback(g,'LOWER THE GRAB TO THE BOTTOM','neutral',420);return}
+  const motion=Math.abs(D.omega)+Math.abs(D.trolleyV)*.9+Math.abs(D.cableV)*.8;
+  if(motion>.20){arcadeV26SetFeedback(g,'LET THE GRAB SETTLE','neutral',420);return}
+  let best=null,bestD=.11;
+  for(const p of g.patches){
+    if(p.remaining<=.05)continue;const dd=Math.hypot(B.x-p.x,(B.y-.025)-p.y);
+    if(dd<bestD){best=p;bestD=dd}
+  }
+  D.open=false;D.grabAt=ts;
+  if(best){
+    const quality=clamp(1-bestD/.11,.2,1),take=Math.min(best.remaining,.32+.34*quality);
+    best.remaining=Math.max(0,best.remaining-take);D.fill=clamp(.55+quality*.45,0,1);D.load=D.fill;D.loadKind='clean';
+    D.silt=Array.from({length:18},(_,i)=>({x:B.x+arcadeV26Rand(g,-.04,.04),y:B.y+arcadeV26Rand(g,-.015,.02),vx:arcadeV26Rand(g,-.08,.08),vy:arcadeV26Rand(g,-.11,-.025),life:arcadeV26Rand(g,.5,1)}));
+    g.score+=Math.round(80+quality*120);arcadeV26SetFeedback(g,quality>.78?'CLEAN BITE':'GRAB LOADED','good',600);beep('soft')
+  }else{
+    D.fill=0;D.load=0;D.loadKind='empty';arcadeV26SetFeedback(g,'EMPTY BITE','neutral',420)
+  }
+}function arcadeV26RenderDredge(g,ts,G,dt,running){
+  const D=g.dredge,sec=dt/1000;
+  if(running){
+    const prevTV=D.trolleyV;
+    D.trolleyV+=(D.targetTrolley-D.trolley)*sec*4.2;D.trolleyV*=Math.pow(.91,dt/16.7);D.trolley=clamp(D.trolley+D.trolleyV*sec,.18,.88);
+    D.cableV+=(D.targetCable-D.cable)*sec*4.0;D.cableV*=Math.pow(.90,dt/16.7);D.cable=clamp(D.cable+D.cableV*sec,.045,.69);
+    const accel=(D.trolleyV-prevTV)/Math.max(.001,sec);
+    D.omega+=(-Math.sin(D.angle)*2.5-accel*.68-Math.sin(ts*.0011)*.035)*sec;
+    D.omega*=Math.pow(.982,dt/16.7);D.angle=clamp(D.angle+D.omega*sec,-.55,.55);
+  }
+  const B=arcadeDredgeV2632GrabPoint(g);
+
+  // successful dump particles and progression
+  if(D.dumpAt){
+    for(const q of D.drops){if(running){q.vy+=.34*sec;q.x+=q.vx*sec;q.y+=q.vy*sec}circle(G.x(q.x),G.y(q.y),q.r,'#c9ad69','#6f5b3f',1)}
+    if(ts-D.dumpAt>720&&D.load>0){
+      g.hopper.fill=clamp(g.hopper.fill+D.load/(g.roundGoal*1.15),0,1);g.dredgeLoaded++;D.load=0;D.fill=0;D.dumpAt=0;D.drops=[];
+      arcadeV26Progress(g,1,300,'CLEAN LOAD')
+    }
+  }
+  if(D.grabAt&&ts-D.grabAt>360)D.grabAt=0;
+
+  // pipe collision uses actual suspended bucket position, not pointer target.
+  if(running&&ts>g.pipeCool&&B.y>.48){
+    for(const p of g.pipes){
+      if(arcadeDredgeV2632PipeDistance(B,p)<.034){
+        g.pipeCool=ts+900;D.pipeHitAt=ts;D.omega+=B.x<.5?.20:-.20;
+        arcadeV26Strike(g,'PIPE STRIKE',70);D.load=0;D.fill=0;D.open=true;D.targetCable=Math.max(.20,D.cable-.15);break
+      }
+    }
+  }
+
+  const waterY=G.y(.255),bedY=G.y(.80);
+  const sky=ctx.createLinearGradient(0,G.top,0,waterY);sky.addColorStop(0,'#b3cac4');sky.addColorStop(1,'#82a9ad');rect(G.left,G.top,G.w,waterY-G.top,sky);
+  const water=ctx.createLinearGradient(0,waterY,0,bedY);water.addColorStop(0,'#28616e');water.addColorStop(.56,'#174b59');water.addColorStop(1,'#103b46');rect(G.left,waterY,G.w,bedY-waterY,water);
+  for(let i=0;i<13;i++){const yy=waterY+18+i*28+Math.sin(ts*.0013+i)*4;line(G.x(.02+(i%3)*.04),yy,G.x(.58+((i*19)%30)/100),yy,'rgba(155,216,226,.10)',i%4===0?2:1)}
+
+  // seabed layers and cuttable clean sediment
+  poly([[G.left,bedY],[G.right,bedY],[G.right,G.bottom],[G.left,G.bottom]],'#4d574e');
+  for(let i=0;i<17;i++){const x=G.x(.02+i*.061),v=(i+g.round)%4;drawArcadeDepthSprite(i%3?'rock':'rock_slab',x,G.y(.88+(i%3)*.012),.62+(i%3)*.10,v,.5,.55,false);if(i%5===0)drawArcadeDepthSprite('kelp',x+8,G.y(.865),.58,v,.5,1,false)}
+  for(const p of g.patches){
+    if(p.remaining<=.03)continue;const x=G.x(p.x),y=G.y(p.y),rr=G.w*p.r*p.remaining;
+    ctx.save();ctx.globalAlpha=.55+.35*p.remaining;circle(x,y,rr,p.col,'#6f5b3f',1);
+    for(let k=0;k<9;k++){const a=k*2.17,rad=rr*(.18+.62*((k*37)%10)/10);circle(x+Math.cos(a)*rad,y+Math.sin(a)*rad*.42,2+(k%3),k%2?'#e4cf90':'#aa915e')}
+    ctx.restore()
+  }
+
+  // live pipes / cables are buried into the bottom with marker posts.
+  for(const p of g.pipes){
+    line(G.x(p.x1),G.y(p.y1),G.x(p.x2),G.y(p.y2),'#933f43',15);line(G.x(p.x1),G.y(p.y1),G.x(p.x2),G.y(p.y2),'#e2c8a7',3);
+    for(const q of [0,.5,1]){const x=lerp(G.x(p.x1),G.x(p.x2),q),y=lerp(G.y(p.y1),G.y(p.y2),q);line(x,y,x,y-18,'#e5b54e',2);poly([[x,y-18],[x+10,y-14],[x,y-10]],'#df7c68','#17313a',1)}
+  }
+
+  // living seabed details
+  drawArcadeDepthSprite('crab',G.x(.13),G.y(.88+Math.sin(ts*.0015)*.004),.76,1,.5,.62,false);
+  drawArcadeDepthSprite('fish',G.x(.76+Math.sin(ts*.0009)*.03),G.y(.64),.68,2,.5,.62,true);
+  drawArcadeDepthSprite('jelly',G.x(.54),G.y(.52+Math.sin(ts*.0014)*.018),.72,1,.5,.38,false);
+
+  // detailed dredger sprite on the surface
+  const boatSpr=arcadeDredgeV2632BoatSprite(Math.floor(ts/170)%4),boatX=G.x(.36),boatY=waterY+7,bw=boatSpr.width*.96,bh=boatSpr.height*.96;
+  ctx.save();ctx.translate(boatX,boatY);ctx.rotate(Math.sin(ts*.00108)*.018);ctx.imageSmoothingEnabled=false;ctx.drawImage(boatSpr,-bw*.5,-bh*.70,bw,bh);ctx.restore();
+  drawArcadeCrew(boatX-18,boatY-47+Math.sin(ts*.006)*2,'#e5b54e','#31545a',.68);
+  drawArcadeCrew(boatX+15,boatY-45-Math.sin(ts*.006)*1.3,'#83bf6a','#31545a',.66);
+
+  // crane head and cable geometry
+  const trolleyX=G.x(D.trolley),pivotY=G.y(.245);
+  line(G.x(.36),G.y(.16),G.x(.88),G.y(.16),'#8c9b96',4);
+  for(let i=0;i<6;i++){const x=lerp(G.x(.38),G.x(.86),i/5);line(x,G.y(.16),x+18,G.y(.12),'rgba(23,49,58,.55)',1)}
+  roundedRect(trolleyX-14,G.y(.145),28,20,4,'#d6a84d','#17313a',2);
+  circle(trolleyX,G.y(.165),5,'#704630','#17313a',1);
+  line(trolleyX,pivotY,G.x(B.x),G.y(B.y)-16,'#d8caa1',3);
+  line(trolleyX+4,pivotY,G.x(B.x)+5,G.y(B.y)-16,'rgba(216,202,161,.48)',1);
+
+  // grab bucket: two jaws visibly open/closed with fill inside.
+  const bx=G.x(B.x),by=G.y(B.y),open=D.open&&!D.grabAt;
+  ctx.save();ctx.translate(bx,by);ctx.rotate(D.angle*.35);
+  line(-7,-18,0,-10,'#704630',2);line(7,-18,0,-10,'#704630',2);
+  if(open){
+    poly([[-4,-10],[-24,-3],[-19,14],[-5,6]],'#8c9b96','#17313a',2);
+    poly([[4,-10],[24,-3],[19,14],[5,6]],'#788884','#17313a',2)
+  }else{
+    poly([[-4,-10],[-19,-2],[-13,15],[0,11]],'#8c9b96','#17313a',2);
+    poly([[4,-10],[19,-2],[13,15],[0,11]],'#788884','#17313a',2);
+    if(D.load>0){poly([[-11,3],[0,8],[11,3],[9,11],[0,15],[-9,11]],'#c9ad69','#6f5b3f',1);for(let i=0;i<4;i++)circle(-6+i*4,8+(i%2)*3,2,'#e4cf90')}
+  }
+  circle(0,-11,4,'#704630','#17313a',1);ctx.restore();
+
+  // silt plume after a bite
+  for(const q of D.silt){if(running){q.x+=q.vx*sec;q.y+=q.vy*sec;q.vy+=.08*sec;q.life-=sec*.72}circle(G.x(q.x),G.y(q.y),3+q.life*4,`rgba(198,174,117,${Math.max(0,q.life*.28)})`)}
+  D.silt=D.silt.filter(q=>q.life>0);
+
+  // hopper is world-space on vessel; fill rises visibly.
+  const hx=G.x(g.hopper.x),hy=G.y(g.hopper.y),hw=G.w*g.hopper.w,hh=G.h*g.hopper.h;
+  poly([[hx-hw*.5,hy-hh*.4],[hx+hw*.5,hy-hh*.4],[hx+hw*.40,hy+hh*.5],[hx-hw*.40,hy+hh*.5]],'rgba(72,82,70,.74)','#17313a',2);
+  if(g.hopper.fill>0){const fy=hy+hh*.42-hh*.72*g.hopper.fill;poly([[hx-hw*.35,fy],[hx+hw*.35,fy],[hx+hw*.36,hy+hh*.38],[hx-hw*.36,hy+hh*.38]],'#b89c65','#6f5b3f',1)}
+
+  // light machinery instrumentation only: cable scale + load indicator.
+  const cableX=G.right-22,ct=G.y(.34),ch=G.h*.31;line(cableX,ct,cableX,ct+ch,'rgba(255,247,222,.28)',4);
+  const cy=ct+ch*clamp((D.cable-.045)/.645,0,1);line(cableX-8,cy,cableX+8,cy,'#fff7de',3);pxText('CABLE',cableX,ct-10,'#fff7de',6,'center');
+  pxText(D.load>0?`GRAB ${Math.round(D.fill*100)}%`:(D.open?'GRAB OPEN':'GRAB CLOSED'),G.left+14,G.y(.10),D.load>0?'#f0d48a':'#fff7de',8,'left');
+  pxText(`${g.roundProgress}/${g.roundGoal} HOPPER LOADS`,G.left+14,G.y(.135),'#9bd8e2',7,'left');
+
+  const settled=Math.abs(D.omega)+Math.abs(D.trolleyV)*.9+Math.abs(D.cableV)*.8<.20;
+  const overHopper=Math.abs(B.x-g.hopper.x)<g.hopper.w*.55&&B.y<g.hopper.y-.015;
+  const cue=D.load>0?(overHopper?'PRESS GRAB / DUMP':'LIFT CLEAR • MOVE OVER HOPPER'):(B.y>.76?(settled?'PRESS GRAB / DUMP':'LET THE GRAB SETTLE'):'LOWER TO GOLD SEDIMENT');
+  pxText(cue,G.cx,G.y(.95),overHopper||settled?'#9bd8e2':'rgba(255,247,222,.88)',9,'center')
 }
 function arcadeV26SpawnLane(g,ts){const kind=Math.floor(arcadeV26Rand(g,0,3)),weight=[1,2,3][kind]+(g.round>=5&&arcadeV26Rand(g,0,1)<.2?1:0),width=arcadeV26Rand(g,0,1)<.25?2:1;g.items.push({x:arcadeV26Rand(g,.15,.85),y:arcadeV26Rand(g,.18,.55),kind,weight,width,born:ts});g.spawn=ts}
 function arcadeV26RenderLanes(g,ts,G,dt,running){if(running&&ts-g.spawn>g.laneSpawn&&g.items.length<7)arcadeV26SpawnLane(g,ts);for(const o of g.items){if(running&&ts-o.born>6500&&o!==g.drag){o.expired=true;arcadeV26Strike(g,'LOAD LEFT LOOSE')}const x=G.x(o.x),y=G.y(o.y);drawArcadeCargo(x,y,o.kind,1.15);pxText(`${o.weight}t/${o.width} BAY`,x,y+6,'#fff7de',7,'center')}g.items=g.items.filter(o=>!o.expired);for(let i=0;i<3;i++){const x=G.x(i/3+.015),w=G.w*.303;roundedRect(x,G.y(.77),w,G.h*.19,8,'rgba(255,255,255,.70)',['#df7c68','#e5b54e','#527da0'][i],3);pxText(['PORT','CENTRE','STARBOARD'][i],x+w/2,G.y(.85),'#18313a',10,'center');pxText(`${g.bayLoads[i]}t · ${g.baySpace[i]} spaces`,x+w/2,G.y(.91),'#18313a',8,'center')}pxText(`${g.roundProgress}/${g.roundGoal} MANIFEST LOADS`,G.cx,G.y(.71),'#fff7de',9,'center')
@@ -5211,7 +5419,7 @@ function arcadeV26RenderPoop(g,ts,G,dt,running){
 
 renderArcadeGame=function(g,ts){
   const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else drawArcadeDeck(g,ts,G);if(arcadeV26FinishIfFailed(g,ts))return;
-  if(g.engine==='timing')arcadeV26RenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeV26RenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeV26RenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeV26RenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeV26RenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeV26RenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeV26RenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeV26RenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeV26RenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeV26RenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeV26RenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeV26RenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeV26RenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeV26RenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeV26RenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeV26RenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeV26RenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeV26RenderPoop(g,ts,G,dt,running);if(!(g.engine==='meter'&&g.theme==='trawler'))arcadeFeedbackDraw(g,G,ts);arcadeV26DrawStatus(g,G,ts);if(g.combo>1)pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
+  if(g.engine==='timing')arcadeV26RenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeV26RenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeV26RenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeV26RenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeV26RenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeV26RenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeV26RenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeV26RenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeV26RenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeV26RenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeV26RenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeV26RenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeV26RenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeV26RenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeV26RenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeV26RenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeV26RenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeV26RenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'))arcadeFeedbackDraw(g,G,ts);arcadeV26DrawStatus(g,G,ts);if(g.combo>1)pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
 };
 
 function arcadeV26TimingInput(g){
@@ -5260,7 +5468,10 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
     }
   }
   else if(e==='aim'){const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.14;if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadeV26SetFeedback(g,'GRAB THE RING BY THE BOAT','neutral')}else if(type==='move'&&g.dragging){const dx=nx-g.origin.x,dy=ny-g.origin.y,dist=Math.max(.001,Math.hypot(dx,dy)),m=Math.min(.25,dist);g.pull={x:g.origin.x+dx/dist*m,y:g.origin.y+dy/dist*m}}else if(type==='up'&&g.dragging){g.dragging=false;const dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,p=Math.hypot(dx,dy);if(p<.055){arcadeV26SetFeedback(g,'PULL BACK FARTHER','neutral');g.pull={...g.origin};return}g.projectile={x:g.origin.x,y:g.origin.y,vx:dx*3.15,vy:dy*3.15,z:.01,vz:1.58,at:performance.now()};g.pull={...g.origin}}}
-  else if(e==='dredge'){if(type==='down'){g.bucket.dragging=true;g.bucket.targetX=clamp(nx,.08,.94);g.bucket.targetY=clamp(ny,.12,.94)}else if(type==='move'&&g.bucket.dragging){g.bucket.targetX=clamp(nx,.08,.94);g.bucket.targetY=clamp(ny,.12,.94)}else if(type==='up')g.bucket.dragging=false}
+  else if(e==='dredge'){
+    if(type==='down'||type==='move'){g.dredge.targetTrolley=clamp(nx,.18,.88);g.dredge.targetCable=clamp(ny-.245,.045,.69);g.dredge.dragging=true}
+    else if(type==='up')g.dredge.dragging=false
+  }
   else if(e==='lanes'){if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeV26LanesDrop(g,nx,ny)}
   else if(e==='rigging'&&type==='down'&&g.phase==='input'){for(let i=0;i<g.nodes.length;i++){const n=g.nodes[i];if(Math.hypot(x-G.x(n[0]),y-G.y(n[1]))<36){const want=g.seq[g.input.length];if(i===want){g.input.push(i);g.score+=65;g.combo++;g.bestStreak=Math.max(g.bestStreak,g.combo);arcadeV26SetFeedback(g,`${g.input.length}/${g.seq.length} RIGHT ROPE`,'good');if(g.input.length===g.seq.length){arcadeV26Reward(g,240+g.seq.length*45,'RIGGED');arcadeV26Advance(g,'SAIL SET')}}else{arcadeV26Strike(g,'WRONG ROPE',35);g.input=[];g.phase='show';g.showAt=performance.now()+320}break}}}
   else if(e==='depth'&&(type==='down'||type==='move'))g.targetY=clamp(ny,.07,.93);
@@ -5305,6 +5516,7 @@ function arcadeControlSpec(g){
   if(e==='crane')return[{a:'left',l:'← LEFT',k:'A / ←',hold:true},{a:'action',l:'RELEASE',k:'SPACE',primary:true},{a:'right',l:'RIGHT →',k:'D / →',hold:true}];
   if(e==='radar')return[{a:'radarAlert',l:'ALERT BRIDGE',k:'SPACE',primary:true}];
   if(e==='sonar')return[{a:'sonarPing',l:'PING',k:'SPACE',primary:true},{a:'sonarMark',l:'MARK TARGET',k:'M'}];
+  if(e==='dredge')return[{a:'dredgeGrab',l:'GRAB / DUMP',k:'SPACE',primary:true}];
   if(e==='stack'&&g.theme==='container')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
   if(e==='stack')return[1,2,3,4,5].map(n=>({a:`slot${n}`,l:String(n),k:String(n),compact:true}));
   if(e==='rigging')return[1,2,3,4,5,6,7].map(n=>({a:`rope${n}`,l:String(n),k:String(n),compact:true}));
@@ -5320,14 +5532,15 @@ function arcadeApplyControl(action,pressed=true){
     if(action==='up'||action==='powerUp'){g.plane.power=pressed?1:(g.plane.power>0?0:g.plane.power);return true}
     if(action==='down'||action==='powerDown'){g.plane.power=pressed?-1:(g.plane.power<0?0:g.plane.power);return true}
   }
-  if(action==='left'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?-1:(g.crane.control<0?0:g.crane.control);return true}return false}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX-step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket-step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control-.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value-.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x-.06,.05,.95);return true}
-  if(action==='right'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?1:(g.crane.control>0?0:g.crane.control);return true}return false}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX+step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket+step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control+.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value+.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x+.06,.05,.95);return true}
-  if(action==='up'){if(g.engine==='depth')g.targetY=clamp(g.targetY-.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY-.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y-.06,.08,.92);return true}
-  if(action==='down'){if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
+  if(action==='left'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?-1:(g.crane.control<0?0:g.crane.control);return true}return false}if(g.engine==='dredge'){g.dredge.targetTrolley=clamp(g.dredge.targetTrolley-.055,.18,.88);return true}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX-step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket-step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control-.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value-.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x-.06,.05,.95);return true}
+  if(action==='right'){if(g.engine==='crane'){if(!g.release){g.crane.control=pressed?1:(g.crane.control>0?0:g.crane.control);return true}return false}if(g.engine==='dredge'){g.dredge.targetTrolley=clamp(g.dredge.targetTrolley+.055,.18,.88);return true}if(g.engine==='steer'||g.engine==='poop')g.inputX=clamp(g.inputX+step,.05,.95);else if(g.engine==='catch')g.basket=clamp(g.basket+step,.08,.92);else if(g.engine==='balance')g.control=clamp(g.control+.065,0,1);else if(g.engine==='meter')g.value=clamp(g.value+.065,0,1);else if(g.engine==='tug')g.aim.x=clamp(g.aim.x+.06,.05,.95);return true}
+  if(action==='up'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable-.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY-.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY-.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y-.06,.08,.92);return true}
+  if(action==='down'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable+.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
   if(action==='pull'){if(g.engine==='meter'&&g.theme!=='yacht'){g.hold=!!pressed;return true}return false}
   if(action==='radarAlert'&&pressed&&g.engine==='radar'){arcadeRadarV2622Alert(g);return true}
   if(action==='sonarPing'&&pressed&&g.engine==='sonar'){arcadeSonarV2623Ping(g);return true}
   if(action==='sonarMark'&&pressed&&g.engine==='sonar'){arcadeSonarV2623Mark(g);return true}
+  if(action==='dredgeGrab'&&pressed&&g.engine==='dredge'){arcadeDredgeV2632Action(g);return true}
   if(action==='action'&&pressed){if(['timing','crane'].includes(g.engine)||(g.engine==='stack'&&g.theme==='container')){arcadePointer(g,'down',canvas.width/2,canvas.height/2);return true}}
   const slot=action.match(/^slot([1-5])$/);if(slot&&pressed&&g.engine==='stack'&&g.theme!=='container'){const n=+slot[1],G=arcadeGeom();arcadePointer(g,'down',G.x((n-.5)/5),G.y(.5));return true}
   const rope=action.match(/^rope([1-7])$/);if(rope&&pressed&&g.engine==='rigging'){const n=+rope[1]-1,node=g.nodes?.[n];if(node){const G=arcadeGeom();arcadePointer(g,'down',G.x(node[0]),G.y(node[1]));return true}}
@@ -5366,6 +5579,7 @@ function arcadeShellKeydown(e){
   else if((key===' '||key==='Enter')&&g.engine==='radar')handled=arcadeApplyControl('radarAlert',true);
   else if((key===' '||key==='Enter')&&g.engine==='sonar')handled=arcadeApplyControl('sonarPing',true);
   else if((key==='m'||key==='M')&&g.engine==='sonar')handled=arcadeApplyControl('sonarMark',true);
+  else if((key===' '||key==='Enter')&&g.engine==='dredge')handled=arcadeApplyControl('dredgeGrab',true);
   else if((key===' '||key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',true);
   else if(key===' '||key==='Enter')handled=arcadeApplyControl('action',true);
   else if(/^[1-5]$/.test(key)&&g.engine==='stack'&&g.theme!=='container')handled=arcadeApplyControl(`slot${key}`,true);
@@ -5385,7 +5599,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpritePr
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcade26={
-  version:'0.26.31',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.26.32',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
