@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.27.3';
+const VERSION_LABEL='0.27.4';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -5917,7 +5917,15 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
     else if(type==='up')g.dredge.dragging=false
   }
   else if(e==='lanes'){if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeLanesDrop(g,nx,ny)}
-  else if(e==='rigging'&&type==='down'&&g.phase==='input'){for(let i=0;i<g.nodes.length;i++){const n=g.nodes[i];if(Math.hypot(x-G.x(n[0]),y-G.y(n[1]))<36){const want=g.seq[g.input.length];if(i===want){g.input.push(i);g.score+=65;g.combo++;g.bestStreak=Math.max(g.bestStreak,g.combo);arcadeSetFeedback(g,`${g.input.length}/${g.seq.length} RIGHT ROPE`,'good');if(g.input.length===g.seq.length){arcadeRoundReward(g,240+g.seq.length*45,'RIGGED');arcadeAdvance(g,'SAIL SET')}}else{arcadeStrike(g,'WRONG ROPE',35);g.input=[];g.phase='show';g.showAt=performance.now()+320}break}}}
+  else if(e==='rigging'&&type==='down'){
+    const R=g.rig;if(!R)return;
+    let best=-1,bestD=34;
+    for(let i=0;i<R.nodes.length;i++){
+      const n=R.nodes[i],dist=Math.hypot(x-G.x(n.x),y-G.y(n.y));
+      if(dist<bestD){best=i;bestD=dist}
+    }
+    if(best>=0)arcadeRiggingMoveTo(g,best)
+  }
   else if(e==='depth'&&(type==='down'||type==='move'))g.targetY=clamp(ny,.07,.93);
   else if(e==='landing'&&(type==='down'||type==='move')){const dx=clamp(nx-.5,-.35,.35),dy=clamp(.52-ny,-.32,.32);g.plane.steer=clamp(dx*3.1,-1,1);g.plane.power=clamp(dy*3.0,-1,1);g.dragging=true}else if(e==='landing'&&type==='up'){g.plane.steer=0;g.plane.power=0;g.dragging=false;}
   else if(e==='poop'&&(type==='down'||type==='move'))g.inputX=clamp(nx,.14,.86)
@@ -5998,7 +6006,6 @@ function arcadeApplyControl(action,pressed=true){
   if(action==='dredgeGrab'&&pressed&&g.engine==='dredge'){arcadeDredgeAction(g);return true}
   if(action==='action'&&pressed){if(['timing','crane'].includes(g.engine)||(g.engine==='stack'&&g.theme==='container')){arcadePointer(g,'down',canvas.width/2,canvas.height/2);return true}}
   const slot=action.match(/^slot([1-5])$/);if(slot&&pressed&&g.engine==='stack'&&g.theme!=='container'){const n=+slot[1],G=arcadeGeom();arcadePointer(g,'down',G.x((n-.5)/5),G.y(.5));return true}
-  const rope=action.match(/^rope([1-7])$/);if(rope&&pressed&&g.engine==='rigging'){const n=+rope[1]-1,node=g.nodes?.[n];if(node){const G=arcadeGeom();arcadePointer(g,'down',G.x(node[0]),G.y(node[1]));return true}}
   return false
 }
 function renderArcadeControls(){
@@ -6055,7 +6062,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.27.3',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.27.4',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
