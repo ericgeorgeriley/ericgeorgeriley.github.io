@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.28.6';
+const VERSION_LABEL='0.28.8';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -528,7 +528,7 @@ const CONTENT={
     tanker_channel:{title:'NARROW CHANNEL',icon:'═',group:'Oil Tanker',engine:'steer',desc:'Con two deep-draught ships through the same confined tidal passage, switching bridges to set up a safe meeting while navigating shoals, islands and traffic.',instruction:'STEER THE ACTIVE SHIP • SWITCH SHIP TO CONTROL THE OTHER • SET BOTH UP FOR A CLEAR PASS • AVOID SHOALS, ISLANDS AND TRAFFIC',duration:0,rewardThreshold:700,benchmark:2200,theme:'tanker',heavy:true},
     naval_radar:{title:'RADAR WATCH',icon:'◎',group:'Naval Vessel',engine:'radar',desc:'Read a live radar picture, watch vessel tracks develop and alert the bridge when a projected course enters your danger ring.',instruction:'TAP A VESSEL TO TRACK IT • WATCH THE PROJECTED COURSE • ALERT BRIDGE IF IT ENTERS THE RED RING',duration:0,rewardThreshold:550,benchmark:1800,theme:'naval'},
     research_sonar:{title:'SONAR HUNT',icon:'◉',group:'Research Ship',engine:'sonar',desc:'Run a live research-sonar survey: steer the towfish through a submerged canyon, listen for bearing echoes and classify real seabed targets among wreckage, rock and marine life.',instruction:'STEER THE TOWFISH • PING TO READ BEARING AND RANGE • CLOSE ON THE RETURN • MARK THE TARGET WHEN THE IMAGE RESOLVES',duration:0,rewardThreshold:450,benchmark:1550,theme:'research'},
-    rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Pull back the lifering, judge the wind and throw it beside the survivor.',instruction:'GRAB THE RING BY THE BOAT • PULL BACK • RELEASE TO THROW',duration:22,rewardThreshold:450,benchmark:1500,theme:'rescue'},
+    rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Place a tethered lifering into moving water beside a drifting survivor, reading wind, current, swell and wreckage before committing the throw.',instruction:'GRAB THE RING ON THE RESCUE BOAT • PULL BACK TO SET DIRECTION AND POWER • RELEASE • WIND MOVES IT IN THE AIR, CURRENT MOVES IT AFTER SPLASHDOWN',duration:0,rewardThreshold:500,benchmark:1900,theme:'rescue'},
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'pilot',desc:'Work a pilot launch alongside increasingly difficult ships, match their motion and choose the instant when the transfer gap closes.',instruction:'A / D MATCH SPEED • W CLOSE IN • S EASE OFF • WATCH THE GREEN TRANSFER CIRCLE BREATHE WITH THE SWELL • SPACE TO JUMP',duration:0,rewardThreshold:550,benchmark:1750,theme:'pilot'},
     dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Work a suspended grab through a living seabed, dig clean material and bring each load safely back to the hopper.',instruction:'DRAG TO POSITION THE TROLLEY AND CABLE • SETTLE THE GRAB INTO GOLD SEDIMENT • PRESS GRAB / DUMP • LIFT CLEAR OF PIPES • DUMP OVER THE HOPPER',duration:0,rewardThreshold:550,benchmark:1750,theme:'dredger'},
     barge_balance:{title:'BARGE BALANCE',icon:'▰',group:'Cargo Barge',engine:'lanes',desc:'Choose where each load goes and keep the barge from listing to port or starboard.',instruction:'DRAG EACH LOAD TO ANY BAY • KEEP PORT AND STARBOARD WEIGHTS CLOSE',duration:27,rewardThreshold:600,benchmark:1900,theme:'barge'},
@@ -3266,7 +3266,7 @@ const ARCADE_COPY={
   cruise_buffet:{desc:'Keep differently weighted plates, cups and bottles on a rolling trolley through sudden wakes.',instruction:'COUNTER THE ROLL • EACH OBJECT HAS ITS OWN INERTIA'},
   cruise_deckchairs:{desc:'Sort drifting deck gear into changing storage zones before it reaches the rail.',instruction:'DRAG EACH ITEM TO ITS MATCHING ZONE • THE DECK GETS BUSIER'},
   trawler_net:{desc:'Haul a real net along the bottom and up to the stern while swell, catch weight and visible seabed obstructions change the load on the warp.',instruction:'HAUL WHILE THE WARP IS HEALTHY • EASE WHEN IT LOADS UP • IF THE NET CATCHES, KEEP EASING UNTIL IT CLIMBS FREE'},
-  trawler_sort:{desc:'Sort a moving catch while gulls close in and later rounds add bycatch to return.',instruction:'SORT THE FISH • RETURN BYCATCH OVERBOARD • DON’T LEAVE IT FOR THE GULLS'},
+  trawler_sort:{desc:'Work a live sorting deck where species, size, bycatch, crawling shellfish, gulls and passing wakes all change what needs doing.',instruction:'DRAG WHITE FISH, OILY FISH AND SHELLFISH TO THEIR OWN BOXES • RETURN UNDERSIZE AND BYCATCH OVERBOARD • DON’T LEAVE GOOD CATCH FOR THE GULLS'},
   yacht_trim:{desc:'Trim through changing points of sail and gusts; good shape drives each leg forward.',instruction:'FOLLOW THE WIND MARK • KEEP THE SAIL WORKING UNTIL THE LEG IS COMPLETE'},
   yacht_tack:{desc:'Link helm timing and sheet timing through a growing sequence of clean tacks.',instruction:'CATCH THE HELM WINDOW • THEN CATCH THE SHEET WINDOW'},
   speedboat_slalom:{desc:'Race a long procedural harbour circuit where every boat is affected by gates, wakes, gull strikes, debris and physical contact.',instruction:'STEER WITH MOMENTUM • HIT THE BOOST GATES • DODGE THE COURSE • FIGHT FOR POSITION'},
@@ -3274,7 +3274,7 @@ const ARCADE_COPY={
   tanker_channel:{desc:'Con a loaded tanker through increasingly confined tidal channels with real yaw inertia, bank effect, buoy gates and crossing traffic.',instruction:'RUDDER EARLY • COUNTER-RUDDER BEFORE THE BEND ENDS • KEEP CLEAR OF SHOALS, MARKS AND TRAFFIC'},
   naval_radar:{desc:'Read relative motion directly from the scope as vessel tracks build and project toward your ship.',instruction:'TAP A CONTACT • LET TWO SWEEPS BUILD ITS TRACK • ALERT ONLY IF THE PROJECTED LINE ENTERS THE DANGER RING'},
   research_sonar:{desc:'Find successive seabed returns with larger survey grids and tighter ping budgets.',instruction:'PING EFFICIENTLY • FOLLOW THE ECHO • FIND EACH TARGET BEFORE PINGS RUN OUT'},
-  rescue_throw:{desc:'Place rings beside drifting survivors as wind and range change from rescue to rescue.',instruction:'PULL BACK AND THROW • LEAD THE DRIFT • ALLOW FOR THE WIND'},
+  rescue_throw:{desc:'Work changing rescue scenes where the ring flies in the wind, then drifts with the current until the survivor can reach it.',instruction:'PULL BACK FROM THE BOAT • RELEASE TO THROW • LEAD THE SURVIVOR • READ WIND, CURRENT, WAVES AND WRECKAGE'},
   pilot_transfer:{desc:'Work progressively harder pilot ships through changing speed, swell and wake, then choose the instant the two decks rise together for the transfer.',instruction:'MATCH SPEED • COME ALONGSIDE • THE GREEN CIRCLE GROWS AS THE SWELL CLOSES THE GAP • JUMP FOR THE DECK OR LADDER'},
   dredger_scoop:{desc:'Operate a real suspended dredging grab through layered sediment, rock and live seabed services as the crane and vessel move in the swell.',instruction:'POSITION THE GRAB • LET IT SETTLE • CLOSE INTO CLEAN SEDIMENT • LIFT CLEAR • OPEN OVER THE HOPPER'},
   barge_balance:{desc:'Stow a growing manifest of loads with different weight and footprint without capsizing.',instruction:'PLACE EACH LOAD • WATCH SPACE AND PORT/STARBOARD WEIGHT'},
@@ -4009,10 +4009,122 @@ function arcadeSetupStack(g,r,d){
   arcadeResetCommon(g,7+Math.min(7,r));g.stackCursor=arcadeRand(g,.18,.82);g.stackDir=arcadeRand(g,0,1)>.5?1:-1;g.stackSpeed=.24+Math.min(.42,r*.026);g.cols=[0,0,0,0,0];g.colWeights=[0,0,0,0,0];g.grid=Array.from({length:8},()=>Array(7).fill(0));g.placed=0;
   if(g.theme==='container'){g.stackLoads=Array.from({length:5},()=>[]);g.stackBodies=[];g.stackDrop=null;g.stackSeaPhase=arcadeRand(g,0,6.28);g.stackRoll=0;g.stackRollV=0;arcadeNewContainerPiece(g)}else arcadeNewTetrisPiece(g)
 }
-function arcadeSpawnSort(g,ts){
-  const bycatch=g.theme==='trawler'&&g.round>=3&&arcadeRand(g,0,1)<Math.min(.28,.07*g.round),kind=bycatch?3:Math.floor(arcadeRand(g,0,3));g.items.push({x:arcadeRand(g,.15,.85),y:arcadeRand(g,.18,.55),vx:arcadeRand(g,-.018,.018)*arcadeDifficulty(g),vy:arcadeRand(g,.004,.017),kind,born:ts,dragging:false});g.spawn=ts
+
+const ARCADE_CATCH_SPECIES={
+  cod:{name:'COD',cat:'white',col:'#c8c7ab',dark:'#5b716e',accent:'#efe5bd',shape:'fish',size:1.12},
+  haddock:{name:'HADDOCK',cat:'white',col:'#aebbb2',dark:'#465b60',accent:'#d8d5ba',shape:'fish',size:1.02},
+  mackerel:{name:'MACKEREL',cat:'oily',col:'#6fa8a4',dark:'#31545a',accent:'#a5d1b0',shape:'striped',size:.96},
+  herring:{name:'HERRING',cat:'oily',col:'#8eb8c2',dark:'#496b73',accent:'#e0e5d6',shape:'fish',size:.84},
+  crab:{name:'BROWN CRAB',cat:'shell',col:'#bd774f',dark:'#6d4937',accent:'#e7a565',shape:'crab',size:.95,crawler:true},
+  lobster:{name:'LOBSTER',cat:'shell',col:'#b85e4e',dark:'#683e38',accent:'#e28d64',shape:'lobster',size:1.03,crawler:true},
+  smallcod:{name:'SMALL COD',cat:'return',col:'#c8c7ab',dark:'#5b716e',accent:'#efe5bd',shape:'fish',size:.66,undersize:true},
+  ray:{name:'THORNBACK RAY',cat:'return',col:'#8a806d',dark:'#4f5049',accent:'#b6aa8c',shape:'ray',size:1.06,protected:true},
+  dogfish:{name:'DOGFISH',cat:'return',col:'#7d9291',dark:'#3f5558',accent:'#a9b9b1',shape:'dogfish',size:1.00,protected:true},
+  starfish:{name:'STARFISH',cat:'return',col:'#d78959',dark:'#87523c',accent:'#efb66e',shape:'star',size:.76,protected:true}
+};
+const ARCADE_CATCH_SPRITES=new Map();
+function arcadeCatchSpeciesForRound(g){
+  const r=g.round||1;
+  let pool=['cod','mackerel'];
+  if(r>=2)pool.push('haddock','herring');
+  if(r>=3)pool.push('crab','smallcod');
+  if(r>=4)pool.push('ray','dogfish');
+  if(r>=5)pool.push('lobster');
+  if(r>=6)pool.push('starfish','crab');
+  return pool
 }
-function arcadeSetupSort(g,r,d){arcadeResetCommon(g,7+Math.min(8,r));g.items=[];g.drag=null;g.sortSpawn=Math.max(360,850-(r-1)*42);g.zoneOrder=[0,1,2];for(let i=g.zoneOrder.length-1;i>0;i--){const j=Math.floor(arcadeRand(g,0,i+1));[g.zoneOrder[i],g.zoneOrder[j]]=[g.zoneOrder[j],g.zoneOrder[i]]}for(let i=0;i<3;i++)arcadeSpawnSort(g,performance.now()-i*180)}
+function arcadeCatchScenario(r){
+  const n=((r-1)%7)+1,tier=Math.floor((r-1)/7);
+  const base=[
+    ['FIRST HAUL','WHITEFISH AND OILY FISH'],
+    ['MIXED SHOAL','MORE SPECIES ON THE TABLE'],
+    ['SIZE CHECK','SHELLFISH IN · SMALL FISH BACK'],
+    ['BYCATCH WATCH','PROTECTED CATCH MUST GO BACK'],
+    ['ROLLING DECK','A PASSING WAKE SHIFTS LOOSE CATCH'],
+    ['LIVE DECK','CRABS CRAWL · GULLS CLOSE IN'],
+    ['RUSH HAUL','EVERYTHING AT ONCE']
+  ][n-1];
+  return{index:n,tier,name:base[0],note:base[1],gulls:n>=4,wake:n>=5,crabs:n>=3,bycatch:n>=4,shell:n>=3}
+}
+function arcadeCatchZones(g){
+  const shell=(g.sortScenario?.shell??((g.round||1)>=3));
+  return{
+    return:{id:'return',x0:.045,x1:.205,y0:.20,y1:.84,label:'RETURN',sub:'OVERBOARD'},
+    white:{id:'white',x0:.245,x1:shell?.43:.515,y0:.775,y1:.955,label:'WHITE FISH',sub:'ICE'},
+    oily:{id:'oily',x0:shell?.445:.535,x1:shell?.625:.805,y0:.775,y1:.955,label:'OILY FISH',sub:'ICE'},
+    shell:shell?{id:'shell',x0:.64,x1:.82,y0:.775,y1:.955,label:'SHELLFISH',sub:'CRATE'}:null
+  }
+}
+function arcadeCatchZoneAt(g,nx,ny){
+  const Z=arcadeCatchZones(g);for(const z of Object.values(Z)){if(z&&nx>=z.x0&&nx<=z.x1&&ny>=z.y0&&ny<=z.y1)return z.id}return null
+}
+function arcadeCatchSprite(species,frame=0){
+  const S=ARCADE_CATCH_SPECIES[species]||ARCADE_CATCH_SPECIES.cod,key=species+':'+(frame%2);if(ARCADE_CATCH_SPRITES.has(key))return ARCADE_CATCH_SPRITES.get(key);
+  const[c,g]=pixelCanvas(54,34),ink='#17313a',f=frame%2;
+  if(S.shape==='crab'){
+    psOutlinePoly(g,[[16,11],[38,11],[45,18],[39,25],[15,25],[9,18]],S.col,ink,1);psRect(g,18,13,18,10,S.accent);psCircle(g,20,15,2,ink);psCircle(g,34,15,2,ink);
+    for(let i=0;i<3;i++){const yy=14+i*5;psLine(g,13,yy,4-(f?2:0),yy+(i-1)*4,S.dark,2);psLine(g,41,yy,50+(f?2:0),yy+(i-1)*4,S.dark,2)}
+    psOutlinePoly(g,[[12,12],[5,7],[2,10],[8,16]],S.col,ink,1);psOutlinePoly(g,[[42,12],[49,7],[52,10],[46,16]],S.col,ink,1)
+  }else if(S.shape==='lobster'){
+    psOutlinePoly(g,[[15,13],[37,11],[44,15],[43,21],[34,24],[16,23],[10,18]],S.col,ink,1);psLine(g,21,13,20,23,S.dark,1);psLine(g,27,12,27,24,S.dark,1);psLine(g,33,12,34,23,S.dark,1);
+    psOutlinePoly(g,[[11,15],[4,10],[2,13],[7,18]],S.accent,ink,1);psOutlinePoly(g,[[42,14],[50,9],[52,12],[47,18]],S.accent,ink,1);psLine(g,11,13,3,3,S.dark,1);psLine(g,14,12,9,2,S.dark,1)
+  }else if(S.shape==='ray'){
+    psOutlinePoly(g,[[27,5],[46,17],[34,27],[27,24],[20,27],[8,17]],S.col,ink,1);psPoly(g,[[27,8],[40,17],[27,22],[14,17]],S.accent);psLine(g,27,24,44,31,S.dark,2);psCircle(g,22,15,1,ink);psCircle(g,32,15,1,ink)
+  }else if(S.shape==='star'){
+    psOutlinePoly(g,[[27,4],[31,13],[42,9],[36,18],[45,24],[33,23],[31,32],[25,24],[15,29],[19,20],[9,16],[21,14]],S.col,ink,1);psCircle(g,27,18,4,S.accent,ink,1)
+  }else{
+    const tail=f?5:2,body=S.shape==='dogfish'?S.col:S.col;
+    psOutlinePoly(g,[[10,17],[17,10],[37,9],[46,15],[47,19],[37,25],[17,24]],body,ink,1);psOutlinePoly(g,[[11,17],[tail,10],[2,17],[tail,24]],S.accent,ink,1);
+    if(S.shape==='dogfish'){psOutlinePoly(g,[[28,10],[33,4],[36,10]],S.dark,ink,1);psOutlinePoly(g,[[36,23],[41,28],[42,21]],S.dark,ink,1);psRect(g,42,15,3,2,S.accent)}
+    else{psPoly(g,[[19,12],[37,11],[43,16],[36,18],[18,18]],S.accent);if(S.shape==='striped')for(let x=21;x<=37;x+=5)psLine(g,x,11,x-4,18,S.dark,1);psOutlinePoly(g,[[27,10],[31,5],[35,10]],S.dark,ink,1)}
+    psCircle(g,41,14,1,ink);psLine(g,19,21,36,21,S.dark,1)
+  }
+  ARCADE_CATCH_SPRITES.set(key,c);return c
+}
+function drawArcadeCatchSprite(species,x,y,scale,ts,rot=0,alpha=1){
+  const spr=arcadeCatchSprite(species,Math.floor(ts/190)%2),w=spr.width*scale,h=spr.height*scale;ctx.save();ctx.globalAlpha=alpha;ctx.translate(Math.round(x),Math.round(y));ctx.rotate(rot);ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(-w/2),Math.round(-h/2),Math.round(w),Math.round(h));ctx.restore()
+}
+function drawArcadeCatchBin(G,z,kind,fill=0){
+  if(!z)return;const x=G.x(z.x0),y=G.y(z.y0),w=G.w*(z.x1-z.x0),h=G.h*(z.y1-z.y0),ink='#17313a';
+  if(kind==='return'){
+    rect(x,y,w,h,'#315b68',ink,3);for(let yy=y+8;yy<y+h;yy+=12)line(x+5,yy,x+w-5,yy,'rgba(155,216,226,.17)',1);rect(x+w-9,y+3,7,h-6,'#6b5843',ink,1);pxText('RETURN',x+w/2,y+h*.46,'#fff7de',9,'center');pxText('OVERBOARD',x+w/2,y+h*.62,'#9bd8e2',6,'center');return
+  }
+  const col=kind==='white'?'#d8eef0':kind==='oily'?'#8fb9ae':'#9b6947';roundedRect(x,y,w,h,7,col,ink,3);
+  if(kind!=='shell'){for(let i=0;i<18;i++){const xx=x+7+(i*19%(Math.max(10,w-14))),yy=y+7+((i*11)%Math.max(10,h-28));rect(xx,yy,4,3,'rgba(255,255,255,.42)')}}
+  else{for(let yy=y+8;yy<y+h-18;yy+=12)line(x+5,yy,x+w-5,yy,'rgba(255,247,222,.18)',1)}
+  pxText(z.label,x+w/2,y+h-18,'#17313a',7,'center');pxText(z.sub,x+w/2,y+h-8,'rgba(23,49,58,.68)',5,'center');
+  if(fill>0){const n=Math.min(7,Math.floor(fill));for(let i=0;i<n;i++)kind==='shell'?drawArcadeCatchSprite(i%2?'crab':'lobster',x+13+(i%3)*16,y+14+Math.floor(i/3)*13,.34,0,(i%3-.8)*.12,.65):drawArcadeCatchSprite(kind==='white'?(i%2?'cod':'haddock'):(i%2?'mackerel':'herring'),x+13+(i%3)*18,y+13+Math.floor(i/3)*12,.30,0,(i%2?-.08:.08),.58)}
+}
+function arcadeCatchDrawGull(g,G,ts){
+  for(const U of g.sortGulls||[]){if(U.done)continue;const O=g.items.find(o=>o.id===U.target);if(!O)continue;const p=clamp((ts-U.at)/U.duration,0,1),sx=G.x(U.fromX),sy=G.y(U.fromY),tx=G.x(O.x),ty=G.y(O.y),x=lerp(sx,tx,p),y=lerp(sy,ty,p)-Math.sin(p*Math.PI)*G.h*.10;drawSeaSprite('gull',x,y,.72,p>.5,Math.floor(ts/150)%3);if(p>.78)circle(tx,ty+10,8,'rgba(23,49,58,.08)')}
+}
+function arcadeCatchUpdateGulls(g,ts){
+  if(!g.sortScenario?.gulls)return;
+  g.sortGulls=g.sortGulls||[];
+  if(ts>(g.nextGullAt||0)&&g.sortGulls.filter(u=>!u.done).length<1){const candidates=g.items.filter(o=>o!==g.drag&&o.dest!=='return'&&ts-o.born>1700);if(candidates.length){const O=candidates.sort((a,b)=>a.born-b.born)[0];g.sortGulls.push({target:O.id,at:ts,fromX:arcadeRand(g,.10,.72),fromY:.08,duration:1650-Math.min(420,(g.round-1)*35),done:false});g.nextGullAt=ts+Math.max(2200,4800-(g.round-1)*180);arcadeSetFeedback(g,'GULL DIVING FOR THE CATCH','neutral',460)}}
+  for(const U of g.sortGulls){if(U.done||ts-U.at<U.duration)continue;const idx=g.items.findIndex(o=>o.id===U.target);if(idx>=0&&g.items[idx]!==g.drag){const O=g.items[idx];g.items.splice(idx,1);U.done=true;arcadeStrike(g,`${ARCADE_CATCH_SPECIES[O.species].name} STOLEN`,45)}else U.done=true}
+  g.sortGulls=g.sortGulls.filter(u=>!u.done&&ts-u.at<u.duration+650)
+}
+function arcadeCatchJolt(g,ts){
+  if(!g.sortScenario?.wake)return;
+  if(!g.nextWakeAt)g.nextWakeAt=ts+4200;
+  if(ts>g.nextWakeAt-900&&ts<g.nextWakeAt&&!g.wakeWarned){g.wakeWarned=true;arcadeSetFeedback(g,'PASSING WAKE — BRACE THE TABLE','neutral',650)}
+  if(ts>=g.nextWakeAt){g.wakePulse=1;g.wakeWarned=false;g.nextWakeAt=ts+Math.max(4800,7200-(g.round-1)*150);for(const O of g.items){if(O===g.drag)continue;O.vx+=arcadeRand(g,-.035,.035);O.vy+=.012;O.spin+=arcadeRand(g,-.7,.7)}beep('soft')}
+}
+function arcadeSpawnSort(g,ts){
+  if(g.theme!=='trawler'){
+    const bycatch=false,kind=Math.floor(arcadeRand(g,0,3));g.items.push({x:arcadeRand(g,.15,.85),y:arcadeRand(g,.18,.55),vx:arcadeRand(g,-.018,.018)*arcadeDifficulty(g),vy:arcadeRand(g,.004,.017),kind,born:ts,dragging:false});g.spawn=ts;return
+  }
+  const pool=arcadeCatchSpeciesForRound(g),species=arcadeChoice(g,pool),S=ARCADE_CATCH_SPECIES[species],id=(g.sortSeq=(g.sortSeq||0)+1),startX=arcadeRand(g,.29,.66);
+  g.items.push({id,species,dest:S.cat,x:startX,y:arcadeRand(g,.205,.275),vx:arcadeRand(g,-.006,.006),vy:.014+Math.min(.020,(g.round-1)*.0018),spin:arcadeRand(g,-.20,.20),born:ts,dragging:false,crawlDir:arcadeRand(g,0,1)<.5?-1:1});g.spawn=ts
+}
+function arcadeSetupSort(g,r,d){
+  if(g.theme!=='trawler'){
+    arcadeResetCommon(g,7+Math.min(8,r));g.items=[];g.drag=null;g.sortSpawn=Math.max(360,850-(r-1)*42);g.zoneOrder=[0,1,2];for(let i=g.zoneOrder.length-1;i>0;i--){const j=Math.floor(arcadeRand(g,0,i+1));[g.zoneOrder[i],g.zoneOrder[j]]=[g.zoneOrder[j],g.zoneOrder[i]]}for(let i=0;i<3;i++)arcadeSpawnSort(g,performance.now()-i*180);return
+  }
+  const now=performance.now(),sc=arcadeCatchScenario(r);arcadeResetCommon(g,6+Math.min(6,Math.floor((r-1)*.8)));g.items=[];g.drag=null;g.sortScenario=sc;g.sortSpawn=Math.max(430,1000-(r-1)*48);g.sortSeq=0;g.sortGulls=[];g.nextGullAt=now+4200;g.nextWakeAt=sc.wake?now+5000:0;g.wakeWarned=false;g.wakePulse=0;g.sortSplashes=[];g.sortBins={white:0,oily:0,shell:0,returned:0};g.sortDeckSeed=arcadeRand(g,0,100);g.sortRollPhase=arcadeRand(g,0,6.28);g.roundProgress=0;
+  const initial=Math.min(3,1+Math.floor(r/2));for(let i=0;i<initial;i++)arcadeSpawnSort(g,now-i*420)
+}
 const ARCADE_TRAWL_CATCHES=[
   {name:'HERRING',mass:.78,drag:.15,fish:9,col:'#65bdd1',accent:'#9bd8e2'},
   {name:'MACKEREL',mass:.98,drag:.19,fish:8,col:'#83bf6a',accent:'#b9d99d'},
@@ -4679,8 +4791,39 @@ function arcadeSetupSonar(g,r,d){
   let good=g.sonarTargets.filter(t=>t.research).length;
   while(good<g.roundGoal){const t=arcadeSonarNewTarget(g,g.sonarTargets.length);t.kind=['wreck','vent','crates'][good%3];t.research=true;g.sonarTargets.push(t);good++}
 }
-function arcadeNewAimTarget(g){g.target={x:arcadeRand(g,.66,.90),y:arcadeRand(g,.20,.54),vx:arcadeRand(g,-.012,.012)*arcadeDifficulty(g),vy:arcadeRand(g,-.005,.005)};g.wind=arcadeRand(g,-.10,.10)*Math.min(2,arcadeDifficulty(g));g.projectile=null;g.dragging=false;g.pull={...g.origin};g.readyAt=0}
-function arcadeSetupAim(g,r,d){arcadeResetCommon(g,2+Math.floor(r/4));g.origin={x:.20,y:.79};g.throws=[];arcadeNewAimTarget(g)}
+function arcadeNewAimTarget(g){
+  const r=g.round||1,R=g.rescue||{},cycle=(r-1)%7,tier=Math.floor((r-1)/7),scale=1+Math.min(.65,tier*.14);
+  const defs=[
+    {id:'calm',label:'CALM WATER',wind:0,current:[0,0],sea:.18,weather:'clear',debris:0},
+    {id:'tide',label:'TIDAL DRIFT',wind:.010,current:[.006,-.020],sea:.28,weather:'clear',debris:0},
+    {id:'crosswind',label:'CROSSWIND',wind:.075,current:[-.004,-.010],sea:.36,weather:'breezy',debris:0},
+    {id:'wreck',label:'WRECKAGE',wind:-.045,current:[.010,-.014],sea:.42,weather:'cloudy',debris:3},
+    {id:'wake',label:'PASSING WAKE',wind:.035,current:[-.008,-.016],sea:.50,weather:'clear',debris:1,wake:true},
+    {id:'squall',label:'SQUALL',wind:-.090,current:[.014,-.022],sea:.66,weather:'rain',debris:2,gust:true},
+    {id:'night',label:'NIGHT SEARCH',wind:.060,current:[-.010,-.018],sea:.58,weather:'night',debris:2,search:true,gust:true}
+  ],D=defs[cycle];
+  R.scenario={...D};R.tier=tier;R.wind={x:D.wind*scale,y:(cycle===5?-.018:0)*scale};R.current={x:D.current[0]*scale,y:D.current[1]*scale};R.sea=Math.min(.92,D.sea+tier*.05);R.weather=D.weather;R.gustPhase=arcadeRand(g,0,6.28);R.wavePhase=arcadeRand(g,0,6.28);R.wake=D.wake?{p:-.15,speed:.13+.012*tier,hit:false}:null;R.flash=0;R.searchPhase=arcadeRand(g,0,6.28);
+  const target={x:arcadeRand(g,.60,.86),y:arcadeRand(g,.24,.55),vx:R.current.x*(.72+arcadeRand(g,0,.22)),vy:R.current.y*(.72+arcadeRand(g,0,.22)),phase:arcadeRand(g,0,6.28),grabbed:false};
+  if(cycle===0){target.x=.70;target.y=.40;target.vx=target.vy=0}
+  if(cycle===4){target.x=.77;target.y=.35}
+  if(cycle===6){target.x=.76;target.y=.38}
+  g.target=target;R.debris=[];
+  const count=D.debris+Math.min(2,tier);
+  for(let i=0;i<count;i++){
+    let o=null;
+    for(let tries=0;tries<30;tries++){
+      const x=arcadeRand(g,.39,.90),y=arcadeRand(g,.18,.70),rad=arcadeRand(g,.042,.072);
+      if(Math.hypot(x-target.x,y-target.y)<rad+.15||Math.hypot(x-g.origin.x,y-g.origin.y)<rad+.18)continue;
+      if(R.debris.some(q=>Math.hypot(x-q.x,y-q.y)<rad+q.rad+.07))continue;
+      o={x,y,rad,kind:(i+r)%4,phase:arcadeRand(g,0,6.28)};break
+    }
+    if(o)R.debris.push(o)
+  }
+  R.splashes=[];R.rescueAt=0;R.lastThrowScore=0;g.wind=R.wind.x;g.projectile=null;g.dragging=false;g.pull={...g.origin};g.readyAt=performance.now()+180
+}
+function arcadeSetupAim(g,r,d){
+  arcadeResetCommon(g,1);g.origin={x:.205,y:.80};g.throws=[];g.rescue={};g.continuous=true;arcadeNewAimTarget(g)
+}
 function arcadeSetupDredge(g,r,d){
   arcadeResetCommon(g,3+Math.min(4,Math.floor((r-1)/2)));
   g.dredge={
@@ -5146,7 +5289,45 @@ function arcadeRenderTetris(g,ts,G,dt,running){
 }
 function arcadeRenderStack(g,ts,G,dt,running){if(g.theme==='container')arcadeRenderContainerStack(g,ts,G,dt,running);else arcadeRenderTetris(g,ts,G,dt,running)}
 function arcadeRenderSort(g,ts,G,dt,running){
-  if(running&&ts-g.spawn>g.sortSpawn&&g.items.length<Math.min(10,5+g.round))arcadeSpawnSort(g,ts);for(const o of g.items){if(running&&o!==g.drag){o.x+=o.vx*dt/1000;o.y+=o.vy*dt/1000;o.x=clamp(o.x,.06,.94)}if(running&&ts-o.born>Math.max(2600,5600-g.round*120)&&o!==g.drag){o.expired=true;arcadeStrike(g,g.theme==='trawler'?'A GULL GOT IT':'OVER THE RAIL')}const x=G.x(o.x),y=G.y(o.y);if(g.theme==='trawler'){if(o.kind===3){drawSeaSprite('gull',x,y,.95,false,Math.floor(ts/180)%3);pxText('BYCATCH',x,y+24,'#fff7de',7,'center')}else drawArcadeFish(x,y,o.kind,1.0)}else{o.kind===0?rect(x-18,y-18,36,36,'#df7c68','#18313a',2):o.kind===1?circle(x,y,20,'rgba(0,0,0,0)','#e5b54e',8):roundedRect(x-24,y-13,48,26,5,'#527da0','#18313a',2)}}g.items=g.items.filter(o=>!o.expired);const cols=['#df7c68','#e5b54e','#527da0'];for(let zone=0;zone<3;zone++){const kind=g.zoneOrder[zone],x=G.x(zone/3+.015),w=G.w*.303;roundedRect(x,G.y(.78),w,G.h*.17,8,cols[kind],'#18313a',3);pxText(g.theme==='trawler'?['RED FISH','GOLD FISH','BLUE FISH'][kind]:['CHAIRS','RINGS','TOWELS'][kind],x+w/2,G.y(.88),'#fff7de',10,'center')}if(g.theme==='trawler'&&g.round>=3)pxText('BYCATCH → RETURN OVER THE TOP RAIL',G.cx,G.y(.72),'#fff7de',8,'center')
+  if(g.theme!=='trawler'){
+    if(running&&ts-g.spawn>g.sortSpawn&&g.items.length<Math.min(10,5+g.round))arcadeSpawnSort(g,ts);for(const o of g.items){if(running&&o!==g.drag){o.x+=o.vx*dt/1000;o.y+=o.vy*dt/1000;o.x=clamp(o.x,.06,.94)}if(running&&ts-o.born>Math.max(2600,5600-g.round*120)&&o!==g.drag){o.expired=true;arcadeStrike(g,'OVER THE RAIL')}const x=G.x(o.x),y=G.y(o.y);o.kind===0?rect(x-18,y-18,36,36,'#df7c68','#18313a',2):o.kind===1?circle(x,y,20,'rgba(0,0,0,0)','#e5b54e',8):roundedRect(x-24,y-13,48,26,5,'#527da0','#18313a',2)}g.items=g.items.filter(o=>!o.expired);const cols=['#df7c68','#e5b54e','#527da0'];for(let zone=0;zone<3;zone++){const kind=g.zoneOrder[zone],x=G.x(zone/3+.015),w=G.w*.303;roundedRect(x,G.y(.78),w,G.h*.17,8,cols[kind],'#18313a',3);pxText(['CHAIRS','RINGS','TOWELS'][kind],x+w/2,G.y(.88),'#fff7de',10,'center')}return
+  }
+  const sc=g.sortScenario,sec=dt/1000,table={x0:.225,x1:.755,y0:.16,y1:.735};
+  if(running){
+    if(ts-g.spawn>g.sortSpawn&&g.items.length<Math.min(10,5+Math.floor((g.round-1)*.75)))arcadeSpawnSort(g,ts);
+    arcadeCatchUpdateGulls(g,ts);arcadeCatchJolt(g,ts);g.wakePulse=Math.max(0,(g.wakePulse||0)-sec*1.4);
+    const deckLean=Math.sin(ts*.00115+g.sortRollPhase)*(.002+Math.min(.006,(g.round-1)*.0006));
+    for(const o of g.items){if(o===g.drag)continue;const S=ARCADE_CATCH_SPECIES[o.species];o.vx+=deckLean*sec*.10;if(S.crawler){o.x+=o.crawlDir*sec*(.010+Math.min(.012,(g.round-1)*.0012));o.y+=Math.sin(ts*.004+o.id)*sec*.004}else{o.x+=o.vx*sec;o.y+=o.vy*sec}o.spin*=Math.pow(.94,dt/16.7);o.x=clamp(o.x,table.x0+.01,table.x1-.01);
+      if(S.crawler&&(o.x<=table.x0+.018||o.x>=table.x1-.018)){o.expired=true;arcadeStrike(g,'SHELLFISH ESCAPED',35)}
+      else if(o.y>table.y1-.01){o.expired=true;arcadeStrike(g,'CATCH PILED UP',35)}
+    }
+    g.items=g.items.filter(o=>!o.expired);g.sortSplashes=g.sortSplashes.filter(p=>ts-p.at<720)
+  }
+  // Sea around the working deck.
+  const sea=ctx.createLinearGradient(0,G.top,0,G.bottom);sea.addColorStop(0,'#4c93a0');sea.addColorStop(1,'#245f70');rect(G.left,G.top,G.w,G.h,sea);
+  for(let i=0;i<18;i++){const y=G.y(.08+i*.054)+Math.sin(ts*.0018+i)*3;line(G.left,y,G.right,y,'rgba(226,246,239,.08)',i%5?1:2)}
+  // Trawler deck and rails.
+  rect(G.x(.19),G.y(.08),G.w*.64,G.h*.90,'#8b7658','#17313a',3);for(let i=0;i<14;i++){const x=G.x(.20+i*.046);line(x,G.y(.09),x+((i%2)*2-1),G.y(.97),'rgba(74,55,40,.18)',1)}
+  rect(G.x(.195),G.y(.10),G.w*.018,G.h*.84,'#d8caa1','#17313a',2);rect(G.x(.805),G.y(.10),G.w*.018,G.h*.84,'#d8caa1','#17313a',2);
+  // Fish hopper / cod-end at the top.
+  roundedRect(G.x(.28),G.y(.105),G.w*.39,G.h*.105,7,'#5a6767','#17313a',3);for(let i=0;i<7;i++)line(G.x(.30+i*.052),G.y(.115),G.x(.30+i*.052),G.y(.195),'rgba(230,228,199,.25)',1);pxText('SORTING HOPPER',G.x(.475),G.y(.145),'#fff7de',7,'center');
+  drawArcadeCrew(G.x(.25),G.y(.19),'#e5b54e','#31545a',.72);drawArcadeCrew(G.x(.71),G.y(.19),'#df7c68','#31545a',.72);
+  // Stainless table.
+  const tx=G.x(table.x0),ty=G.y(table.y0),tw=G.w*(table.x1-table.x0),th=G.h*(table.y1-table.y0);roundedRect(tx,ty,tw,th,8,'#97a8a4','#17313a',3);rect(tx+8,ty+8,tw-16,th-16,'#aebcb5','#526661',1);
+  for(let y=ty+18;y<ty+th-12;y+=19)line(tx+10,y,tx+tw-10,y,'rgba(255,255,255,.13)',1);for(let i=0;i<22;i++){const x=tx+13+(i*37%(Math.max(20,tw-26))),y=ty+14+((i*29)%Math.max(20,th-30));circle(x,y,1.5,'rgba(44,87,92,.20)')}
+  // Measuring ruler gives meaning to undersized fish.
+  rect(tx+12,ty+th-31,tw*.40,18,'#d7c796','#17313a',1);for(let i=0;i<=8;i++){const x=tx+17+i*(tw*.37/8);line(x,ty+th-29,x,ty+th-(i%2?22:19),'#6c5d43',1)}pxText('MEASURE',tx+tw*.22,ty+th-18,'#6c5d43',5,'center');
+  // Drop destinations.
+  const Z=arcadeCatchZones(g);drawArcadeCatchBin(G,Z.return,'return',g.sortBins.returned);drawArcadeCatchBin(G,Z.white,'white',g.sortBins.white);drawArcadeCatchBin(G,Z.oily,'oily',g.sortBins.oily);if(Z.shell)drawArcadeCatchBin(G,Z.shell,'shell',g.sortBins.shell);
+  // Wake visually crosses the working deck shortly before/after impact.
+  if(sc.wake&&g.nextWakeAt){const q=clamp(1-(g.nextWakeAt-ts)/900,0,1);if(q>0&&q<1){const yy=G.y(.10+q*.80);for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(G.x(.05),yy+i*8);ctx.quadraticCurveTo(G.cx,yy-8+i*8,G.x(.90),yy+i*8);ctx.strokeStyle='rgba(230,248,244,.28)';ctx.lineWidth=2;ctx.stroke()}}}
+  if((g.wakePulse||0)>0){ctx.save();ctx.globalAlpha=.08*g.wakePulse;rect(G.x(.19),G.y(.08),G.w*.64,G.h*.90,'#9bd8e2');ctx.restore()}
+  // Catch items.
+  for(const o of g.items){const S=ARCADE_CATCH_SPECIES[o.species],x=G.x(o.x),y=G.y(o.y),scal=(S.size||1)*(o===g.drag?1.22:1.05);drawArcadeCatchSprite(o.species,x,y,scal,ts,o.spin||0,1);if(o===g.drag){const label=S.undersize?`${S.name} · UNDERSIZE`:S.protected?`${S.name} · RETURN`:S.name;pxText(label,x,y-29,S.cat==='return'?'#ffcfb8':'#fff7de',7,'center')}}
+  // Gull dives and splash payoffs.
+  arcadeCatchDrawGull(g,G,ts);for(const P of g.sortSplashes){const a=1-clamp((ts-P.at)/720,0,1),x=G.x(P.x),y=G.y(P.y);circle(x,y,8+(1-a)*17,'rgba(0,0,0,0)',`rgba(225,246,239,${.42*a})`,2);for(let i=0;i<4;i++)circle(x+Math.sin(i*1.7)*(8+10*(1-a)),y+Math.cos(i*1.7)*(5+7*(1-a)),2,'rgba(225,246,239,.25)')}
+  const scenario=`${sc.name}${sc.tier?` · TIER ${sc.tier+1}`:''}`;pxText(scenario,G.left+12,G.y(.055),'#fff7de',9,'left');pxText(sc.note,G.left+12,G.y(.080),'rgba(255,247,222,.70)',6,'left');pxText(`${g.roundProgress}/${g.roundGoal} PROCESSED`,G.right-12,G.y(.055),'#fff7de',8,'right');
+  const oldest=g.items.filter(o=>o!==g.drag).sort((a,b)=>a.born-b.born)[0],age=oldest?ts-oldest.born:0,cue=g.drag?'DROP INTO THE RIGHT BOX / RETURN CHUTE':age>4200?'CLEAR THE OLDEST CATCH':'DRAG EACH CATCH OFF THE TABLE';pxText(cue,G.cx,G.y(.985),age>4200?'#ffd2b8':'#fff7de',7,'center')
 }
 function arcadeRenderMeter(g,ts,G,dt,running){
   const sec=dt/1000,d=arcadeDifficulty(g);
@@ -5753,8 +5934,102 @@ function arcadeRenderSonar(g,ts,G,dt,running){
   roundedRect(G.x(.79),G.y(.845),G.w*.11,30,5,close?'#83bf6a':'#c7c2ad','#17313a',1);
   pxText(close?'IMAGE':'SEARCH',G.x(.845),G.y(.864),'#17313a',6,'center')
 }
+
+const ARCADE_RESCUE_ASSET_CACHE=new Map();
+function arcadeRescueAsset(kind,variant=0){
+  const key=`rescue:${kind}:${variant}`;if(ARCADE_RESCUE_ASSET_CACHE.has(key))return ARCADE_RESCUE_ASSET_CACHE.get(key);let c,g;const ink='#17313a';
+  if(kind==='launch'){
+    [c,g]=pixelCanvas(104,142);g.imageSmoothingEnabled=false;spriteShadow(g,16,128,72,7,.22);
+    psOutlinePoly(g,[[52,4],[71,14],[87,34],[94,66],[90,112],[76,132],[52,139],[28,132],[14,112],[10,66],[17,34],[33,14]],'#c75f52',ink,2);
+    psPoly(g,[[52,8],[69,17],[83,36],[88,67],[84,109],[73,126],[52,133],[31,126],[20,109],[16,67],[21,36],[35,17]],'#df7c68');
+    psLine(g,20,70,84,70,'#fff3cf',3);psLine(g,22,102,82,102,'#fff3cf',2);
+    psOutlinePoly(g,[[31,38],[37,22],[67,22],[73,38],[72,72],[32,72]],'#fff3cf',ink,1);psRect(g,36,28,32,17,ink);for(const x of [39,49,59]){psRect(g,x,31,7,10,'#77b6c7');psRect(g,x+1,32,5,4,'#a8d7df')}
+    psRect(g,42,48,20,18,'#d8caa1',ink,1);psRect(g,46,51,12,6,'#527da0');psRect(g,49,14,6,9,ink);psLine(g,52,14,52,5,ink,2);psRect(g,48,4,9,3,'#e5b54e');
+    for(const y of [82,112]){psCircle(g,25,y,5,'#fff7de');psCircle(g,25,y,3,'#df7c68');psCircle(g,79,y,5,'#fff7de');psCircle(g,79,y,3,'#df7c68')}
+    psRect(g,29,78,46,18,'#a86d45',ink,1);for(let x=33;x<=69;x+=9)psLine(g,x,80,x,94,'rgba(255,247,222,.22)',1);
+    psRect(g,45,119,14,11,'#304a50',ink,1);psLine(g,52,120,52,136,'#17313a',2);psRect(g,33,121,8,6,'#e5b54e',ink,1);psRect(g,63,121,8,6,'#e5b54e',ink,1);
+  }else if(kind==='survivor'){
+    [c,g]=pixelCanvas(34,38);g.imageSmoothingEnabled=false;const frame=variant%3,skin='#d6a47a',coat='#e5b54e',red='#df7c68';
+    psCircle(g,17,10,6,ink);psCircle(g,17,10,4,skin);psRect(g,10,16,14,11,ink);psRect(g,12,17,10,9,coat);psRect(g,7,18+(frame===1?2:0),5,4,skin);psRect(g,22,18+(frame===2?2:0),5,4,skin);psLine(g,11,27,8,34,ink,2);psLine(g,23,27,26,34,ink,2);psRect(g,12,21,10,2,red);psRect(g,16,8,2,2,'#17313a');
+    for(const p of [[5,28],[28,30],[8,35],[25,36]])psRect(g,p[0]+(frame-1),p[1],3,1,'#dff5f4')
+  }else if(kind==='ring'){
+    [c,g]=pixelCanvas(30,30);g.imageSmoothingEnabled=false;psCircle(g,15,15,12,'#fff7de');psCircle(g,15,15,8,'#df7c68');psCircle(g,15,15,5,'rgba(0,0,0,0)');for(const p of [[15,4],[26,15],[15,26],[4,15]])psRect(g,p[0]-2,p[1]-2,4,4,'#527da0')
+  }else if(kind==='plank'){
+    [c,g]=pixelCanvas(48,22);g.imageSmoothingEnabled=false;psOutlinePoly(g,[[2,8],[37,3],[46,8],[43,17],[9,20],[3,16]],'#8d613f',ink,1);psLine(g,8,10,40,7,'#c08b56',1);psLine(g,13,18,34,13,'#704630',1);psRect(g,17,7,2,9,'#17313a')
+  }else if(kind==='crate'){
+    [c,g]=pixelCanvas(30,27);g.imageSmoothingEnabled=false;psRect(g,3,5,24,19,ink);psRect(g,5,7,20,15,'#9b683f');psLine(g,6,8,24,21,'#d0a064',2);psLine(g,24,8,6,21,'#704630',1);psRect(g,13,7,3,15,'#d0a064')
+  }else if(kind==='drum'){
+    [c,g]=pixelCanvas(26,28);g.imageSmoothingEnabled=false;psOutlinePoly(g,[[6,3],[20,3],[23,7],[22,22],[19,25],[7,25],[4,21],[4,7]],'#527da0',ink,1);psLine(g,5,9,22,9,'#d8caa1',2);psLine(g,5,20,21,20,'#d8caa1',2);psRect(g,9,5,8,2,'rgba(255,255,255,.18)')
+  }else{
+    [c,g]=pixelCanvas(36,34);g.imageSmoothingEnabled=false;psPoly(g,[[4,22],[10,10],[19,6],[30,10],[34,18],[29,28],[14,31],[6,27]],'#596e75');psLine(g,8,23,18,9,'#768a90',1);psLine(g,14,29,29,24,'#3f5258',2)
+  }
+  ARCADE_RESCUE_ASSET_CACHE.set(key,c);return c
+}
+function drawArcadeRescueAsset(kind,x,y,s=1,variant=0,rot=0){const spr=arcadeRescueAsset(kind,variant),w=spr.width*s,h=spr.height*s;ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(Math.round(x),Math.round(y));ctx.rotate(rot);ctx.drawImage(spr,Math.round(-w/2),Math.round(-h/2),Math.round(w),Math.round(h));ctx.restore()}
+function arcadeRescueResetThrow(g,delay=360){g.projectile=null;g.dragging=false;g.pull={...g.origin};g.readyAt=performance.now()+delay}
+function arcadeRescueMiss(g,text,points=20){if(!g.projectile)return;const R=g.rescue,p=g.projectile;R.splashes.push({x:p.x,y:p.y,at:performance.now(),bad:true});arcadeStrike(g,text,points);arcadeRescueResetThrow(g,430)}
+function arcadeRescueDebrisHit(g,p){return(g.rescue.debris||[]).find(o=>Math.hypot(p.x-o.x,p.y-o.y)<o.rad+.035)}
+function arcadeRescueWindNow(g,ts){const R=g.rescue,base=R.wind||{x:0,y:0},gust=R.scenario?.gust?(1+.42*Math.sin(ts*.0022+R.gustPhase)+.18*Math.sin(ts*.0053+R.gustPhase*1.7)):1;return{x:base.x*gust,y:base.y*gust}}
 function arcadeRenderAim(g,ts,G,dt,running){
-  const sec=dt/1000,T=g.target;if(running){T.x+=T.vx*sec;T.y+=T.vy*sec;if(T.x<.62||T.x>.93)T.vx*=-1;if(T.y<.17||T.y>.58)T.vy*=-1}const ox=G.x(g.origin.x),oy=G.y(g.origin.y),bob=Math.sin(ts*.004)*.012,tx=G.x(T.x),ty=G.y(T.y+bob);drawArcadeRescueBoat(ox,oy,1.44);drawArcadeCrew(ox-5,oy-26,'#e5b54e','#c75f52',1.0);circle(tx,ty+5,24,'rgba(101,189,209,.18)','#9bd8e2',2);drawTopVillager(tx,ty-9,'#df7c68','#e5b54e',1.45);if(running&&g.projectile){const p=g.projectile;p.vx+=g.wind*sec;p.x+=p.vx*sec;p.y+=p.vy*sec;p.z+=p.vz*sec;p.vz-=3.35*sec;if(p.z<=0&&ts-p.at>280){const dist=Math.hypot(p.x-T.x,p.y-(T.y+bob));g.throws.push({x:p.x,y:p.y,good:dist<.12,at:ts});if(dist<.12){arcadeProgress(g,1,Math.round(520*(1-dist/.12))+100,dist<.035?'PERFECT THROW':'SAFE THROW');arcadeNewAimTarget(g)}else{arcadeStrike(g,dist<.20?'JUST WIDE':'SHORT / WIDE');g.projectile=null;g.readyAt=ts+320}}}if(g.dragging){const px=G.x(g.pull.x),py=G.y(g.pull.y),dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,pow=clamp(Math.hypot(dx,dy)/.25,0,1);line(ox,oy,px,py,'#fff7de',3);circle(px,py,18,'rgba(0,0,0,0)','#e5b54e',3);roundedRect(G.x(.12),G.y(.88),G.w*.42,18,6,'rgba(255,255,255,.35)','#18313a',2);rect(G.x(.12)+3,G.y(.88)+3,(G.w*.42-6)*pow,12,pow>.78?'#df7c68':'#e5b54e')}if(g.projectile){const p=g.projectile;drawArcadeLifeRing(G.x(p.x),G.y(p.y)-p.z*G.h*.08,.72)}const windTxt=Math.abs(g.wind)<.02?'CALM':g.wind>0?'WIND →':'← WIND';pxText(`${windTxt} · ${g.roundProgress}/${g.roundGoal} RESCUES`,G.cx,G.y(.95),'#fff7de',9,'center')
+  const sec=dt/1000,R=g.rescue,T=g.target,wind=arcadeRescueWindNow(g,ts),sea=R.sea||.2;
+  if(running){
+    // Survivor follows the water rather than bouncing around randomly.
+    if(!T.grabbed){T.vx+=(R.current.x-T.vx)*sec*.22;T.vy+=(R.current.y-T.vy)*sec*.22;T.x+=T.vx*sec;T.y+=T.vy*sec;T.x=clamp(T.x,.43,.93);T.y=clamp(T.y,.15,.72)}
+    if(R.wake){R.wake.p+=R.wake.speed*sec;if(R.wake.p>1.15)R.wake.p=-.18;const wy=.08+R.wake.p*.78;if(!R.wake.hit&&Math.abs(T.y-wy)<.025){T.vx-=.020;T.vy+=.034;R.wake.hit=true;arcadeSetFeedback(g,'PASSING WAKE','neutral',420)}if(R.wake.p<0)R.wake.hit=false}
+    if(R.weather==='night')R.searchPhase+=sec*.48;
+    if(R.weather==='rain'&&Math.random()<.0025)R.flash=150;R.flash=Math.max(0,R.flash-dt);
+    const p=g.projectile;
+    if(p){
+      if(p.phase==='air'){
+        p.vx+=wind.x*sec;p.vy+=wind.y*sec;p.x+=p.vx*sec;p.y+=p.vy*sec;p.z+=p.vz*sec;p.vz-=3.35*sec;
+        if(p.z<=0&&ts-p.at>260){p.z=0;p.phase='water';p.waterAt=ts;p.vx=R.current.x*.85;p.vy=R.current.y*.85;R.splashes.push({x:p.x,y:p.y,at:ts,bad:false});const hit=arcadeRescueDebrisHit(g,p);if(hit){arcadeRescueMiss(g,'RING FOULED ON WRECKAGE',35)}}
+      }else if(p.phase==='water'){
+        p.vx+=(R.current.x-p.vx)*sec*.8;p.vy+=(R.current.y-p.vy)*sec*.8;p.x+=p.vx*sec;p.y+=p.vy*sec;
+        const d=Math.hypot(p.x-T.x,p.y-T.y);
+        if(d<.17){const nx=(p.x-T.x)/Math.max(.001,d),ny=(p.y-T.y)/Math.max(.001,d),swim=.018+.008*Math.max(0,.10-d)/.10;T.x+=nx*swim*sec;T.y+=ny*swim*sec}
+        const d2=Math.hypot(p.x-T.x,p.y-T.y);
+        if(d2<.058){p.phase='recover';p.recoverAt=ts;p.rx=p.x;p.ry=p.y;p.tx=T.x;p.ty=T.y;T.grabbed=true;R.lastThrowScore=Math.max(0,Math.round(650-(ts-p.at)*.13));arcadeSetFeedback(g,'RING CAUGHT · RECOVERING','good',600)}
+        else if(ts-p.waterAt>3700||p.x<.03||p.x>.98||p.y<.05||p.y>.96)arcadeRescueMiss(g,'RING DRIFTED CLEAR',25)
+      }else if(p.phase==='recover'){
+        const q=clamp((ts-p.recoverAt)/1250,0,1),ease=1-Math.pow(1-q,2),destX=g.origin.x+.015,destY=g.origin.y-.045;p.x=lerp(p.rx,destX,ease);p.y=lerp(p.ry,destY,ease);T.x=lerp(p.tx,destX+.018,ease);T.y=lerp(p.ty,destY-.005,ease);
+        if(q>=1){const pts=420+R.lastThrowScore+Math.round(120*(1-sea));g.projectile=null;arcadeProgress(g,1,pts,'RESCUE COMPLETE')}
+      }
+    }
+  }
+
+  // Weather-led open water, no generic deck background.
+  const night=R.weather==='night',storm=R.weather==='rain';
+  const sky=ctx.createLinearGradient(0,G.top,0,G.bottom);sky.addColorStop(0,night?'#173544':storm?'#596f78':'#4f9caf');sky.addColorStop(1,night?'#1b5060':storm?'#356d79':'#2d7e91');rect(G.left,G.top,G.w,G.h,sky);
+  if(storm&&R.flash>0){ctx.save();ctx.globalAlpha=.08+.18*(R.flash/150);rect(G.left,G.top,G.w,G.h,'#fff');ctx.restore()}
+  // Long travelling swell crests; greater sea state means closer, brighter crests.
+  const rows=9+Math.round(sea*7);for(let j=0;j<rows;j++){const yy=((j/rows)+(ts*.000018*(.8+sea*1.7)))%1,xShift=Math.sin(ts*.0011+j*1.37)*18;ctx.beginPath();for(let i=0;i<=8;i++){const x=G.left+i*G.w/8+xShift,y=G.y(.06+yy*.90)+Math.sin(i*.95+j+ts*.0017)*G.h*(.004+.007*sea);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.strokeStyle=`rgba(220,245,241,${.06+sea*.15})`;ctx.lineWidth=1+(sea>.56&&j%3===0?1:0);ctx.stroke()}
+  // Current streaks are world information: direction and strength are visible before the throw.
+  for(let i=0;i<22;i++){const phase=(i*.173+ts*.000035*(10+Math.hypot(R.current.x,R.current.y)*850))%1,x=G.x(.08+((i*37)%83)/100),y=G.y(.10+phase*.82),mag=18+Math.hypot(R.current.x,R.current.y)*520,n=Math.hypot(R.current.x,R.current.y)||1,dx=R.current.x/n*mag,dy=R.current.y/n*mag;line(x,y,x+dx,y+dy,'rgba(225,247,242,.12)',1)}
+  if(storm){for(let i=0;i<62;i++){const seed=(i*79+Math.floor(R.gustPhase*100))%997,x=G.left+((seed*13+ts*.18)%G.w),y=G.top+((seed*41+ts*.43)%G.h);line(x,y,x-4+wind.x*50,y+12,'rgba(232,244,246,.25)',1)}}
+  if(night){ctx.save();ctx.fillStyle='rgba(5,20,28,.25)';ctx.fillRect(G.left,G.top,G.w,G.h);const a=R.searchPhase,cx=G.x(g.origin.x),cy=G.y(g.origin.y),ang=-1.0+Math.sin(a)*.48,len=G.w*.78,wide=.23;ctx.globalCompositeOperation='screen';ctx.fillStyle='rgba(255,245,190,.105)';ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,len,ang-wide,ang+wide);ctx.closePath();ctx.fill();ctx.restore()}
+  // Passing wake visibly travels across the survivor before applying its impulse.
+  if(R.wake){const wy=.08+R.wake.p*.78;for(let k=0;k<3;k++){const y=G.y(wy+k*.014);ctx.beginPath();ctx.moveTo(G.x(.34),y);ctx.quadraticCurveTo(G.x(.62),y-8-k*2,G.x(.96),y+2);ctx.strokeStyle=`rgba(255,255,255,${.28-k*.06})`;ctx.lineWidth=3-k;ctx.stroke()}}
+
+  // Debris has readable pixel silhouettes and real fouling radii.
+  for(const o of R.debris||[]){const kind=['plank','crate','drum','rock'][o.kind%4],bob=Math.sin(ts*.003+o.phase)*3;drawArcadeRescueAsset(kind,G.x(o.x),G.y(o.y)+bob,kind==='plank'?1.15:1.0,o.kind,Math.sin(ts*.001+o.phase)*.04)}
+  // Survivor: treading water, not a villager floating on top of the sea.
+  const tbob=Math.sin(ts*.0042+T.phase)*G.h*(.004+.005*sea),tx=G.x(T.x),ty=G.y(T.y)+tbob;drawArcadeRescueAsset('survivor',tx,ty,1.15,Math.floor(ts/260)%3);for(let i=0;i<3;i++){const rr=10+i*6+Math.sin(ts*.004+i)*2;ctx.beginPath();ctx.arc(tx,ty+7,rr,0,Math.PI*2);ctx.strokeStyle=`rgba(220,246,243,${.16-i*.035})`;ctx.lineWidth=1;ctx.stroke()}
+
+  // Rescue launch uses a dedicated pixel sprite; throwing station remains large and obvious.
+  const ox=G.x(g.origin.x),oy=G.y(g.origin.y);drawArcadeRescueAsset('launch',G.x(.15),G.y(.79),1.08,0,-.10);drawArcadeCrew(G.x(.20),G.y(.735),'#e5b54e','#c75f52',.95);
+  // Wind pennant is attached to the launch so the force reads in-world.
+  const wx=G.x(.12),wy=G.y(.665),wmag=clamp(Math.hypot(wind.x,wind.y)/.11,0,1),wdir=wind.x>=0?1:-1;line(wx,wy+27,wx,wy,'#17313a',2);poly([[wx,wy],[wx+wdir*(15+26*wmag),wy+3+Math.sin(ts*.013)*4*wmag],[wx+wdir*(12+20*wmag),wy+13],[wx,wy+9]],wmag>.68?'#df7c68':'#e5b54e','#17313a',1);
+
+  // Tether and projectile/recovery animation.
+  const p=g.projectile;if(p){const px=G.x(p.x),py=G.y(p.y)-p.z*G.h*.085,midX=(ox+px)/2,midY=(oy+py)/2+10+Math.min(20,Math.hypot(px-ox,py-oy)*.06);ctx.beginPath();ctx.moveTo(ox,oy);ctx.quadraticCurveTo(midX,midY,px,py);ctx.strokeStyle='rgba(239,222,178,.70)';ctx.lineWidth=2;ctx.stroke();drawArcadeRescueAsset('ring',px,py,.78,0,p.phase==='air'?ts*.008:0)}
+  else drawArcadeRescueAsset('ring',ox,oy,.86,0,0);
+  for(const sp of R.splashes||[]){const age=ts-sp.at;if(age<1200){const q=age/1200;ctx.save();ctx.globalAlpha=1-q;ctx.beginPath();ctx.arc(G.x(sp.x),G.y(sp.y),8+q*22,0,Math.PI*2);ctx.strokeStyle=sp.bad?'#df7c68':'rgba(235,252,248,.65)';ctx.lineWidth=2;ctx.stroke();ctx.restore()}}
+  R.splashes=(R.splashes||[]).filter(sp=>ts-sp.at<1300);
+
+  if(g.dragging){const px=G.x(g.pull.x),py=G.y(g.pull.y),dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,pow=clamp(Math.hypot(dx,dy)/.28,0,1),ang=Math.atan2(dy,dx);line(ox,oy,px,py,'rgba(255,247,222,.72)',3);circle(px,py,20,'rgba(0,0,0,0)','#e5b54e',3);for(let i=1;i<=4;i++){const d=22+i*(16+pow*8);circle(ox+Math.cos(ang)*d,oy+Math.sin(ang)*d,2+i*.25,i===4?'#e5b54e':'rgba(255,247,222,.65)')}}
+
+  const cur=Math.hypot(R.current.x,R.current.y),windAbs=Math.hypot(wind.x,wind.y),cue=p?.phase==='recover'?'RECOVERING SURVIVOR':p?.phase==='water'?'RING AFLOAT · LET THE CURRENT WORK':g.dragging?'SET BEARING & POWER':'GRAB THE RING · PULL BACK · RELEASE';
+  pxText(R.scenario.label,G.left+10,G.y(.095),'#fff7de',9,'left');pxText(`${windAbs>.075?'STRONG WIND':windAbs>.025?'WIND':'LIGHT AIR'} · ${cur>.023?'STRONG SET':cur>.010?'CURRENT':'SLACK WATER'}`,G.right-10,G.y(.095),'rgba(255,247,222,.70)',7,'right');pxText(cue,G.cx,G.y(.95),'#fff7de',8,'center')
 }
 const ARCADE_DREDGE_BOAT_CACHE=new Map();
 function arcadeDredgeBoatSprite(frame=0){
@@ -6329,7 +6604,7 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 
 renderArcadeGame=function(g,ts){
   const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts))return;
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines')arcadeDrawStatus(g,G,ts);if(g.combo>1)pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&!(g.engine==='sort'&&g.theme==='trawler'))arcadeDrawStatus(g,G,ts);if(g.combo>1)pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
 };
 
 function arcadeTimingInput(g){
@@ -6348,7 +6623,23 @@ function arcadeCraneInput(g){
 }
 function arcadeContainerDrop(g){arcadeStackBeginDrop(g)}
 function arcadeTetrisDrop(g,nx){const piece=g.tetrisPiece.cells,col=Math.floor(clamp(nx*7,0,6.999)),maxX=Math.max(...piece.map(p=>p[0]));let x0=Math.min(col,6-maxX),bestY=null;for(let y=0;y<8;y++){let ok=true;for(const [px,py] of piece){const gy=y+py;if(gy>=8||g.grid[gy][x0+px]){ok=false;break}}if(ok)bestY=y;else if(bestY!==null)break}if(bestY===null){arcadeStrike(g,'NO ROOM THERE',55);arcadeNewTetrisPiece(g);return}for(const [px,py] of piece)g.grid[bestY+py][x0+px]=g.tetrisPiece.kind+1;arcadeProgress(g,1,180+piece.length*45,'PACKED');arcadeNewTetrisPiece(g)}
-function arcadeSortDrop(g,nx,ny){const o=g.drag;if(!o)return;if(o.kind===3&&g.theme==='trawler'){if(ny<.25)arcadeProgress(g,1,190,'RETURNED');else arcadeStrike(g,'BYCATCH TO SEA',30)}else{const zone=Math.floor(clamp(nx*3,0,2.999)),kind=g.zoneOrder[zone];if(ny>.75&&kind===o.kind)arcadeProgress(g,1,205,'SORTED');else arcadeStrike(g,ny<=.75?'DRAG TO A BIN':'WRONG BIN',35)}g.items=g.items.filter(x=>x!==o);g.drag=null}
+function arcadeSortDrop(g,nx,ny){
+  const o=g.drag;if(!o)return;
+  if(g.theme!=='trawler'){
+    const zone=Math.floor(clamp(nx*3,0,2.999)),kind=g.zoneOrder[zone];if(ny>.75&&kind===o.kind)arcadeProgress(g,1,205,'SORTED');else arcadeStrike(g,ny<=.75?'DRAG TO A BIN':'WRONG BIN',35);g.items=g.items.filter(x=>x!==o);g.drag=null;return
+  }
+  const zone=arcadeCatchZoneAt(g,nx,ny),S=ARCADE_CATCH_SPECIES[o.species];o.dragging=false;
+  if(!zone){o.x=clamp(nx,.24,.73);o.y=clamp(ny,.22,.70);o.vx=arcadeRand(g,-.008,.008);o.vy=.010;g.drag=null;return}
+  if(zone===o.dest){
+    g.items=g.items.filter(x=>x!==o);g.drag=null;
+    if(zone==='return'){g.sortBins.returned++;g.sortSplashes.push({x:.185,y:clamp(ny,.25,.80),at:performance.now(),species:o.species});arcadeProgress(g,1,230,S.undersize?'UNDERSIZE RETURNED':'BYCATCH RETURNED')}
+    else{g.sortBins[zone]=(g.sortBins[zone]||0)+1;arcadeProgress(g,1,210+(S.cat==='shell'?30:0),`${S.name} STOWED`)}return
+  }
+  if(zone==='return'&&o.dest!=='return'){
+    g.items=g.items.filter(x=>x!==o);g.drag=null;g.sortSplashes.push({x:.185,y:clamp(ny,.25,.80),at:performance.now(),species:o.species});arcadeStrike(g,'GOOD CATCH OVERBOARD',55);return
+  }
+  arcadeStrike(g,o.dest==='return'?'RETURN THAT CATCH':'WRONG BOX',35);o.x=clamp(nx,.27,.71);o.y=.66;o.vx=arcadeRand(g,-.015,.015);o.vy=.008;g.drag=null
+}
 function arcadeLanesDrop(g,nx,ny){const o=g.drag;if(!o)return;const lane=Math.floor(clamp(nx*3,0,2.999));if(ny<=.75){arcadeStrike(g,'DROP IT IN A BAY',20)}else if(g.baySpace[lane]<o.width){arcadeStrike(g,'BAY FULL',35)}else{g.baySpace[lane]-=o.width;g.bayLoads[lane]+=o.weight;const list=Math.abs(g.bayLoads[0]-g.bayLoads[2]);if(list>7+g.round*.35){arcadeStrike(g,'DANGEROUS LIST',45);g.bayLoads[lane]=Math.max(0,g.bayLoads[lane]-o.weight);g.baySpace[lane]+=o.width}else arcadeProgress(g,1,Math.max(100,285-list*22),list<=1?'EVEN KEEL':'STOWED')}g.items=g.items.filter(x=>x!==o);g.drag=null}
 arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performance.now()<(g.roundPauseUntil||0))return;const G=arcadeGeom(),nx=G.nx(x),ny=G.ny(y),e=g.engine;
   if(e==='pilot'){
@@ -6366,7 +6657,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeCraneInput(g);
   else if(e==='stack'&&type==='down'&&performance.now()>g.cool){g.theme==='container'?arcadeContainerDrop(g):arcadeTetrisDrop(g,nx);g.cool=performance.now()+180}
   else if(e==='sort'){
-    if(type==='down'){for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<44){g.drag=o;o.dragging=true;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny}else if(type==='up'&&g.drag)arcadeSortDrop(g,nx,ny)
+    if(type==='down'){const hit=g.theme==='trawler'?54:44;for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<hit){g.drag=o;o.dragging=true;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny;g.drag.vx=0;g.drag.vy=0}else if(type==='up'&&g.drag)arcadeSortDrop(g,nx,ny)
   }
   else if(e==='meter'){if(g.theme==='yacht'){if(type==='down'||type==='move')g.value=nx}else{if(type==='down')g.hold=true;if(type==='up')g.hold=false}}
   else if(e==='steer'&&g.theme==='tanker'){
@@ -6391,7 +6682,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
       if(type==='down')arcadeSetFeedback(g,'TOWFISH COURSE SET','neutral',260)
     }
   }
-  else if(e==='aim'){const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.14;if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadeSetFeedback(g,'GRAB THE RING BY THE BOAT','neutral')}else if(type==='move'&&g.dragging){const dx=nx-g.origin.x,dy=ny-g.origin.y,dist=Math.max(.001,Math.hypot(dx,dy)),m=Math.min(.25,dist);g.pull={x:g.origin.x+dx/dist*m,y:g.origin.y+dy/dist*m}}else if(type==='up'&&g.dragging){g.dragging=false;const dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,p=Math.hypot(dx,dy);if(p<.055){arcadeSetFeedback(g,'PULL BACK FARTHER','neutral');g.pull={...g.origin};return}g.projectile={x:g.origin.x,y:g.origin.y,vx:dx*3.15,vy:dy*3.15,z:.01,vz:1.58,at:performance.now()};g.pull={...g.origin}}}
+  else if(e==='aim'){const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.17;if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadeSetFeedback(g,'GRAB THE RING ON THE RESCUE BOAT','neutral')}else if(type==='move'&&g.dragging){const dx=nx-g.origin.x,dy=ny-g.origin.y,dist=Math.max(.001,Math.hypot(dx,dy)),m=Math.min(.28,dist);g.pull={x:g.origin.x+dx/dist*m,y:g.origin.y+dy/dist*m}}else if(type==='up'&&g.dragging){g.dragging=false;const dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,p=Math.hypot(dx,dy);if(p<.060){arcadeSetFeedback(g,'PULL BACK FARTHER','neutral');g.pull={...g.origin};return}g.projectile={phase:'air',x:g.origin.x,y:g.origin.y,vx:dx*3.10,vy:dy*3.10,z:.012,vz:1.58,at:performance.now()};g.pull={...g.origin}}}
   else if(e==='dredge'){
     if(type==='down'||type==='move'){g.dredge.targetTrolley=clamp(nx,.18,.88);g.dredge.targetCable=clamp(ny-.245,.045,.69);g.dredge.dragging=true}
     else if(type==='up')g.dredge.dragging=false
@@ -6550,7 +6841,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.28.6',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.28.8',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
