@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.29.0';
+const VERSION_LABEL='0.29.1';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -536,7 +536,7 @@ const CONTENT={
     tallship_rigging:{title:'ALOFT!',icon:'⚑',group:'Tall Ship',engine:'rigging',desc:'Climb the shrouds, edge out along a working yard and free the sail while the ship rolls and the rig comes alive in the wind.',instruction:'TAP A REACHABLE HOLD TO MOVE • CROSS THE YARD BETWEEN GUSTS • HOLD SPACE TO BRACE OR WORK A GASKET • FINISH THE SAIL AND GET BACK TO THE MAST',duration:0,rewardThreshold:600,benchmark:1850,theme:'tallship'},
     sub_depth:{title:'SILENT DEPTH',icon:'≈',group:'Submarine',engine:'depth',desc:'Guide a survey sub ever deeper through a living rock cave, balancing buoyancy as the pressure rises.',instruction:'DRAG OR PRESS UP / DOWN • KEEP THE SUB IN THE SAFE WATER • DIVE AS DEEP AS YOU CAN',duration:28,rewardThreshold:650,benchmark:2050,theme:'submarine'},
     carrier_landing:{title:'DECK LANDING',icon:'✈',group:'Aircraft Carrier',engine:'landing',desc:'Fly a little carrier prop plane from a chase view, keeping the moving deck centred while power controls the glide.',instruction:'KEEP THE DECK AHEAD OF YOUR NOSE • CORRECT LINEUP • USE POWER TO FLY THE BALL • SETTLE ONTO THE WIRES',duration:0,rewardThreshold:550,benchmark:1800,theme:'carrier'},
-    houseboat_catch:{title:'HOUSEBOAT HAVOC',icon:'⌂',group:'Houseboat',engine:'catch',desc:'Catch mugs, cushions and dinner before the wake sends them overboard.',instruction:'DRAG THE BASKET LEFT / RIGHT AND CATCH THINGS BEFORE THEY SPLASH',duration:24,rewardThreshold:550,benchmark:1750,theme:'houseboat'}
+    houseboat_catch:{title:'HOUSEBOAT HAVOC',icon:'⌂',group:'Houseboat',engine:'houseboat',desc:'Secure a lived-in houseboat before passing wakes and squalls turn breakfast, books and galley gear into flying clutter.',instruction:'DRAG LOOSE THINGS TO THEIR REAL STOWS • TAP OPEN LATCHES • WATCH THE WATER FOR THE NEXT WAKE • RECOVER ANYTHING THAT BREAKS LOOSE',duration:0,rewardThreshold:650,benchmark:2100,theme:'houseboat'}
   },
   voyageEvents:[
     {id:'dolphins',scene:'dolphins',icon:'⌁',title:['Dolphins off the bow','Company in the blue'],log:['A pod of dolphins kept pace with the boat for a while.','Silver backs rose beside the bow, then slipped under again.'],ambient:true,weight:1.2},
@@ -3282,7 +3282,7 @@ const ARCADE_COPY={
   tallship_rigging:{desc:'Watch the bosun rig the sail, remember the working-point order, then climb the live rig and repeat it while the finished ropes swing free in the wind.',instruction:'WATCH THE FLASHED NODES • REPEAT THEM IN ORDER • HOLD SPACE TO BRACE • EACH CORRECT LASH OPENS MORE SAIL'},
   sub_depth:{desc:'Pilot a buoyant survey sub through a procedural cave that narrows and bends with depth.',instruction:'CONTROL DEPTH WITH INERTIA • STAY BETWEEN THE ROCK FACES'},
   carrier_landing:{desc:'Fly a full moving-deck approach where power controls glideslope, lateral corrections fight crosswind and the carrier pitches beneath you.',instruction:'FLY THE BALL • KEEP LINEUP • MANAGE POWER • TOUCH DOWN ON SPEED • CATCH A WIRE'},
-  houseboat_catch:{desc:'Save mugs, bags and cushions with different bounce and fall behaviour through bigger wakes.',instruction:'MOVE THE BASKET • READ EACH OBJECT’S FALL • KEEP IT OUT OF THE WATER'}
+  houseboat_catch:{desc:'Secure a lived-in houseboat through passing wakes, open latches and squalls.',instruction:'STOW LOOSE GEAR • LATCH THE CABIN • WATCH THE WAKE • RECOVER BREAKAWAYS'}
 };
 for(const [id,copy] of Object.entries(ARCADE_COPY))if(MINIGAME_META[id])Object.assign(MINIGAME_META[id],copy);
 AT_SEA_MINIGAME_SCENARIOS.poop_deck={scene:'seabirds',icon:'⌃',title:['Gulls over the mast','A very confident flock'],log:['A flock of gulls takes an unusual interest in the boat.','Several gulls wheel overhead with suspicious concentration.'],rewardKind:'bottle'};
@@ -3776,6 +3776,136 @@ function arcadeSpawnCatch(g,ts,first=false){
   const r=g.round,d=arcadeDifficulty(g),kind=Math.floor(arcadeRand(g,0,3)),house=g.theme==='houseboat';g.items.push({x:arcadeRand(g,.12,.88),y:first?arcadeRand(g,.18,.58):.10,vx:arcadeRand(g,-.055,.055)*d,vy:arcadeRand(g,.11,.16)*d,gravity:(house?[.045,.062,.032][kind]:[.038,.052,.045][kind])*d,bounce:house?[.15,.06,.30][kind]:.08,kind,caught:false,spin:arcadeRand(g,-2,2)});g.spawn=ts
 }
 function arcadeSetupCatch(g,r,d){arcadeResetCommon(g,6+Math.min(8,r));g.basket=.5;g.items=[];g.catchSpawn=Math.max(260,680-(r-1)*34);for(let i=0;i<2;i++)arcadeSpawnCatch(g,performance.now(),true)}
+
+const ARCADE_HOUSEBOAT_PROPS={
+  mug:{name:'MUG',target:'mugRack',surface:'table',mass:.55,friction:.78,fragile:true},
+  plate:{name:'PLATE',target:'plateRack',surface:'counter',mass:.62,friction:.70,fragile:true},
+  kettle:{name:'KETTLE',target:'hob',surface:'counter',mass:1.45,friction:.86},
+  pan:{name:'PAN',target:'panHook',surface:'counter',mass:1.20,friction:.80},
+  jar:{name:'JAR',target:'cupboard',surface:'counter',mass:.82,friction:.70,fragile:true},
+  book:{name:'BOOK',target:'bookShelf',surface:'table',mass:.72,friction:.68},
+  cushion:{name:'CUSHION',target:'sofa',surface:'sofa',mass:.34,friction:.55},
+  lamp:{name:'LAMP',target:'lampClip',surface:'table',mass:.88,friction:.72,fragile:true},
+  chair:{name:'CHAIR',target:'chairStrap',surface:'floor',mass:1.70,friction:.90},
+  bowl:{name:'BOWL',target:'sink',surface:'table',mass:.62,friction:.65,fragile:true},
+  radio:{name:'RADIO',target:'radioShelf',surface:'shelf',mass:1.05,friction:.76},
+  utensils:{name:'CUTLERY',target:'drawer',surface:'floor',mass:.35,friction:.48}
+};
+const ARCADE_HOUSEBOAT_SURFACES={
+  counter:{y:.505,min:.17,max:.39},table:{y:.555,min:.43,max:.625},shelf:{y:.390,min:.665,max:.845},sofa:{y:.625,min:.675,max:.855},floor:{y:.705,min:.135,max:.865}
+};
+const ARCADE_HOUSEBOAT_TARGETS={
+  mugRack:{x:.285,y:.355,w:.075,h:.075,label:'CUP RACK'},plateRack:{x:.365,y:.475,w:.055,h:.065,label:'PLATE RACK'},hob:{x:.215,y:.480,w:.065,h:.055,label:'STOVE CLAMP'},panHook:{x:.175,y:.335,w:.055,h:.075,label:'PAN HOOK'},cupboard:{x:.315,y:.325,w:.105,h:.085,label:'CUPBOARD'},bookShelf:{x:.755,y:.370,w:.125,h:.065,label:'BOOKSHELF'},sofa:{x:.755,y:.610,w:.165,h:.095,label:'SOFA STRAP'},lampClip:{x:.565,y:.315,w:.060,h:.065,label:'LAMP CLIP'},chairStrap:{x:.545,y:.690,w:.100,h:.060,label:'FLOOR STRAP'},sink:{x:.325,y:.485,w:.070,h:.055,label:'SINK'},radioShelf:{x:.690,y:.370,w:.065,h:.060,label:'RADIO SHELF'},drawer:{x:.350,y:.585,w:.085,h:.050,label:'DRAWER'}
+};
+const ARCADE_HOUSEBOAT_SCENARIOS=[
+  {id:'tea',label:'MORNING TEA',note:'A small cruiser wake is coming.',props:['mug','plate','book','cushion'],fixtures:[],wakes:[{delay:6500,dir:1,strength:.25}],rain:0},
+  {id:'galley',label:'GALLEY READY',note:'Latch the cupboard before the wake arrives.',props:['mug','kettle','pan','jar','plate'],fixtures:['cupboard'],wakes:[{delay:6400,dir:-1,strength:.31}],rain:0},
+  {id:'cabin',label:'CABIN CHECK',note:'Loose living-room gear has nowhere to hide.',props:['book','radio','lamp','cushion','chair'],fixtures:['drawer'],wakes:[{delay:6100,dir:1,strength:.34}],rain:0},
+  {id:'ferry',label:'FERRY WAKE',note:'A passenger ferry is overtaking close aboard.',props:['mug','plate','kettle','book','lamp','cushion'],fixtures:['cupboard'],wakes:[{delay:6000,dir:-1,strength:.43}],rain:0,ferry:true},
+  {id:'double',label:'CROSS WAKE',note:'Two boats are crossing the mooring.',props:['mug','bowl','pan','book','radio','chair'],fixtures:['drawer'],wakes:[{delay:5400,dir:1,strength:.38},{delay:10100,dir:-1,strength:.42}],rain:0,double:true},
+  {id:'squall',label:'RAIN SQUALL',note:'Shut the skylight or the floor will get slick.',props:['mug','plate','kettle','jar','book','lamp','cushion'],fixtures:['cupboard','skylight'],wakes:[{delay:5700,dir:1,strength:.40}],rain:1,wind:.26},
+  {id:'supper',label:'SUPPER ABOARD',note:'Full cabin, rain and two wakes. Get ahead of it.',props:['mug','plate','kettle','pan','jar','book','lamp','cushion','chair'],fixtures:['cupboard','drawer','skylight'],wakes:[{delay:5200,dir:-1,strength:.42},{delay:9800,dir:1,strength:.48}],rain:1,wind:.32,double:true}
+];
+const ARCADE_HOUSE_PROP_CACHE=new Map(),ARCADE_HOUSE_SCENE_CACHE=new Map(),ARCADE_HOUSE_PASSING_CACHE=new Map();
+function arcadeHouseboatScenario(r){const base=ARCADE_HOUSEBOAT_SCENARIOS[(r-1)%ARCADE_HOUSEBOAT_SCENARIOS.length],tier=Math.floor((r-1)/ARCADE_HOUSEBOAT_SCENARIOS.length);return{...base,tier,wakes:base.wakes.map((w,i)=>({...w,strength:w.strength+tier*.035,delay:Math.max(4300,w.delay-tier*250)})),props:[...base.props,...Array.from({length:Math.min(2,tier)},(_,i)=>['bowl','radio','cushion','mug'][(r+i)%4])]}}
+function arcadeHouseboatFixtureRects(){return{cupboard:{x:.270,y:.235,w:.115,h:.115,label:'CUPBOARD'},drawer:{x:.305,y:.535,w:.095,h:.075,label:'DRAWER'},skylight:{x:.515,y:.140,w:.110,h:.055,label:'SKYLIGHT'}}}
+function arcadeHouseboatStartSlot(kind,i){const S=ARCADE_HOUSEBOAT_PROPS[kind],surf=ARCADE_HOUSEBOAT_SURFACES[S.surface],phase=(i*0.137)%1;return{x:lerp(surf.min+.018,surf.max-.018,.18+phase*.64),y:surf.y,surface:S.surface}}
+function arcadeSetupHouseboat(g,r,d){
+  const sc=arcadeHouseboatScenario(r);arcadeResetCommon(g,1);const props=sc.props.map((kind,i)=>{const q=arcadeHouseboatStartSlot(kind,i);return{id:`hb-${r}-${i}-${kind}`,kind,...q,vx:0,vy:0,state:'loose',dragging:false,securedAt:null,spawned:false}});
+  const fixtures={cupboard:{closed:!sc.fixtures.includes('cupboard'),spilled:false},drawer:{closed:!sc.fixtures.includes('drawer'),spilled:false},skylight:{closed:!sc.fixtures.includes('skylight'),spilled:false}};
+  g.house={scenario:sc,props,fixtures,phase:'prep',phaseAt:0,nextWakeAt:0,wakeIndex:0,wakePulse:0,wakeDir:1,wakeVisual:0,wakeHitAt:0,lastWakeAt:0,wetness:0,shards:[],puddles:[],drag:null,catPhase:arcadeRand(g,0,6.28),messageAt:0,scorePrep:0,scoreRecovery:0};g.drag=null;g.continuous=true;g.roundGoal=props.length+sc.fixtures.length;g.roundProgress=0
+}
+function arcadeHouseboatTarget(kind){return ARCADE_HOUSEBOAT_TARGETS[ARCADE_HOUSEBOAT_PROPS[kind]?.target]}
+function arcadeHouseboatSurfaceAt(x,y){if(x>=.16&&x<=.40&&y>=.42&&y<=.57)return'counter';if(x>=.42&&x<=.64&&y>=.46&&y<=.64)return'table';if(x>=.65&&x<=.86&&y>=.31&&y<=.46)return'shelf';if(x>=.65&&x<=.87&&y>=.50&&y<=.67)return'sofa';return'floor'}
+function arcadeHouseboatCloseFixture(g,id){const H=g.house,F=H.fixtures[id];if(!F||F.closed)return false;F.closed=true;g.score+=75+g.round*5;arcadeSetFeedback(g,`${arcadeHouseboatFixtureRects()[id].label} LATCHED`,'good',360);return true}
+function arcadeHouseboatSpawnSpill(g,fixture){const H=g.house,add=fixture==='cupboard'?['mug','jar']:['utensils'];const base=fixture==='cupboard'?{x:.31,y:.31}:{x:.35,y:.57};for(let i=0;i<add.length;i++){const kind=add[i];H.props.push({id:`spill-${performance.now()}-${i}`,kind,x:base.x+i*.025,y:base.y,vx:arcadeRand(g,-.025,.025),vy:.04,state:'falling',surface:'floor',dragging:false,securedAt:null,spawned:true})}}
+function arcadeHouseboatHitWake(g,ts,w){const H=g.house;H.wakePulse=w.dir*w.strength;H.wakeDir=w.dir;H.wakeHitAt=ts;H.lastWakeAt=ts;H.phase='wake';for(const o of H.props){if(o.state!=='loose')continue;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];o.vx+=w.dir*w.strength*(.23/Math.max(.38,P.mass))*arcadeRand(g,.82,1.16)}
+  if(!H.fixtures.cupboard.closed&&!H.fixtures.cupboard.spilled){H.fixtures.cupboard.spilled=true;arcadeHouseboatSpawnSpill(g,'cupboard');arcadeSetFeedback(g,'CUPBOARD OPEN · CONTENTS LOOSE','bad',700)}
+  if(!H.fixtures.drawer.closed&&!H.fixtures.drawer.spilled){H.fixtures.drawer.spilled=true;arcadeHouseboatSpawnSpill(g,'drawer');arcadeSetFeedback(g,'DRAWER FLEW OPEN','bad',650)}
+  if(H.scenario.rain&&!H.fixtures.skylight.closed)H.wetness=Math.max(H.wetness,.42);
+  H.wakeIndex++;H.nextWakeAt=H.wakeIndex<H.scenario.wakes.length?H.phaseAt+H.scenario.wakes[H.wakeIndex].delay:0
+}
+function arcadeHouseboatResolveProp(g,o,text){if(o.state==='lost')return;o.state='lost';o.dragging=false;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];if(P.fragile){g.house.shards.push({x:o.x,y:.705,kind:o.kind,at:performance.now()});arcadeStrike(g,`${P.name} BROKE`,40)}else{arcadeStrike(g,`${P.name} HIT THE DECK`,20)}arcadeSetFeedback(g,text||`${P.name} LOOSE`,'bad',500)}
+function arcadeHouseboatDrop(g,o,nx,ny){const H=g.house,T=arcadeHouseboatTarget(o.kind),P=ARCADE_HOUSEBOAT_PROPS[o.kind];o.dragging=false;H.drag=null;g.drag=null;if(T&&Math.abs(nx-T.x)<=T.w*.72&&Math.abs(ny-T.y)<=T.h*.85){o.state='secured';o.securedAt=P.target;o.x=T.x;o.y=T.y;o.vx=o.vy=0;const pre=H.wakeIndex===0&&(!H.lastWakeAt);g.score+=pre?175:255;if(pre)H.scorePrep++;else H.scoreRecovery++;arcadeSetFeedback(g,`${P.name} SECURE`,'good',360);return true}
+  const surf=arcadeHouseboatSurfaceAt(nx,ny),S=ARCADE_HOUSEBOAT_SURFACES[surf];o.state='loose';o.surface=surf;o.x=clamp(nx,S.min+.01,S.max-.01);o.y=S.y;o.vx=0;o.vy=0;arcadeSetFeedback(g,`STOW ${P.name} AT ${T.label}`,'neutral',420);return false}
+function arcadeHouseboatTasks(g){const H=g.house,props=H.props.filter(o=>o.state==='secured'||o.state==='lost').length,fixtures=H.scenario.fixtures.filter(id=>H.fixtures[id].closed).length,total=H.props.length+H.scenario.fixtures.length;g.roundProgress=props+fixtures;g.roundGoal=total;return{props,fixtures,total,done:props===H.props.length&&fixtures===H.scenario.fixtures.length}}
+function arcadeHouseboatUpdate(g,ts,dt,running){const H=g.house,sec=dt/1000;if(!running)return;if(!H.phaseAt){H.phaseAt=ts;H.nextWakeAt=ts+H.scenario.wakes[0].delay}
+  if(H.scenario.rain&&!H.fixtures.skylight.closed){H.wetness=clamp(H.wetness+sec*.055,0,1);if(H.wetness>.25&&H.puddles.length<7&&Math.floor(ts/600)%2===0)H.puddles.push({x:.53+arcadeRand(g,-.09,.09),y:.704,r:arcadeRand(g,.018,.038)})}else H.wetness=Math.max(0,H.wetness-sec*.018);
+  if(H.nextWakeAt&&ts>=H.nextWakeAt)arcadeHouseboatHitWake(g,ts,H.scenario.wakes[H.wakeIndex]);H.wakePulse*=Math.pow(.944,dt/16.7);
+  for(const o of H.props){if(o.dragging||o.state==='secured'||o.state==='lost')continue;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];if(o.state==='falling'){o.vy+=.78*sec;o.x+=o.vx*sec;o.y+=o.vy*sec;if(o.y>=.705){const impact=o.vy;o.y=.705;o.vy=0;o.surface='floor';o.state='loose';o.vx*=.42;if(P.fragile&&impact>.31){arcadeHouseboatResolveProp(g,o);continue}}}
+    else{const S=ARCADE_HOUSEBOAT_SURFACES[o.surface]||ARCADE_HOUSEBOAT_SURFACES.floor,wet=H.wetness*(o.surface==='floor'?1:.35),damp=clamp(P.friction-wet*.30,.35,.94);o.vx+=H.wakePulse*(.46/Math.max(.42,P.mass))*sec;o.vx*=Math.pow(damp,dt/16.7);o.x+=o.vx*sec;o.y=S.y;if(o.x<S.min||o.x>S.max){if(o.surface==='floor'){o.x=clamp(o.x,S.min,S.max);const impact=Math.abs(o.vx);o.vx*=-.28;if(P.fragile&&impact>.22){arcadeHouseboatResolveProp(g,o);continue}}else{o.x=clamp(o.x,S.min-.012,S.max+.012);o.state='falling';o.vy=.025+Math.abs(o.vx)*.16}}}
+  }
+  const T=arcadeHouseboatTasks(g),lastDone=H.wakeIndex>=H.scenario.wakes.length&&(!H.nextWakeAt);if(lastDone&&ts-H.lastWakeAt>1000)H.phase='tidy';if(lastDone&&T.done&&ts-H.lastWakeAt>1100){const clean=g.strikes===0?180:0,prep=Math.min(H.scorePrep,H.scenario.props.length)*18;g.score+=310+g.round*45+clean+prep;arcadeAdvance(g,g.strikes===0?'CABIN SHIPSHAPE':'CABIN SECURE')}
+}
+function arcadeHousePropSprite(kind){if(ARCADE_HOUSE_PROP_CACHE.has(kind))return ARCADE_HOUSE_PROP_CACHE.get(kind);const [c,g]=pixelCanvas(32,32),ink='#17313a',wood='#a86d45',cream='#fff7de',gold='#e5b54e',red='#df7c68',sea='#65bdd1',green='#83bf6a';
+  if(kind==='mug'){psRect(g,8,9,14,16,cream);psRect(g,9,10,12,3,'#d9eef2');psRect(g,22,13,5,8,cream);psRect(g,23,15,2,4,sea);psRect(g,11,24,9,2,ink)}
+  else if(kind==='plate'){psCircle(g,16,17,10,cream);psCircle(g,16,17,7,'#d9eef2');psCircle(g,16,17,3,cream)}
+  else if(kind==='kettle'){psRect(g,8,10,16,15,'#8d9893');psRect(g,10,7,12,4,ink);psLine(g,11,9,7,16,ink,2);psLine(g,22,10,27,14,ink,2);psRect(g,12,13,8,5,'#b7c3bd')}
+  else if(kind==='pan'){psCircle(g,13,17,9,'#586b70');psCircle(g,13,17,6,'#78898b');psRect(g,20,15,10,4,wood)}
+  else if(kind==='jar'){psRect(g,10,8,13,18,'#d8caa1');psRect(g,9,7,15,4,red);psRect(g,12,13,9,7,gold);psRect(g,14,14,5,5,'#b98359')}
+  else if(kind==='book'){psRect(g,7,8,19,18,'#527da0');psRect(g,9,10,15,2,'#fff7de');psRect(g,9,14,13,2,'#d9eef2');psRect(g,7,8,3,18,'#df7c68')}
+  else if(kind==='cushion'){psRect(g,7,9,20,17,green);psRect(g,9,11,16,13,'#a9cf7d');psLine(g,9,11,24,24,'#719e62',1);psLine(g,24,11,9,24,'#719e62',1)}
+  else if(kind==='lamp'){psRect(g,14,7,4,15,wood);psOutlinePoly(g,[[8,8],[24,8],[20,15],[12,15]],gold,ink,1);psRect(g,9,22,15,4,wood)}
+  else if(kind==='chair'){psRect(g,9,9,15,5,wood);psRect(g,10,14,13,9,'#c08b5a');psLine(g,11,22,8,30,ink,2);psLine(g,22,22,25,30,ink,2);psLine(g,10,10,8,22,ink,2);psLine(g,23,10,25,22,ink,2)}
+  else if(kind==='bowl'){psOutlinePoly(g,[[7,12],[25,12],[22,23],[10,23]],cream,ink,1);psRect(g,10,13,12,3,red);psCircle(g,13,11,2,green);psCircle(g,18,10,2,gold);psCircle(g,21,12,2,red)}
+  else if(kind==='radio'){psRect(g,7,9,20,17,'#6d5a45');psRect(g,9,11,16,13,'#b98359');psCircle(g,14,18,5,'#3e5055');psRect(g,21,13,3,3,gold);psLine(g,22,9,27,3,ink,1)}
+  else if(kind==='utensils'){psLine(g,8,8,22,25,'#c7cfca',2);psLine(g,14,7,18,26,'#8d9893',2);psLine(g,22,8,10,25,'#e0e4df',2);psRect(g,7,24,18,3,wood)}
+  ARCADE_HOUSE_PROP_CACHE.set(kind,c);return c
+}
+function arcadeHouseboatInteriorSprite(variant=0){const key=variant%3;if(ARCADE_HOUSE_SCENE_CACHE.has(key))return ARCADE_HOUSE_SCENE_CACHE.get(key);const [c,g]=pixelCanvas(480,300),ink='#17313a',cream='#fff7de',wall='#efe3bd',wood='#a86d45',wood2='#704630',sea='#65bdd1',green='#83bf6a',gold='#e5b54e',glass='#9bd8e2';
+  // hull and cutaway shell
+  psOutlinePoly(g,[[24,215],[456,215],[440,268],[398,284],[78,284],[40,267]],'#477987',ink,2);psRect(g,43,218,394,18,'#5f91a0');psLine(g,48,238,432,238,'#d9eef2',2);for(let x=68;x<425;x+=44)psRect(g,x,260,24,3,'#365a62');
+  // cabin envelope / roof
+  psRect(g,46,54,388,163,wall);psRect(g,39,48,402,9,green);psRect(g,57,61,366,153,'#f5ead0');psRect(g,59,199,363,15,wood);psLine(g,58,198,423,198,ink,2);psLine(g,178,60,178,199,'#c7b98f',2);psLine(g,315,60,315,199,'#c7b98f',2);
+  // windows
+  for(const q of [[74,78,75,45],[194,78,95,45],[332,78,72,45]]){psRect(g,q[0],q[1],q[2],q[3],ink);psRect(g,q[0]+3,q[1]+3,q[2]-6,q[3]-6,glass);for(let y=q[1]+8;y<q[1]+q[3]-4;y+=11)psLine(g,q[0]+4,y,q[0]+q[2]-5,y,'#bce8e6',1)}
+  // galley left
+  psRect(g,70,154,101,44,wood);psRect(g,74,158,43,34,'#d8caa1');psRect(g,121,158,46,34,'#c39765');psRect(g,68,148,105,8,'#5b6260');psRect(g,128,137,35,10,'#333e40');for(let x of [132,141,150,159])psCircle(g,x,142,2,'#d6c287');psRect(g,92,132,26,14,'#8aa0a5');psRect(g,96,135,18,8,sea);psRect(g,77,92,72,41,wood);psRect(g,81,96,31,32,'#d7c49c');psRect(g,116,96,29,32,'#d7c49c');psCircle(g,108,111,2,ink);psCircle(g,120,111,2,ink);for(let i=0;i<4;i++){psRect(g,83+i*12,116,7,9,cream);psRect(g,85+i*12,118,3,4,sea)}
+  // centre saloon table + benches + hanging lamp
+  psRect(g,200,165,94,10,wood);psRect(g,209,175,7,22,wood2);psRect(g,278,175,7,22,wood2);psRect(g,190,181,35,15,'#9e7750');psRect(g,270,181,35,15,'#9e7750');psLine(g,246,58,246,98,wood2,2);psOutlinePoly(g,[[233,98],[259,98],[254,112],[238,112]],gold,ink,1);psRect(g,220,127,52,14,'#b7aa83');for(let i=0;i<4;i++)psRect(g,226+i*11,130,7,8,cream);
+  // right cabin / sofa / shelf / bunk
+  psRect(g,330,151,79,47,green);psRect(g,336,157,32,35,'#a9cf7d');psRect(g,371,157,32,35,'#94bd72');psRect(g,333,183,73,9,wood2);psRect(g,325,123,92,10,wood);for(let i=0;i<5;i++){const bc=['#df7c68','#527da0','#e5b54e','#83bf6a','#b98359'][i];psRect(g,331+i*16,109,12,13,bc);psLine(g,331+i*16,109,343+i*16,109,ink,1)}
+  // tiny radio shelf + bookends
+  psRect(g,332,135,55,9,wood);psRect(g,337,126,18,9,'#6d5a45');psRect(g,359,126,24,9,'#527da0');
+  // floor lash cleat and rugs
+  psRect(g,226,202,72,6,'#d8caa1');for(let x=235;x<292;x+=12)psLine(g,x,202,x+8,207,'#b49f78',1);psRect(g,260,193,14,6,'#57696d');psRect(g,263,189,8,5,'#8aa0a5');
+  // ladder / fittings / roof details
+  psLine(g,421,143,421,204,ink,2);for(let y=150;y<200;y+=10)psLine(g,411,y,421,y,wood2,2);psRect(g,269,45,59,4,'#527da0');for(let x=273;x<325;x+=9)psLine(g,x,46,x+4,49,'#9bd8e2',1);psCircle(g,56,227,10,'#fff7de');psCircle(g,56,227,6,'#df7c68');psCircle(g,56,227,2,'#477987');
+  ARCADE_HOUSE_SCENE_CACHE.set(key,c);return c
+}
+function arcadeHouseboatPassingSprite(kind=0){if(ARCADE_HOUSE_PASSING_CACHE.has(kind))return ARCADE_HOUSE_PASSING_CACHE.get(kind);const [c,g]=pixelCanvas(104,45),ink='#17313a';psOutlinePoly(g,[[5,27],[97,27],[87,39],[21,39]],kind?'#596d73':'#527da0',ink,1);psRect(g,21,13,61,15,'#fff7de');psRect(g,32,7,35,8,'#e7ddbd');for(let x=27;x<78;x+=10)psRect(g,x,17,6,5,'#8ab8c1');psRect(g,66,6,5,7,ink);psLine(g,68,6,68,2,ink,1);psRect(g,12,25,13,3,'#df7c68');ARCADE_HOUSE_PASSING_CACHE.set(kind,c);return c}
+function arcadeHouseboatDrawTarget(G,id,active=false){const T=ARCADE_HOUSEBOAT_TARGETS[id];if(!T)return;const x=G.x(T.x),y=G.y(T.y),w=G.w*T.w,h=G.h*T.h;if(active){ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle='#e5b54e';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.strokeRect(x-w/2,y-h/2,w,h);ctx.restore()}}
+function arcadeHouseboatDrawFixtures(g,G,ts){const H=g.house,R=arcadeHouseboatFixtureRects();
+  // cupboard doors genuinely open/closed
+  const C=R.cupboard,cx=G.x(C.x),cy=G.y(C.y);if(!H.fixtures.cupboard.closed){line(cx-G.w*C.w*.46,cy-G.h*C.h*.38,cx-G.w*C.w*.74,cy+G.h*C.h*.20,'#704630',5);pxText('LATCH',cx,cy-G.h*C.h*.58,'#df7c68',6,'center')}else{circle(cx+G.w*C.w*.13,cy,2,'#17313a')}
+  const D=R.drawer,dx=G.x(D.x),dy=G.y(D.y);if(!H.fixtures.drawer.closed){rect(dx-G.w*D.w*.44,dy-G.h*D.h*.10,G.w*D.w*.88,G.h*D.h*.36,'#c39765','#17313a',1);pxText('LATCH',dx,dy+G.h*D.h*.50,'#df7c68',6,'center')}
+  const S=R.skylight,sx=G.x(S.x),sy=G.y(S.y);if(!H.fixtures.skylight.closed){poly([[sx-G.w*S.w*.45,sy],[sx+G.w*S.w*.10,sy-G.h*S.h*.45],[sx+G.w*S.w*.45,sy-G.h*S.h*.45],[sx+G.w*S.w*.45,sy]],'#9bd8e2','#17313a',2);pxText('SHUT',sx,sy-G.h*S.h*.66,'#df7c68',6,'center')}else{rect(sx-G.w*S.w*.45,sy-G.h*S.h*.18,G.w*S.w*.9,G.h*S.h*.32,'#77aab3','#17313a',1)}
+}
+function arcadeHouseboatDrawWake(g,G,ts){const H=g.house;if(!H.phaseAt)return;const W=H.scenario.wakes[Math.min(H.wakeIndex,H.scenario.wakes.length-1)],at=H.nextWakeAt||H.lastWakeAt,dir=W?.dir||H.wakeDir,time=at-ts,p=clamp(1-time/3900,0,1),waterY=G.y(.815);if(H.nextWakeAt&&time<4400){const bx=dir>0?lerp(G.x(-.08),G.x(.98),p*.86):lerp(G.x(1.08),G.x(.02),p*.86),spr=arcadeHouseboatPassingSprite(H.scenario.ferry?0:1),scale=.62,w=spr.width*scale,h=spr.height*scale;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(bx-w/2),Math.round(waterY-h*.7),Math.round(w),Math.round(h));ctx.restore();const crest=dir>0?lerp(G.x(.04),G.cx,p):lerp(G.x(.96),G.cx,p);for(let k=0;k<3;k++){const xx=crest-dir*k*12;ctx.beginPath();ctx.moveTo(xx-18,waterY+8+k*3);ctx.quadraticCurveTo(xx,waterY-4-k*2,xx+18,waterY+8+k*3);ctx.strokeStyle=`rgba(245,252,244,${.18+p*.28})`;ctx.lineWidth=2;ctx.stroke()}}
+  if(ts-H.wakeHitAt<700){const a=1-(ts-H.wakeHitAt)/700;for(let i=0;i<5;i++){const xx=G.cx+(i-2)*16*H.wakeDir;line(xx,G.y(.755),xx+H.wakeDir*12,G.y(.735)-i%2*4,`rgba(255,255,255,${a*.42})`,2)}}
+}
+function arcadeRenderHouseboat(g,ts,G,dt,running){const H=g.house,sc=H.scenario;arcadeHouseboatUpdate(g,ts,dt,running);
+  const sky=ctx.createLinearGradient(0,G.top,0,G.bottom);sky.addColorStop(0,sc.rain?'#7f9da6':'#a6d9df');sky.addColorStop(.62,sc.rain?'#6d8e98':'#91cbd4');sky.addColorStop(1,'#477e8c');rect(G.left,G.top,G.w,G.h,sky);
+  // distant shore
+  poly([[G.left,G.y(.29)],[G.x(.08),G.y(.25)],[G.x(.16),G.y(.28)],[G.x(.24),G.y(.22)],[G.x(.36),G.y(.29)],[G.x(.48),G.y(.24)],[G.x(.61),G.y(.28)],[G.x(.74),G.y(.23)],[G.x(.86),G.y(.27)],[G.right,G.y(.22)],[G.right,G.y(.36)],[G.left,G.y(.36)]],sc.rain?'#5f7669':'#71956f');for(let x=.05;x<.96;x+=.09)rect(G.x(x),G.y(.29+Math.sin(x*20)*.012),G.w*.025,G.h*.025,'#d8caa1','#17313a',1);
+  // water and wake
+  rect(G.left,G.y(.70),G.w,G.h*.30,sc.rain?'#376e7b':'#4e98a6');for(let i=0;i<12;i++){const yy=G.y(.73+i*.022)+Math.sin(ts*.0016+i)*2;line(G.left,yy,G.right,yy,'rgba(235,251,246,.09)',1)}arcadeHouseboatDrawWake(g,G,ts);
+  // rain stays outside unless skylight is open
+  if(sc.rain){for(let i=0;i<64;i++){const seed=i*47+17,x=G.x(((seed%101)/101+ts*.00007)%1),y=G.y(((seed%79)/79+ts*.00042)%1);line(x,y,x-4,y+12,'rgba(230,240,242,.26)',1)}}
+  const scene=arcadeHouseboatInteriorSprite(g.round),left=G.x(.05),top=G.y(.105),w=G.w*.90,h=G.h*.70;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(scene,Math.round(left),Math.round(top),Math.round(w),Math.round(h));ctx.restore();arcadeHouseboatDrawFixtures(g,G,ts);
+  // wet floor / rain through open skylight
+  for(const p of H.puddles){ctx.save();ctx.globalAlpha=.24+.18*H.wetness;ctx.beginPath();ctx.ellipse(G.x(p.x),G.y(p.y),G.w*p.r,G.h*p.r*.24,0,0,Math.PI*2);ctx.fillStyle='#65bdd1';ctx.fill();ctx.restore()}if(sc.rain&&!H.fixtures.skylight.closed){for(let i=0;i<9;i++){const x=G.x(.49+i*.012),y=G.y(.18+((ts*.0005+i*.13)%1)*.46);line(x,y,x-2,y+9,'rgba(200,231,236,.34)',1)}}
+  // target hardware integrated into room; only correct target glows while dragging
+  const activeTarget=H.drag?ARCADE_HOUSEBOAT_PROPS[H.drag.kind].target:null;for(const id of Object.keys(ARCADE_HOUSEBOAT_TARGETS))arcadeHouseboatDrawTarget(G,id,id===activeTarget);
+  // loose/secured props
+  for(const o of H.props){if(o.state==='lost')continue;const spr=arcadeHousePropSprite(o.kind),size=o.kind==='chair'?34:o.kind==='cushion'?31:27,x=G.x(o.x),y=G.y(o.y);ctx.save();ctx.imageSmoothingEnabled=false;if(o.dragging){ctx.globalAlpha=.96;circle(x,y,22,'rgba(229,181,78,.08)','rgba(229,181,78,.52)',2)}ctx.drawImage(spr,Math.round(x-size/2),Math.round(y-size*.72),size,size);ctx.restore();if(o.state==='secured'){const T=arcadeHouseboatTarget(o.kind);if(['chairStrap','sofa','hob'].includes(o.securedAt)){line(x-size*.25,y+3,x+size*.25,y+3,'#e5b54e',2);line(x-size*.18,y-2,x+size*.18,y+7,'#704630',1)}}}
+  // shards / breakage remains visible for the round
+  for(const q of H.shards){for(let i=0;i<4;i++)poly([[G.x(q.x)+i*5-7,G.y(q.y)],[G.x(q.x)+i*5-3,G.y(q.y)-5-(i%2)*2],[G.x(q.x)+i*5+1,G.y(q.y)]],i%2?'#d9eef2':'#fff7de','#17313a',1)}
+  // main-game animal sprite as cosy flavour, planted on the floor rather than floating on the roof
+  try{const frame=Math.floor(ts/320)%4,cat=animalSprite('cat',frame,H.wakePulse<0),sz=25,cx=G.x(.805+Math.sin(ts*.00045+H.catPhase)*.015),cy=G.y(.690);ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(cat,Math.round(cx-sz/2),Math.round(cy-sz*.80),sz,sz);ctx.restore()}catch(e){}
+  const T=arcadeHouseboatTasks(g),lives=arcadeLives(g),time=H.nextWakeAt?Math.max(0,(H.nextWakeAt-ts)/1000):0;pxText(sc.label,G.left+12,G.y(.050),'#fff7de',10,'left');pxText(sc.note,G.left+12,G.y(.078),'rgba(255,247,222,.72)',7,'left');pxText(`SECURED ${T.props}/${H.props.length}  ${'♥'.repeat(lives)}${'·'.repeat(Math.max(0,3-lives))}`,G.right-12,G.y(.050),lives===1?'#ffb6a7':'#fff7de',8,'right');if(H.nextWakeAt)pxText(`WAKE ${time<1?'NOW':Math.ceil(time)+'s'}`,G.right-12,G.y(.078),time<1.5?'#ffd978':'rgba(255,247,222,.72)',7,'right');else pxText(H.phase==='tidy'?'TIDY UP':'WAKE PASSED',G.right-12,G.y(.078),'rgba(255,247,222,.72)',7,'right');
+  let cue;if(H.drag)cue=`STOW ${ARCADE_HOUSEBOAT_PROPS[H.drag.kind].name} · ${arcadeHouseboatTarget(H.drag.kind).label}`;else{const open=sc.fixtures.find(id=>!H.fixtures[id].closed);if(open)cue=`TAP ${arcadeHouseboatFixtureRects()[open].label} TO LATCH`;else if(T.props<H.props.length)cue=H.phase==='tidy'?'RECOVER THE LOOSE CABIN':'DRAG LOOSE THINGS TO THEIR STOWS';else cue=H.nextWakeAt?'READY · WATCH THE WATER':'CABIN SECURE'}pxText(cue,G.cx,G.y(.965),'#fff7de',8,'center')
+}
 
 const ARCADE_CRANE_LOADS=[
   {id:'pallet',label:'PALLET',mass:.75,windage:1.30,w:.055,h:.035,fall:.31},
@@ -5256,7 +5386,7 @@ function arcadeLandingDrawJet(x,y,scale,bank=0,hook=true,ts=0){
 function arcadeSetupPoop(g,r,d){arcadeResetCommon(g,8+Math.min(14,r*2));g.playerX=.5;g.inputX=.5;g.playerVx=0;g.gulls=[];g.drops=[];g.splats=g.splats||[];g.poopSpawn=Math.max(260,820-(r-1)*46);g.gullSpawn=Math.max(900,1900-(r-1)*60);g.spawn=performance.now()-500;g.gullLast=0;g.wind=arcadeRand(g,-.025,.025)*d}
 function setupArcadeRound(g,first=false){
   const r=g.round||1,d=arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
-  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
+  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='houseboat')arcadeSetupHouseboat(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
 }
 
 arcadeScoreRecord=function(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec};
@@ -6769,8 +6899,8 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 }
 
 renderArcadeGame=function(g,ts){
-  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts))return;
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
+  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','houseboat'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts))return;
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='houseboat')arcadeRenderHouseboat(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='houseboat'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='houseboat'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
 };
 
 function arcadeTimingInput(g){
@@ -6820,6 +6950,14 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='timing'&&type==='down'&&performance.now()>g.cool)arcadeTimingInput(g);
   else if(e==='balance'&&(type==='down'||type==='move'))g.control=nx;
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
+  else if(e==='houseboat'){
+    const H=g.house;if(type==='down'){
+      let best=null,bestD=52;for(let i=H.props.length-1;i>=0;i--){const o=H.props[i];if(o.state==='lost')continue;const d=Math.hypot(x-G.x(o.x),y-G.y(o.y));if(d<bestD){best=o;bestD=d}}
+      if(best){best.dragging=true;best.state=best.state==='secured'?'loose':best.state;best.securedAt=null;best.vx=best.vy=0;H.drag=best;g.drag=best}
+      else{const R=arcadeHouseboatFixtureRects();for(const id of H.scenario.fixtures){const q=R[id];if(!H.fixtures[id].closed&&Math.abs(nx-q.x)<q.w*.65&&Math.abs(ny-q.y)<q.h*.75){arcadeHouseboatCloseFixture(g,id);break}}}
+    }else if(type==='move'&&H.drag){H.drag.x=clamp(nx,.10,.90);H.drag.y=clamp(ny,.16,.74);H.drag.vx=H.drag.vy=0}
+    else if(type==='up'&&H.drag)arcadeHouseboatDrop(g,H.drag,nx,ny)
+  }
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeCraneInput(g);
   else if(e==='stack'&&g.meta.id==='cargo_tetris')arcadeHoldPointer(g,type,x,y,G)
   else if(e==='stack'&&type==='down'&&performance.now()>g.cool){g.theme==='container'?arcadeContainerDrop(g):arcadeTetrisDrop(g,nx);g.cool=performance.now()+180}
@@ -7013,7 +7151,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.29.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.29.1',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
