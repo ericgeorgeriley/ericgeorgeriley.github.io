@@ -254,7 +254,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.29.4';
+const VERSION_LABEL='0.29.5';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -539,7 +539,7 @@ const CONTENT={
     tallship_rigging:{title:'ALOFT!',icon:'⚑',group:'Tall Ship',engine:'rigging',desc:'Climb the shrouds, edge out along a working yard and free the sail while the ship rolls and the rig comes alive in the wind.',instruction:'TAP A REACHABLE HOLD TO MOVE • CROSS THE YARD BETWEEN GUSTS • HOLD SPACE TO BRACE OR WORK A GASKET • FINISH THE SAIL AND GET BACK TO THE MAST',duration:0,rewardThreshold:600,benchmark:1850,theme:'tallship'},
     sub_depth:{title:'SILENT DEPTH',icon:'≈',group:'Submarine',engine:'depth',desc:'Guide a survey sub ever deeper through a living rock cave, balancing buoyancy as the pressure rises.',instruction:'DRAG OR PRESS UP / DOWN • KEEP THE SUB IN THE SAFE WATER • DIVE AS DEEP AS YOU CAN',duration:28,rewardThreshold:650,benchmark:2050,theme:'submarine'},
     carrier_landing:{title:'DECK LANDING',icon:'✈',group:'Aircraft Carrier',engine:'landing',desc:'Fly a little carrier prop plane from a chase view, keeping the moving deck centred while power controls the glide.',instruction:'KEEP THE DECK AHEAD OF YOUR NOSE • CORRECT LINEUP • USE POWER TO FLY THE BALL • SETTLE ONTO THE WIRES',duration:0,rewardThreshold:550,benchmark:1800,theme:'carrier'},
-    damage_control:{title:'DAMAGE CONTROL',icon:'✚',group:'Ship Systems',engine:'damage',desc:'Fight progressive flooding inside a cutaway ship: route bilge suction, isolate compartments and send the damage-control team to shore breaches before machinery and electrical spaces are lost.',instruction:'TAP SUCTION VALVES TO ROUTE THE PUMPS • TAP BULKHEAD DOORS TO ISOLATE FLOODING • TAP A BREACH TO SEND THE DAMAGE-CONTROL TEAM • KEEP THE ENGINE ROOM DRY',duration:0,rewardThreshold:700,benchmark:2350,theme:'damage'}
+    damage_control:{title:'DAMAGE CONTROL',icon:'✚',group:'Ship Systems',engine:'damage',desc:'Stop water rising inside a cutaway ship. Connect a flooded room to the bilge pump, start pumping, then tap the hole to send the repair team. Later casualties add watertight doors, spreading water and backup pumps.',instruction:'1. TAP THE RED VALVE BELOW THE FLOODED ROOM • 2. START THE MAIN PUMP • 3. TAP THE LEAK TO SEND THE REPAIR TEAM • LATER: SHUT DOORS TO CONTAIN SPREADING WATER',duration:0,rewardThreshold:700,benchmark:2350,theme:'damage'}
   },
   voyageEvents:[
     {id:'dolphins',scene:'dolphins',icon:'⌁',title:['Dolphins off the bow','Company in the blue'],log:['A pod of dolphins kept pace with the boat for a while.','Silver backs rose beside the bow, then slipped under again.'],ambient:true,weight:1.2},
@@ -3284,7 +3284,7 @@ const ARCADE_COPY={
   tallship_rigging:{desc:'Watch the bosun rig the sail, remember the working-point order, then climb the live rig and repeat it while the finished ropes swing free in the wind.',instruction:'WATCH THE FLASHED NODES • REPEAT THEM IN ORDER • HOLD SPACE TO BRACE • EACH CORRECT LASH OPENS MORE SAIL'},
   sub_depth:{desc:'Pilot a buoyant survey sub through a procedural cave that narrows and bends with depth.',instruction:'CONTROL DEPTH WITH INERTIA • STAY BETWEEN THE ROCK FACES'},
   carrier_landing:{desc:'Fly a full moving-deck approach where power controls glideslope, lateral corrections fight crosswind and the carrier pitches beneath you.',instruction:'FLY THE BALL • KEEP LINEUP • MANAGE POWER • TOUCH DOWN ON SPEED • CATCH A WIRE'},
-  damage_control:{desc:'Fight a live flooding casualty by routing pumps, isolating compartments and sending a damage-control team to shore hull breaches.',instruction:'ROUTE SUCTION • ISOLATE FLOODING • SEND THE TEAM • PROTECT THE ENGINE ROOM'}
+  damage_control:{desc:'Stop a live flooding casualty by connecting wet compartments to the pumps, containing spreading water and sending a repair team to shore the hull.',instruction:'OPEN THE VALVE UNDER A FLOODED ROOM • START A PUMP • TAP THE LEAK TO SEND THE REPAIR TEAM • SHUT WATERTIGHT DOORS TO STOP WATER SPREADING'}
 };
 for(const [id,copy] of Object.entries(ARCADE_COPY))if(MINIGAME_META[id])Object.assign(MINIGAME_META[id],copy);
 AT_SEA_MINIGAME_SCENARIOS.poop_deck={scene:'seabirds',icon:'⌃',title:['Gulls over the mast','A very confident flock'],log:['A flock of gulls takes an unusual interest in the boat.','Several gulls wheel overhead with suspicious concentration.'],rewardKind:'bottle'};
@@ -3324,7 +3324,7 @@ function arcadeDefaultHelperCue(g){
   if(id==='tallship_rigging')return'MOVE ONE HOLD AT A TIME · BRACE IN GUSTS · MAKE THE PATTERN FAST';
   if(id==='sub_depth')return'KEEP CENTRED IN SAFE WATER · PRESSURE RISES AS YOU DIVE';
   if(id==='carrier_landing')return'KEEP THE DECK CENTRED · FLY THE BALL WITH POWER · CATCH A WIRE';
-  if(id==='damage_control')return'ROUTE BILGE SUCTION · ISOLATE FLOODING · TAP A BREACH TO SEND THE TEAM';
+  if(id==='damage_control')return'OPEN THE VALVE UNDER THE FLOODED ROOM · START A PUMP · TAP THE LEAK TO SEND THE REPAIR TEAM';
   if(id==='poop_deck')return'WATCH THE SHADOWS · MOVE BEFORE THE DROPPINGS LAND';
   return''
 }
@@ -3830,13 +3830,13 @@ const ARCADE_DAMAGE_ROOMS=[
   {id:'steer',label:'STEERING FLAT',short:'STEER'}
 ];
 const ARCADE_DAMAGE_SCENARIOS=[
-  {id:'single',label:'SHELL PLATE',note:'One breach. Learn the bilge manifold.',leaks:1,doors:false,spread:0,emergency:false,engineRisk:false,start:.03},
-  {id:'split',label:'SPLIT FLOODING',note:'Two spaces are taking water. Do not waste pump capacity.',leaks:2,doors:false,spread:0,emergency:false,engineRisk:false,start:.05},
-  {id:'doors',label:'WATERTIGHT',note:'Open doors let flooding migrate between spaces.',leaks:2,doors:true,spread:.13,emergency:false,engineRisk:false,start:.07},
-  {id:'power',label:'POWER AT RISK',note:'The main bilge pump depends on a dry engine room.',leaks:2,doors:true,spread:.13,emergency:true,engineRisk:true,start:.10,forceEngine:true},
-  {id:'shoring',label:'SHORING PARTY',note:'Three breaches. Pump levels down so the team can work.',leaks:3,doors:true,spread:.15,emergency:true,engineRisk:true,start:.12},
-  {id:'casualty',label:'PUMP CASUALTY',note:'Main pump can trip if the engine space floods.',leaks:3,doors:true,spread:.16,emergency:true,engineRisk:true,start:.15,weakMain:true},
-  {id:'collision',label:'COLLISION DAMAGE',note:'Multiple breaches, progressive flooding, both pumps required.',leaks:4,doors:true,spread:.18,emergency:true,engineRisk:true,start:.17,forceEngine:true}
+  {id:'single',label:'SHELL PLATE',note:'One flooded room. Follow the highlighted controls.',leaks:1,doors:false,spread:0,emergency:false,engineRisk:false,start:.03,tutorial:true},
+  {id:'split',label:'SPLIT FLOODING',note:'Two rooms are leaking. Open only the valves you need so the pump is not divided everywhere.',leaks:2,doors:false,spread:0,emergency:false,engineRisk:false,start:.05},
+  {id:'doors',label:'WATERTIGHT',note:'Water can now pass through open bulkhead doors. Shut doors to keep dry rooms dry.',leaks:2,doors:true,spread:.13,emergency:false,engineRisk:false,start:.07},
+  {id:'power',label:'POWER AT RISK',note:'Keep the engine room dry or the main pump loses power. A backup pump is now rigged.',leaks:2,doors:true,spread:.13,emergency:true,engineRisk:true,start:.10,forceEngine:true},
+  {id:'shoring',label:'SHORING PARTY',note:'Three holes are open. Pump the worst room, then send the team when it is safe.',leaks:3,doors:true,spread:.15,emergency:true,engineRisk:true,start:.12},
+  {id:'casualty',label:'PUMP CASUALTY',note:'The main pump has less margin. Prioritise the wettest compartments.',leaks:3,doors:true,spread:.16,emergency:true,engineRisk:true,start:.15,weakMain:true},
+  {id:'collision',label:'COLLISION DAMAGE',note:'Multiple holes, spreading water and machinery risk. Contain, pump and repair in the right order.',leaks:4,doors:true,spread:.18,emergency:true,engineRisk:true,start:.17,forceEngine:true}
 ];
 const ARCADE_DAMAGE_SCENE_CACHE=new Map();
 function arcadeDamageScenario(g,r){
@@ -3856,7 +3856,8 @@ function arcadeSetupDamage(g,r,d){
   const leaks=leakRooms.map((comp,i)=>({id:`leak-${r}-${i}`,comp,rate:.052+arcadeRand(g,0,.018)+Math.min(.025,(r-1)*.0018)+sc.rateBoost,y:.515+arcadeRand(g,0,.19),side:i%2?'right':'left',patched:false,patchProgress:0,pulse:arcadeRand(g,0,6.28)}));
   const doors=Array.from({length:4},(_,i)=>({id:i,open:true,enabled:!!sc.doors,jammed:false}));
   if(sc.doors&&r>=7&&arcadeRand(g,0,1)>.55){const j=Math.floor(arcadeRand(g,0,4));doors[j].open=true;doors[j].jammed=true}
-  arcadeResetCommon(g,leaks.length);g.damage={scenario:sc,rooms,leaks,doors,pumps:{main:{on:false,available:true,tripped:false,cap:sc.mainCap},emergency:{on:false,available:!!sc.emergency,tripped:false,cap:sc.emergencyCap}},crew:{comp:2,target:-1,state:'idle',phaseAt:0,from:2,progress:0},stableMs:0,lastFloodStrike:0,discharge:0,tripWarned:false,startedAt:0};g.continuous=true;g.roundProgress=0;g.roundGoal=leaks.length
+  if(sc.tutorial&&leakRooms.length){rooms.forEach((R,i)=>{if(i!==leakRooms[0])R.water=Math.min(R.water,.045)});rooms[leakRooms[0]].water=.58}
+  arcadeResetCommon(g,leaks.length);g.damage={scenario:sc,rooms,leaks,doors,pumps:{main:{on:false,available:true,tripped:false,cap:sc.mainCap},emergency:{on:false,available:!!sc.emergency,tripped:false,cap:sc.emergencyCap}},crew:{comp:2,target:-1,state:'idle',phaseAt:0,from:2,progress:0},stableMs:0,lastFloodStrike:0,discharge:0,tripWarned:false,startedAt:0,tutorialTarget:leakRooms[0]??-1};g.continuous=true;g.roundProgress=0;g.roundGoal=leaks.length
 }
 function arcadeDamageGeom(G){
   const x0=.065,x1=.935,top=.475,bottom=.785,w=(x1-x0)/5;
@@ -3868,16 +3869,17 @@ function arcadeDamageDoorPathOpen(D,a,b){
 function arcadeDamageFirstBlockedDoor(D,a,b){
   if(a===b)return-1;const lo=Math.min(a,b),hi=Math.max(a,b);for(let i=lo;i<hi;i++)if(!D.doors[i].open)return i;return-1
 }
+function arcadeDamageCrewSafeLevel(D){return D.scenario.tutorial?.42:.70}
 function arcadeDamageAssignCrew(g,leak){
-  const D=g.damage,C=D.crew;if(leak.patched){arcadeSetFeedback(g,'BREACH ALREADY SHORED','neutral',350);return false}
-  if(C.state!=='idle'){arcadeSetFeedback(g,'DAMAGE-CONTROL TEAM BUSY','warn',420);return false}
-  if(D.rooms[leak.comp].water>.70){arcadeSetFeedback(g,`PUMP ${ARCADE_DAMAGE_ROOMS[leak.comp].short} DOWN FIRST`,'warn',650);return false}
-  const block=arcadeDamageFirstBlockedDoor(D,C.comp,leak.comp);if(block>=0){arcadeSetFeedback(g,'OPEN THE BULKHEAD DOOR FOR THE TEAM','warn',620);return false}
-  C.from=C.comp;C.target=leak.comp;C.state='moving';C.phaseAt=performance.now();C.progress=0;arcadeSetFeedback(g,`TEAM TO ${ARCADE_DAMAGE_ROOMS[leak.comp].short}`,'good',400);return true
+  const D=g.damage,C=D.crew,safe=arcadeDamageCrewSafeLevel(D);if(leak.patched){arcadeSetFeedback(g,'THAT HOLE IS ALREADY REPAIRED','neutral',350);return false}
+  if(C.state!=='idle'){arcadeSetFeedback(g,'REPAIR TEAM IS ALREADY BUSY','warn',420);return false}
+  if(D.rooms[leak.comp].water>safe){arcadeSetFeedback(g,`PUMP ${ARCADE_DAMAGE_ROOMS[leak.comp].short} DOWN TO THE WHITE SAFE LINE FIRST`,'warn',760);return false}
+  const block=arcadeDamageFirstBlockedDoor(D,C.comp,leak.comp);if(block>=0){arcadeSetFeedback(g,'OPEN THE HIGHLIGHTED DOOR SO THE REPAIR TEAM CAN GET THROUGH','warn',720);return false}
+  C.from=C.comp;C.target=leak.comp;C.state='moving';C.phaseAt=performance.now();C.progress=0;arcadeSetFeedback(g,`REPAIR TEAM HEADING TO ${ARCADE_DAMAGE_ROOMS[leak.comp].short}`,'good',500);return true
 }
-function arcadeDamageToggleDoor(g,i){const D=g.damage,q=D.doors[i];if(!q?.enabled){arcadeSetFeedback(g,'WATERTIGHT DOORS NOT REQUIRED YET','neutral',350);return false}if(q.jammed){arcadeSetFeedback(g,'DOOR JAMMED OPEN','bad',500);return false}const C=D.crew;if(C.state!=='idle'&&((C.from<=i&&C.target>i)||(C.target<=i&&C.from>i))){arcadeSetFeedback(g,'TEAM IS PASSING THROUGH','warn',380);return false}q.open=!q.open;arcadeSetFeedback(g,q.open?'BULKHEAD DOOR OPEN':'BULKHEAD DOOR SHUT',q.open?'neutral':'good',360);return true}
-function arcadeDamageTogglePump(g,which){const D=g.damage,P=D.pumps[which];if(!P.available){arcadeSetFeedback(g,'EMERGENCY PUMP NOT RIGGED','neutral',360);return false}if(which==='main'&&P.tripped){if(D.rooms[2].water<.40){P.tripped=false;P.on=true;D.tripWarned=false;arcadeSetFeedback(g,'MAIN PUMP RESET','good',480);return true}arcadeSetFeedback(g,'ENGINE ROOM TOO WET TO RESET MAIN PUMP','bad',650);return false}P.on=!P.on;arcadeSetFeedback(g,`${which==='main'?'MAIN':'EMERGENCY'} PUMP ${P.on?'RUNNING':'STOPPED'}`,P.on?'good':'neutral',360);return true}
-function arcadeDamageToggleValve(g,i){const D=g.damage,R=D.rooms[i];R.valve=!R.valve;arcadeSetFeedback(g,`${R.short} SUCTION ${R.valve?'OPEN':'SHUT'}`,R.valve?'good':'neutral',320);return true}
+function arcadeDamageToggleDoor(g,i){const D=g.damage,q=D.doors[i];if(!q?.enabled){arcadeSetFeedback(g,'WATERTIGHT DOORS ARE INTRODUCED IN A LATER CASUALTY','neutral',520);return false}if(q.jammed){arcadeSetFeedback(g,'THIS DOOR IS JAMMED OPEN','bad',520);return false}const C=D.crew;if(C.state!=='idle'&&((C.from<=i&&C.target>i)||(C.target<=i&&C.from>i))){arcadeSetFeedback(g,'WAIT — THE REPAIR TEAM IS PASSING THROUGH','warn',480);return false}q.open=!q.open;arcadeSetFeedback(g,q.open?'WATERTIGHT DOOR OPEN':'WATERTIGHT DOOR SHUT — WATER CANNOT PASS',q.open?'neutral':'good',520);return true}
+function arcadeDamageTogglePump(g,which){const D=g.damage,P=D.pumps[which];if(!P.available){arcadeSetFeedback(g,'ONLY THE MAIN PUMP IS RIGGED FOR THIS CASUALTY','neutral',520);return false}if(which==='main'&&P.tripped){if(D.rooms[2].water<.40){P.tripped=false;P.on=true;D.tripWarned=false;arcadeSetFeedback(g,'MAIN PUMP RESET AND RUNNING','good',520);return true}arcadeSetFeedback(g,'PUMP THE ENGINE ROOM LOWER BEFORE RESETTING THE MAIN PUMP','bad',720);return false}P.on=!P.on;arcadeSetFeedback(g,`${which==='main'?'MAIN':'BACKUP'} PUMP ${P.on?'STARTED':'STOPPED'}`,P.on?'good':'neutral',430);return true}
+function arcadeDamageToggleValve(g,i){const D=g.damage,R=D.rooms[i];R.valve=!R.valve;arcadeSetFeedback(g,R.valve?`${R.short} IS NOW CONNECTED TO THE PUMP`:`${R.short} DISCONNECTED FROM THE PUMP`,R.valve?'good':'neutral',430);return true}
 function arcadeDamagePumpFactor(D){const w=D.rooms[2].water;if(!D.scenario.engineRisk)return 1;if(w<=.48)return 1;return clamp(1-(w-.48)/.38,.08,1)}
 function arcadeDamageUpdateCrew(g,ts,dt){
   const D=g.damage,C=D.crew;if(C.state==='idle')return;
@@ -3886,7 +3888,7 @@ function arcadeDamageUpdateCrew(g,ts,dt){
   }else if(C.state==='patching'){
     const leak=D.leaks.find(q=>q.comp===C.target&&!q.patched);if(!leak){C.state='idle';C.target=-1;return}
     const water=D.rooms[C.target].water,slow=clamp(1-(Math.max(0,water-.48))*1.5,.25,1),dur=1350+leak.rate*5200+Math.min(550,(g.round-1)*25);C.progress=clamp(C.progress+dt/dur*slow,0,1);leak.patchProgress=C.progress;
-    if(C.progress>=1){leak.patched=true;leak.patchProgress=1;g.score+=250+g.round*18;C.state='idle';C.target=-1;C.progress=0;arcadeSetFeedback(g,`${ARCADE_DAMAGE_ROOMS[leak.comp].short} BREACH SHORED`,'good',650)}
+    if(C.progress>=1){leak.patched=true;leak.patchProgress=1;g.score+=250+g.round*18;C.state='idle';C.target=-1;C.progress=0;arcadeSetFeedback(g,`${ARCADE_DAMAGE_ROOMS[leak.comp].short} LEAK REPAIRED`,'good',650)}
   }
 }
 function arcadeDamageUpdate(g,ts,dt,running){
@@ -3922,8 +3924,8 @@ function arcadeDamageSceneSprite(){
   psLine(g,59,225,455,225,'#d7b369',5);for(let x=92;x<455;x+=83)psLine(g,x,225,x,205,'#d7b369',3);
   ARCADE_DAMAGE_SCENE_CACHE.set(key,c);return c
 }
-function arcadeDamageDrawValve(x,y,open,active=false){
-  const col=open?'#83bf6a':'#c55c57';circle(x,y,12,'#445a60','#17313a',2);circle(x,y,8,'rgba(0,0,0,0)',col,2);for(let a=0;a<Math.PI*2;a+=Math.PI/2)line(x+Math.cos(a)*3,y+Math.sin(a)*3,x+Math.cos(a)*9,y+Math.sin(a)*9,col,2);circle(x,y,3,col);if(active)circle(x,y,17,'rgba(0,0,0,0)','rgba(255,247,222,.42)',1)
+function arcadeDamageDrawValve(x,y,open,active=false,dim=false){
+  ctx.save();if(dim)ctx.globalAlpha=.30;const col=open?'#83bf6a':'#c55c57';circle(x,y,12,'#445a60','#17313a',2);circle(x,y,8,'rgba(0,0,0,0)',col,2);for(let a=0;a<Math.PI*2;a+=Math.PI/2)line(x+Math.cos(a)*3,y+Math.sin(a)*3,x+Math.cos(a)*9,y+Math.sin(a)*9,col,2);circle(x,y,3,col);if(active)circle(x,y,17,'rgba(0,0,0,0)','rgba(255,247,222,.42)',1);ctx.restore()
 }
 function arcadeDamageDrawDoor(G,D,i,ts){
   const M=arcadeDamageGeom(G),p=M.door(i),x=G.x(p.x),y=G.y(p.y),q=D.doors[i],h=G.h*.30;if(q.open){line(x,y-h*.43,x,y-h*.12,'#839498',4);line(x,y+h*.12,x,y+h*.43,'#839498',4);line(x-6,y,x+6,y,'#e5b54e',2)}else{rect(x-5,y-h*.42,10,h*.84,'#687a7e','#17313a',2);circle(x,y,5,'#d7b369','#17313a',1)}if(q.jammed){line(x-8,y-7,x+8,y+7,'#df7c68',2);line(x+8,y-7,x-8,y+7,'#df7c68',2)}
@@ -3938,31 +3940,55 @@ function arcadeDamageRenderWater(G,D,i,ts){
 function arcadeDamageRenderLeak(G,D,L,ts){
   const M=arcadeDamageGeom(G),R=M.roomRect(L.comp),rx=G.x(R.x),ry=G.y(R.y),rw=G.w*R.w,rh=G.h*R.h,x=L.side==='left'?rx+8:rx+rw-8,y=G.y(L.y),dir=L.side==='left'?1:-1;if(L.patched){rect(x-8,y-9,16,18,'#a86d45','#17313a',2);line(x-7,y-5,x+7,y+5,'#d7b369',2);line(x-7,y+5,x+7,y-5,'#d7b369',2);return}poly([[x,y-9],[x+dir*7,y-3],[x+dir*3,y+4],[x+dir*8,y+9],[x-dir*3,y+5],[x-dir*5,y-4]],'#263c45','#df7c68',2);const pulse=.6+.4*Math.sin(ts*.012+L.pulse),len=18+L.rate*150;line(x+dir*3,y,x+dir*len,y+5,'rgba(182,229,235,.78)',3);for(let k=0;k<3;k++)circle(x+dir*(8+k*7),y+4+k*3+Math.sin(ts*.009+k)*2,2,'rgba(221,248,244,.55)')
 }
+function arcadeDamageAdvice(g){
+  const D=g.damage,C=D.crew,safe=arcadeDamageCrewSafeLevel(D),live=D.leaks.filter(L=>!L.patched),wettest=[...D.rooms].map((R,i)=>({R,i})).sort((a,b)=>b.R.water-a.R.water)[0],pumpOn=(D.pumps.main.on&&!D.pumps.main.tripped)||(D.pumps.emergency.available&&D.pumps.emergency.on&&!D.pumps.emergency.tripped);
+  if(C.state==='moving')return{kind:'crew',step:D.scenario.tutorial?4:0,cue:D.scenario.tutorial?'STEP 4 · REPAIR TEAM EN ROUTE':'REPAIR TEAM EN ROUTE',sub:'Keep the pump running while they reach the damaged compartment.'};
+  if(C.state==='patching')return{kind:'leak',leak:live.find(L=>L.comp===C.target),step:D.scenario.tutorial?4:0,cue:`REPAIRING ${ARCADE_DAMAGE_ROOMS[C.target].short} · KEEP PUMPING`,sub:'The yellow bar is the repair progress. Do not let the water climb back up.'};
+  if(live.length){
+    const L=[...live].sort((a,b)=>D.rooms[b.comp].water-D.rooms[a.comp].water)[0],R=D.rooms[L.comp];
+    if(D.scenario.spread){for(let i=0;i<4;i++){const q=D.doors[i];if(!q.enabled||!q.open||q.jammed)continue;const a=D.rooms[i].water,b=D.rooms[i+1].water;if(Math.abs(a-b)>.16&&Math.max(a,b)>.34){const wetter=a>b?i:i+1,drier=a>b?i+1:i;if(L.comp===wetter&&arcadeDamageDoorPathOpen(D,C.comp,L.comp))return{kind:'door',index:i,cue:'SHUT THIS WATERTIGHT DOOR TO CONTAIN THE FLOOD',sub:`Water is escaping from ${ARCADE_DAMAGE_ROOMS[wetter].short} into ${ARCADE_DAMAGE_ROOMS[drier].short}. You can reopen the door when the repair team needs passage.`}}}
+    }
+    if(!R.valve)return{kind:'valve',index:L.comp,step:D.scenario.tutorial?1:0,cue:D.scenario.tutorial?'STEP 1 · TAP THE RED WHEEL UNDER THE FLOODED ROOM':`OPEN THE VALVE UNDER ${ARCADE_DAMAGE_ROOMS[L.comp].short}`,sub:'Opening this wheel connects that compartment to the bilge pump. Red means shut; green means open.'};
+    const open=D.rooms.map((q,i)=>q.valve?i:-1).filter(i=>i>=0),wasted=open.find(i=>i!==L.comp&&D.rooms[i].water<.10);
+    if(open.length>1&&wasted>=0&&R.water>.34)return{kind:'valve',index:wasted,cue:`CLOSE THE ${ARCADE_DAMAGE_ROOMS[wasted].short} VALVE`,sub:'Every open valve shares the same pump capacity. Do not spend suction on an almost-dry room.'};
+    if(!pumpOn)return{kind:'pump',which:D.pumps.main.tripped&&D.pumps.emergency.available?'emergency':'main',step:D.scenario.tutorial?2:0,cue:D.scenario.tutorial?'STEP 2 · TAP MAIN BILGE TO START THE PUMP':'START A BILGE PUMP',sub:'With the valve open, the blue water level in that room will begin to fall.'};
+    if(R.water>safe)return{kind:'water',index:L.comp,level:safe,step:D.scenario.tutorial?3:0,cue:D.scenario.tutorial?'STEP 3 · PUMP DOWN TO THE WHITE SAFE LINE':`PUMP ${ARCADE_DAMAGE_ROOMS[L.comp].short} DOWN TO THE WHITE LINE`,sub:'The repair team will not enter while the water is above this line.'};
+    const block=arcadeDamageFirstBlockedDoor(D,C.comp,L.comp);if(block>=0)return{kind:'door',index:block,cue:'OPEN THIS DOOR FOR THE REPAIR TEAM',sub:'The crew travels through the ship physically. Once they pass, you can shut the door again to contain flooding.'};
+    return{kind:'leak',leak:L,step:D.scenario.tutorial?4:0,cue:D.scenario.tutorial?'STEP 4 · TAP THE LEAK TO SEND THE REPAIR TEAM':`TAP THE ${ARCADE_DAMAGE_ROOMS[L.comp].short} LEAK TO SEND THE REPAIR TEAM`,sub:'Keep that room connected to a running pump while the crew repairs the hull.'};
+  }
+  if(wettest.R.water>.18){if(!wettest.R.valve)return{kind:'valve',index:wettest.i,step:D.scenario.tutorial?5:0,cue:D.scenario.tutorial?'STEP 5 · KEEP PUMPING UNTIL THE ROOM IS DRY':`OPEN ${ARCADE_DAMAGE_ROOMS[wettest.i].short} AND PUMP THE REMAINING WATER`,sub:'All holes are repaired. Finish by lowering every compartment below the safe level.'};if(!pumpOn)return{kind:'pump',which:'main',cue:'START A PUMP TO CLEAR THE REMAINING WATER',sub:'The casualty ends when the holes are repaired and the ship is pumped dry.'};return{kind:'water',index:wettest.i,level:.18,step:D.scenario.tutorial?5:0,cue:D.scenario.tutorial?'STEP 5 · KEEP PUMPING UNTIL THE ROOM IS DRY':'HOLES REPAIRED · PUMP THE SHIP DRY',sub:`${ARCADE_DAMAGE_ROOMS[wettest.i].short} is still ${Math.round(wettest.R.water*100)}% flooded.`}}
+  return{kind:'none',cue:'CASUALTY CONTROLLED · SHIP DRY',sub:'All leaks are repaired and flooding is below the safe level.'}
+}
+function arcadeDamageDrawPumpFlow(G,D,ts){
+  const M=arcadeDamageGeom(G),running=(D.pumps.main.on&&!D.pumps.main.tripped)||(D.pumps.emergency.available&&D.pumps.emergency.on&&!D.pumps.emergency.tripped),open=D.rooms.map((R,i)=>R.valve?i:-1).filter(i=>i>=0);if(!open.length)return;const manifoldY=G.y(.855),targets=[];if(D.pumps.main.on&&!D.pumps.main.tripped)targets.push(M.main);if(D.pumps.emergency.available&&D.pumps.emergency.on&&!D.pumps.emergency.tripped)targets.push(M.emergency);
+  ctx.save();for(const i of open){const p=M.valve(i),x=G.x(p.x),y=G.y(p.y);line(x,y-10,x,manifoldY,running?'rgba(185,232,236,.48)':'rgba(229,181,78,.25)',3);if(running){for(let k=0;k<3;k++){const t=((ts*.0016+k/3+i*.13)%1),yy=lerp(y-10,manifoldY,t);circle(x,yy,2,'#d9f4ef')}}}
+  for(const T of targets){const tx=G.x(T.x),ty=G.y(T.y-T.h*.34);for(const i of open){const x=G.x(M.valve(i).x);line(x,manifoldY,tx,manifoldY,'rgba(185,232,236,.28)',2)}line(tx,manifoldY,tx,ty,'rgba(185,232,236,.45)',3);for(let k=0;k<4;k++){const t=((ts*.0013+k/4)%1),yy=lerp(manifoldY,ty,t);circle(tx,yy,2,'#d9f4ef')}}ctx.restore()
+}
+function arcadeDamageDrawAdviceFocus(G,D,A,ts){
+  if(!A||A.kind==='none'||A.kind==='crew')return;const M=arcadeDamageGeom(G),pulse=2+Math.sin(ts*.009)*2,stroke='rgba(255,215,104,.95)',fill='rgba(255,215,104,.07)';let x=0,y=0;
+  if(A.kind==='valve'){const p=M.valve(A.index);x=G.x(p.x);y=G.y(p.y);circle(x,y,22+pulse,fill,stroke,3)}
+  else if(A.kind==='pump'){const q=M[A.which],w=G.w*q.w,h=G.h*q.h;x=G.x(q.x);y=G.y(q.y);roundedRect(x-w*.62,y-h*.72,w*1.24,h*1.44,9,fill,stroke,3)}
+  else if(A.kind==='door'){const p=M.door(A.index);x=G.x(p.x);y=G.y(p.y);roundedRect(x-13-pulse,y-G.h*.145,26+pulse*2,G.h*.29,8,fill,stroke,3)}
+  else if(A.kind==='leak'&&A.leak){const R=M.roomRect(A.leak.comp);x=G.x(A.leak.side==='left'?R.x+.015:R.x+R.w-.015);y=G.y(A.leak.y);circle(x,y,24+pulse,fill,stroke,3)}
+  else if(A.kind==='water'){const R=M.roomRect(A.index),safe=A.level??arcadeDamageCrewSafeLevel(D),rx=G.x(R.x),rw=G.w*R.w,ry=G.y(R.y),rh=G.h*R.h,yy=ry+rh*(1-safe);ctx.save();ctx.setLineDash([7,5]);line(rx+7,yy,rx+rw-7,yy,stroke,3);ctx.restore();x=rx+rw*.5;y=yy}
+  if(D.scenario.tutorial&&A.step&&x&&y){circle(x-18,y-22,11,'#e5b54e','#17313a',2);pxText(String(A.step),x-18,y-18,'#17313a',9,'center')}
+}
 function arcadeRenderDamage(g,ts,G,dt,running){
-  const D=g.damage,sc=D.scenario;arcadeDamageUpdate(g,ts,dt,running);
-  // sea / sky around the cutaway vessel
+  const D=g.damage,sc=D.scenario;arcadeDamageUpdate(g,ts,dt,running);const advice=arcadeDamageAdvice(g);
   const sky=ctx.createLinearGradient(0,G.top,0,G.bottom);sky.addColorStop(0,'#91b9be');sky.addColorStop(.42,'#6c98a2');sky.addColorStop(.43,'#3e7d8c');sky.addColorStop(1,'#285b6a');rect(G.left,G.top,G.w,G.h,sky);for(let i=0;i<13;i++){const yy=G.y(.18+i*.047)+Math.sin(ts*.0017+i)*2;line(G.left,yy,G.right,yy,'rgba(224,244,239,.07)',1)}
   const spr=arcadeDamageSceneSprite(),left=G.x(.035),top=G.y(.115),w=G.w*.93,h=G.h*.72;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(left),Math.round(top),Math.round(w),Math.round(h));ctx.restore();const M=arcadeDamageGeom(G);
-  // water is dynamic inside each compartment and remains clipped to the cutaway.
   for(let i=0;i<5;i++)arcadeDamageRenderWater(G,D,i,ts);
-  // bulkheads, doors and labels sit above the water.
+  // A single white line shows the maximum water depth at which the repair team may enter the advised casualty.
+  if(advice.kind==='water'||(sc.tutorial&&D.leaks.some(L=>!L.patched))){const idx=advice.index??D.tutorialTarget,safe=advice.level??arcadeDamageCrewSafeLevel(D);if(idx>=0){const R=M.roomRect(idx),rx=G.x(R.x),rw=G.w*R.w,ry=G.y(R.y),rh=G.h*R.h,yy=ry+rh*(1-safe);ctx.save();ctx.setLineDash([5,4]);line(rx+8,yy,rx+rw-8,yy,'rgba(255,247,222,.72)',2);ctx.restore()}}
   for(let i=0;i<4;i++)arcadeDamageDrawDoor(G,D,i,ts);
-  for(let i=0;i<5;i++){const R=M.roomRect(i),cx=G.x(R.x+R.w*.5);pxText(ARCADE_DAMAGE_ROOMS[i].short,cx,G.y(.495),'rgba(255,247,222,.70)',6,'center');const vp=M.valve(i);arcadeDamageDrawValve(G.x(vp.x),G.y(vp.y),D.rooms[i].valve,D.rooms[i].water>.45)}
-  // live breaches and patching progress.
+  const leakRooms=new Set(D.leaks.filter(L=>!L.patched).map(L=>L.comp));for(let i=0;i<5;i++){const R=M.roomRect(i),cx=G.x(R.x+R.w*.5);pxText(ARCADE_DAMAGE_ROOMS[i].short,cx,G.y(.495),'rgba(255,247,222,.78)',7,'center');const vp=M.valve(i),dim=sc.tutorial&&!leakRooms.has(i);arcadeDamageDrawValve(G.x(vp.x),G.y(vp.y),D.rooms[i].valve,D.rooms[i].water>.45,dim)}
   for(const L of D.leaks){arcadeDamageRenderLeak(G,D,L,ts);if(!L.patched&&D.crew.state==='patching'&&D.crew.target===L.comp){const R=M.roomRect(L.comp),cx=G.x(R.x+R.w*.5),yy=G.y(.39);roundedRect(cx-28,yy-5,56,8,3,'rgba(23,49,58,.65)','#17313a',1);rect(cx-26,yy-3,52*clamp(L.patchProgress,0,1),4,'#e5b54e')}}
-  // pumps and discharge.
-  arcadeDamageDrawPump(G,D,'main',ts);arcadeDamageDrawPump(G,D,'emergency',ts);if(D.discharge>.08){const a=D.discharge;for(let i=0;i<5;i++){const x=G.x(.93)+i*5,y=G.y(.875)+Math.sin(ts*.012+i)*3;line(x,y,x+12,y-4,`rgba(215,244,239,${.14+a*.34})`,2)}}
-  // damage-control team travels along the actual passageway.
-  const CP=arcadeDamageCrewPos(D,ts),roomW=(M.x1-M.x0)/5,cx=G.x(M.x0+(CP.x+.5)*roomW),cy=G.y(CP.y);drawArcadeCrew(cx-5,cy,CP.working?'#e5b54e':'#d8caa1','#df7c68',.78);drawArcadeCrew(cx+6,cy+1,CP.working?'#e5b54e':'#d8caa1','#527da0',.72);if(CP.working){line(cx+4,cy-7,cx+14+Math.sin(ts*.012)*3,cy-15,'#d7b369',2)}
-  // engine-room power risk is communicated by the physical switchboard.
+  arcadeDamageDrawPumpFlow(G,D,ts);arcadeDamageDrawPump(G,D,'main',ts);arcadeDamageDrawPump(G,D,'emergency',ts);if(D.discharge>.08){const a=D.discharge;for(let i=0;i<5;i++){const x=G.x(.93)+i*5,y=G.y(.875)+Math.sin(ts*.012+i)*3;line(x,y,x+12,y-4,`rgba(215,244,239,${.14+a*.34})`,2)}}
+  const CP=arcadeDamageCrewPos(D,ts),roomW=(M.x1-M.x0)/5,cx=G.x(M.x0+(CP.x+.5)*roomW),cy=G.y(CP.y);drawArcadeCrew(cx-5,cy,CP.working?'#e5b54e':'#d8caa1','#df7c68',.78);drawArcadeCrew(cx+6,cy+1,CP.working?'#e5b54e':'#d8caa1','#527da0',.72);if(CP.working)line(cx+4,cy-7,cx+14+Math.sin(ts*.012)*3,cy-15,'#d7b369',2);
   const ew=D.rooms[2].water;if(sc.engineRisk&&ew>.48){const ex=G.x(M.x0+(2.82)*M.w),ey=G.y(.565);circle(ex,ey,5,ew>.76?'#df7c68':'#e5b54e','#17313a',1);if(ew>.66&&Math.floor(ts/180)%2===0)line(ex+5,ey-6,ex+11,ey-12,'#ffd978',2)}
-  // sparse world labels; actionable instruction lives in the shared DOM helper.
-  pxText(sc.label,G.left+10,G.y(.045),'#fff7de',9,'left');pxText(`BREACHES ${D.leaks.filter(L=>L.patched).length}/${D.leaks.length}`,G.right-10,G.y(.045),'#fff7de',8,'right');
-  const max=Math.max(...D.rooms.map(R=>R.water)),maxI=D.rooms.findIndex(R=>R.water===max),C=D.crew;let cue='';
-  if(C.state==='moving')cue=`DAMAGE-CONTROL TEAM MOVING TO ${ARCADE_DAMAGE_ROOMS[C.target].short}`;
-  else if(C.state==='patching')cue=`SHORING ${ARCADE_DAMAGE_ROOMS[C.target].short} BREACH`;
-  else{const urgent=D.leaks.filter(L=>!L.patched).sort((a,b)=>D.rooms[b.comp].water-D.rooms[a.comp].water)[0];if(urgent){if(D.rooms[urgent.comp].water>.70)cue=`PUMP ${ARCADE_DAMAGE_ROOMS[urgent.comp].short} BELOW 70% BEFORE SENDING THE TEAM`;else{const block=arcadeDamageFirstBlockedDoor(D,C.comp,urgent.comp);cue=block>=0?'OPEN A BULKHEAD DOOR SO THE TEAM CAN REACH THE BREACH':'TAP A BREACH TO SEND THE DAMAGE-CONTROL TEAM'}}else if(max>.18){const open=D.rooms.filter(R=>R.valve).length,pumpOn=(D.pumps.main.on&&!D.pumps.main.tripped)||(D.pumps.emergency.available&&D.pumps.emergency.on);cue=!open?`OPEN ${ARCADE_DAMAGE_ROOMS[maxI].short} SUCTION VALVE`:!pumpOn?'START A BILGE PUMP':`PUMPING ${ARCADE_DAMAGE_ROOMS[maxI].short} DOWN TO THE SAFE LINE`}else cue='SHIP DRY · HOLDING'}
-  const pumps=`MAIN ${D.pumps.main.tripped?'TRIPPED':D.pumps.main.on?'ON':'OFF'}${D.pumps.emergency.available?` · EMERGENCY ${D.pumps.emergency.on?'ON':'OFF'}`:''}`,valves=D.rooms.filter(R=>R.valve).length;arcadeSetHelperCue(g,cue,`${ARCADE_DAMAGE_ROOMS[maxI].short} ${Math.round(max*100)}% · ${valves} suction valve${valves===1?'':'s'} open · ${pumps}`)
+  arcadeDamageDrawAdviceFocus(G,D,advice,ts);
+  pxText(sc.label,G.left+10,G.y(.045),'#fff7de',9,'left');pxText(`LEAKS REPAIRED ${D.leaks.filter(L=>L.patched).length}/${D.leaks.length}`,G.right-10,G.y(.045),'#fff7de',8,'right');
+  const max=Math.max(...D.rooms.map(R=>R.water)),maxI=D.rooms.findIndex(R=>R.water===max),pumps=`MAIN ${D.pumps.main.tripped?'TRIPPED':D.pumps.main.on?'ON':'OFF'}${D.pumps.emergency.available?` · BACKUP ${D.pumps.emergency.on?'ON':'OFF'}`:''}`;arcadeSetHelperCue(g,advice.cue,advice.sub||`${ARCADE_DAMAGE_ROOMS[maxI].short} ${Math.round(max*100)}% flooded · ${pumps}`)
 }
 function arcadeDamagePointer(g,type,x,y,G=arcadeGeom()){
   if(type!=='down')return;const D=g.damage,M=arcadeDamageGeom(G),nx=G.nx(x),ny=G.ny(y);
@@ -7288,7 +7314,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.29.4',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.29.5',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
