@@ -254,7 +254,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.29.3';
+const VERSION_LABEL='0.29.4';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -539,7 +539,7 @@ const CONTENT={
     tallship_rigging:{title:'ALOFT!',icon:'⚑',group:'Tall Ship',engine:'rigging',desc:'Climb the shrouds, edge out along a working yard and free the sail while the ship rolls and the rig comes alive in the wind.',instruction:'TAP A REACHABLE HOLD TO MOVE • CROSS THE YARD BETWEEN GUSTS • HOLD SPACE TO BRACE OR WORK A GASKET • FINISH THE SAIL AND GET BACK TO THE MAST',duration:0,rewardThreshold:600,benchmark:1850,theme:'tallship'},
     sub_depth:{title:'SILENT DEPTH',icon:'≈',group:'Submarine',engine:'depth',desc:'Guide a survey sub ever deeper through a living rock cave, balancing buoyancy as the pressure rises.',instruction:'DRAG OR PRESS UP / DOWN • KEEP THE SUB IN THE SAFE WATER • DIVE AS DEEP AS YOU CAN',duration:28,rewardThreshold:650,benchmark:2050,theme:'submarine'},
     carrier_landing:{title:'DECK LANDING',icon:'✈',group:'Aircraft Carrier',engine:'landing',desc:'Fly a little carrier prop plane from a chase view, keeping the moving deck centred while power controls the glide.',instruction:'KEEP THE DECK AHEAD OF YOUR NOSE • CORRECT LINEUP • USE POWER TO FLY THE BALL • SETTLE ONTO THE WIRES',duration:0,rewardThreshold:550,benchmark:1800,theme:'carrier'},
-    houseboat_catch:{title:'HOUSEBOAT HAVOC',icon:'⌂',group:'Houseboat',engine:'houseboat',desc:'Secure a lived-in houseboat before passing wakes and squalls turn breakfast, books and galley gear into flying clutter.',instruction:'DRAG LOOSE THINGS TO THEIR REAL STOWS • TAP OPEN LATCHES • WATCH THE WATER FOR THE NEXT WAKE • RECOVER ANYTHING THAT BREAKS LOOSE',duration:0,rewardThreshold:650,benchmark:2100,theme:'houseboat'}
+    damage_control:{title:'DAMAGE CONTROL',icon:'✚',group:'Ship Systems',engine:'damage',desc:'Fight progressive flooding inside a cutaway ship: route bilge suction, isolate compartments and send the damage-control team to shore breaches before machinery and electrical spaces are lost.',instruction:'TAP SUCTION VALVES TO ROUTE THE PUMPS • TAP BULKHEAD DOORS TO ISOLATE FLOODING • TAP A BREACH TO SEND THE DAMAGE-CONTROL TEAM • KEEP THE ENGINE ROOM DRY',duration:0,rewardThreshold:700,benchmark:2350,theme:'damage'}
   },
   voyageEvents:[
     {id:'dolphins',scene:'dolphins',icon:'⌁',title:['Dolphins off the bow','Company in the blue'],log:['A pod of dolphins kept pace with the boat for a while.','Silver backs rose beside the bow, then slipped under again.'],ambient:true,weight:1.2},
@@ -574,7 +574,7 @@ const CONTENT={
     {id:'arcade_tallship',scene:'arcadevessel',icon:'⚑',title:['Tall masts ahead','A square-rigger under sail'],log:['A tall ship crossed the horizon with a forest of rope and canvas.','A traditional vessel passed close enough to hear the bosun calling from the rigging.'],interaction:{minigame:'tallship_rigging'},rewards:[{kind:'cloth',weight:.55},{kind:'bottle',weight:.45}],weight:.5},
     {id:'arcade_sub',scene:'arcadevessel',icon:'≈',title:['A dark shape below','A submarine surfaces nearby'],log:['A dark hull surfaced beyond the bow, water pouring from its casing.','For a moment a low submarine silhouette broke the surface beside the route.'],interaction:{minigame:'sub_depth'},rewards:[{kind:'chart',weight:.55},{kind:'bell',weight:.45}],weight:.28},
     {id:'arcade_carrier',scene:'arcadevessel',icon:'✈',title:['A vast flight deck','Aircraft circling a carrier'],log:['A distant carrier turned into the wind while tiny aircraft moved above its deck.','A huge flat deck appeared on the horizon with deck crews signalling in bright colours.'],interaction:{minigame:'carrier_landing'},rewards:[{kind:'bell',weight:.55},{kind:'crate',weight:.45}],weight:.22},
-    {id:'arcade_houseboat',scene:'arcadevessel',icon:'⌂',title:['A cheerful houseboat','Dinner in a lively wake'],log:['A cosy houseboat rocked through a ferry wake while everything inside shifted at once.','A little floating home bobbed past with washing, mugs and cushions in mild disarray.'],interaction:{minigame:'houseboat_catch'},rewards:[{kind:'bottle',weight:.65},{kind:'cloth',weight:.35}],weight:.6},
+    {id:'arcade_houseboat',scene:'arcadevessel',icon:'✚',title:['Water below decks','A pump watch turns urgent'],log:['A workboat crew found water rising behind a damaged shell plate and started the bilge manifold.','A sharp report below decks sent the damage-control team running for the pump flat.'],interaction:{minigame:'damage_control'},rewards:[{kind:'hardware',weight:.55},{kind:'cloth',weight:.45}],weight:.6},
   ],
   featureLabels:{dock:'dock',cottage:'cottage',jetty:'jetty',tiny_jetty:'tiny jetty',windmill_ruin:'old windmill',windmill:'windmill',pier:'new pier',garden:'garden',guesthouse:'guesthouse',workshop:'workshop',mosaic:'sea-glass mosaic',bell_tower:'bell tower',story_post:'post box',chart_house:'chart room',boatyard:'boatyard',home_garden:'garden',new_resident:'new neighbour',market:'market',museum_glass:'museum display',harbour_bell:'harbour bell',post_office:'post office',map_room:'chart room',footbridge:'footbridge',orchard:'orchard',tea_house:'tea house',observatory:'lookout',ferry:'ferry landing',nature_path:'nature trail',market_stall:'market stall',market_square:'market square',market_hall:'market hall',cottage_row:'cottage row',memory:'little monument',souvenir:'voyage shelf'},
   copy:{
@@ -689,7 +689,7 @@ const AT_SEA_MINIGAME_SCENARIOS={
   tallship_rigging:{scene:'rigging',icon:'⚑',title:['Running rigging needs sorting','A rope sequence on deck'],log:['A few lines have worked themselves into an untidy order and the next sail change is a good moment to sort them.','The rigging taps out a familiar little job: watch the lines, then work them in the right sequence.'],rewardKind:'cloth'},
   sub_depth:{scene:'shoal',icon:'≈',title:['A survey drone below','A little vehicle under the keel'],log:['A research crew nearby offers the controls of a tiny underwater survey drone for one short run.','A compact submersible drone slips beneath the boat to trace a safe path through the darker water.'],rewardKind:'chart'},
   carrier_landing:{scene:'signal',icon:'✈',title:['A spotter plane returning','A deck exercise over the horizon'],log:['A distant training ship asks you to watch a tiny spotter aircraft line up for one careful deck approach.','Radio chatter from a harmless sea exercise carries across the water as a small aircraft makes its approach.'],rewardKind:'bell'},
-  houseboat_catch:{scene:'breeze',icon:'⌂',title:['The cabin gets a wake','Mugs, cushions, everything'],log:['A passing wake reaches the cabin at exactly the wrong moment and the cosy loose things all begin to slide.','The boat gives one buoyant roll and mugs, cushions and supper suddenly need catching.'],rewardKind:'bottle'}
+  damage_control:{scene:'rigging',icon:'✚',title:['Water in the bilges','Damage-control stations'],log:['A damaged shell plate starts shipping water and the bilge manifold needs sorting quickly.','The pump watch reports rising water below decks and calls for the damage-control team.'],rewardKind:'hardware'}
 };
 
 function ensureArcadeOfferData(arcade=null){
@@ -1044,7 +1044,7 @@ const AdaptiveMusic=(()=>{
   function queuePalette(i){if(!Number.isInteger(i)||!PALETTES[i])return;A.desiredPalette=i;if(A.paletteMorph){if(i===A.paletteMorph.to)A.pendingPalette=null;return}if(i===A.activePalette){A.pendingPalette=null;return}A.pendingPalette=i}
   function currentChord(){const ph=A.currentPhrase;if(!ph||!ph.harmony.length)return[60,64,67];const l=local(),ch=ph.harmony.filter(h=>h.g<=l).sort((a,b)=>b.g-a.g)[0]||ph.harmony[0];return ch.notes}
   function director(){const phase=dayPhase(),weather=activeWeatherDetails(),isl=currentIsland(),biome=isl?.biome||'meadow',atSea=state.phase==='fasting';let world,palette,intensity,ornament,human,tail,ambience,scene;
-    if(minigame){scene='arcade';world=5;palette=minigame?.theme==='ferry'||minigame?.theme==='houseboat'?4:6;intensity=.84;ornament=.34;human=.24;tail=.43;ambience=.25}
+    if(minigame){scene='arcade';world=5;palette=minigame?.theme==='ferry'?4:6;intensity=.84;ornament=.34;human=.24;tail=.43;ambience=.25}
     else if(atSea){scene='sea';world=(phase==='night'||phase==='dusk'||weather.kind==='storm')?0:2;palette=phase==='night'||phase==='dusk'?1:5;intensity=.50;ornament=.27;human=.36;tail=.64;ambience=.50;if(state.voyage?.activeEventId||(sceneEvent&&!sceneEvent.ambient)){intensity=.68;ornament=.44}if(['rain','mist'].includes(weather.kind)){palette=2;tail=.80;ambience=.80;intensity=Math.max(.38,intensity*.84)}else if(weather.kind==='breezy'){palette=5;intensity+=.05}else if(weather.kind==='snow'){palette=2;tail=.78;ambience=.72}}
     else{scene='shore';const developed=!!(isl?.home||isl?.projects?.some(p=>p.complete)||isl?.population>=5),natural=['pine','orchard','marsh','dunes'].includes(biome);if(developed){world=3;palette=7;intensity=isl?.population>=9?.42:.34;ornament=.20;human=.40;tail=.68;ambience=.44}else if(natural||phase==='dawn'){world=4;palette=3;intensity=.31;ornament=.22;human=.41;tail=.72;ambience=.56}else{world=1;palette=7;intensity=.40;ornament=.25;human=.34;tail=.58;ambience=.38}
       if(phase==='night'||phase==='dusk'){palette=1;intensity*=.78;tail=.88;ambience=.74}else if(['rain','mist','storm'].includes(weather.kind)){palette=2;intensity*=weather.kind==='storm'?.92:.76;tail=.82;ambience=.80}else if(weather.kind==='snow'){palette=2;tail=.80;ambience=.74}else if(weather.kind==='breezy'){palette=natural?3:5}}
@@ -2963,7 +2963,7 @@ function drawChart(){
   updateChartLabelOverlay(labelNodes,you,vr);chartView.needsFit=false;
 }
 
-function arcadeThemePalette(theme){const p={ferry:['#e9e2c5','#d7cda9','#497b94'],container:['#b98359','#704630','#4f8b56'],cruise:['#fff7de','#d9eef2','#527da0'],trawler:['#a86d45','#704630','#4f8b56'],yacht:['#f2e7c5','#a86d45','#4f8b56'],speedboat:['#d9eef2','#527da0','#df7c68'],tug:['#d6c287','#704630','#e5b54e'],tanker:['#6a7c7f','#384f55','#df7c68'],naval:['#7a8c88','#435d5b','#d8caa1'],research:['#e5e8df','#527da0','#e5b54e'],rescue:['#fff7de','#df7c68','#527da0'],pilot:['#fff7de','#527da0','#e5b54e'],dredger:['#c89d63','#704630','#e5b54e'],barge:['#a86d45','#704630','#527da0'],tallship:['#a86d45','#704630','#fff7de'],submarine:['#49646b','#263c45','#65bdd1'],carrier:['#7f8a86','#46534f','#e5b54e'],houseboat:['#fff7de','#a86d45','#83bf6a']};return p[theme]||p.ferry}
+function arcadeThemePalette(theme){const p={ferry:['#e9e2c5','#d7cda9','#497b94'],container:['#b98359','#704630','#4f8b56'],cruise:['#fff7de','#d9eef2','#527da0'],trawler:['#a86d45','#704630','#4f8b56'],yacht:['#f2e7c5','#a86d45','#4f8b56'],speedboat:['#d9eef2','#527da0','#df7c68'],tug:['#d6c287','#704630','#e5b54e'],tanker:['#6a7c7f','#384f55','#df7c68'],naval:['#7a8c88','#435d5b','#d8caa1'],research:['#e5e8df','#527da0','#e5b54e'],rescue:['#fff7de','#df7c68','#527da0'],pilot:['#fff7de','#527da0','#e5b54e'],dredger:['#c89d63','#704630','#e5b54e'],barge:['#a86d45','#704630','#527da0'],tallship:['#a86d45','#704630','#fff7de'],submarine:['#49646b','#263c45','#65bdd1'],carrier:['#7f8a86','#46534f','#e5b54e'],damage:['#596d73','#263c45','#df7c68']};return p[theme]||p.ferry}
 function arcadeGeom(){const W=canvas.width,H=canvas.height,top=Math.max(82,Math.round(H*.095)),bottom=H-18,h=Math.max(250,bottom-top),left=22,right=W-22,w=right-left;return{W,H,top,bottom,h,left,right,w,cx:W/2,x:p=>left+w*p,y:p=>top+h*p,nx:x=>clamp((x-left)/w,0,1),ny:y=>clamp((y-top)/h,0,1)}}
 function radarGeometry(G){return{cx:G.cx,cy:G.y(.50),r:Math.min(G.w*.39,G.h*.31)}}
 function sonarGeometry(G){const left=G.x(.07),right=G.x(.93),top=G.y(.16),bottom=G.y(.76);return{left,right,top,bottom,cw:(right-left)/6,ch:(bottom-top)/5}}
@@ -3190,7 +3190,6 @@ function drawArcadeDeck(g,ts,G){const [deck,dark,accent]=arcadeThemePalette(g.th
   if(g.theme==='research'){roundedRect(G.x(.33),G.y(.07),G.w*.34,G.h*.16,7,'#fff7de','#18313a',3);line(G.cx,G.y(.05),G.cx,G.y(.27),'#18313a',4);for(let i=0;i<4;i++)circle(G.x(.18+i*.21),G.y(.30),8,'#e5b54e','#18313a',2);for(let i=0;i<3;i++)roundedRect(G.x(.12+i*.28),G.y(.63),G.w*.18,G.h*.08,5,'#527da0','#18313a',2);drawArcadeCrew(G.x(.78),G.y(.25),'#527da0','#e5b54e',.8)}
   if(g.theme==='dredger'){drawArcadeDredger(G.cx,G.y(.20),Math.min(1.65,G.w/390));drawArcadeCrew(G.x(.76),G.y(.25),'#e5b54e','#527da0',.78)}
   if(g.theme==='carrier'){rect(G.x(.08),G.y(.33),G.w*.84,G.h*.25,'#6a7c7f','#18313a',4);line(G.x(.10),G.y(.455),G.x(.90),G.y(.455),'#fff7de',3);for(let i=0;i<5;i++)rect(G.x(.16+i*.14),G.y(.40),2,G.h*.11,'rgba(255,247,222,.65)')}
-  if(g.theme==='houseboat'){roundedRect(G.x(.30),G.y(.08),G.w*.40,G.h*.21,10,'#fff7de','#18313a',3);poly([[G.x(.27),G.y(.09)],[G.cx,G.y(.015)],[G.x(.73),G.y(.09)]],'#83bf6a','#18313a',3);for(let i=0;i<4;i++)rect(G.x(.36+i*.09),G.y(.145),18,16,'#65bdd1','#18313a',1);line(G.x(.13),G.y(.31),G.x(.85),G.y(.31),'#704630',3);rect(G.x(.15),G.y(.39),G.w*.22,G.h*.08,'#e9d5ad','#18313a',2);circle(G.x(.24),G.y(.43),18,'#fff7de','#18313a',2);for(let i=0;i<5;i++){line(G.x(.63)+i*18,G.y(.35),G.x(.63)+i*18,G.y(.42),'#704630',2);rect(G.x(.62)+i*18,G.y(.41),13,9,['#df7c68','#e5b54e','#65bdd1'][i%3],'#18313a',1)}}
 }
 function spawnLaneItem(g,ts){if(!g.started||ts-g.spawn<720||g.items.length>7)return;g.spawn=ts;g.items.push({x:.14+Math.random()*.72,y:.20+Math.random()*.37,kind:Math.floor(Math.random()*3)})}
 function spawnSortItem(g,ts){if(!g.started||ts-g.spawn<620||g.items.length>6)return;g.spawn=ts;const cells=[[.18,.22],[.50,.20],[.80,.24],[.28,.42],[.67,.43],[.48,.58]],c=cells[g.spawnIndex++%cells.length];g.items.push({x:c[0],y:c[1],kind:Math.floor(Math.random()*3)})}
@@ -3285,7 +3284,7 @@ const ARCADE_COPY={
   tallship_rigging:{desc:'Watch the bosun rig the sail, remember the working-point order, then climb the live rig and repeat it while the finished ropes swing free in the wind.',instruction:'WATCH THE FLASHED NODES • REPEAT THEM IN ORDER • HOLD SPACE TO BRACE • EACH CORRECT LASH OPENS MORE SAIL'},
   sub_depth:{desc:'Pilot a buoyant survey sub through a procedural cave that narrows and bends with depth.',instruction:'CONTROL DEPTH WITH INERTIA • STAY BETWEEN THE ROCK FACES'},
   carrier_landing:{desc:'Fly a full moving-deck approach where power controls glideslope, lateral corrections fight crosswind and the carrier pitches beneath you.',instruction:'FLY THE BALL • KEEP LINEUP • MANAGE POWER • TOUCH DOWN ON SPEED • CATCH A WIRE'},
-  houseboat_catch:{desc:'Secure a lived-in houseboat through passing wakes, open latches and squalls.',instruction:'STOW LOOSE GEAR • LATCH THE CABIN • WATCH THE WAKE • RECOVER BREAKAWAYS'}
+  damage_control:{desc:'Fight a live flooding casualty by routing pumps, isolating compartments and sending a damage-control team to shore hull breaches.',instruction:'ROUTE SUCTION • ISOLATE FLOODING • SEND THE TEAM • PROTECT THE ENGINE ROOM'}
 };
 for(const [id,copy] of Object.entries(ARCADE_COPY))if(MINIGAME_META[id])Object.assign(MINIGAME_META[id],copy);
 AT_SEA_MINIGAME_SCENARIOS.poop_deck={scene:'seabirds',icon:'⌃',title:['Gulls over the mast','A very confident flock'],log:['A flock of gulls takes an unusual interest in the boat.','Several gulls wheel overhead with suspicious concentration.'],rewardKind:'bottle'};
@@ -3302,7 +3301,7 @@ function arcadeGoalRatio(g){return g.engine==='depth'&&g.continuous?clamp(((g.de
 function arcadeRand(g,a=0,b=1){return a+(g.rr?.()??Math.random())*(b-a)}
 function arcadeChoice(g,list){return list[Math.floor(arcadeRand(g,0,list.length))%list.length]}
 function arcadeSetFeedback(g,text,tone='good',ms=820){g.feedback={text,tone,until:performance.now()+ms}}
-const ARCADE_HELPER_GAMES=new Set(['ferry_lines','container_crane','container_stack','trawler_net','trawler_sort','speedboat_slalom','tug_dock','tanker_channel','naval_radar','research_sonar','rescue_throw','pilot_transfer','dredger_scoop','cargo_tetris','tallship_rigging','sub_depth','carrier_landing','houseboat_catch','poop_deck']);
+const ARCADE_HELPER_GAMES=new Set(['ferry_lines','container_crane','container_stack','trawler_net','trawler_sort','speedboat_slalom','tug_dock','tanker_channel','naval_radar','research_sonar','rescue_throw','pilot_transfer','dredger_scoop','cargo_tetris','tallship_rigging','sub_depth','carrier_landing','damage_control','poop_deck']);
 function arcadeHelperEnabled(g){return!!g&&ARCADE_HELPER_GAMES.has(g.meta?.id||g.type)}
 function arcadeSetHelperCue(g,text,sub=''){if(!g)return;g.helperCue=text||'';g.helperSub=sub||''}
 function arcadeHideHelper(){const el=$('#arcadeHelper');if(el){el.classList.remove('show','good','bad','warn','neutral','interacting');el.classList.add('neutral')}}
@@ -3325,7 +3324,7 @@ function arcadeDefaultHelperCue(g){
   if(id==='tallship_rigging')return'MOVE ONE HOLD AT A TIME · BRACE IN GUSTS · MAKE THE PATTERN FAST';
   if(id==='sub_depth')return'KEEP CENTRED IN SAFE WATER · PRESSURE RISES AS YOU DIVE';
   if(id==='carrier_landing')return'KEEP THE DECK CENTRED · FLY THE BALL WITH POWER · CATCH A WIRE';
-  if(id==='houseboat_catch')return'STOW LOOSE GEAR · LATCH OPEN FITTINGS · WATCH THE WATER FOR WAKES';
+  if(id==='damage_control')return'ROUTE BILGE SUCTION · ISOLATE FLOODING · TAP A BREACH TO SEND THE TEAM';
   if(id==='poop_deck')return'WATCH THE SHADOWS · MOVE BEFORE THE DROPPINGS LAND';
   return''
 }
@@ -3819,138 +3818,162 @@ function arcadeSetupBalance(g,r,d){
   arcadeResetCommon(g,Math.round((8+Math.min(6,r*.45))*1000));g.control=.5;g.wave=.5;g.wakePulse=0;g.nextWake=performance.now()+arcadeRand(g,900,2100);const count=Math.min(8,4+Math.floor(r/2));g.objects=Array.from({length:count},(_,i)=>({x:arcadeRand(g,-.26,.26),v:0,type:i%3,roll:g.theme==='cruise'?[.75,1.22,1.55][i%3]:[.82,1.0,1.18][i%3],lost:false}));
 }
 function arcadeSpawnCatch(g,ts,first=false){
-  const r=g.round,d=arcadeDifficulty(g),kind=Math.floor(arcadeRand(g,0,3)),house=g.theme==='houseboat';g.items.push({x:arcadeRand(g,.12,.88),y:first?arcadeRand(g,.18,.58):.10,vx:arcadeRand(g,-.055,.055)*d,vy:arcadeRand(g,.11,.16)*d,gravity:(house?[.045,.062,.032][kind]:[.038,.052,.045][kind])*d,bounce:house?[.15,.06,.30][kind]:.08,kind,caught:false,spin:arcadeRand(g,-2,2)});g.spawn=ts
+  const r=g.round,d=arcadeDifficulty(g),kind=Math.floor(arcadeRand(g,0,3));g.items.push({x:arcadeRand(g,.12,.88),y:first?arcadeRand(g,.18,.58):.10,vx:arcadeRand(g,-.055,.055)*d,vy:arcadeRand(g,.11,.16)*d,gravity:[.038,.052,.045][kind]*d,bounce:.08,kind,caught:false,spin:arcadeRand(g,-2,2)});g.spawn=ts
 }
 function arcadeSetupCatch(g,r,d){arcadeResetCommon(g,6+Math.min(8,r));g.basket=.5;g.items=[];g.catchSpawn=Math.max(260,680-(r-1)*34);for(let i=0;i<2;i++)arcadeSpawnCatch(g,performance.now(),true)}
 
-const ARCADE_HOUSEBOAT_PROPS={
-  mug:{name:'MUG',target:'mugRack',surface:'table',mass:.55,friction:.78,fragile:true},
-  plate:{name:'PLATE',target:'plateRack',surface:'counter',mass:.62,friction:.70,fragile:true},
-  kettle:{name:'KETTLE',target:'hob',surface:'counter',mass:1.45,friction:.86},
-  pan:{name:'PAN',target:'panHook',surface:'counter',mass:1.20,friction:.80},
-  jar:{name:'JAR',target:'cupboard',surface:'counter',mass:.82,friction:.70,fragile:true},
-  book:{name:'BOOK',target:'bookShelf',surface:'table',mass:.72,friction:.68},
-  cushion:{name:'CUSHION',target:'sofa',surface:'sofa',mass:.34,friction:.55},
-  lamp:{name:'LAMP',target:'lampClip',surface:'table',mass:.88,friction:.72,fragile:true},
-  chair:{name:'CHAIR',target:'chairStrap',surface:'floor',mass:1.70,friction:.90},
-  bowl:{name:'BOWL',target:'sink',surface:'table',mass:.62,friction:.65,fragile:true},
-  radio:{name:'RADIO',target:'radioShelf',surface:'shelf',mass:1.05,friction:.76},
-  utensils:{name:'CUTLERY',target:'drawer',surface:'floor',mass:.35,friction:.48}
-};
-const ARCADE_HOUSEBOAT_SURFACES={
-  counter:{y:.505,min:.17,max:.39},table:{y:.555,min:.43,max:.625},shelf:{y:.390,min:.665,max:.845},sofa:{y:.625,min:.675,max:.855},floor:{y:.705,min:.135,max:.865}
-};
-const ARCADE_HOUSEBOAT_TARGETS={
-  mugRack:{x:.285,y:.355,w:.075,h:.075,label:'CUP RACK'},plateRack:{x:.365,y:.475,w:.055,h:.065,label:'PLATE RACK'},hob:{x:.215,y:.480,w:.065,h:.055,label:'STOVE CLAMP'},panHook:{x:.175,y:.335,w:.055,h:.075,label:'PAN HOOK'},cupboard:{x:.315,y:.325,w:.105,h:.085,label:'CUPBOARD'},bookShelf:{x:.755,y:.370,w:.125,h:.065,label:'BOOKSHELF'},sofa:{x:.755,y:.610,w:.165,h:.095,label:'SOFA STRAP'},lampClip:{x:.565,y:.315,w:.060,h:.065,label:'LAMP CLIP'},chairStrap:{x:.545,y:.690,w:.100,h:.060,label:'FLOOR STRAP'},sink:{x:.325,y:.485,w:.070,h:.055,label:'SINK'},radioShelf:{x:.690,y:.370,w:.065,h:.060,label:'RADIO SHELF'},drawer:{x:.350,y:.585,w:.085,h:.050,label:'DRAWER'}
-};
-const ARCADE_HOUSEBOAT_SCENARIOS=[
-  {id:'tea',label:'MORNING TEA',note:'A small cruiser wake is coming.',props:['mug','plate','book','cushion'],fixtures:[],wakes:[{delay:6500,dir:1,strength:.25}],rain:0},
-  {id:'galley',label:'GALLEY READY',note:'Latch the cupboard before the wake arrives.',props:['mug','kettle','pan','jar','plate'],fixtures:['cupboard'],wakes:[{delay:6400,dir:-1,strength:.31}],rain:0},
-  {id:'cabin',label:'CABIN CHECK',note:'Loose living-room gear has nowhere to hide.',props:['book','radio','lamp','cushion','chair'],fixtures:['drawer'],wakes:[{delay:6100,dir:1,strength:.34}],rain:0},
-  {id:'ferry',label:'FERRY WAKE',note:'A passenger ferry is overtaking close aboard.',props:['mug','plate','kettle','book','lamp','cushion'],fixtures:['cupboard'],wakes:[{delay:6000,dir:-1,strength:.43}],rain:0,ferry:true},
-  {id:'double',label:'CROSS WAKE',note:'Two boats are crossing the mooring.',props:['mug','bowl','pan','book','radio','chair'],fixtures:['drawer'],wakes:[{delay:5400,dir:1,strength:.38},{delay:10100,dir:-1,strength:.42}],rain:0,double:true},
-  {id:'squall',label:'RAIN SQUALL',note:'Shut the skylight or the floor will get slick.',props:['mug','plate','kettle','jar','book','lamp','cushion'],fixtures:['cupboard','skylight'],wakes:[{delay:5700,dir:1,strength:.40}],rain:1,wind:.26},
-  {id:'supper',label:'SUPPER ABOARD',note:'Full cabin, rain and two wakes. Get ahead of it.',props:['mug','plate','kettle','pan','jar','book','lamp','cushion','chair'],fixtures:['cupboard','drawer','skylight'],wakes:[{delay:5200,dir:-1,strength:.42},{delay:9800,dir:1,strength:.48}],rain:1,wind:.32,double:true}
+const ARCADE_DAMAGE_ROOMS=[
+  {id:'fore',label:'FOREPEAK',short:'FORE'},
+  {id:'hold',label:'LOWER HOLD',short:'HOLD'},
+  {id:'engine',label:'ENGINE ROOM',short:'ENGINE'},
+  {id:'accom',label:'ACCOMMODATION',short:'ACCOM'},
+  {id:'steer',label:'STEERING FLAT',short:'STEER'}
 ];
-const ARCADE_HOUSE_PROP_CACHE=new Map(),ARCADE_HOUSE_SCENE_CACHE=new Map(),ARCADE_HOUSE_PASSING_CACHE=new Map();
-function arcadeHouseboatScenario(r){const base=ARCADE_HOUSEBOAT_SCENARIOS[(r-1)%ARCADE_HOUSEBOAT_SCENARIOS.length],tier=Math.floor((r-1)/ARCADE_HOUSEBOAT_SCENARIOS.length);return{...base,tier,wakes:base.wakes.map((w,i)=>({...w,strength:w.strength+tier*.035,delay:Math.max(4300,w.delay-tier*250)})),props:[...base.props,...Array.from({length:Math.min(2,tier)},(_,i)=>['bowl','radio','cushion','mug'][(r+i)%4])]}}
-function arcadeHouseboatFixtureRects(){return{cupboard:{x:.270,y:.235,w:.115,h:.115,label:'CUPBOARD'},drawer:{x:.305,y:.535,w:.095,h:.075,label:'DRAWER'},skylight:{x:.515,y:.140,w:.110,h:.055,label:'SKYLIGHT'}}}
-function arcadeHouseboatStartSlot(kind,i){const S=ARCADE_HOUSEBOAT_PROPS[kind],surf=ARCADE_HOUSEBOAT_SURFACES[S.surface],phase=(i*0.137)%1;return{x:lerp(surf.min+.018,surf.max-.018,.18+phase*.64),y:surf.y,surface:S.surface}}
-function arcadeSetupHouseboat(g,r,d){
-  const sc=arcadeHouseboatScenario(r);arcadeResetCommon(g,1);const props=sc.props.map((kind,i)=>{const q=arcadeHouseboatStartSlot(kind,i);return{id:`hb-${r}-${i}-${kind}`,kind,...q,vx:0,vy:0,state:'loose',dragging:false,securedAt:null,spawned:false}});
-  const fixtures={cupboard:{closed:!sc.fixtures.includes('cupboard'),spilled:false},drawer:{closed:!sc.fixtures.includes('drawer'),spilled:false},skylight:{closed:!sc.fixtures.includes('skylight'),spilled:false}};
-  g.house={scenario:sc,props,fixtures,phase:'prep',phaseAt:0,nextWakeAt:0,wakeIndex:0,wakePulse:0,wakeDir:1,wakeVisual:0,wakeHitAt:0,lastWakeAt:0,wetness:0,shards:[],puddles:[],drag:null,catPhase:arcadeRand(g,0,6.28),messageAt:0,scorePrep:0,scoreRecovery:0};g.drag=null;g.continuous=true;g.roundGoal=props.length+sc.fixtures.length;g.roundProgress=0
+const ARCADE_DAMAGE_SCENARIOS=[
+  {id:'single',label:'SHELL PLATE',note:'One breach. Learn the bilge manifold.',leaks:1,doors:false,spread:0,emergency:false,engineRisk:false,start:.03},
+  {id:'split',label:'SPLIT FLOODING',note:'Two spaces are taking water. Do not waste pump capacity.',leaks:2,doors:false,spread:0,emergency:false,engineRisk:false,start:.05},
+  {id:'doors',label:'WATERTIGHT',note:'Open doors let flooding migrate between spaces.',leaks:2,doors:true,spread:.13,emergency:false,engineRisk:false,start:.07},
+  {id:'power',label:'POWER AT RISK',note:'The main bilge pump depends on a dry engine room.',leaks:2,doors:true,spread:.13,emergency:true,engineRisk:true,start:.10,forceEngine:true},
+  {id:'shoring',label:'SHORING PARTY',note:'Three breaches. Pump levels down so the team can work.',leaks:3,doors:true,spread:.15,emergency:true,engineRisk:true,start:.12},
+  {id:'casualty',label:'PUMP CASUALTY',note:'Main pump can trip if the engine space floods.',leaks:3,doors:true,spread:.16,emergency:true,engineRisk:true,start:.15,weakMain:true},
+  {id:'collision',label:'COLLISION DAMAGE',note:'Multiple breaches, progressive flooding, both pumps required.',leaks:4,doors:true,spread:.18,emergency:true,engineRisk:true,start:.17,forceEngine:true}
+];
+const ARCADE_DAMAGE_SCENE_CACHE=new Map();
+function arcadeDamageScenario(g,r){
+  const base=ARCADE_DAMAGE_SCENARIOS[(r-1)%7],tier=Math.floor((r-1)/7),sc={...base,tier};
+  sc.leaks=Math.min(4,base.leaks+(tier>=2?1:0));sc.start=Math.min(.28,base.start+tier*.025);sc.spread=base.spread?Math.min(.24,base.spread+tier*.012):0;
+  sc.rateBoost=Math.min(.030,tier*.006);sc.mainCap=Math.max(.135,.188-tier*.004-(base.weakMain?.018:0));sc.emergencyCap=base.emergency?Math.max(.082,.112-tier*.002):0;
+  return sc
 }
-function arcadeHouseboatTarget(kind){return ARCADE_HOUSEBOAT_TARGETS[ARCADE_HOUSEBOAT_PROPS[kind]?.target]}
-function arcadeHouseboatSurfaceAt(x,y){if(x>=.16&&x<=.40&&y>=.42&&y<=.57)return'counter';if(x>=.42&&x<=.64&&y>=.46&&y<=.64)return'table';if(x>=.65&&x<=.86&&y>=.31&&y<=.46)return'shelf';if(x>=.65&&x<=.87&&y>=.50&&y<=.67)return'sofa';return'floor'}
-function arcadeHouseboatCloseFixture(g,id){const H=g.house,F=H.fixtures[id];if(!F||F.closed)return false;F.closed=true;g.score+=75+g.round*5;arcadeSetFeedback(g,`${arcadeHouseboatFixtureRects()[id].label} LATCHED`,'good',360);return true}
-function arcadeHouseboatSpawnSpill(g,fixture){const H=g.house,add=fixture==='cupboard'?['mug','jar']:['utensils'];const base=fixture==='cupboard'?{x:.31,y:.31}:{x:.35,y:.57};for(let i=0;i<add.length;i++){const kind=add[i];H.props.push({id:`spill-${performance.now()}-${i}`,kind,x:base.x+i*.025,y:base.y,vx:arcadeRand(g,-.025,.025),vy:.04,state:'falling',surface:'floor',dragging:false,securedAt:null,spawned:true})}}
-function arcadeHouseboatHitWake(g,ts,w){const H=g.house;H.wakePulse=w.dir*w.strength;H.wakeDir=w.dir;H.wakeHitAt=ts;H.lastWakeAt=ts;H.phase='wake';for(const o of H.props){if(o.state!=='loose')continue;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];o.vx+=w.dir*w.strength*(.23/Math.max(.38,P.mass))*arcadeRand(g,.82,1.16)}
-  if(!H.fixtures.cupboard.closed&&!H.fixtures.cupboard.spilled){H.fixtures.cupboard.spilled=true;arcadeHouseboatSpawnSpill(g,'cupboard');arcadeSetFeedback(g,'CUPBOARD OPEN · CONTENTS LOOSE','bad',700)}
-  if(!H.fixtures.drawer.closed&&!H.fixtures.drawer.spilled){H.fixtures.drawer.spilled=true;arcadeHouseboatSpawnSpill(g,'drawer');arcadeSetFeedback(g,'DRAWER FLEW OPEN','bad',650)}
-  if(H.scenario.rain&&!H.fixtures.skylight.closed)H.wetness=Math.max(H.wetness,.42);
-  H.wakeIndex++;H.nextWakeAt=H.wakeIndex<H.scenario.wakes.length?H.phaseAt+H.scenario.wakes[H.wakeIndex].delay:0
+function arcadeDamageLeakRooms(g,sc){
+  const rooms=[0,1,2,3,4],picked=[];
+  if(sc.forceEngine){picked.push(2);rooms.splice(2,1)}
+  while(picked.length<sc.leaks&&rooms.length){const i=Math.floor(arcadeRand(g,0,rooms.length));picked.push(rooms.splice(i,1)[0])}
+  return picked
 }
-function arcadeHouseboatResolveProp(g,o,text){if(o.state==='lost')return;o.state='lost';o.dragging=false;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];if(P.fragile){g.house.shards.push({x:o.x,y:.705,kind:o.kind,at:performance.now()});arcadeStrike(g,`${P.name} BROKE`,40)}else{arcadeStrike(g,`${P.name} HIT THE DECK`,20)}arcadeSetFeedback(g,text||`${P.name} LOOSE`,'bad',500)}
-function arcadeHouseboatDrop(g,o,nx,ny){const H=g.house,T=arcadeHouseboatTarget(o.kind),P=ARCADE_HOUSEBOAT_PROPS[o.kind];o.dragging=false;H.drag=null;g.drag=null;if(T&&Math.abs(nx-T.x)<=T.w*.72&&Math.abs(ny-T.y)<=T.h*.85){o.state='secured';o.securedAt=P.target;o.x=T.x;o.y=T.y;o.vx=o.vy=0;const pre=H.wakeIndex===0&&(!H.lastWakeAt);g.score+=pre?175:255;if(pre)H.scorePrep++;else H.scoreRecovery++;arcadeSetFeedback(g,`${P.name} SECURE`,'good',360);return true}
-  const surf=arcadeHouseboatSurfaceAt(nx,ny),S=ARCADE_HOUSEBOAT_SURFACES[surf];o.state='loose';o.surface=surf;o.x=clamp(nx,S.min+.01,S.max-.01);o.y=S.y;o.vx=0;o.vy=0;arcadeSetFeedback(g,`STOW ${P.name} AT ${T.label}`,'neutral',420);return false}
-function arcadeHouseboatTasks(g){const H=g.house,props=H.props.filter(o=>o.state==='secured'||o.state==='lost').length,fixtures=H.scenario.fixtures.filter(id=>H.fixtures[id].closed).length,total=H.props.length+H.scenario.fixtures.length;g.roundProgress=props+fixtures;g.roundGoal=total;return{props,fixtures,total,done:props===H.props.length&&fixtures===H.scenario.fixtures.length}}
-function arcadeHouseboatUpdate(g,ts,dt,running){const H=g.house,sec=dt/1000;if(!running)return;if(!H.phaseAt){H.phaseAt=ts;H.nextWakeAt=ts+H.scenario.wakes[0].delay}
-  if(H.scenario.rain&&!H.fixtures.skylight.closed){H.wetness=clamp(H.wetness+sec*.055,0,1);if(H.wetness>.25&&H.puddles.length<7&&Math.floor(ts/600)%2===0)H.puddles.push({x:.53+arcadeRand(g,-.09,.09),y:.704,r:arcadeRand(g,.018,.038)})}else H.wetness=Math.max(0,H.wetness-sec*.018);
-  if(H.nextWakeAt&&ts>=H.nextWakeAt)arcadeHouseboatHitWake(g,ts,H.scenario.wakes[H.wakeIndex]);H.wakePulse*=Math.pow(.944,dt/16.7);
-  for(const o of H.props){if(o.dragging||o.state==='secured'||o.state==='lost')continue;const P=ARCADE_HOUSEBOAT_PROPS[o.kind];if(o.state==='falling'){o.vy+=.78*sec;o.x+=o.vx*sec;o.y+=o.vy*sec;if(o.y>=.705){const impact=o.vy;o.y=.705;o.vy=0;o.surface='floor';o.state='loose';o.vx*=.42;if(P.fragile&&impact>.31){arcadeHouseboatResolveProp(g,o);continue}}}
-    else{const S=ARCADE_HOUSEBOAT_SURFACES[o.surface]||ARCADE_HOUSEBOAT_SURFACES.floor,wet=H.wetness*(o.surface==='floor'?1:.35),damp=clamp(P.friction-wet*.30,.35,.94);o.vx+=H.wakePulse*(.46/Math.max(.42,P.mass))*sec;o.vx*=Math.pow(damp,dt/16.7);o.x+=o.vx*sec;o.y=S.y;if(o.x<S.min||o.x>S.max){if(o.surface==='floor'){o.x=clamp(o.x,S.min,S.max);const impact=Math.abs(o.vx);o.vx*=-.28;if(P.fragile&&impact>.22){arcadeHouseboatResolveProp(g,o);continue}}else{o.x=clamp(o.x,S.min-.012,S.max+.012);o.state='falling';o.vy=.025+Math.abs(o.vx)*.16}}}
+function arcadeSetupDamage(g,r,d){
+  const sc=arcadeDamageScenario(g,r),leakRooms=arcadeDamageLeakRooms(g,sc),rooms=ARCADE_DAMAGE_ROOMS.map((q,i)=>({...q,water:clamp(sc.start*arcadeRand(g,.35,1.0)+(leakRooms.includes(i)?.16+arcadeRand(g,.03,.08):0),0,.48),valve:false,critical:false}));
+  const leaks=leakRooms.map((comp,i)=>({id:`leak-${r}-${i}`,comp,rate:.052+arcadeRand(g,0,.018)+Math.min(.025,(r-1)*.0018)+sc.rateBoost,y:.515+arcadeRand(g,0,.19),side:i%2?'right':'left',patched:false,patchProgress:0,pulse:arcadeRand(g,0,6.28)}));
+  const doors=Array.from({length:4},(_,i)=>({id:i,open:true,enabled:!!sc.doors,jammed:false}));
+  if(sc.doors&&r>=7&&arcadeRand(g,0,1)>.55){const j=Math.floor(arcadeRand(g,0,4));doors[j].open=true;doors[j].jammed=true}
+  arcadeResetCommon(g,leaks.length);g.damage={scenario:sc,rooms,leaks,doors,pumps:{main:{on:false,available:true,tripped:false,cap:sc.mainCap},emergency:{on:false,available:!!sc.emergency,tripped:false,cap:sc.emergencyCap}},crew:{comp:2,target:-1,state:'idle',phaseAt:0,from:2,progress:0},stableMs:0,lastFloodStrike:0,discharge:0,tripWarned:false,startedAt:0};g.continuous=true;g.roundProgress=0;g.roundGoal=leaks.length
+}
+function arcadeDamageGeom(G){
+  const x0=.065,x1=.935,top=.475,bottom=.785,w=(x1-x0)/5;
+  return{x0,x1,top,bottom,w,roomRect:i=>({x:x0+i*w,y:top,w,h:bottom-top}),valve:i=>({x:x0+(i+.5)*w,y:.825}),door:i=>({x:x0+(i+1)*w,y:.630}),main:{x:.445,y:.895,w:.155,h:.085},emergency:{x:.655,y:.895,w:.155,h:.085},locker:{x:.505,y:.225}}
+}
+function arcadeDamageDoorPathOpen(D,a,b){
+  if(a===b)return true;const lo=Math.min(a,b),hi=Math.max(a,b);for(let i=lo;i<hi;i++)if(!D.doors[i].open)return false;return true
+}
+function arcadeDamageFirstBlockedDoor(D,a,b){
+  if(a===b)return-1;const lo=Math.min(a,b),hi=Math.max(a,b);for(let i=lo;i<hi;i++)if(!D.doors[i].open)return i;return-1
+}
+function arcadeDamageAssignCrew(g,leak){
+  const D=g.damage,C=D.crew;if(leak.patched){arcadeSetFeedback(g,'BREACH ALREADY SHORED','neutral',350);return false}
+  if(C.state!=='idle'){arcadeSetFeedback(g,'DAMAGE-CONTROL TEAM BUSY','warn',420);return false}
+  if(D.rooms[leak.comp].water>.70){arcadeSetFeedback(g,`PUMP ${ARCADE_DAMAGE_ROOMS[leak.comp].short} DOWN FIRST`,'warn',650);return false}
+  const block=arcadeDamageFirstBlockedDoor(D,C.comp,leak.comp);if(block>=0){arcadeSetFeedback(g,'OPEN THE BULKHEAD DOOR FOR THE TEAM','warn',620);return false}
+  C.from=C.comp;C.target=leak.comp;C.state='moving';C.phaseAt=performance.now();C.progress=0;arcadeSetFeedback(g,`TEAM TO ${ARCADE_DAMAGE_ROOMS[leak.comp].short}`,'good',400);return true
+}
+function arcadeDamageToggleDoor(g,i){const D=g.damage,q=D.doors[i];if(!q?.enabled){arcadeSetFeedback(g,'WATERTIGHT DOORS NOT REQUIRED YET','neutral',350);return false}if(q.jammed){arcadeSetFeedback(g,'DOOR JAMMED OPEN','bad',500);return false}const C=D.crew;if(C.state!=='idle'&&((C.from<=i&&C.target>i)||(C.target<=i&&C.from>i))){arcadeSetFeedback(g,'TEAM IS PASSING THROUGH','warn',380);return false}q.open=!q.open;arcadeSetFeedback(g,q.open?'BULKHEAD DOOR OPEN':'BULKHEAD DOOR SHUT',q.open?'neutral':'good',360);return true}
+function arcadeDamageTogglePump(g,which){const D=g.damage,P=D.pumps[which];if(!P.available){arcadeSetFeedback(g,'EMERGENCY PUMP NOT RIGGED','neutral',360);return false}if(which==='main'&&P.tripped){if(D.rooms[2].water<.40){P.tripped=false;P.on=true;D.tripWarned=false;arcadeSetFeedback(g,'MAIN PUMP RESET','good',480);return true}arcadeSetFeedback(g,'ENGINE ROOM TOO WET TO RESET MAIN PUMP','bad',650);return false}P.on=!P.on;arcadeSetFeedback(g,`${which==='main'?'MAIN':'EMERGENCY'} PUMP ${P.on?'RUNNING':'STOPPED'}`,P.on?'good':'neutral',360);return true}
+function arcadeDamageToggleValve(g,i){const D=g.damage,R=D.rooms[i];R.valve=!R.valve;arcadeSetFeedback(g,`${R.short} SUCTION ${R.valve?'OPEN':'SHUT'}`,R.valve?'good':'neutral',320);return true}
+function arcadeDamagePumpFactor(D){const w=D.rooms[2].water;if(!D.scenario.engineRisk)return 1;if(w<=.48)return 1;return clamp(1-(w-.48)/.38,.08,1)}
+function arcadeDamageUpdateCrew(g,ts,dt){
+  const D=g.damage,C=D.crew;if(C.state==='idle')return;
+  if(C.state==='moving'){
+    const dur=520+Math.abs(C.target-C.from)*210;C.progress=clamp((ts-C.phaseAt)/dur,0,1);if(C.progress>=1){C.comp=C.target;C.state='patching';C.phaseAt=ts;C.progress=0}
+  }else if(C.state==='patching'){
+    const leak=D.leaks.find(q=>q.comp===C.target&&!q.patched);if(!leak){C.state='idle';C.target=-1;return}
+    const water=D.rooms[C.target].water,slow=clamp(1-(Math.max(0,water-.48))*1.5,.25,1),dur=1350+leak.rate*5200+Math.min(550,(g.round-1)*25);C.progress=clamp(C.progress+dt/dur*slow,0,1);leak.patchProgress=C.progress;
+    if(C.progress>=1){leak.patched=true;leak.patchProgress=1;g.score+=250+g.round*18;C.state='idle';C.target=-1;C.progress=0;arcadeSetFeedback(g,`${ARCADE_DAMAGE_ROOMS[leak.comp].short} BREACH SHORED`,'good',650)}
   }
-  const T=arcadeHouseboatTasks(g),lastDone=H.wakeIndex>=H.scenario.wakes.length&&(!H.nextWakeAt);if(lastDone&&ts-H.lastWakeAt>1000)H.phase='tidy';if(lastDone&&T.done&&ts-H.lastWakeAt>1100){const clean=g.strikes===0?180:0,prep=Math.min(H.scorePrep,H.scenario.props.length)*18;g.score+=310+g.round*45+clean+prep;arcadeAdvance(g,g.strikes===0?'CABIN SHIPSHAPE':'CABIN SECURE')}
 }
-function arcadeHousePropSprite(kind){if(ARCADE_HOUSE_PROP_CACHE.has(kind))return ARCADE_HOUSE_PROP_CACHE.get(kind);const [c,g]=pixelCanvas(32,32),ink='#17313a',wood='#a86d45',cream='#fff7de',gold='#e5b54e',red='#df7c68',sea='#65bdd1',green='#83bf6a';
-  if(kind==='mug'){psRect(g,8,9,14,16,cream);psRect(g,9,10,12,3,'#d9eef2');psRect(g,22,13,5,8,cream);psRect(g,23,15,2,4,sea);psRect(g,11,24,9,2,ink)}
-  else if(kind==='plate'){psCircle(g,16,17,10,cream);psCircle(g,16,17,7,'#d9eef2');psCircle(g,16,17,3,cream)}
-  else if(kind==='kettle'){psRect(g,8,10,16,15,'#8d9893');psRect(g,10,7,12,4,ink);psLine(g,11,9,7,16,ink,2);psLine(g,22,10,27,14,ink,2);psRect(g,12,13,8,5,'#b7c3bd')}
-  else if(kind==='pan'){psCircle(g,13,17,9,'#586b70');psCircle(g,13,17,6,'#78898b');psRect(g,20,15,10,4,wood)}
-  else if(kind==='jar'){psRect(g,10,8,13,18,'#d8caa1');psRect(g,9,7,15,4,red);psRect(g,12,13,9,7,gold);psRect(g,14,14,5,5,'#b98359')}
-  else if(kind==='book'){psRect(g,7,8,19,18,'#527da0');psRect(g,9,10,15,2,'#fff7de');psRect(g,9,14,13,2,'#d9eef2');psRect(g,7,8,3,18,'#df7c68')}
-  else if(kind==='cushion'){psRect(g,7,9,20,17,green);psRect(g,9,11,16,13,'#a9cf7d');psLine(g,9,11,24,24,'#719e62',1);psLine(g,24,11,9,24,'#719e62',1)}
-  else if(kind==='lamp'){psRect(g,14,7,4,15,wood);psOutlinePoly(g,[[8,8],[24,8],[20,15],[12,15]],gold,ink,1);psRect(g,9,22,15,4,wood)}
-  else if(kind==='chair'){psRect(g,9,9,15,5,wood);psRect(g,10,14,13,9,'#c08b5a');psLine(g,11,22,8,30,ink,2);psLine(g,22,22,25,30,ink,2);psLine(g,10,10,8,22,ink,2);psLine(g,23,10,25,22,ink,2)}
-  else if(kind==='bowl'){psOutlinePoly(g,[[7,12],[25,12],[22,23],[10,23]],cream,ink,1);psRect(g,10,13,12,3,red);psCircle(g,13,11,2,green);psCircle(g,18,10,2,gold);psCircle(g,21,12,2,red)}
-  else if(kind==='radio'){psRect(g,7,9,20,17,'#6d5a45');psRect(g,9,11,16,13,'#b98359');psCircle(g,14,18,5,'#3e5055');psRect(g,21,13,3,3,gold);psLine(g,22,9,27,3,ink,1)}
-  else if(kind==='utensils'){psLine(g,8,8,22,25,'#c7cfca',2);psLine(g,14,7,18,26,'#8d9893',2);psLine(g,22,8,10,25,'#e0e4df',2);psRect(g,7,24,18,3,wood)}
-  ARCADE_HOUSE_PROP_CACHE.set(kind,c);return c
+function arcadeDamageUpdate(g,ts,dt,running){
+  const D=g.damage;if(!running)return;const sec=dt/1000;if(!D.startedAt)D.startedAt=ts;
+  for(const L of D.leaks){const seep=L.rate*(L.patched?.075:1);D.rooms[L.comp].water=clamp(D.rooms[L.comp].water+seep*sec,0,1)}
+  if(D.scenario.spread){for(let i=0;i<4;i++){if(!D.doors[i].open)continue;const A=D.rooms[i],B=D.rooms[i+1],diff=A.water-B.water,q=diff*D.scenario.spread*sec;A.water=clamp(A.water-q,0,1);B.water=clamp(B.water+q,0,1)}}
+  const open=D.rooms.map((R,i)=>R.valve?i:-1).filter(i=>i>=0);let pumped=0;
+  if(open.length){const main=D.pumps.main,onMain=main.on&&!main.tripped,fac=arcadeDamagePumpFactor(D),em=D.pumps.emergency,onEm=em.available&&em.on&&!em.tripped,total=(onMain?main.cap*fac:0)+(onEm?em.cap:0);if(total>0){const each=total/open.length*sec;for(const i of open){const before=D.rooms[i].water;D.rooms[i].water=Math.max(0,D.rooms[i].water-each);pumped+=before-D.rooms[i].water}}}
+  D.discharge=lerp(D.discharge,pumped>0?1:0,.18);
+  if(D.scenario.engineRisk&&D.rooms[2].water>.82&&!D.pumps.main.tripped){D.pumps.main.tripped=true;D.pumps.main.on=false;arcadeSetFeedback(g,'MAIN PUMP TRIPPED · ENGINE ROOM FLOODED','bad',900)}
+  arcadeDamageUpdateCrew(g,ts,dt);
+  const max=Math.max(...D.rooms.map(R=>R.water)),critical=D.rooms.findIndex(R=>R.water>.94);if(critical>=0&&ts-D.lastFloodStrike>1700){D.lastFloodStrike=ts;arcadeStrike(g,`${ARCADE_DAMAGE_ROOMS[critical].short} FLOODED`,70);D.rooms[critical].water=.76;D.rooms[critical].critical=true}
+  const patched=D.leaks.filter(L=>L.patched).length;g.roundProgress=patched;g.roundGoal=D.leaks.length;
+  if(patched===D.leaks.length&&max<.18){D.stableMs+=dt}else D.stableMs=Math.max(0,D.stableMs-dt*.6);
+  if(D.stableMs>1150){const clean=g.strikes===0?180:0,waterBonus=Math.round((.18-max)*520);g.score+=360+g.round*42+clean+Math.max(0,waterBonus);arcadeAdvance(g,g.strikes===0?'SHIP DRY':'FLOODING CONTROLLED')}
 }
-function arcadeHouseboatInteriorSprite(variant=0){const key=variant%3;if(ARCADE_HOUSE_SCENE_CACHE.has(key))return ARCADE_HOUSE_SCENE_CACHE.get(key);const [c,g]=pixelCanvas(480,300),ink='#17313a',cream='#fff7de',wall='#efe3bd',wood='#a86d45',wood2='#704630',sea='#65bdd1',green='#83bf6a',gold='#e5b54e',glass='#9bd8e2';
-  // hull and cutaway shell
-  psOutlinePoly(g,[[24,215],[456,215],[440,268],[398,284],[78,284],[40,267]],'#477987',ink,2);psRect(g,43,218,394,18,'#5f91a0');psLine(g,48,238,432,238,'#d9eef2',2);for(let x=68;x<425;x+=44)psRect(g,x,260,24,3,'#365a62');
-  // cabin envelope / roof
-  psRect(g,46,54,388,163,wall);psRect(g,39,48,402,9,green);psRect(g,57,61,366,153,'#f5ead0');psRect(g,59,199,363,15,wood);psLine(g,58,198,423,198,ink,2);psLine(g,178,60,178,199,'#c7b98f',2);psLine(g,315,60,315,199,'#c7b98f',2);
-  // windows
-  for(const q of [[74,78,75,45],[194,78,95,45],[332,78,72,45]]){psRect(g,q[0],q[1],q[2],q[3],ink);psRect(g,q[0]+3,q[1]+3,q[2]-6,q[3]-6,glass);for(let y=q[1]+8;y<q[1]+q[3]-4;y+=11)psLine(g,q[0]+4,y,q[0]+q[2]-5,y,'#bce8e6',1)}
-  // galley left
-  psRect(g,70,154,101,44,wood);psRect(g,74,158,43,34,'#d8caa1');psRect(g,121,158,46,34,'#c39765');psRect(g,68,148,105,8,'#5b6260');psRect(g,128,137,35,10,'#333e40');for(let x of [132,141,150,159])psCircle(g,x,142,2,'#d6c287');psRect(g,92,132,26,14,'#8aa0a5');psRect(g,96,135,18,8,sea);psRect(g,77,92,72,41,wood);psRect(g,81,96,31,32,'#d7c49c');psRect(g,116,96,29,32,'#d7c49c');psCircle(g,108,111,2,ink);psCircle(g,120,111,2,ink);for(let i=0;i<4;i++){psRect(g,83+i*12,116,7,9,cream);psRect(g,85+i*12,118,3,4,sea)}
-  // centre saloon table + benches + hanging lamp
-  psRect(g,200,165,94,10,wood);psRect(g,209,175,7,22,wood2);psRect(g,278,175,7,22,wood2);psRect(g,190,181,35,15,'#9e7750');psRect(g,270,181,35,15,'#9e7750');psLine(g,246,58,246,98,wood2,2);psOutlinePoly(g,[[233,98],[259,98],[254,112],[238,112]],gold,ink,1);psRect(g,220,127,52,14,'#b7aa83');for(let i=0;i<4;i++)psRect(g,226+i*11,130,7,8,cream);
-  // right cabin / sofa / shelf / bunk
-  psRect(g,330,151,79,47,green);psRect(g,336,157,32,35,'#a9cf7d');psRect(g,371,157,32,35,'#94bd72');psRect(g,333,183,73,9,wood2);psRect(g,325,123,92,10,wood);for(let i=0;i<5;i++){const bc=['#df7c68','#527da0','#e5b54e','#83bf6a','#b98359'][i];psRect(g,331+i*16,109,12,13,bc);psLine(g,331+i*16,109,343+i*16,109,ink,1)}
-  // tiny radio shelf + bookends
-  psRect(g,332,135,55,9,wood);psRect(g,337,126,18,9,'#6d5a45');psRect(g,359,126,24,9,'#527da0');
-  // floor lash cleat and rugs
-  psRect(g,226,202,72,6,'#d8caa1');for(let x=235;x<292;x+=12)psLine(g,x,202,x+8,207,'#b49f78',1);psRect(g,260,193,14,6,'#57696d');psRect(g,263,189,8,5,'#8aa0a5');
-  // ladder / fittings / roof details
-  psLine(g,421,143,421,204,ink,2);for(let y=150;y<200;y+=10)psLine(g,411,y,421,y,wood2,2);psRect(g,269,45,59,4,'#527da0');for(let x=273;x<325;x+=9)psLine(g,x,46,x+4,49,'#9bd8e2',1);psCircle(g,56,227,10,'#fff7de');psCircle(g,56,227,6,'#df7c68');psCircle(g,56,227,2,'#477987');
-  ARCADE_HOUSE_SCENE_CACHE.set(key,c);return c
+function arcadeDamageSceneSprite(){
+  const key='damage-v1';if(ARCADE_DAMAGE_SCENE_CACHE.has(key))return ARCADE_DAMAGE_SCENE_CACHE.get(key);const [c,g]=pixelCanvas(520,270),ink='#172f38',steel='#53666c',steel2='#74858a',dark='#31464d',deck='#b28b5a',cream='#e7dfc2',red='#c75e55',gold='#e3b454',sea='#477f8d';
+  // upper ship profile
+  psOutlinePoly(g,[[16,86],[38,58],[438,58],[482,78],[500,104],[480,126],[34,126]],steel,ink,2);psRect(g,87,31,214,29,cream);psRect(g,113,16,126,17,'#d9d2b8');for(let x=101;x<284;x+=22)psRect(g,x,40,13,9,'#79a9b3');psRect(g,245,14,9,44,dark);psLine(g,249,14,249,4,ink,2);psRect(g,439,69,33,10,red);psRect(g,43,64,33,7,gold);
+  // deck and cutaway hull shell
+  psRect(g,23,118,466,9,deck);psOutlinePoly(g,[[23,127],[489,127],[463,248],[51,248]],dark,ink,2);psRect(g,49,137,416,102,'#233b43');
+  // frames and bulkheads
+  for(let x=50;x<=466;x+=83){psRect(g,x,135,4,106,steel2);for(let y=143;y<236;y+=18)psRect(g,x+4,y,5,2,steel)}
+  psRect(g,46,238,422,8,steel);psLine(g,47,248,466,248,ink,2);
+  // passageway
+  psRect(g,50,132,415,14,'#8b795b');for(let x=61;x<455;x+=20)psRect(g,x,135,10,3,'#c1a56f');
+  // engine-room machinery / switchboard
+  psRect(g,218,167,55,50,'#596d73');psRect(g,225,158,40,12,'#7d8c90');for(let y=175;y<208;y+=9)psLine(g,226,y,264,y,'#263c45',2);psRect(g,277,150,31,64,'#41555b');for(let y=158;y<202;y+=12){psCircle(g,285,y,2,y%24?'#83bf6a':red);psRect(g,292,y-2,9,4,'#d8caa1')}
+  // lockers, pipes, steering gear
+  psRect(g,24,88,45,30,'#a7744b');psRect(g,30,94,15,18,'#d6c287');psRect(g,47,94,15,18,'#d6c287');psLine(g,351,180,445,180,gold,4);psCircle(g,418,195,23,'#6f7d80');psCircle(g,418,195,12,'#263c45');
+  // bilge manifold baseline
+  psLine(g,59,225,455,225,'#d7b369',5);for(let x=92;x<455;x+=83)psLine(g,x,225,x,205,'#d7b369',3);
+  ARCADE_DAMAGE_SCENE_CACHE.set(key,c);return c
 }
-function arcadeHouseboatPassingSprite(kind=0){if(ARCADE_HOUSE_PASSING_CACHE.has(kind))return ARCADE_HOUSE_PASSING_CACHE.get(kind);const [c,g]=pixelCanvas(104,45),ink='#17313a';psOutlinePoly(g,[[5,27],[97,27],[87,39],[21,39]],kind?'#596d73':'#527da0',ink,1);psRect(g,21,13,61,15,'#fff7de');psRect(g,32,7,35,8,'#e7ddbd');for(let x=27;x<78;x+=10)psRect(g,x,17,6,5,'#8ab8c1');psRect(g,66,6,5,7,ink);psLine(g,68,6,68,2,ink,1);psRect(g,12,25,13,3,'#df7c68');ARCADE_HOUSE_PASSING_CACHE.set(kind,c);return c}
-function arcadeHouseboatDrawTarget(G,id,active=false){const T=ARCADE_HOUSEBOAT_TARGETS[id];if(!T)return;const x=G.x(T.x),y=G.y(T.y),w=G.w*T.w,h=G.h*T.h;if(active){ctx.save();ctx.globalAlpha=.55;ctx.strokeStyle='#e5b54e';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.strokeRect(x-w/2,y-h/2,w,h);ctx.restore()}}
-function arcadeHouseboatDrawFixtures(g,G,ts){const H=g.house,R=arcadeHouseboatFixtureRects();
-  // cupboard doors genuinely open/closed
-  const C=R.cupboard,cx=G.x(C.x),cy=G.y(C.y);if(!H.fixtures.cupboard.closed){line(cx-G.w*C.w*.46,cy-G.h*C.h*.38,cx-G.w*C.w*.74,cy+G.h*C.h*.20,'#704630',5);pxText('LATCH',cx,cy-G.h*C.h*.58,'#df7c68',6,'center')}else{circle(cx+G.w*C.w*.13,cy,2,'#17313a')}
-  const D=R.drawer,dx=G.x(D.x),dy=G.y(D.y);if(!H.fixtures.drawer.closed){rect(dx-G.w*D.w*.44,dy-G.h*D.h*.10,G.w*D.w*.88,G.h*D.h*.36,'#c39765','#17313a',1);pxText('LATCH',dx,dy+G.h*D.h*.50,'#df7c68',6,'center')}
-  const S=R.skylight,sx=G.x(S.x),sy=G.y(S.y);if(!H.fixtures.skylight.closed){poly([[sx-G.w*S.w*.45,sy],[sx+G.w*S.w*.10,sy-G.h*S.h*.45],[sx+G.w*S.w*.45,sy-G.h*S.h*.45],[sx+G.w*S.w*.45,sy]],'#9bd8e2','#17313a',2);pxText('SHUT',sx,sy-G.h*S.h*.66,'#df7c68',6,'center')}else{rect(sx-G.w*S.w*.45,sy-G.h*S.h*.18,G.w*S.w*.9,G.h*S.h*.32,'#77aab3','#17313a',1)}
+function arcadeDamageDrawValve(x,y,open,active=false){
+  const col=open?'#83bf6a':'#c55c57';circle(x,y,12,'#445a60','#17313a',2);circle(x,y,8,'rgba(0,0,0,0)',col,2);for(let a=0;a<Math.PI*2;a+=Math.PI/2)line(x+Math.cos(a)*3,y+Math.sin(a)*3,x+Math.cos(a)*9,y+Math.sin(a)*9,col,2);circle(x,y,3,col);if(active)circle(x,y,17,'rgba(0,0,0,0)','rgba(255,247,222,.42)',1)
 }
-function arcadeHouseboatDrawWake(g,G,ts){const H=g.house;if(!H.phaseAt)return;const W=H.scenario.wakes[Math.min(H.wakeIndex,H.scenario.wakes.length-1)],at=H.nextWakeAt||H.lastWakeAt,dir=W?.dir||H.wakeDir,time=at-ts,p=clamp(1-time/3900,0,1),waterY=G.y(.815);if(H.nextWakeAt&&time<4400){const bx=dir>0?lerp(G.x(-.08),G.x(.98),p*.86):lerp(G.x(1.08),G.x(.02),p*.86),spr=arcadeHouseboatPassingSprite(H.scenario.ferry?0:1),scale=.62,w=spr.width*scale,h=spr.height*scale;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(bx-w/2),Math.round(waterY-h*.7),Math.round(w),Math.round(h));ctx.restore();const crest=dir>0?lerp(G.x(.04),G.cx,p):lerp(G.x(.96),G.cx,p);for(let k=0;k<3;k++){const xx=crest-dir*k*12;ctx.beginPath();ctx.moveTo(xx-18,waterY+8+k*3);ctx.quadraticCurveTo(xx,waterY-4-k*2,xx+18,waterY+8+k*3);ctx.strokeStyle=`rgba(245,252,244,${.18+p*.28})`;ctx.lineWidth=2;ctx.stroke()}}
-  if(ts-H.wakeHitAt<700){const a=1-(ts-H.wakeHitAt)/700;for(let i=0;i<5;i++){const xx=G.cx+(i-2)*16*H.wakeDir;line(xx,G.y(.755),xx+H.wakeDir*12,G.y(.735)-i%2*4,`rgba(255,255,255,${a*.42})`,2)}}
+function arcadeDamageDrawDoor(G,D,i,ts){
+  const M=arcadeDamageGeom(G),p=M.door(i),x=G.x(p.x),y=G.y(p.y),q=D.doors[i],h=G.h*.30;if(q.open){line(x,y-h*.43,x,y-h*.12,'#839498',4);line(x,y+h*.12,x,y+h*.43,'#839498',4);line(x-6,y,x+6,y,'#e5b54e',2)}else{rect(x-5,y-h*.42,10,h*.84,'#687a7e','#17313a',2);circle(x,y,5,'#d7b369','#17313a',1)}if(q.jammed){line(x-8,y-7,x+8,y+7,'#df7c68',2);line(x+8,y-7,x-8,y+7,'#df7c68',2)}
 }
-function arcadeRenderHouseboat(g,ts,G,dt,running){const H=g.house,sc=H.scenario;arcadeHouseboatUpdate(g,ts,dt,running);
-  const sky=ctx.createLinearGradient(0,G.top,0,G.bottom);sky.addColorStop(0,sc.rain?'#7f9da6':'#a6d9df');sky.addColorStop(.62,sc.rain?'#6d8e98':'#91cbd4');sky.addColorStop(1,'#477e8c');rect(G.left,G.top,G.w,G.h,sky);
-  // distant shore
-  poly([[G.left,G.y(.29)],[G.x(.08),G.y(.25)],[G.x(.16),G.y(.28)],[G.x(.24),G.y(.22)],[G.x(.36),G.y(.29)],[G.x(.48),G.y(.24)],[G.x(.61),G.y(.28)],[G.x(.74),G.y(.23)],[G.x(.86),G.y(.27)],[G.right,G.y(.22)],[G.right,G.y(.36)],[G.left,G.y(.36)]],sc.rain?'#5f7669':'#71956f');for(let x=.05;x<.96;x+=.09)rect(G.x(x),G.y(.29+Math.sin(x*20)*.012),G.w*.025,G.h*.025,'#d8caa1','#17313a',1);
-  // water and wake
-  rect(G.left,G.y(.70),G.w,G.h*.30,sc.rain?'#376e7b':'#4e98a6');for(let i=0;i<12;i++){const yy=G.y(.73+i*.022)+Math.sin(ts*.0016+i)*2;line(G.left,yy,G.right,yy,'rgba(235,251,246,.09)',1)}arcadeHouseboatDrawWake(g,G,ts);
-  // rain stays outside unless skylight is open
-  if(sc.rain){for(let i=0;i<64;i++){const seed=i*47+17,x=G.x(((seed%101)/101+ts*.00007)%1),y=G.y(((seed%79)/79+ts*.00042)%1);line(x,y,x-4,y+12,'rgba(230,240,242,.26)',1)}}
-  const scene=arcadeHouseboatInteriorSprite(g.round),left=G.x(.05),top=G.y(.105),w=G.w*.90,h=G.h*.70;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(scene,Math.round(left),Math.round(top),Math.round(w),Math.round(h));ctx.restore();arcadeHouseboatDrawFixtures(g,G,ts);
-  // wet floor / rain through open skylight
-  for(const p of H.puddles){ctx.save();ctx.globalAlpha=.24+.18*H.wetness;ctx.beginPath();ctx.ellipse(G.x(p.x),G.y(p.y),G.w*p.r,G.h*p.r*.24,0,0,Math.PI*2);ctx.fillStyle='#65bdd1';ctx.fill();ctx.restore()}if(sc.rain&&!H.fixtures.skylight.closed){for(let i=0;i<9;i++){const x=G.x(.49+i*.012),y=G.y(.18+((ts*.0005+i*.13)%1)*.46);line(x,y,x-2,y+9,'rgba(200,231,236,.34)',1)}}
-  // target hardware integrated into room; only correct target glows while dragging
-  const activeTarget=H.drag?ARCADE_HOUSEBOAT_PROPS[H.drag.kind].target:null;for(const id of Object.keys(ARCADE_HOUSEBOAT_TARGETS))arcadeHouseboatDrawTarget(G,id,id===activeTarget);
-  // loose/secured props
-  for(const o of H.props){if(o.state==='lost')continue;const spr=arcadeHousePropSprite(o.kind),size=o.kind==='chair'?34:o.kind==='cushion'?31:27,x=G.x(o.x),y=G.y(o.y);ctx.save();ctx.imageSmoothingEnabled=false;if(o.dragging){ctx.globalAlpha=.96;circle(x,y,22,'rgba(229,181,78,.08)','rgba(229,181,78,.52)',2)}ctx.drawImage(spr,Math.round(x-size/2),Math.round(y-size*.72),size,size);ctx.restore();if(o.state==='secured'){const T=arcadeHouseboatTarget(o.kind);if(['chairStrap','sofa','hob'].includes(o.securedAt)){line(x-size*.25,y+3,x+size*.25,y+3,'#e5b54e',2);line(x-size*.18,y-2,x+size*.18,y+7,'#704630',1)}}}
-  // shards / breakage remains visible for the round
-  for(const q of H.shards){for(let i=0;i<4;i++)poly([[G.x(q.x)+i*5-7,G.y(q.y)],[G.x(q.x)+i*5-3,G.y(q.y)-5-(i%2)*2],[G.x(q.x)+i*5+1,G.y(q.y)]],i%2?'#d9eef2':'#fff7de','#17313a',1)}
-  // main-game animal sprite as cosy flavour, planted on the floor rather than floating on the roof
-  try{const frame=Math.floor(ts/320)%4,cat=animalSprite('cat',frame,H.wakePulse<0),sz=25,cx=G.x(.805+Math.sin(ts*.00045+H.catPhase)*.015),cy=G.y(.690);ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(cat,Math.round(cx-sz/2),Math.round(cy-sz*.80),sz,sz);ctx.restore()}catch(e){}
-  const T=arcadeHouseboatTasks(g),lives=arcadeLives(g),time=H.nextWakeAt?Math.max(0,(H.nextWakeAt-ts)/1000):0;pxText(sc.label,G.left+12,G.y(.050),'#fff7de',10,'left');pxText(sc.note,G.left+12,G.y(.078),'rgba(255,247,222,.72)',7,'left');pxText(`SECURED ${T.props}/${H.props.length}  ${'♥'.repeat(lives)}${'·'.repeat(Math.max(0,3-lives))}`,G.right-12,G.y(.050),lives===1?'#ffb6a7':'#fff7de',8,'right');if(H.nextWakeAt)pxText(`WAKE ${time<1?'NOW':Math.ceil(time)+'s'}`,G.right-12,G.y(.078),time<1.5?'#ffd978':'rgba(255,247,222,.72)',7,'right');else pxText(H.phase==='tidy'?'TIDY UP':'WAKE PASSED',G.right-12,G.y(.078),'rgba(255,247,222,.72)',7,'right');
-  let cue;if(H.drag)cue=`STOW ${ARCADE_HOUSEBOAT_PROPS[H.drag.kind].name} · ${arcadeHouseboatTarget(H.drag.kind).label}`;else{const open=sc.fixtures.find(id=>!H.fixtures[id].closed);if(open)cue=`TAP ${arcadeHouseboatFixtureRects()[open].label} TO LATCH`;else if(T.props<H.props.length)cue=H.phase==='tidy'?'RECOVER THE LOOSE CABIN':'DRAG LOOSE THINGS TO THEIR STOWS';else cue=H.nextWakeAt?'READY · WATCH THE WATER':'CABIN SECURE'}arcadeSetHelperCue(g,cue,`${T.props}/${H.props.length} secured · ${H.wakeIndex}/${sc.wakes.length} wakes passed`)
+function arcadeDamageDrawPump(G,D,which,ts){
+  const M=arcadeDamageGeom(G),Q=M[which],P=D.pumps[which],x=G.x(Q.x),y=G.y(Q.y),w=G.w*Q.w,h=G.h*Q.h,on=P.available&&P.on&&!P.tripped;roundedRect(x-w/2,y-h/2,w,h,6,P.available?(which==='main'?'#5d7378':'#a76752'):'#4c585b','#17313a',2);circle(x-w*.28,y,Math.min(14,h*.28),'#263c45','#17313a',1);if(on){const a=ts*.012;for(let k=0;k<4;k++)line(x-w*.28,y,x-w*.28+Math.cos(a+k*Math.PI/2)*9,y+Math.sin(a+k*Math.PI/2)*9,'#d9eef2',2)}else circle(x-w*.28,y,4,P.tripped?'#df7c68':'#839498');pxText(which==='main'?'MAIN BILGE':'EMERGENCY',x+w*.10,y-3,P.available?'#fff7de':'rgba(255,247,222,.35)',7,'center');pxText(P.tripped?'TRIPPED':on?'RUNNING':P.available?'STOPPED':'NOT RIGGED',x+w*.10,y+10,P.tripped?'#ffb6a7':on?'#cfe9c0':'rgba(255,247,222,.62)',6,'center')
+}
+function arcadeDamageCrewPos(D,ts){const C=D.crew;if(C.state==='idle')return{x:C.comp,y:.455,working:false};if(C.state==='moving')return{x:lerp(C.from,C.target,C.progress),y:.455,working:false};return{x:C.target,y:.455,working:true}}
+function arcadeDamageRenderWater(G,D,i,ts){
+  const M=arcadeDamageGeom(G),R=M.roomRect(i),room=D.rooms[i],x=G.x(R.x),y=G.y(R.y),w=G.w*R.w,h=G.h*R.h,level=clamp(room.water,0,1),wy=y+h*(1-level);if(level<=.002)return;ctx.save();ctx.beginPath();ctx.rect(x+3,y+2,w-6,h-4);ctx.clip();ctx.fillStyle='rgba(54,130,150,.78)';ctx.fillRect(x,wy,w,h*level);ctx.strokeStyle='rgba(210,242,239,.42)';ctx.lineWidth=2;ctx.beginPath();for(let k=0;k<=12;k++){const xx=x+k*w/12,yy=wy+Math.sin(ts*.004+k*.8+i)*2;!k?ctx.moveTo(xx,yy):ctx.lineTo(xx,yy)}ctx.stroke();for(let k=0;k<5;k++){const bx=x+((k*37+i*17)%100)/100*w,by=wy+8+((ts*.025+k*31+i*13)%(Math.max(12,h*level-10)));circle(bx,by,1.5,'rgba(226,247,242,.28)')}ctx.restore()
+}
+function arcadeDamageRenderLeak(G,D,L,ts){
+  const M=arcadeDamageGeom(G),R=M.roomRect(L.comp),rx=G.x(R.x),ry=G.y(R.y),rw=G.w*R.w,rh=G.h*R.h,x=L.side==='left'?rx+8:rx+rw-8,y=G.y(L.y),dir=L.side==='left'?1:-1;if(L.patched){rect(x-8,y-9,16,18,'#a86d45','#17313a',2);line(x-7,y-5,x+7,y+5,'#d7b369',2);line(x-7,y+5,x+7,y-5,'#d7b369',2);return}poly([[x,y-9],[x+dir*7,y-3],[x+dir*3,y+4],[x+dir*8,y+9],[x-dir*3,y+5],[x-dir*5,y-4]],'#263c45','#df7c68',2);const pulse=.6+.4*Math.sin(ts*.012+L.pulse),len=18+L.rate*150;line(x+dir*3,y,x+dir*len,y+5,'rgba(182,229,235,.78)',3);for(let k=0;k<3;k++)circle(x+dir*(8+k*7),y+4+k*3+Math.sin(ts*.009+k)*2,2,'rgba(221,248,244,.55)')
+}
+function arcadeRenderDamage(g,ts,G,dt,running){
+  const D=g.damage,sc=D.scenario;arcadeDamageUpdate(g,ts,dt,running);
+  // sea / sky around the cutaway vessel
+  const sky=ctx.createLinearGradient(0,G.top,0,G.bottom);sky.addColorStop(0,'#91b9be');sky.addColorStop(.42,'#6c98a2');sky.addColorStop(.43,'#3e7d8c');sky.addColorStop(1,'#285b6a');rect(G.left,G.top,G.w,G.h,sky);for(let i=0;i<13;i++){const yy=G.y(.18+i*.047)+Math.sin(ts*.0017+i)*2;line(G.left,yy,G.right,yy,'rgba(224,244,239,.07)',1)}
+  const spr=arcadeDamageSceneSprite(),left=G.x(.035),top=G.y(.115),w=G.w*.93,h=G.h*.72;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(left),Math.round(top),Math.round(w),Math.round(h));ctx.restore();const M=arcadeDamageGeom(G);
+  // water is dynamic inside each compartment and remains clipped to the cutaway.
+  for(let i=0;i<5;i++)arcadeDamageRenderWater(G,D,i,ts);
+  // bulkheads, doors and labels sit above the water.
+  for(let i=0;i<4;i++)arcadeDamageDrawDoor(G,D,i,ts);
+  for(let i=0;i<5;i++){const R=M.roomRect(i),cx=G.x(R.x+R.w*.5);pxText(ARCADE_DAMAGE_ROOMS[i].short,cx,G.y(.495),'rgba(255,247,222,.70)',6,'center');const vp=M.valve(i);arcadeDamageDrawValve(G.x(vp.x),G.y(vp.y),D.rooms[i].valve,D.rooms[i].water>.45)}
+  // live breaches and patching progress.
+  for(const L of D.leaks){arcadeDamageRenderLeak(G,D,L,ts);if(!L.patched&&D.crew.state==='patching'&&D.crew.target===L.comp){const R=M.roomRect(L.comp),cx=G.x(R.x+R.w*.5),yy=G.y(.39);roundedRect(cx-28,yy-5,56,8,3,'rgba(23,49,58,.65)','#17313a',1);rect(cx-26,yy-3,52*clamp(L.patchProgress,0,1),4,'#e5b54e')}}
+  // pumps and discharge.
+  arcadeDamageDrawPump(G,D,'main',ts);arcadeDamageDrawPump(G,D,'emergency',ts);if(D.discharge>.08){const a=D.discharge;for(let i=0;i<5;i++){const x=G.x(.93)+i*5,y=G.y(.875)+Math.sin(ts*.012+i)*3;line(x,y,x+12,y-4,`rgba(215,244,239,${.14+a*.34})`,2)}}
+  // damage-control team travels along the actual passageway.
+  const CP=arcadeDamageCrewPos(D,ts),roomW=(M.x1-M.x0)/5,cx=G.x(M.x0+(CP.x+.5)*roomW),cy=G.y(CP.y);drawArcadeCrew(cx-5,cy,CP.working?'#e5b54e':'#d8caa1','#df7c68',.78);drawArcadeCrew(cx+6,cy+1,CP.working?'#e5b54e':'#d8caa1','#527da0',.72);if(CP.working){line(cx+4,cy-7,cx+14+Math.sin(ts*.012)*3,cy-15,'#d7b369',2)}
+  // engine-room power risk is communicated by the physical switchboard.
+  const ew=D.rooms[2].water;if(sc.engineRisk&&ew>.48){const ex=G.x(M.x0+(2.82)*M.w),ey=G.y(.565);circle(ex,ey,5,ew>.76?'#df7c68':'#e5b54e','#17313a',1);if(ew>.66&&Math.floor(ts/180)%2===0)line(ex+5,ey-6,ex+11,ey-12,'#ffd978',2)}
+  // sparse world labels; actionable instruction lives in the shared DOM helper.
+  pxText(sc.label,G.left+10,G.y(.045),'#fff7de',9,'left');pxText(`BREACHES ${D.leaks.filter(L=>L.patched).length}/${D.leaks.length}`,G.right-10,G.y(.045),'#fff7de',8,'right');
+  const max=Math.max(...D.rooms.map(R=>R.water)),maxI=D.rooms.findIndex(R=>R.water===max),C=D.crew;let cue='';
+  if(C.state==='moving')cue=`DAMAGE-CONTROL TEAM MOVING TO ${ARCADE_DAMAGE_ROOMS[C.target].short}`;
+  else if(C.state==='patching')cue=`SHORING ${ARCADE_DAMAGE_ROOMS[C.target].short} BREACH`;
+  else{const urgent=D.leaks.filter(L=>!L.patched).sort((a,b)=>D.rooms[b.comp].water-D.rooms[a.comp].water)[0];if(urgent){if(D.rooms[urgent.comp].water>.70)cue=`PUMP ${ARCADE_DAMAGE_ROOMS[urgent.comp].short} BELOW 70% BEFORE SENDING THE TEAM`;else{const block=arcadeDamageFirstBlockedDoor(D,C.comp,urgent.comp);cue=block>=0?'OPEN A BULKHEAD DOOR SO THE TEAM CAN REACH THE BREACH':'TAP A BREACH TO SEND THE DAMAGE-CONTROL TEAM'}}else if(max>.18){const open=D.rooms.filter(R=>R.valve).length,pumpOn=(D.pumps.main.on&&!D.pumps.main.tripped)||(D.pumps.emergency.available&&D.pumps.emergency.on);cue=!open?`OPEN ${ARCADE_DAMAGE_ROOMS[maxI].short} SUCTION VALVE`:!pumpOn?'START A BILGE PUMP':`PUMPING ${ARCADE_DAMAGE_ROOMS[maxI].short} DOWN TO THE SAFE LINE`}else cue='SHIP DRY · HOLDING'}
+  const pumps=`MAIN ${D.pumps.main.tripped?'TRIPPED':D.pumps.main.on?'ON':'OFF'}${D.pumps.emergency.available?` · EMERGENCY ${D.pumps.emergency.on?'ON':'OFF'}`:''}`,valves=D.rooms.filter(R=>R.valve).length;arcadeSetHelperCue(g,cue,`${ARCADE_DAMAGE_ROOMS[maxI].short} ${Math.round(max*100)}% · ${valves} suction valve${valves===1?'':'s'} open · ${pumps}`)
+}
+function arcadeDamagePointer(g,type,x,y,G=arcadeGeom()){
+  if(type!=='down')return;const D=g.damage,M=arcadeDamageGeom(G),nx=G.nx(x),ny=G.ny(y);
+  // breaches first: large invisible hit radius around the visible shell damage.
+  let best=null,bestD=34;for(const L of D.leaks){if(L.patched)continue;const R=M.roomRect(L.comp),lx=G.x(L.side==='left'?R.x+.015:R.x+R.w-.015),ly=G.y(L.y),d=Math.hypot(x-lx,y-ly);if(d<bestD){best=L;bestD=d}}if(best){arcadeDamageAssignCrew(g,best);return}
+  // suction manifold valves.
+  for(let i=0;i<5;i++){const p=M.valve(i);if(Math.hypot(x-G.x(p.x),y-G.y(p.y))<26){arcadeDamageToggleValve(g,i);return}}
+  // watertight doors use a generous vertical hit strip.
+  for(let i=0;i<4;i++){const p=M.door(i);if(Math.abs(x-G.x(p.x))<20&&Math.abs(y-G.y(p.y))<G.h*.18){arcadeDamageToggleDoor(g,i);return}}
+  // pumps.
+  for(const which of ['main','emergency']){const q=M[which],cx=G.x(q.x),cy=G.y(q.y);if(Math.abs(x-cx)<G.w*q.w*.58&&Math.abs(y-cy)<G.h*q.h*.65){arcadeDamageTogglePump(g,which);return}}
 }
 
 const ARCADE_CRANE_LOADS=[
@@ -5506,7 +5529,7 @@ function arcadeLandingDrawJet(x,y,scale,bank=0,hook=true,ts=0){
 function arcadeSetupPoop(g,r,d){arcadeResetCommon(g,8+Math.min(14,r*2));g.playerX=.5;g.inputX=.5;g.playerVx=0;g.gulls=[];g.drops=[];g.splats=g.splats||[];g.poopSpawn=Math.max(260,820-(r-1)*46);g.gullSpawn=Math.max(900,1900-(r-1)*60);g.spawn=performance.now()-500;g.gullLast=0;g.wind=arcadeRand(g,-.025,.025)*d}
 function setupArcadeRound(g,first=false){
   const r=g.round||1,d=arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
-  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='houseboat')arcadeSetupHouseboat(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
+  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='damage')arcadeSetupDamage(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
 }
 
 arcadeScoreRecord=function(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec};
@@ -7020,8 +7043,8 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 }
 
 renderArcadeGame=function(g,ts){
-  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','houseboat'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='houseboat')arcadeRenderHouseboat(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='houseboat'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='houseboat'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
+  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='damage')arcadeRenderDamage(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='damage'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='damage'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
 };
 
 function arcadeTimingInput(g){
@@ -7071,14 +7094,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='timing'&&type==='down'&&performance.now()>g.cool)arcadeTimingInput(g);
   else if(e==='balance'&&(type==='down'||type==='move'))g.control=nx;
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
-  else if(e==='houseboat'){
-    const H=g.house;if(type==='down'){
-      let best=null,bestD=52;for(let i=H.props.length-1;i>=0;i--){const o=H.props[i];if(o.state==='lost')continue;const d=Math.hypot(x-G.x(o.x),y-G.y(o.y));if(d<bestD){best=o;bestD=d}}
-      if(best){best.dragging=true;best.state=best.state==='secured'?'loose':best.state;best.securedAt=null;best.vx=best.vy=0;H.drag=best;g.drag=best}
-      else{const R=arcadeHouseboatFixtureRects();for(const id of H.scenario.fixtures){const q=R[id];if(!H.fixtures[id].closed&&Math.abs(nx-q.x)<q.w*.65&&Math.abs(ny-q.y)<q.h*.75){arcadeHouseboatCloseFixture(g,id);break}}}
-    }else if(type==='move'&&H.drag){H.drag.x=clamp(nx,.10,.90);H.drag.y=clamp(ny,.16,.74);H.drag.vx=H.drag.vy=0}
-    else if(type==='up'&&H.drag)arcadeHouseboatDrop(g,H.drag,nx,ny)
-  }
+  else if(e==='damage')arcadeDamagePointer(g,type,x,y,G)
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeCraneInput(g);
   else if(e==='stack'&&g.meta.id==='cargo_tetris')arcadeHoldPointer(g,type,x,y,G)
   else if(e==='stack'&&type==='down'&&performance.now()>g.cool){g.theme==='container'?arcadeContainerDrop(g):arcadeTetrisDrop(g,nx);g.cool=performance.now()+180}
@@ -7272,7 +7288,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.29.3',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.29.4',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
