@@ -251,7 +251,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.28.8';
+const VERSION_LABEL='0.29.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -532,7 +532,7 @@ const CONTENT={
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'pilot',desc:'Work a pilot launch alongside increasingly difficult ships, match their motion and choose the instant when the transfer gap closes.',instruction:'A / D MATCH SPEED • W CLOSE IN • S EASE OFF • WATCH THE GREEN TRANSFER CIRCLE BREATHE WITH THE SWELL • SPACE TO JUMP',duration:0,rewardThreshold:550,benchmark:1750,theme:'pilot'},
     dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Work a suspended grab through a living seabed, dig clean material and bring each load safely back to the hopper.',instruction:'DRAG TO POSITION THE TROLLEY AND CABLE • SETTLE THE GRAB INTO GOLD SEDIMENT • PRESS GRAB / DUMP • LIFT CLEAR OF PIPES • DUMP OVER THE HOPPER',duration:0,rewardThreshold:550,benchmark:1750,theme:'dredger'},
     barge_balance:{title:'BARGE BALANCE',icon:'▰',group:'Cargo Barge',engine:'lanes',desc:'Choose where each load goes and keep the barge from listing to port or starboard.',instruction:'DRAG EACH LOAD TO ANY BAY • KEEP PORT AND STARBOARD WEIGHTS CLOSE',duration:27,rewardThreshold:600,benchmark:1900,theme:'barge'},
-    cargo_tetris:{title:'HOLD PACKER',icon:'▦',group:'Cargo Barge',engine:'stack',desc:'Pack awkward cargo blocks into a tight hold without building a dangerous tower.',instruction:'TAP A COLUMN TO DROP • FLAT STACKS SCORE MORE',duration:28,rewardThreshold:600,benchmark:1950,theme:'barge'},
+    cargo_tetris:{title:'HOLD PACKER',icon:'▦',group:'Cargo Barge',engine:'stack',desc:'Plan a real working hold: choose the next lift, build a supported stow, keep heavy cargo low, protect fragile freight, segregate hazards and finish with the barge in trim.',instruction:'CHOOSE FROM THE THREE STAGED LOADS • DRAG INTO THE HOLD • ROTATE BEFORE STOWING • TAP STOWED CARGO TO REHANDLE • WATCH ACCESS, LASHING, CHILLED CARGO AND TRIM',duration:0,rewardThreshold:700,benchmark:2250,theme:'barge'},
     tallship_rigging:{title:'ALOFT!',icon:'⚑',group:'Tall Ship',engine:'rigging',desc:'Climb the shrouds, edge out along a working yard and free the sail while the ship rolls and the rig comes alive in the wind.',instruction:'TAP A REACHABLE HOLD TO MOVE • CROSS THE YARD BETWEEN GUSTS • HOLD SPACE TO BRACE OR WORK A GASKET • FINISH THE SAIL AND GET BACK TO THE MAST',duration:0,rewardThreshold:600,benchmark:1850,theme:'tallship'},
     sub_depth:{title:'SILENT DEPTH',icon:'≈',group:'Submarine',engine:'depth',desc:'Guide a survey sub ever deeper through a living rock cave, balancing buoyancy as the pressure rises.',instruction:'DRAG OR PRESS UP / DOWN • KEEP THE SUB IN THE SAFE WATER • DIVE AS DEEP AS YOU CAN',duration:28,rewardThreshold:650,benchmark:2050,theme:'submarine'},
     carrier_landing:{title:'DECK LANDING',icon:'✈',group:'Aircraft Carrier',engine:'landing',desc:'Fly a little carrier prop plane from a chase view, keeping the moving deck centred while power controls the glide.',instruction:'KEEP THE DECK AHEAD OF YOUR NOSE • CORRECT LINEUP • USE POWER TO FLY THE BALL • SETTLE ONTO THE WIRES',duration:0,rewardThreshold:550,benchmark:1800,theme:'carrier'},
@@ -3278,7 +3278,7 @@ const ARCADE_COPY={
   pilot_transfer:{desc:'Work progressively harder pilot ships through changing speed, swell and wake, then choose the instant the two decks rise together for the transfer.',instruction:'MATCH SPEED • COME ALONGSIDE • THE GREEN CIRCLE GROWS AS THE SWELL CLOSES THE GAP • JUMP FOR THE DECK OR LADDER'},
   dredger_scoop:{desc:'Operate a real suspended dredging grab through layered sediment, rock and live seabed services as the crane and vessel move in the swell.',instruction:'POSITION THE GRAB • LET IT SETTLE • CLOSE INTO CLEAN SEDIMENT • LIFT CLEAR • OPEN OVER THE HOPPER'},
   barge_balance:{desc:'Stow a growing manifest of loads with different weight and footprint without capsizing.',instruction:'PLACE EACH LOAD • WATCH SPACE AND PORT/STARBOARD WEIGHT'},
-  cargo_tetris:{desc:'Pack rotating irregular cargo into a real hold grid and keep making room for the next load.',instruction:'TAP A COLUMN TO DROP • FIT THE SHAPES • DON’T BOX YOURSELF IN'},
+  cargo_tetris:{desc:'Stow a changing cargo manifest in a physical cutaway hold where heavy machinery, fragile cases, upright tanks, structure and lashing points all constrain the plan.',instruction:'DRAG THE NEXT LOAD INTO THE HOLD • ROTATE IT • BUILD FROM SUPPORT • KEEP HEAVY CARGO LOW • PROTECT FRAGILE FREIGHT • GOLD EYES MARK LASHING POSITIONS'},
   tallship_rigging:{desc:'Watch the bosun rig the sail, remember the working-point order, then climb the live rig and repeat it while the finished ropes swing free in the wind.',instruction:'WATCH THE FLASHED NODES • REPEAT THEM IN ORDER • HOLD SPACE TO BRACE • EACH CORRECT LASH OPENS MORE SAIL'},
   sub_depth:{desc:'Pilot a buoyant survey sub through a procedural cave that narrows and bends with depth.',instruction:'CONTROL DEPTH WITH INERTIA • STAY BETWEEN THE ROCK FACES'},
   carrier_landing:{desc:'Fly a full moving-deck approach where power controls glideslope, lateral corrections fight crosswind and the carrier pitches beneath you.',instruction:'FLY THE BALL • KEEP LINEUP • MANAGE POWER • TOUCH DOWN ON SPEED • CATCH A WIRE'},
@@ -4006,8 +4006,174 @@ function arcadeStackResolveDrop(g){
 }
 function arcadeNewTetrisPiece(g){const shape=ARCADE_PIECES[Math.floor(arcadeRand(g,0,Math.min(ARCADE_PIECES.length,3+g.round)))];g.tetrisPiece={cells:shape.map(p=>[p[0],p[1]]),kind:Math.floor(arcadeRand(g,0,3))}}
 function arcadeSetupStack(g,r,d){
+  if(g.meta.id==='cargo_tetris'){arcadeSetupHoldPacker(g,r,d);return}
   arcadeResetCommon(g,7+Math.min(7,r));g.stackCursor=arcadeRand(g,.18,.82);g.stackDir=arcadeRand(g,0,1)>.5?1:-1;g.stackSpeed=.24+Math.min(.42,r*.026);g.cols=[0,0,0,0,0];g.colWeights=[0,0,0,0,0];g.grid=Array.from({length:8},()=>Array(7).fill(0));g.placed=0;
   if(g.theme==='container'){g.stackLoads=Array.from({length:5},()=>[]);g.stackBodies=[];g.stackDrop=null;g.stackSeaPhase=arcadeRand(g,0,6.28);g.stackRoll=0;g.stackRollV=0;arcadeNewContainerPiece(g)}else arcadeNewTetrisPiece(g)
+}
+
+
+const ARCADE_HOLD_CARGO={
+  crate:{id:'crate',label:'TIMBER CRATES',style:'crate',cells:[[0,0],[1,0],[0,1],[1,1]],mass:2,note:'GENERAL CARGO · STACKABLE'},
+  long:{id:'long',label:'LONG CASE',style:'case',cells:[[0,0],[1,0],[2,0]],mass:2,note:'LONG · MAY ROTATE'},
+  lshape:{id:'lshape',label:'SPARES PALLET',style:'pallet',cells:[[0,0],[1,0],[0,1]],mass:2,note:'AWKWARD FOOTPRINT'},
+  small:{id:'small',label:'TOOL CHEST',style:'chest',cells:[[0,0]],mass:1,note:'SMALL · FILLS A GAP'},
+  generator:{id:'generator',label:'GENERATOR',style:'generator',cells:[[0,0],[1,0],[0,1],[1,1]],mass:6,heavy:true,hot:true,fixed:true,note:'6t · FLOOR ONLY · IGNITION SOURCE'},
+  coil:{id:'coil',label:'STEEL COIL',style:'coil',cells:[[0,0],[1,0]],mass:5,heavy:true,fixed:true,note:'5t · FLOOR ONLY'},
+  glass:{id:'glass',label:'GLASS CASE',style:'glass',cells:[[0,0],[1,0]],mass:1,fragile:true,note:'FRAGILE · NOTHING ABOVE'},
+  tank:{id:'tank',label:'UPRIGHT TANK',style:'tank',cells:[[0,0],[0,1],[0,2]],mass:3,upright:true,fixed:true,note:'KEEP UPRIGHT'},
+  drums:{id:'drums',label:'DRUM PALLET',style:'drums',cells:[[0,0],[1,0],[0,1],[1,1]],mass:3,fixed:true,note:'BANDED PALLET'},
+  pipes:{id:'pipes',label:'PIPE RACK',style:'pipes',cells:[[0,0],[1,0],[2,0]],mass:2,lash:true,fixed:true,note:'LASH TO A GOLD EYE'},
+  reefer:{id:'reefer',label:'REEFER CASE',style:'reefer',cells:[[0,0],[1,0]],mass:2,cold:true,note:'CHILLED · BLUE BULKHEAD'},
+  chemicals:{id:'chemicals',label:'CHEMICAL DRUMS',style:'chem',cells:[[0,0],[1,0]],mass:2,hazard:true,fixed:true,note:'HAZMAT · CLEAR OF MACHINERY'}
+};
+function arcadeHoldScenario(g,r){
+  const index=((r-1)%7)+1,tier=Math.floor((r-1)/7),variant=Math.floor(arcadeRand(g,0,2));
+  const defs=[
+    {name:'FIRST LOAD',note:'CHOOSE THE ORDER · BUILD A SOLID STOW',man:[['crate','long','lshape','small'],['long','lshape','crate','small']]},
+    {name:'HEAVY LIFT',note:'KEEP THE WEIGHT LOW AND THE BARGE IN TRIM',trim:true,man:[['generator','coil','long','crate','small'],['coil','generator','crate','long','small']]},
+    {name:'COLD & FRAGILE',note:'REEFER TO BLUE BULKHEAD · NOTHING ON GLASS',cold:true,man:[['reefer','glass','crate','long','lshape','small'],['glass','reefer','long','crate','small','lshape']]},
+    {name:'KEEP UPRIGHT',note:'TANKS STAY VERTICAL · WATCH PORT / STARBOARD WEIGHT',trim:true,man:[['tank','drums','generator','long','crate','small'],['tank','generator','drums','crate','long','small']]},
+    {name:'SERVICE ACCESS',note:'KEEP THE YELLOW BILGE ACCESS WAY CLEAR',keepClear:[[2,0],[2,1]],trim:true,man:[['crate','long','generator','lshape','tank','small'],['long','crate','generator','tank','lshape','small']]},
+    {name:'SEGREGATED LOAD',note:'HAZMAT CLEAR OF GENERATOR · POWER REEFER · LASH PIPES',lash:true,cold:true,trim:true,man:[['chemicals','pipes','generator','reefer','crate','small'],['pipes','chemicals','reefer','generator','crate','small']]},
+    {name:'FULL MANIFEST',note:'PLAN ORDER · ACCESS · COLD · LASHING · SEGREGATION · TRIM',lash:true,cold:true,trim:true,keepClear:[[2,0]],man:[['glass','generator','pipes','tank','reefer','chemicals','crate','lshape','small'],['generator','glass','tank','pipes','chemicals','reefer','lshape','crate','small']]}
+  ];
+  const d=defs[index-1],manifest=d.man[variant%d.man.length].slice();
+  if(tier>0){const extra=index===7?'small':(tier%2?'small':'long');manifest.push(extra)}
+  return{index,tier,name:d.name,note:d.note,manifest,blocked:[],keepClear:(d.keepClear||[]).map(p=>({x:p[0],y:p[1]})),lash:!!d.lash,cold:!!d.cold,trim:!!d.trim,lashPoints:d.lash?[{x:0,y:0},{x:5,y:0},{x:0,y:2},{x:5,y:2}]:[],coldColumn:5,trimLimit:.31}
+}
+function arcadeHoldRotateCells(spec,rot=0){
+  let cells=spec.cells.map(p=>[p[0],p[1]]),turns=(spec.fixed||spec.upright)?0:((rot%4)+4)%4;
+  for(let k=0;k<turns;k++)cells=cells.map(([x,y])=>[-y,x]);
+  const minX=Math.min(...cells.map(p=>p[0])),minY=Math.min(...cells.map(p=>p[1]));return cells.map(([x,y])=>[x-minX,y-minY])
+}
+function arcadeHoldBounds(spec,rot=0){const C=arcadeHoldRotateCells(spec,rot);return{cells:C,w:Math.max(...C.map(p=>p[0]))+1,h:Math.max(...C.map(p=>p[1]))+1}}
+function arcadeHoldGeometry(G){
+  const cols=6,rows=5,cell=Math.min(G.w*.086,G.h*.116),w=cols*cell,h=rows*cell,x0=G.x(.31)+(G.w*.58-w)*.5,y0=G.y(.205)+(G.h*.61-h)*.5;
+  return{cols,rows,cell,w,h,x0,y0,x1:x0+w,y1:y0+h,stage:{x0:G.x(.035),x1:G.x(.265),y0:G.y(.205),y1:G.y(.735)}}
+}
+function arcadeHoldQueueSlots(geo){const gap=7,h=(geo.stage.y1-geo.stage.y0-gap*4)/3;return[0,1,2].map(i=>({x0:geo.stage.x0+7,x1:geo.stage.x1-7,y0:geo.stage.y0+gap+i*(h+gap),y1:geo.stage.y0+gap+i*(h+gap)+h}))}
+function arcadeHoldCurrentKind(g){const H=g.hold;if(!H||!H.remaining.length)return null;H.selectedSlot=clamp(H.selectedSlot,0,Math.min(2,H.remaining.length-1));return H.remaining[H.selectedSlot]}
+function arcadeHoldCurrent(g){const id=arcadeHoldCurrentKind(g);return id?ARCADE_HOLD_CARGO[id]:null}
+function arcadeHoldRebuild(g){const H=g.hold;H.occ=Array.from({length:H.rows},()=>Array(H.cols).fill(null));for(const P of H.placements)for(const c of P.cells)H.occ[c.y][c.x]=P}
+function arcadeHoldBlocked(g,x,y){const H=g.hold;return H.scenario.blocked.some(p=>p.x===x&&p.y===y)||H.scenario.keepClear.some(p=>p.x===x&&p.y===y)}
+function arcadeHoldSolid(g,x,y){if(y<0)return true;if(x<0||x>=g.hold.cols||y>=g.hold.rows)return false;return arcadeHoldBlocked(g,x,y)||!!g.hold.occ[y][x]}
+function arcadeHoldCargoDistance(A,B){let best=99;for(const a of A)for(const b of B)best=Math.min(best,Math.abs(a.x-b.x)+Math.abs(a.y-b.y));return best}
+function arcadeHoldCheck(g,spec,rot,x,y){
+  const H=g.hold,B=arcadeHoldBounds(spec,rot),cells=B.cells.map(([cx,cy])=>({x:x+cx,y:y+cy}));
+  if(cells.some(c=>c.x<0||c.x>=H.cols||c.y<0||c.y>=H.rows))return{ok:false,reason:'OUTSIDE THE HOLD'};
+  if(cells.some(c=>H.scenario.keepClear.some(p=>p.x===c.x&&p.y===c.y)))return{ok:false,reason:'KEEP THE YELLOW ACCESS WAY CLEAR'};
+  if(cells.some(c=>H.scenario.blocked.some(p=>p.x===c.x&&p.y===c.y)))return{ok:false,reason:'STRUCTURE BLOCKS THAT SPACE'};
+  if(cells.some(c=>H.occ[c.y][c.x]))return{ok:false,reason:'THAT SPACE IS OCCUPIED'};
+  if(spec.heavy&&Math.min(...cells.map(c=>c.y))!==0)return{ok:false,reason:'HEAVY CARGO MUST SIT ON THE HOLD FLOOR'};
+  const byX=new Map();for(const c of cells){if(!byX.has(c.x)||c.y<byX.get(c.x).y)byX.set(c.x,c)}
+  for(const c of byX.values())if(c.y>0){const below=H.occ[c.y-1][c.x];if(!below&&!arcadeHoldBlocked(g,c.x,c.y-1))return{ok:false,reason:'CARGO NEEDS SOLID SUPPORT'};if(below?.spec?.fragile)return{ok:false,reason:'DO NOT LOAD ON FRAGILE CARGO'}}
+  if(spec.fragile)for(const c of cells){const above=c.y+1<H.rows?H.occ[c.y+1][c.x]:null;if(above)return{ok:false,reason:'FRAGILE CASE NEEDS CLEAR SPACE ABOVE'}}
+  if(spec.lash){const hit=cells.some(c=>H.scenario.lashPoints.some(p=>p.x===c.x&&p.y===c.y));if(!hit)return{ok:false,reason:'PIPE RACK MUST REACH A GOLD LASHING EYE'}}
+  if(spec.cold&&!cells.some(c=>c.x===H.scenario.coldColumn))return{ok:false,reason:'REEFER CASE MUST TOUCH THE BLUE CHILLED BULKHEAD'};
+  if(spec.hazard||spec.hot){for(const P of H.placements){if((spec.hazard&&P.spec.hot)||(spec.hot&&P.spec.hazard)){if(arcadeHoldCargoDistance(cells,P.cells)<=1)return{ok:false,reason:'KEEP HAZMAT ONE SPACE CLEAR OF MACHINERY'}}}}
+  return{ok:true,cells,bounds:B}
+}
+function arcadeHoldTrim(g,placements=null){
+  const H=g.hold,list=placements||H.placements;if(!list.length)return 0;let mass=0,moment=0;for(const P of list){const m=P.spec.mass||1,cx=P.cells.reduce((a,c)=>a+c.x+.5,0)/P.cells.length;mass+=m;moment+=(cx-H.cols/2)*m}return moment/Math.max(.001,mass*(H.cols/2))
+}
+function arcadeHoldFinalCheck(g){const H=g.hold;if(H.scenario.trim){const trim=arcadeHoldTrim(g);if(Math.abs(trim)>H.scenario.trimLimit)return{ok:false,reason:`SHIFT WEIGHT ${trim<0?'TO STARBOARD':'TO PORT'} — BARGE OUT OF TRIM`}}return{ok:true}}
+function arcadeSetupHoldPacker(g,r,d){
+  const scenario=arcadeHoldScenario(g,r);arcadeResetCommon(g,scenario.manifest.length);
+  g.hold={cols:6,rows:5,scenario,manifest:scenario.manifest.slice(),remaining:scenario.manifest.slice(),placements:[],occ:[],selectedSlot:0,rotation:0,dragging:false,hover:null,rehandles:0,completeAt:0,completeDone:false,needsTrim:false,loadSeq:0,seaPhase:arcadeRand(g,0,6.28),cranePhase:arcadeRand(g,0,6.28),crewPhase:arcadeRand(g,0,6.28),lastLift:null};arcadeHoldRebuild(g)
+}
+function arcadeHoldRotate(g,dir=1){const H=g.hold,spec=arcadeHoldCurrent(g);if(!H||!spec||spec.fixed||spec.upright){if(spec)arcadeSetFeedback(g,spec.upright?'KEEP THIS LOAD UPRIGHT':'THIS LOAD DOES NOT ROTATE','neutral',430);return false}H.rotation=(H.rotation+dir+4)%4;arcadeSetFeedback(g,'LOAD ROTATED','neutral',280);return true}
+function arcadeHoldRehandle(g,P){const H=g.hold;if(!H||!P)return false;const i=H.placements.indexOf(P);if(i<0)return false;H.placements.splice(i,1);H.remaining.unshift(P.spec.id);H.selectedSlot=0;H.rotation=P.rot;H.completeAt=0;H.completeDone=false;H.needsTrim=false;H.rehandles++;g.roundProgress=H.placements.length;g.score=Math.max(0,g.score-35);arcadeHoldRebuild(g);arcadeSetFeedback(g,`REHANDLE · ${P.spec.label}`,'neutral',520);return true}
+function arcadeHoldUndo(g){const H=g.hold;if(!H||!H.placements.length)return false;return arcadeHoldRehandle(g,H.placements[H.placements.length-1])}
+function arcadeHoldTryPlace(g,x,y,rot=g.hold.rotation){
+  const H=g.hold,spec=arcadeHoldCurrent(g),kind=arcadeHoldCurrentKind(g);if(!spec||H.completeAt)return false;const C=arcadeHoldCheck(g,spec,rot,x,y);if(!C.ok){arcadeSetFeedback(g,C.reason,'neutral',720);return false}
+  const P={id:++H.loadSeq,spec,kind,rot,x,y,cells:C.cells,at:performance.now()};H.placements.push(P);H.remaining.splice(H.selectedSlot,1);H.selectedSlot=clamp(H.selectedSlot,0,Math.max(0,Math.min(2,H.remaining.length-1)));arcadeHoldRebuild(g);g.roundProgress=H.placements.length;H.rotation=0;H.dragging=false;H.hover=null;H.lastLift=P;
+  const maxY=Math.max(...C.cells.map(c=>c.y)),points=160+C.cells.length*30+(spec.heavy?65:0)+(spec.fragile?40:0)+(spec.lash?50:0)+(spec.cold?45:0)+(spec.hazard?45:0)+Math.max(0,55-maxY*12);arcadeRoundReward(g,points,spec.lash?'LASHED & STOWED':spec.cold?'REEFER CONNECTED':spec.heavy?'HEAVY CARGO LOW':'STOWED');
+  if(!H.remaining.length){const final=arcadeHoldFinalCheck(g);if(final.ok){H.completeAt=performance.now()+820;H.needsTrim=false;arcadeSetFeedback(g,'MANIFEST STOWED · SECURING FOR SEA','good',760)}else{H.needsTrim=true;arcadeSetFeedback(g,final.reason,'neutral',1100)}}return true
+}
+function arcadeHoldFinalBonus(g){const H=g.hold;if(!H.placements.length)return 0;const used=H.placements.flatMap(p=>p.cells),maxY=Math.max(...used.map(c=>c.y)),filled=used.length,volume=H.cols*(maxY+1),eff=filled/Math.max(1,volume),trim=Math.abs(arcadeHoldTrim(g));return Math.round(200+eff*430+Math.max(0,130-H.rehandles*30)+Math.max(0,120-trim*420))}
+function arcadeHoldSnap(g,G,x,y){const H=arcadeHoldGeometry(G),spec=arcadeHoldCurrent(g);if(!spec)return null;const B=arcadeHoldBounds(spec,g.hold.rotation),gx=Math.floor((x-H.x0)/H.cell),screenRow=Math.floor((y-H.y0)/H.cell),gy=H.rows-1-screenRow;return{x:clamp(gx-Math.floor(B.w/2),0,H.cols-B.w),y:clamp(gy-Math.floor(B.h/2),0,H.rows-B.h)} }
+function arcadeHoldPlacementAt(g,G,x,y){const geo=arcadeHoldGeometry(G),gx=Math.floor((x-geo.x0)/geo.cell),sr=Math.floor((y-geo.y0)/geo.cell),gy=geo.rows-1-sr;if(gx<0||gx>=geo.cols||gy<0||gy>=geo.rows)return null;return g.hold.occ[gy]?.[gx]||null}
+function arcadeHoldPointer(g,type,x,y,G=arcadeGeom()){
+  const H=g.hold,geo=arcadeHoldGeometry(G),slots=arcadeHoldQueueSlots(geo),inHold=x>=geo.x0-geo.cell*.22&&x<=geo.x1+geo.cell*.22&&y>=geo.y0-geo.cell*.22&&y<=geo.y1+geo.cell*.22;
+  if(!H||H.completeAt)return;
+  if(type==='down'&&inHold){const placed=arcadeHoldPlacementAt(g,G,x,y);if(placed){arcadeHoldRehandle(g,placed);return}}
+  if(type==='down')for(let i=0;i<Math.min(3,H.remaining.length);i++){const q=slots[i];if(x>=q.x0&&x<=q.x1&&y>=q.y0&&y<=q.y1){H.selectedSlot=i;H.rotation=0;H.dragging=true;H.hover=null;arcadeSetFeedback(g,ARCADE_HOLD_CARGO[H.remaining[i]].label,'neutral',240);return}}
+  const spec=arcadeHoldCurrent(g);if(!spec)return;
+  if(type==='down'&&inHold){H.dragging=true;H.hover=arcadeHoldSnap(g,G,x,y)}
+  else if(type==='move'&&H.dragging){H.hover=inHold?arcadeHoldSnap(g,G,x,y):null}
+  else if(type==='up'&&H.dragging){const p=H.hover;H.dragging=false;if(p)arcadeHoldTryPlace(g,p.x,p.y,H.rotation);H.hover=null}
+}
+function arcadeHoldCellScreen(geo,x,y){return{x:geo.x0+x*geo.cell,y:geo.y0+(geo.rows-1-y)*geo.cell}}
+function arcadeHoldDrawCargo(spec,rot,x,y,cell,alpha=1,ghost=false){
+  const B=arcadeHoldBounds(spec,rot),w=B.w*cell,h=B.h*cell,ink='#17313a';ctx.save();ctx.globalAlpha=alpha;const X=x,Y=y;
+  if(ghost){ctx.fillStyle='rgba(255,247,222,.15)';for(const[cx,cy]of B.cells)ctx.fillRect(Math.round(X+cx*cell+2),Math.round(Y+(B.h-1-cy)*cell+2),Math.round(cell-4),Math.round(cell-4))}
+  if(spec.style==='generator'){
+    roundedRect(X+3,Y+3,w-6,h-6,5,'#567166',ink,2);rect(X+cell*.14,Y+cell*.30,w-cell*.28,cell*.58,'#304b49',ink,2);for(let i=0;i<5;i++)line(X+cell*.25+i*(w-cell*.5)/5,Y+cell*.38,X+cell*.25+i*(w-cell*.5)/5,Y+cell*.78,'#8fa69b',2);circle(X+w*.78,Y+h*.70,5,'#e5b54e',ink,1);rect(X+6,Y+h-10,w-12,5,'#2e3f40');poly([[X+w*.16,Y+8],[X+w*.25,Y+3],[X+w*.34,Y+8]],'#d7b56a',ink,1)
+  }else if(spec.style==='coil'){
+    rect(X+3,Y+h*.68,w-6,h*.20,'#77583d',ink,2);for(let i=0;i<2;i++){const cx=X+w*(.28+i*.44),cy=Y+h*.43,rr=Math.min(cell*.28,h*.28);circle(cx,cy,rr,'#6f7d80',ink,2);circle(cx,cy,rr*.48,'#263e45',ink,2);line(cx-rr*.65,cy-rr*.65,cx+rr*.65,cy+rr*.65,'rgba(255,255,255,.20)',2)}
+  }else if(spec.style==='glass'){
+    rect(X+2,Y+3,w-4,h-6,'#9a754e',ink,2);rect(X+7,Y+7,w-14,h-14,'rgba(142,200,213,.62)',ink,1);line(X+7,Y+h-7,X+w-7,Y+7,'#fff7de',2);line(X+w*.5,Y+7,X+w*.5,Y+h-7,'#cde6e6',1);pxText('FRAGILE',X+w*.5,Y+h*.56,'#fff7de',Math.max(5,cell*.11),'center')
+  }else if(spec.style==='tank'){
+    roundedRect(X+cell*.18,Y+3,w-cell*.36,h-6,cell*.18,'#82969a',ink,2);rect(X+cell*.28,Y+cell*.30,w-cell*.56,h-cell*.60,'#aebcba',ink,1);line(X+w*.50,Y+5,X+w*.50,Y+h-5,'rgba(255,255,255,.26)',2);poly([[X+w*.5,Y+8],[X+w*.39,Y+20],[X+w*.61,Y+20]],'#e5b54e',ink,1)
+  }else if(spec.style==='drums'){
+    for(let r=0;r<2;r++)for(let c=0;c<2;c++){const cx=X+(c+.5)*cell,cy=Y+(r+.5)*cell;roundedRect(cx-cell*.30,cy-cell*.34,cell*.60,cell*.68,cell*.12,c%2?'#637b80':'#8b6954',ink,2);line(cx-cell*.25,cy-cell*.18,cx+cell*.25,cy-cell*.18,'#c4b990',2);line(cx-cell*.25,cy+cell*.18,cx+cell*.25,cy+cell*.18,'#c4b990',2)}rect(X+4,Y+h-8,w-8,5,'#704630',ink,1)
+  }else if(spec.style==='pipes'){
+    rect(X+2,Y+h*.62,w-4,h*.25,'#77583d',ink,2);for(let i=0;i<5;i++){const cx=X+w*(.12+i*.19),cy=Y+h*.42;circle(cx,cy,Math.max(4,cell*.11),'#6f8387',ink,2);circle(cx,cy,Math.max(1,cell*.045),'#30464b')}line(X+5,Y+h*.18,X+w-5,Y+h*.18,'#d7b56a',3)
+  }else if(spec.style==='reefer'){
+    roundedRect(X+2,Y+4,w-4,h-8,3,'#d9e4df',ink,2);rect(X+6,Y+8,w-12,h-16,'#b8d5d5',ink,1);for(let i=0;i<4;i++)line(X+10+i*(w-20)/4,Y+10,X+10+i*(w-20)/4,Y+h-10,'rgba(53,105,116,.35)',1);circle(X+w*.78,Y+h*.50,Math.max(5,cell*.12),'#527da0',ink,2);for(let a=0;a<4;a++){const aa=a*Math.PI/2;line(X+w*.78,Y+h*.50,X+w*.78+Math.cos(aa)*cell*.08,Y+h*.50+Math.sin(aa)*cell*.08,'#dff3f4',2)}rect(X+6,Y+6,w*.28,5,'#527da0')
+  }else if(spec.style==='chem'){
+    rect(X+2,Y+h*.70,w-4,h*.17,'#77583d',ink,2);for(let i=0;i<2;i++){const cx=X+w*(.28+i*.44);roundedRect(cx-cell*.28,Y+h*.22,cell*.56,h*.52,cell*.12,'#c48b4d',ink,2);line(cx-cell*.22,Y+h*.38,cx+cell*.22,Y+h*.38,'#fff0ce',2);poly([[cx,Y+h*.45],[cx-cell*.11,Y+h*.56],[cx,Y+h*.67],[cx+cell*.11,Y+h*.56]],'#df7c68',ink,1);pxText('!',cx,Y+h*.60,'#17313a',6,'center')}
+  }else if(spec.style==='case'){
+    rect(X+2,Y+4,w-4,h-8,'#b58a58',ink,2);for(let i=0;i<B.w;i++){line(X+i*cell+5,Y+7,X+(i+1)*cell-5,Y+h-7,'rgba(90,59,37,.48)',2);line(X+(i+1)*cell-5,Y+7,X+i*cell+5,Y+h-7,'rgba(255,247,222,.24)',1)}rect(X+5,Y+6,w-10,4,'#d9bc77')
+  }else if(spec.style==='pallet'){
+    for(const[cx,cy]of B.cells){const px=X+cx*cell+3,py=Y+(B.h-1-cy)*cell+3;rect(px,py,cell-6,cell-6,cy?'#8d6d4d':'#a98658',ink,2);line(px+4,py+4,px+cell-10,py+cell-10,'rgba(255,247,222,.24)',1)}line(X+3,Y+h-5,X+w-3,Y+h-5,'#5f4937',4)
+  }else if(spec.style==='chest'){
+    roundedRect(X+5,Y+cell*.20,w-10,h-cell*.34,4,'#4f6b72',ink,2);rect(X+w*.34,Y+cell*.14,w*.32,5,'#d7b56a',ink,1);circle(X+w*.5,Y+h*.58,3,'#e5b54e',ink,1)
+  }else{
+    for(const[cx,cy]of B.cells){const px=X+cx*cell+2,py=Y+(B.h-1-cy)*cell+2;rect(px,py,cell-4,cell-4,'#9a754e',ink,2);line(px+5,py+5,px+cell-9,py+cell-9,'rgba(255,247,222,.25)',1);line(px+cell-9,py+5,px+5,py+cell-9,'rgba(78,52,36,.42)',2)}
+  }
+  ctx.restore()
+}
+function arcadeHoldDrawPlacedServices(g,P,geo){
+  if(P.spec.lash){const eye=P.cells.flatMap(c=>g.hold.scenario.lashPoints.filter(e=>e.x===c.x&&e.y===c.y))[0];if(eye){const E=arcadeHoldCellScreen(geo,eye.x,eye.y),B=arcadeHoldBounds(P.spec,P.rot),cx=geo.x0+(P.x+B.w*.5)*geo.cell,cy=geo.y0+(geo.rows-(P.y+B.h*.5))*geo.cell;line(cx-8,cy,E.x+geo.cell*.5,E.y+geo.cell*.82,'#d7b56a',2);line(cx+8,cy,E.x+geo.cell*.5,E.y+geo.cell*.82,'#d7b56a',2)}}
+  if(P.spec.cold){const B=arcadeHoldBounds(P.spec,P.rot),cx=geo.x0+(P.x+B.w)*geo.cell,cy=geo.y0+(geo.rows-(P.y+B.h*.5))*geo.cell;line(cx,cy,geo.x1+13,cy,'#7fd0de',2);circle(geo.x1+13,cy,4,'#7fd0de','#17313a',1)}
+}
+function arcadeRenderHoldPacker(g,ts,G,dt,running){
+  const H=g.hold,geo=arcadeHoldGeometry(G),sc=H.scenario,spec=arcadeHoldCurrent(g),trim=arcadeHoldTrim(g);if(running&&H.completeAt&&ts>=H.completeAt&&!H.completeDone){H.completeDone=true;g.score+=arcadeHoldFinalBonus(g);arcadeAdvance(g,H.rehandles?'MANIFEST STOWED':'TIGHT STOW');return}
+  // Sea outside the cutaway barge: motion is environmental, not a fake wobble of the cargo.
+  const sea=ctx.createLinearGradient(0,G.top,0,G.bottom);sea.addColorStop(0,'#65a9b5');sea.addColorStop(1,'#245f70');rect(G.left,G.top,G.w,G.h,sea);for(let i=0;i<16;i++){const yy=G.y(.06+i*.061)+Math.sin(ts*.0014+i+H.seaPhase)*3;for(let x=G.left-20+(i%2)*22;x<G.right;x+=76)line(x,yy,x+28,yy+Math.sin(ts*.002+i)*2,'rgba(228,247,241,.11)',i%4?1:2)}
+  // Complete barge silhouette around the cutaway.
+  poly([[G.x(.18),G.y(.12)],[G.x(.95),G.y(.12)],[G.x(.93),G.y(.87)],[G.x(.86),G.y(.95)],[G.x(.28),G.y(.95)],[G.x(.20),G.y(.87)]],'#375863','#17313a',3);poly([[G.x(.19),G.y(.78)],[G.x(.94),G.y(.78)],[G.x(.91),G.y(.92)],[G.x(.29),G.y(.92)]],'#2c4d58','#17313a',2);line(G.x(.21),G.y(.82),G.x(.92),G.y(.82),'#fff7de',2);for(let i=0;i<6;i++)pxText(String(i+1),G.x(.29+i*.11),G.y(.86),'rgba(255,247,222,.55)',6,'center')
+  // Weathered steel deck and hatch coaming.
+  rect(G.x(.18),G.y(.12),G.w*.77,G.h*.11,'#6f7d78','#17313a',3);for(let x=G.x(.21);x<G.x(.92);x+=34){line(x,G.y(.14),x+14,G.y(.205),'rgba(255,247,222,.10)',2);circle(x+6,G.y(.17),2,'#465a5c')}
+  // Cutaway hold cavity.
+  rect(geo.x0-11,geo.y0-11,geo.w+22,geo.h+22,'#213941','#17313a',3);rect(geo.x0,geo.y0,geo.w,geo.h,'#b89968','#704630',2);
+  for(let y=0;y<geo.rows;y++)for(let x=0;x<geo.cols;x++){const P=arcadeHoldCellScreen(geo,x,y);rect(P.x+1,P.y+1,geo.cell-2,geo.cell-2,'rgba(255,247,222,.055)','rgba(112,70,48,.20)',1)}
+  // Frames, ladder, bilge line, frame numbers and rivets.
+  for(let x=0;x<=geo.cols;x++){const xx=geo.x0+x*geo.cell;line(xx,geo.y0-8,xx,geo.y1+8,'rgba(23,49,58,.30)',2);if(x<geo.cols)pxText(String(18+x),xx+geo.cell*.5,geo.y0-13,'rgba(255,247,222,.43)',5,'center')}
+  line(geo.x0-7,geo.y1+7,geo.x1+7,geo.y1+7,'#c8a96e',5);line(geo.x0+5,geo.y1-6,geo.x1-5,geo.y1-6,'#47676b',4);for(let i=0;i<5;i++)circle(geo.x0+18+i*geo.cell*1.18,geo.y1-7,3,'#d7b56a','#17313a',1);for(let y=geo.y0+10;y<geo.y1-10;y+=14){line(geo.x0-13,y,geo.x0-3,y,'#c7b98f',2)}line(geo.x0-9,geo.y0+5,geo.x0-9,geo.y1-5,'#c7b98f',2)
+  // Chilled bulkhead and power sockets only when the job needs them.
+  if(sc.cold){rect(geo.x1+2,geo.y0+4,13,geo.h-8,'rgba(105,186,201,.28)','#17313a',1);for(let y=geo.y0+18;y<geo.y1;y+=34){circle(geo.x1+8,y,5,'#7fd0de','#17313a',1);line(geo.x1+5,y,geo.x1+11,y,'#e7fbfa',1);line(geo.x1+8,y-3,geo.x1+8,y+3,'#e7fbfa',1)}}
+  // Service access way: physically empty cells with hazard paint and a bilge hatch.
+  for(const K of sc.keepClear){const P=arcadeHoldCellScreen(geo,K.x,K.y);rect(P.x+2,P.y+2,geo.cell-4,geo.cell-4,'rgba(229,181,78,.15)','#d7b56a',2);for(let z=-geo.cell;z<geo.cell*2;z+=12)line(P.x+z,P.y+geo.cell-3,P.x+z+geo.cell*.55,P.y+3,'rgba(23,49,58,.32)',3);if(K.y===0)roundedRect(P.x+7,P.y+geo.cell*.48,geo.cell-14,geo.cell*.33,3,'#40585d','#17313a',1)}
+  for(const P0 of sc.lashPoints){const P=arcadeHoldCellScreen(geo,P0.x,P0.y);circle(P.x+geo.cell*.5,P.y+geo.cell*.82,7,'#d7b56a','#17313a',2);circle(P.x+geo.cell*.5,P.y+geo.cell*.82,3,'#263e45','#17313a',1)}
+  // Three-load staging rack. Choosing order is now part of the puzzle.
+  roundedRect(geo.stage.x0,geo.stage.y0,geo.stage.x1-geo.stage.x0,geo.stage.y1-geo.stage.y0,7,'#78664f','#17313a',3);pxText('STAGING RACK',(geo.stage.x0+geo.stage.x1)/2,geo.stage.y0-10,'#fff7de',7,'center');const slots=arcadeHoldQueueSlots(geo),visible=H.remaining.slice(0,3);
+  for(let i=0;i<3;i++){const q=slots[i],active=i===H.selectedSlot&&i<visible.length;roundedRect(q.x0,q.y0,q.x1-q.x0,q.y1-q.y0,5,active?'#9b835e':'#665a49',active?'#e5b54e':'#17313a',active?3:2);if(i<visible.length){const S=ARCADE_HOLD_CARGO[visible[i]],B=arcadeHoldBounds(S,active?H.rotation:0),pc=Math.min((q.x1-q.x0)*.52/B.w,(q.y1-q.y0)*.56/B.h),px=q.x0+8,py=(q.y0+q.y1)/2-B.h*pc*.48;arcadeHoldDrawCargo(S,active?H.rotation:0,px,py,pc,(H.dragging&&active)?0.40:1,false);pxText(S.label,q.x1-6,q.y0+17,active?'#fff7de':'rgba(255,247,222,.82)',6,'right');pxText(`${S.mass||1}t`,q.x1-6,q.y0+31,S.heavy?'#ffd27a':S.fragile?'#bfe8f1':S.hazard?'#ffb5a4':'rgba(255,247,222,.58)',6,'right');const tag=S.cold?'COLD':S.lash?'LASH':S.hazard?'HAZMAT':S.upright?'UPRIGHT':S.heavy?'HEAVY':S.fragile?'FRAGILE':'';if(tag)pxText(tag,q.x1-6,q.y1-9,'rgba(255,247,222,.58)',5,'right')}}
+  // Forklift and stevedore establish scale.
+  const fx=G.x(.055),fy=G.y(.80);rect(fx,fy,44,28,'#d7a948','#17313a',2);circle(fx+9,fy+29,7,'#273f46','#17313a',2);circle(fx+36,fy+29,7,'#273f46','#17313a',2);line(fx+41,fy+2,fx+41,fy-30,'#17313a',4);line(fx+41,fy-29,fx+66,fy-29,'#17313a',3);rect(fx+9,fy-18,23,18,'#fff7de','#17313a',2);rect(fx+13,fy-14,15,7,'#7ba8b1','#17313a',1);drawArcadeCrew(fx+78,fy+17,'#e5b54e','#527da0',.82)
+  // Placed cargo and its working services.
+  for(const P of H.placements){const B=arcadeHoldBounds(P.spec,P.rot),finalX=geo.x0+P.x*geo.cell,finalY=geo.y0+(geo.rows-(P.y+B.h))*geo.cell,t=clamp((ts-P.at)/430,0,1),sx=geo.x0+geo.w*.50-B.w*geo.cell*.5,sy=geo.y0-B.h*geo.cell*.70,x=lerp(sx,finalX,t),y=lerp(sy,finalY,t);if(t<1){line(geo.x0+geo.w*.5,geo.y0-39,x+B.w*geo.cell*.5,y,'#574538',2);circle(x+B.w*geo.cell*.5,y+3,4,'#e5b54e','#17313a',1)}arcadeHoldDrawCargo(P.spec,P.rot,x,y,geo.cell,1,false);if(t>=1)arcadeHoldDrawPlacedServices(g,P,geo)}
+  // Gantry crane and travelling trolley.
+  line(geo.x0-18,geo.y0-43,geo.x1+18,geo.y0-43,'#c49b45',9);line(geo.x0-18,geo.y0-43,geo.x1+18,geo.y0-43,'#17313a',2);for(let x=geo.x0-8;x<geo.x1+8;x+=28)line(x,geo.y0-48,x+11,geo.y0-38,'rgba(255,247,222,.30)',2);const trolley=geo.x0+geo.w*(.50+Math.sin(ts*.0011+H.cranePhase)*.10);roundedRect(trolley-13,geo.y0-52,26,18,3,'#e5b54e','#17313a',2);line(trolley,geo.y0-34,trolley,geo.y0-20,'#574538',2)
+  // Physical trim cue: a plumb bob hanging from the beam, not a generic HUD meter.
+  const pendX=geo.x1+36,pendY=geo.y0+16,pendOff=clamp(trim,-.55,.55)*24;line(pendX,geo.y0-35,pendX+pendOff,pendY,'#e8d9af',2);poly([[pendX+pendOff,pendY],[pendX+pendOff-6,pendY+12],[pendX+pendOff+6,pendY+12]],Math.abs(trim)>sc.trimLimit?'#df7c68':'#d7b56a','#17313a',1);pxText('TRIM',pendX,pendY+27,'rgba(255,247,222,.58)',5,'center')
+  // Drag ghost snapped to the physical hold.
+  if(spec&&H.dragging&&H.hover){const B=arcadeHoldBounds(spec,H.rotation),check=arcadeHoldCheck(g,spec,H.rotation,H.hover.x,H.hover.y),gx=geo.x0+H.hover.x*geo.cell,gy=geo.y0+(geo.rows-(H.hover.y+B.h))*geo.cell;arcadeHoldDrawCargo(spec,H.rotation,gx,gy,geo.cell,.46,true);for(const c of check.cells||[]){const P=arcadeHoldCellScreen(geo,c.x,c.y);ctx.strokeStyle=check.ok?'#83bf6a':'#df7c68';ctx.lineWidth=2;ctx.strokeRect(P.x+3,P.y+3,geo.cell-6,geo.cell-6)}}
+  // Scenario and progress are painted into the scene rather than a large panel.
+  pxText(sc.name,G.left+12,G.y(.055),'#fff7de',9,'left');pxText(sc.note,G.left+12,G.y(.082),'rgba(255,247,222,.72)',6,'left');if(g.feedback&&ts<(g.feedback.until||0))pxText(g.feedback.text,G.cx,G.y(.113),g.feedback.tone==='bad'?'#ffcabd':g.feedback.tone==='good'?'#dff1cf':'#fff7de',7,'center');
+  const used=H.placements.flatMap(p=>p.cells);let efficiency='EMPTY HOLD';if(used.length){const maxY=Math.max(...used.map(c=>c.y)),eff=used.length/(H.cols*(maxY+1));efficiency=eff>.72?'TIGHT STOW':eff>.52?'GOOD USE OF SPACE':'ROOM TO IMPROVE'}const trimWord=!sc.trim?'':Math.abs(trim)<.11?' · EVEN TRIM':Math.abs(trim)<=sc.trimLimit?' · TRIM OK':trim<0?' · PORT HEAVY':' · STARBOARD HEAVY';
+  pxText(`${H.placements.length}/${H.manifest.length} STOWED · ${efficiency}${trimWord}${H.rehandles?` · ${H.rehandles} REHANDLE${H.rehandles>1?'S':''}`:''}`,G.cx,G.y(.948),H.needsTrim?'#ffcabd':'#fff7de',8,'center');if(!H.remaining.length&&H.needsTrim)pxText('TAP A STOWED LOAD TO SHIFT IT',G.cx,G.y(.916),'#ffd27a',7,'center')
 }
 
 const ARCADE_CATCH_SPECIES={
@@ -5287,7 +5453,7 @@ function arcadeRenderContainerStack(g,ts,G,dt,running){
 function arcadeRenderTetris(g,ts,G,dt,running){
   const cell=Math.min(G.w/10,G.h/12),ox=G.cx-cell*3.5,oy=G.y(.16);roundedRect(ox-8,oy-8,cell*7+16,cell*8+16,8,'rgba(23,49,58,.70)','#fff7de',2);for(let y=0;y<8;y++)for(let x=0;x<7;x++){const v=g.grid[y][x];rect(ox+x*cell,oy+y*cell,cell-2,cell-2,v?['#df7c68','#e5b54e','#527da0'][(v-1)%3]:'rgba(255,247,222,.10)',v?'#18313a':null,1)}const pc=g.tetrisPiece.cells;for(const [x,y] of pc)rect(G.cx+(x-1)*cell,G.y(.06)+y*cell,cell-2,cell-2,['#df7c68','#e5b54e','#527da0'][g.tetrisPiece.kind],'#18313a',1);pxText('TAP A COLUMN · PIECES AUTO-ROTATE BETWEEN LOADS',G.cx,G.y(.92),'#fff7de',8,'center')
 }
-function arcadeRenderStack(g,ts,G,dt,running){if(g.theme==='container')arcadeRenderContainerStack(g,ts,G,dt,running);else arcadeRenderTetris(g,ts,G,dt,running)}
+function arcadeRenderStack(g,ts,G,dt,running){if(g.meta.id==='cargo_tetris')arcadeRenderHoldPacker(g,ts,G,dt,running);else if(g.theme==='container')arcadeRenderContainerStack(g,ts,G,dt,running);else arcadeRenderTetris(g,ts,G,dt,running)}
 function arcadeRenderSort(g,ts,G,dt,running){
   if(g.theme!=='trawler'){
     if(running&&ts-g.spawn>g.sortSpawn&&g.items.length<Math.min(10,5+g.round))arcadeSpawnSort(g,ts);for(const o of g.items){if(running&&o!==g.drag){o.x+=o.vx*dt/1000;o.y+=o.vy*dt/1000;o.x=clamp(o.x,.06,.94)}if(running&&ts-o.born>Math.max(2600,5600-g.round*120)&&o!==g.drag){o.expired=true;arcadeStrike(g,'OVER THE RAIL')}const x=G.x(o.x),y=G.y(o.y);o.kind===0?rect(x-18,y-18,36,36,'#df7c68','#18313a',2):o.kind===1?circle(x,y,20,'rgba(0,0,0,0)','#e5b54e',8):roundedRect(x-24,y-13,48,26,5,'#527da0','#18313a',2)}g.items=g.items.filter(o=>!o.expired);const cols=['#df7c68','#e5b54e','#527da0'];for(let zone=0;zone<3;zone++){const kind=g.zoneOrder[zone],x=G.x(zone/3+.015),w=G.w*.303;roundedRect(x,G.y(.78),w,G.h*.17,8,cols[kind],'#18313a',3);pxText(['CHAIRS','RINGS','TOWELS'][kind],x+w/2,G.y(.88),'#fff7de',10,'center')}return
@@ -6604,7 +6770,7 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 
 renderArcadeGame=function(g,ts){
   const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts))return;
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&!(g.engine==='sort'&&g.theme==='trawler'))arcadeDrawStatus(g,G,ts);if(g.combo>1)pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);if(!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right')
 };
 
 function arcadeTimingInput(g){
@@ -6655,6 +6821,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='balance'&&(type==='down'||type==='move'))g.control=nx;
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeCraneInput(g);
+  else if(e==='stack'&&g.meta.id==='cargo_tetris')arcadeHoldPointer(g,type,x,y,G)
   else if(e==='stack'&&type==='down'&&performance.now()>g.cool){g.theme==='container'?arcadeContainerDrop(g):arcadeTetrisDrop(g,nx);g.cool=performance.now()+180}
   else if(e==='sort'){
     if(type==='down'){const hit=g.theme==='trawler'?54:44;for(let i=g.items.length-1;i>=0;i--){const o=g.items[i];if(Math.hypot(x-G.x(o.x),y-G.y(o.y))<hit){g.drag=o;o.dragging=true;break}}}else if(type==='move'&&g.drag){g.drag.x=nx;g.drag.y=ny;g.drag.vx=0;g.drag.vy=0}else if(type==='up'&&g.drag)arcadeSortDrop(g,nx,ny)
@@ -6739,6 +6906,8 @@ function arcadeControlSpec(g){
   if(e==='radar')return[{a:'radarAlert',l:'ALERT BRIDGE',k:'SPACE',primary:true}];
   if(e==='sonar')return[{a:'sonarPing',l:'PING',k:'SPACE',primary:true},{a:'sonarMark',l:'MARK TARGET',k:'M'}];
   if(e==='dredge')return[{a:'dredgeGrab',l:'GRAB / DUMP',k:'SPACE',primary:true}];
+  if(e==='stack'&&g.meta.id==='cargo_tetris')return[{a:'holdRotate',l:'ROTATE',k:'R / SPACE',primary:true},{a:'holdUndo',l:'UNDO',k:'U'}];
+
   if(e==='stack'&&g.theme==='container')return[{a:'action',l:'DROP',k:'SPACE',primary:true}];
   if(e==='stack')return[1,2,3,4,5].map(n=>({a:`slot${n}`,l:String(n),k:String(n),compact:true}));
   if(e==='rigging')return[{a:'rigBrace',l:'BRACE / WORK',k:'HOLD SPACE',primary:true,hold:true}];
@@ -6748,6 +6917,7 @@ function arcadeControlSpec(g){
 function arcadeApplyControl(action,pressed=true){
   const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(action==='action'&&pressed){beginArcadeRound();return true}return false}
   const step=.075;
+  if(g.engine==='stack'&&g.meta.id==='cargo_tetris'){if(action==='holdRotate'||action==='action'){if(pressed)return arcadeHoldRotate(g,1);return true}if(action==='holdUndo'&&pressed)return arcadeHoldUndo(g)}
   if(g.engine==='lines'){if(action==='linesHeave'||action==='action'){arcadeLinesAction(g,'heave',pressed);return true}if(action==='linesEase'||action==='down'){arcadeLinesAction(g,'ease',pressed);return true}}
   if(g.engine==='pilot'){
     if(action==='pilotBack'||action==='left'){g.pilot.targetThrottle=pressed?.34:.50;return true}
@@ -6781,7 +6951,7 @@ function arcadeApplyControl(action,pressed=true){
   if(action==='sonarMark'&&pressed&&g.engine==='sonar'){arcadeSonarMark(g);return true}
   if(action==='dredgeGrab'&&pressed&&g.engine==='dredge'){arcadeDredgeAction(g);return true}
   if(action==='action'&&pressed){if(['timing','crane'].includes(g.engine)||(g.engine==='stack'&&g.theme==='container')){arcadePointer(g,'down',canvas.width/2,canvas.height/2);return true}}
-  const slot=action.match(/^slot([1-5])$/);if(slot&&pressed&&g.engine==='stack'&&g.theme!=='container'){const n=+slot[1],G=arcadeGeom();arcadePointer(g,'down',G.x((n-.5)/5),G.y(.5));return true}
+  const slot=action.match(/^slot([1-5])$/);if(slot&&pressed&&g.engine==='stack'&&g.theme!=='container'&&g.meta.id!=='cargo_tetris'){const n=+slot[1],G=arcadeGeom();arcadePointer(g,'down',G.x((n-.5)/5),G.y(.5));return true}
   return false
 }
 function renderArcadeControls(){
@@ -6808,7 +6978,9 @@ function arcadeShellKeydown(e){
   if(g.paused){e.preventDefault();e.stopImmediatePropagation();return}
   if(!g.started){if(key===' '||key==='Enter'){e.preventDefault();e.stopImmediatePropagation();beginArcadeRound()}return}
   let handled=false;
-  if(['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left');
+  if(g.engine==='stack'&&g.meta.id==='cargo_tetris'&&(['r','R',' ','Enter'].includes(key)))handled=arcadeApplyControl('holdRotate',true);
+  else if(g.engine==='stack'&&g.meta.id==='cargo_tetris'&&['u','U'].includes(key))handled=arcadeApplyControl('holdUndo',true);
+  else if(['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left');
   else if(['ArrowRight','d','D'].includes(key))handled=arcadeApplyControl('right');
   else if(['ArrowUp','w','W'].includes(key))handled=arcadeApplyControl('up');
   else if(['ArrowDown','s','S'].includes(key))handled=arcadeApplyControl('down');
@@ -6824,7 +6996,7 @@ function arcadeShellKeydown(e){
   else if((key===' '||key==='Enter')&&g.engine==='dredge')handled=arcadeApplyControl('dredgeGrab',true);
   else if((key===' '||key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',true);
   else if(key===' '||key==='Enter')handled=arcadeApplyControl('action',true);
-  else if(/^[1-5]$/.test(key)&&g.engine==='stack'&&g.theme!=='container')handled=arcadeApplyControl(`slot${key}`,true);
+  else if(/^[1-5]$/.test(key)&&g.engine==='stack'&&g.theme!=='container'&&g.meta.id!=='cargo_tetris')handled=arcadeApplyControl(`slot${key}`,true);
   else if((key===' '||key==='Enter')&&g.engine==='rigging')handled=arcadeApplyControl('rigBrace',true);
   if(handled){e.preventDefault();e.stopImmediatePropagation()}
 }
@@ -6841,7 +7013,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.28.8',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.29.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
