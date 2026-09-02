@@ -255,7 +255,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=23;
-const VERSION_LABEL='0.29.8';
+const VERSION_LABEL='0.29.9';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3915,18 +3915,51 @@ function arcadeSteamGeom(G,D){
   return{panel,cw,ch,cell:(r,c)=>({x:panel.x+c*cw,y:panel.y+r*ch,w:cw,h:ch}),boiler:{x:.06,y:.36,w:.145,h:.38},engine:{x:.855,y:.39,w:.115,h:.32},feed:{x:.55,y:.835,w:.17,h:.10}}
 }
 function arcadeSteamPortPoint(G,M,r,c,d,scale=.42){const C=M.cell(r,c),cx=G.x(C.x+C.w*.5),cy=G.y(C.y+C.h*.5),q=ARCADE_STEAM_DIRS[d];return{x:cx+q.dc*G.w*C.w*scale,y:cy+q.dr*G.h*C.h*scale,cx,cy}}
+const arcadeSteamArtCache=new Map();
+function arcadeSteamArt(kind){
+  if(arcadeSteamArtCache.has(kind))return arcadeSteamArtCache.get(kind);
+  const sizes={boiler:[64,104],engine:[78,96],feed:[64,42],deckhouse:[148,62],funnel:[34,76]},sz=sizes[kind]||[64,64],off=document.createElement('canvas');off.width=sz[0];off.height=sz[1];const g=off.getContext('2d');g.imageSmoothingEnabled=false;
+  const I='#17313a',D='#324b50',steel='#637a78',steel2='#87918a',cream='#e9ddba',wood='#9b633d',wood2='#704630',copper='#a86f45',copper2='#d39a5b',brass='#d7b56a',glass='#80b5be',red='#c55c57';
+  if(kind==='boiler'){
+    psRect(g,10,8,44,84,I);psRect(g,13,10,38,80,copper);psRect(g,15,13,34,75,'#945f3d');
+    for(const x of [16,26,37,47])psRect(g,x,12,3,77,copper2);
+    for(let y=18;y<82;y+=10){psRect(g,13,y,38,1,'#6f4935');psRect(g,17,y+2,2,2,brass);psRect(g,45,y+2,2,2,brass)}
+    psRect(g,19,68,26,19,I);psRect(g,22,71,20,13,D);psRect(g,25,75,14,6,red);psRect(g,28,77,8,4,'#ffd978');
+    psRect(g,23,3,18,8,I);psRect(g,26,1,12,8,brass);psRect(g,29,0,6,3,I);psRect(g,7,30,6,28,I);psRect(g,9,32,4,24,copper2);
+    psRect(g,12,90,40,5,I);psRect(g,17,95,8,6,wood2);psRect(g,39,95,8,6,wood2);
+  }else if(kind==='engine'){
+    psRect(g,6,72,66,8,I);psRect(g,10,68,58,5,wood2);psRect(g,12,18,22,43,I);psRect(g,15,21,16,37,steel);psRect(g,18,24,10,8,steel2);psRect(g,44,18,22,43,I);psRect(g,47,21,16,37,steel);psRect(g,50,24,10,8,steel2);
+    psRect(g,16,12,14,8,I);psRect(g,48,12,14,8,I);psRect(g,19,9,8,4,brass);psRect(g,51,9,8,4,brass);
+    psRect(g,34,22,10,47,D);psRect(g,37,25,4,41,steel2);psRect(g,26,57,27,8,I);psRect(g,29,59,21,4,brass);
+    for(const x of [12,30,48,66])psRect(g,x,76,4,10,I);
+    psRect(g,3,82,72,5,D);psRect(g,8,88,12,5,I);psRect(g,58,88,12,5,I);
+  }else if(kind==='feed'){
+    psRect(g,4,26,56,7,I);psRect(g,8,12,25,17,I);psRect(g,11,15,19,11,steel);psRect(g,35,8,18,22,I);psRect(g,38,11,12,16,'#789b75');psRect(g,16,7,6,6,brass);psRect(g,5,33,50,4,wood2);psRect(g,12,37,6,4,I);psRect(g,44,37,6,4,I);
+  }else if(kind==='deckhouse'){
+    psRect(g,4,21,140,37,I);psRect(g,7,18,134,36,cream);psRect(g,7,47,134,7,wood);psRect(g,11,21,126,4,'#fff0ce');
+    for(let i=0;i<5;i++){const x=15+i*24;psRect(g,x,27,16,13,I);psRect(g,x+2,29,12,9,glass);psRect(g,x+3,30,5,3,'#b7d9da')}
+    psRect(g,121,27,14,27,I);psRect(g,124,30,8,24,wood);psRect(g,129,41,2,2,brass);psRect(g,0,16,148,5,I);psRect(g,8,12,132,5,wood2);
+    psCircle(g,73,45,7,I);psCircle(g,73,45,5,'#fff0ce');psCircle(g,73,45,2,red);psLine(g,73,40,73,50,red,1);psLine(g,68,45,78,45,red,1);
+  }else if(kind==='funnel'){
+    psRect(g,7,8,20,60,I);psRect(g,10,9,14,57,D);psRect(g,6,5,22,8,I);psRect(g,9,0,16,7,'#24383c');psRect(g,11,31,12,8,'#b9814f');psRect(g,12,33,10,4,'#d39a5b');psRect(g,4,67,26,5,I);
+  }
+  arcadeSteamArtCache.set(kind,off);return off
+}
+function arcadeSteamBlit(kind,x,y,w,h){const spr=arcadeSteamArt(kind);ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x),Math.round(y),Math.round(w),Math.round(h));ctx.restore()}
 function arcadeSteamDrawPipeTile(G,M,D,r,c,t,live,ts){
-  const C=M.cell(r,c),x=G.x(C.x),y=G.y(C.y),w=G.w*C.w,h=G.h*C.h,cx=x+w*.5,cy=y+h*.5,rad=Math.min(w,h)*.13,pipe=Math.max(5,Math.min(w,h)*.12),metal=live?'#d5ad58':'#a86f45',hi=live?'#ffe09a':'#d8a469',ink='#17313a';
-  ctx.save();ctx.globalAlpha=t.fixed?.94:1;roundedRect(x+2,y+2,w-4,h-4,4,'rgba(33,65,70,.42)','rgba(23,49,58,.52)',1);
+  const C=M.cell(r,c),x=Math.round(G.x(C.x)),y=Math.round(G.y(C.y)),w=Math.round(G.w*C.w),h=Math.round(G.h*C.h),cx=Math.round(x+w*.5),cy=Math.round(y+h*.5),pipe=Math.max(6,Math.round(Math.min(w,h)*.13)),metal=live?'#d7b56a':'#a86f45',edge=live?'#ffe29a':'#d69a5c',ink='#17313a';
+  ctx.save();ctx.globalAlpha=t.fixed?.94:1;
+  rect(x+2,y+2,w-4,h-4,t.fixed?'#405356':'#33484b',ink,1);rect(x+5,y+5,w-10,h-10,'rgba(93,119,116,.30)');
+  for(const [rx,ry] of [[7,7],[w-8,7],[7,h-8],[w-8,h-8]])circle(x+rx,y+ry,1.6,'#b7aa83','#17313a',1);
+  const drawRun=d=>{const p=arcadeSteamPortPoint(G,M,r,c,d,.49);line(cx,cy,Math.round(p.x),Math.round(p.y),ink,pipe+5);line(cx,cy,Math.round(p.x),Math.round(p.y),metal,pipe);line(cx-1,cy-1,Math.round(p.x)-1,Math.round(p.y)-1,edge,Math.max(2,Math.round(pipe*.20)));const q=ARCADE_STEAM_DIRS[d],fx=Math.round(p.x-q.dc*4),fy=Math.round(p.y-q.dr*4);rect(fx-(q.dc?2:pipe*.55),fy-(q.dr?2:pipe*.55),q.dc?4:pipe*1.1,q.dr?4:pipe*1.1,metal,ink,1)};
+  for(let d=0;d<4;d++)if(t.mask&ARCADE_STEAM_DIRS[d].bit)drawRun(d);
   if(t.kind==='valve'){
-    for(let d=0;d<4;d++)if(t.mask&ARCADE_STEAM_DIRS[d].bit){const p=arcadeSteamPortPoint(G,M,r,c,d,.43);line(cx,cy,p.x,p.y,ink,pipe+4);line(cx,cy,p.x,p.y,metal,pipe);line(cx,cy,p.x,p.y,hi,Math.max(2,pipe*.22))}
-    circle(cx,cy,rad*1.28,t.open?'#c65f52':'#6f8b66',ink,2);circle(cx,cy,rad*.62,'#d9c68c',ink,2);for(let a=0;a<4;a++){const aa=a*Math.PI/2+(t.open?ts*.00015:0),dx=Math.cos(aa)*rad*1.12,dy=Math.sin(aa)*rad*1.12;line(cx-dx*.45,cy-dy*.45,cx+dx,cy+dy,'#17313a',2)}circle(cx,cy,2,'#fff0c4');
-    if(live&&t.open){for(let k=0;k<4;k++){const yy=cy-rad*1.6-k*7-((ts*.03+k*5)%8),xx=cx+Math.sin(ts*.01+k)*4;circle(xx,yy,3+k*.5,`rgba(244,247,225,${.46-k*.07})`)}}
+    circle(cx,cy,Math.max(7,pipe*.86),'#8e5a43',ink,2);circle(cx,cy,Math.max(5,pipe*.62),t.open?'#c55c57':'#718863',ink,2);const rr=Math.max(8,pipe*.92);for(let a=0;a<4;a++){const aa=a*Math.PI/2,dx=Math.cos(aa)*rr,dy=Math.sin(aa)*rr;line(cx-dx*.36,cy-dy*.36,cx+dx,cy+dy,'#f0d5a1',2)}circle(cx,cy,2,'#fff0ce',ink,1);
+    if(live&&t.open)for(let k=0;k<4;k++){const yy=cy-rr*1.4-k*7-((ts*.03+k*5)%8),xx=cx+Math.sin(ts*.01+k)*4;circle(xx,yy,3+k*.5,`rgba(244,247,225,${.46-k*.07})`)}
   }else{
-    for(let d=0;d<4;d++)if(t.mask&ARCADE_STEAM_DIRS[d].bit){const p=arcadeSteamPortPoint(G,M,r,c,d,.48);line(cx,cy,p.x,p.y,ink,pipe+4);line(cx,cy,p.x,p.y,metal,pipe);line(cx-1,cy-1,p.x-1,p.y-1,hi,Math.max(2,pipe*.20))}
-    circle(cx,cy,pipe*.62,metal,ink,2);circle(cx-2,cy-2,Math.max(1,pipe*.16),hi);
-    if(t.fixed){for(const [dx,dy] of [[-1,-1],[1,-1],[-1,1],[1,1]])circle(cx+dx*w*.31,cy+dy*h*.31,2,'#d8caa1','#17313a',1)}
-    if(live){ctx.save();ctx.globalAlpha=.86;const phase=(ts*.0025+r*.21+c*.13)%1;for(let d=0;d<4;d++)if(t.mask&ARCADE_STEAM_DIRS[d].bit){const p=arcadeSteamPortPoint(G,M,r,c,d,.41),px=lerp(cx,p.x,phase),py=lerp(cy,p.y,phase);circle(px,py,2.5,'#fff0b5')}ctx.restore()}
+    circle(cx,cy,pipe*.70,metal,ink,2);circle(cx-2,cy-2,Math.max(1,pipe*.16),edge);
+    if(t.fixed){rect(x+5,y+5,w-10,4,'rgba(220,202,161,.24)');rect(x+5,y+h-9,w-10,4,'rgba(23,49,58,.18)')}
+    if(live){ctx.save();ctx.globalAlpha=.9;const phase=(ts*.0025+r*.21+c*.13)%1;for(let d=0;d<4;d++)if(t.mask&ARCADE_STEAM_DIRS[d].bit){const p=arcadeSteamPortPoint(G,M,r,c,d,.42),px=lerp(cx,p.x,phase),py=lerp(cy,p.y,phase);circle(px,py,2.5,'#fff0b5')}ctx.restore()}
   }
   ctx.restore()
 }
@@ -3939,30 +3972,68 @@ function arcadeSteamUpdate(g,ts,dt,running){
 }
 function arcadeRenderSteam(g,ts,G,dt,running){
   const D=g.steam,sc=D.scenario;arcadeSteamUpdate(g,ts,dt,running);const E=D.lastEval||arcadeSteamEvaluate(D,false),M=arcadeSteamGeom(G,D),ink='#17313a';
-  const sky=ctx.createLinearGradient(0,G.top,0,G.y(.27));sky.addColorStop(0,'#b9d9d1');sky.addColorStop(1,'#83b8bd');rect(G.left,G.top,G.w,G.h*.28,sky);rect(G.left,G.y(.22),G.w,G.h*.78,'#3f8392');for(let i=0;i<10;i++){const yy=G.y(.24+i*.065)+Math.sin(ts*.0014+i)*2;line(G.left,yy,G.right,yy,'rgba(225,246,239,.08)',1)}
-  // Steam packet exterior and cutaway shell.
-  poly([[G.x(.035),G.y(.255)],[G.x(.95),G.y(.255)],[G.x(.91),G.y(.89)],[G.x(.12),G.y(.89)],[G.x(.055),G.y(.74)]],'#456a70',ink,3);rect(G.x(.045),G.y(.27),G.w*.895,G.h*.60,'#d9d0b3',ink,2);rect(G.x(.05),G.y(.285),G.w*.89,G.h*.035,'#a86d45',ink,2);line(G.x(.05),G.y(.315),G.x(.94),G.y(.315),'#704630',2);
-  // Deckhouse, funnel and small period details.
-  roundedRect(G.x(.095),G.y(.165),G.w*.21,G.h*.115,5,'#eee2bf',ink,2);for(let i=0;i<4;i++)rect(G.x(.115+i*.045),G.y(.19),G.w*.026,G.h*.035,'#80b5be',ink,1);rect(G.x(.18),G.y(.075),G.w*.055,G.h*.105,'#2f464a',ink,2);rect(G.x(.174),G.y(.066),G.w*.067,G.h*.018,'#17313a');for(let i=0;i<4;i++){const xx=G.x(.204)+Math.sin(ts*.0012+i)*7,yy=G.y(.058)-i*9-((ts*.009+i*3)%8);circle(xx,yy,5+i*1.4,`rgba(82,90,84,${.26-i*.04})`)}
-  // Engine-room backing panel and structure.
-  roundedRect(G.x(.055),G.y(.335),G.w*.89,G.h*.49,8,'#6d7b70',ink,3);for(let i=0;i<9;i++)line(G.x(.06+i*.11),G.y(.34),G.x(.06+i*.11),G.y(.82),'rgba(23,49,58,.18)',1);for(let i=0;i<5;i++)line(G.x(.06),G.y(.36+i*.10),G.x(.94),G.y(.36+i*.10),'rgba(255,247,222,.08)',1);
-  // Boiler left.
-  const bx=G.x(M.boiler.x),by=G.y(M.boiler.y),bw=G.w*M.boiler.w,bh=G.h*M.boiler.h;roundedRect(bx,by,bw,bh,12,'#9e6a47',ink,3);for(let i=0;i<5;i++)line(bx+bw*(.10+i*.20),by+4,bx+bw*(.10+i*.20),by+bh-4,'rgba(244,199,123,.25)',2);roundedRect(bx+bw*.20,by+bh*.62,bw*.60,bh*.22,7,'#273f46',ink,2);rect(bx+bw*.29,by+bh*.68,bw*.42,bh*.10,'#df7c68',ink,1);for(let k=0;k<5;k++){const fx=bx+bw*(.34+k*.075),fy=by+bh*.73-Math.sin(ts*.012+k)*4;poly([[fx,fy+7],[fx-3,fy],[fx,fy-7],[fx+3,fy]],k%2?'#ffd978':'#df7c68')};arcadeSteamDrawGauge(bx+bw*.50,by+bh*.17,D.pressure,'BOILER');pxText('BOILER',bx+bw*.5,by+bh*.95,'#fff0ce',7,'center');
-  // Pipe chest.
-  roundedRect(G.x(M.panel.x)-5,G.y(M.panel.y)-5,G.w*M.panel.w+10,G.h*M.panel.h+10,7,'#334f50',ink,3);
+  // Harbour beyond the vessel: simple pixel scenery keeps the packet in a believable world.
+  const sky=ctx.createLinearGradient(0,G.top,0,G.y(.30));sky.addColorStop(0,'#c9e3d9');sky.addColorStop(1,'#87bcc0');rect(G.left,G.top,G.w,G.h*.31,sky);
+  rect(G.left,G.y(.235),G.w,G.h*.765,'#3f8392');
+  for(let i=0;i<8;i++){const hx=G.x(.02+i*.14),hy=G.y(.205+(i%3)*.012);rect(hx,hy,G.w*.10,G.h*.035,i%2?'#8a806b':'#9a8c72','#526164',1);if(i%3===0){rect(hx+G.w*.022,hy-G.h*.028,G.w*.015,G.h*.028,'#526164');line(hx+G.w*.03,hy-G.h*.025,hx+G.w*.07,hy-G.h*.055,'#526164',2)}}
+  for(let i=0;i<13;i++){const yy=G.y(.27+i*.052)+Math.sin(ts*.0013+i)*2,xx=G.left+((i*67+ts*.008)%Math.max(1,G.w));line(xx,yy,xx+18,yy-2,'rgba(226,247,241,.13)',2)}
+
+  // Full side-profile packet steamer. The machinery is shown through a deliberate cutaway aperture rather than a box framing the game.
+  const deckY=G.y(.305),waterY=G.y(.76);
+  poly([[G.x(.028),G.y(.30)],[G.x(.905),G.y(.30)],[G.x(.963),G.y(.36)],[G.x(.948),G.y(.735)],[G.x(.885),G.y(.855)],[G.x(.155),G.y(.885)],[G.x(.065),G.y(.80)],[G.x(.035),G.y(.62)]],'#314f5a',ink,3);
+  poly([[G.x(.04),G.y(.31)],[G.x(.91),G.y(.31)],[G.x(.946),G.y(.365)],[G.x(.932),G.y(.735)],[G.x(.87),G.y(.82)],[G.x(.17),G.y(.845)],[G.x(.08),G.y(.775)],[G.x(.055),G.y(.62)]],'#d8cfaf',ink,2);
+  // Lower hull remains intact around the cutaway.
+  poly([[G.x(.055),G.y(.73)],[G.x(.934),G.y(.73)],[G.x(.91),G.y(.82)],[G.x(.86),G.y(.855)],[G.x(.17),G.y(.875)],[G.x(.075),G.y(.79)]],'#365865',ink,2);
+  poly([[G.x(.075),G.y(.82)],[G.x(.91),G.y(.80)],[G.x(.875),G.y(.855)],[G.x(.17),G.y(.875)]],'#8f5142',ink,1);
+  line(G.x(.064),waterY,G.x(.936),waterY,'rgba(221,244,239,.26)',2);
+  // Cutaway aperture and structural frames.
+  rect(G.x(.045),G.y(.345),G.w*.895,G.h*.39,'#2b4246',ink,2);rect(G.x(.052),G.y(.355),G.w*.881,G.h*.37,'#536866');
+  for(let i=0;i<9;i++){const x=G.x(.06+i*.106);rect(x,G.y(.355),3,G.h*.37,'#31484a');circle(x+1.5,G.y(.366),1.5,'#b7aa83');circle(x+1.5,G.y(.708),1.5,'#b7aa83')}
+  rect(G.x(.052),G.y(.70),G.w*.88,G.h*.026,'#704630',ink,1);for(let x=.06;x<.93;x+=.045)line(G.x(x),G.y(.704),G.x(x+.025),G.y(.721),'rgba(255,240,206,.16)',1);
+  // Deck, bulwark and fittings.
+  rect(G.x(.042),G.y(.287),G.w*.885,G.h*.026,'#704630',ink,2);rect(G.x(.05),G.y(.271),G.w*.87,G.h*.019,'#b58252',ink,1);for(let x=.06;x<.91;x+=.038)line(G.x(x),G.y(.274),G.x(x),G.y(.286),'rgba(255,247,222,.26)',1);
+  for(const x of [.06,.885]){rect(G.x(x),G.y(.245),3,G.h*.042,ink);line(G.x(x),G.y(.247),G.x(x+.035),G.y(.247),'#d8caa1',2)}
+
+  // Pixel-art deckhouse and funnel, scaled without smoothing like the main-game boat assets.
+  arcadeSteamBlit('deckhouse',G.x(.07),G.y(.19),G.w*.25,G.h*.105);
+  arcadeSteamBlit('funnel',G.x(.168),G.y(.075),G.w*.052,G.h*.126);
+  const smokeStrength=.35+D.pressure*.65;for(let i=0;i<7;i++){const p=((ts*.00022+i/7)%1),sx=G.x(.194)+Math.sin(ts*.001+i*1.7)*5+p*G.w*.035,sy=G.y(.074)-p*G.h*.12,rr=3+i*.45+p*5;circle(sx,sy,rr,`rgba(55,67,66,${(.20-p*.13)*smokeStrength})`)}
+  // Small aft lifeboat, vents and deck clutter make the packet read as a working vessel rather than a frame.
+  poly([[G.x(.74),G.y(.245)],[G.x(.825),G.y(.245)],[G.x(.81),G.y(.27)],[G.x(.755),G.y(.27)]],'#b36d4f',ink,2);line(G.x(.782),G.y(.245),G.x(.782),G.y(.218),'#704630',2);line(G.x(.755),G.y(.225),G.x(.81),G.y(.225),'#704630',2);
+  for(const x of [.34,.39]){rect(G.x(x),G.y(.242),G.w*.018,G.h*.046,'#637a78',ink,1);rect(G.x(x-.003),G.y(.237),G.w*.024,G.h*.008,'#87918a',ink,1)}
+
+  // Boiler: cached pixel machine with live fire and gauge layered on top.
+  const bx=G.x(M.boiler.x),by=G.y(M.boiler.y),bw=G.w*M.boiler.w,bh=G.h*M.boiler.h;arcadeSteamBlit('boiler',bx,by,bw,bh);
+  for(let k=0;k<4;k++){const fx=bx+bw*(.38+k*.07),fy=by+bh*.76-Math.sin(ts*.014+k)*3;poly([[fx,fy+5],[fx-2,fy],[fx,fy-6],[fx+2,fy]],k%2?'#ffd978':'#df7c68')}
+  arcadeSteamDrawGauge(bx+bw*.51,by+bh*.16,D.pressure,'BOILER');
+
+  // Riveted pipe chest: the puzzle remains visually dominant but now belongs to the machinery space.
+  const px=G.x(M.panel.x)-6,py=G.y(M.panel.y)-6,pw=G.w*M.panel.w+12,ph=G.h*M.panel.h+12;rect(px,py,pw,ph,'#263c40',ink,3);rect(px+4,py+4,pw-8,ph-8,'#435a58');for(let x=px+12;x<px+pw-8;x+=22){circle(x,py+7,1.5,'#b7aa83');circle(x,py+ph-7,1.5,'#b7aa83')}
   for(let r=0;r<D.rows;r++)for(let c=0;c<D.cols;c++){const t=D.tiles[r*D.cols+c];if(!t)continue;arcadeSteamDrawPipeTile(G,M,D,r,c,t,E.reached.has(r*D.cols+c),ts)}
   for(const L of E.leaks)arcadeSteamDrawLeak(G,M,D,L,ts);
-  // Source pipe from boiler to the chest.
-  {const C=M.cell(D.source.r,D.source.c),y=G.y(C.y+C.h*.5),x1=bx+bw,x2=G.x(C.x);line(x1,y,x2,y,ink,10);line(x1,y,x2,y,'#b77a4b',6);if(E.reached.size){for(let k=0;k<3;k++){const t=((ts*.002+k/3)%1);circle(lerp(x1,x2,t),y,2.5,'#ffe2a1')}}}
-  // Main engine right with live flywheel and piston gear.
-  const ex=G.x(M.engine.x),ey=G.y(M.engine.y),ew=G.w*M.engine.w,eh=G.h*M.engine.h;rect(ex,ey+eh*.72,ew,eh*.12,'#704630',ink,2);roundedRect(ex+ew*.08,ey+eh*.12,ew*.34,eh*.55,5,'#68777a',ink,2);roundedRect(ex+ew*.48,ey+eh*.12,ew*.34,eh*.55,5,'#68777a',ink,2);const spin=ts*.0048*D.rpm,fr=Math.min(ew,eh)*.25,fcx=ex+ew*.50,fcy=ey+eh*.62;circle(fcx,fcy,fr,'#8a6f50',ink,3);for(let a=0;a<6;a++){const aa=spin+a*Math.PI/3;line(fcx,fcy,fcx+Math.cos(aa)*fr*.82,fcy+Math.sin(aa)*fr*.82,'#d8caa1',3)}circle(fcx,fcy,5,'#273f46',ink,2);const piston=Math.sin(spin)*eh*.10;line(fcx,fcy,ex+ew*.28,ey+eh*.34+piston,'#273f46',4);line(fcx,fcy,ex+ew*.67,ey+eh*.34-piston,'#273f46',4);const shaftX=G.x(.972),shaftY=G.y(.76);line(fcx,fcy,shaftX-10,shaftY,'#273f46',4);circle(shaftX,shaftY,4,'#d8caa1',ink,1);for(let a=0;a<3;a++){const aa=spin*1.6+a*Math.PI*2/3;line(shaftX,shaftY,shaftX+Math.cos(aa)*13,shaftY+Math.sin(aa)*13,D.rpm>.2?'#d7b56a':'#7e725f',4)}if(D.rpm>.18){for(let k=0;k<5;k++){const px=shaftX+10+k*6+(ts*.02*D.rpm)%7,py=shaftY+Math.sin(ts*.013+k)*6;circle(px,py,2+k*.35,`rgba(226,247,241,${.18+D.rpm*.18})`)}}pxText('ENGINE',ex+ew*.5,ey+eh*.94,'#fff0ce',7,'center');
-  // Steam connection to engine and optional feed pump.
-  {const C=M.cell(D.engine.r,D.engine.c),y=G.y(C.y+C.h*.5),x1=G.x(C.x+C.w),x2=ex;line(x1,y,x2,y,ink,10);line(x1,y,x2,y,E.engine?'#d5ad58':'#a86f45',6);if(E.engine)for(let k=0;k<3;k++){const t=((ts*.002+k/3)%1);circle(lerp(x1,x2,t),y,2.5,'#ffe2a1')}}
-  if(D.aux){const C=M.cell(D.aux.r,D.aux.c),cx=G.x(C.x+C.w*.5),y1=G.y(C.y+C.h),fy=G.y(M.feed.y),fw=G.w*M.feed.w,fh=G.h*M.feed.h,fx=cx-fw*.5;line(cx,y1,cx,fy,ink,10);line(cx,y1,cx,fy,E.aux?'#d5ad58':'#a86f45',6);roundedRect(fx,fy,fw,fh,6,E.aux?'#789b75':'#68777a',ink,2);circle(fx+fw*.25,fy+fh*.5,fh*.28,'#d8caa1',ink,2);const aa=spin*1.25;line(fx+fw*.25,fy+fh*.5,fx+fw*.25+Math.cos(aa)*fh*.22,fy+fh*.5+Math.sin(aa)*fh*.22,'#17313a',2);pxText('FEED PUMP',fx+fw*.68,fy+fh*.58,'#fff0ce',6,'center')}
-  // Wheelhouse telegraph / propulsive payoff.
-  const teleX=G.x(.86),teleY=G.y(.18);circle(teleX,teleY,20,'#e7ce82',ink,2);const ta=-2.35+D.rpm*2.0;line(teleX,teleY,teleX+Math.cos(ta)*14,teleY+Math.sin(ta)*14,'#c55c57',2);pxText(D.rpm>.82?'AHEAD':'STOP',teleX,teleY+32,'#fff0ce',6,'center');if(D.rpm>.25){for(let i=0;i<6;i++){const x=G.x(.94)+i*9+(ts*.018*D.rpm)%12,y=G.y(.84)+Math.sin(ts*.012+i)*4;line(x,y,x+10,y-2,'rgba(225,246,239,.28)',2)}}
-  // One concise world label; helper carries the readable instruction.
-  pxText(sc.label,G.left+10,G.y(.045),'#fff7de',9,'left');pxText(`TURN ${D.moves}`,G.right-10,G.y(.045),'#fff7de',8,'right');
+
+  // Boiler-to-manifold header with brass flanges.
+  {const C=M.cell(D.source.r,D.source.c),y=G.y(C.y+C.h*.5),x1=bx+bw*.94,x2=G.x(C.x);line(x1,y,x2,y,ink,12);line(x1,y,x2,y,'#a86f45',7);rect(x1-4,y-8,7,16,'#d7b56a',ink,1);rect(x2-3,y-8,7,16,'#d7b56a',ink,1);if(E.reached.size)for(let k=0;k<3;k++){const t=((ts*.002+k/3)%1);circle(lerp(x1,x2,t),y,2.5,'#ffe2a1')}}
+
+  // Reciprocating engine sprite and live motion.
+  const ex=G.x(M.engine.x),ey=G.y(M.engine.y),ew=G.w*M.engine.w,eh=G.h*M.engine.h;arcadeSteamBlit('engine',ex,ey,ew,eh);const spin=ts*.0048*D.rpm,fr=Math.min(ew,eh)*.24,fcx=ex+ew*.50,fcy=ey+eh*.63;
+  circle(fcx,fcy,fr,'#273f46',ink,2);circle(fcx,fcy,fr*.80,'#8f7653',ink,2);for(let a=0;a<6;a++){const aa=spin+a*Math.PI/3;line(fcx,fcy,fcx+Math.cos(aa)*fr*.72,fcy+Math.sin(aa)*fr*.72,'#d8caa1',2)}circle(fcx,fcy,4,'#d7b56a',ink,1);
+  const p1=Math.sin(spin)*eh*.105,p2=Math.sin(spin+Math.PI)*eh*.105;line(fcx,fcy,ex+ew*.27,ey+eh*.38+p1,'#d7b56a',3);line(fcx,fcy,ex+ew*.70,ey+eh*.38+p2,'#d7b56a',3);
+  // Prop shaft continues through the stern gland into the water.
+  const shaftX=G.x(.972),shaftY=G.y(.69);line(fcx,fcy,shaftX-10,shaftY,'#273f46',5);line(fcx,fcy,shaftX-10,shaftY,'#87918a',2);circle(shaftX-8,shaftY,5,'#d7b56a',ink,1);for(let a=0;a<3;a++){const aa=spin*1.6+a*Math.PI*2/3;line(shaftX,shaftY,shaftX+Math.cos(aa)*12,shaftY+Math.sin(aa)*12,D.rpm>.2?'#d7b56a':'#6f735f',4)}
+  if(D.rpm>.18)for(let k=0;k<6;k++){const x=shaftX+9+k*8+(ts*.02*D.rpm)%9,y=shaftY+Math.sin(ts*.013+k)*5;circle(x,y,2+k*.25,`rgba(226,247,241,${.14+D.rpm*.18})`)}
+
+  // Manifold-to-engine line.
+  {const C=M.cell(D.engine.r,D.engine.c),y=G.y(C.y+C.h*.5),x1=G.x(C.x+C.w),x2=ex+ew*.04;line(x1,y,x2,y,ink,12);line(x1,y,x2,y,E.engine?'#d7b56a':'#a86f45',7);rect(x1-3,y-8,7,16,'#d7b56a',ink,1);if(E.engine)for(let k=0;k<3;k++){const t=((ts*.002+k/3)%1);circle(lerp(x1,x2,t),y,2.5,'#ffe2a1')}}
+
+  // Feed pump lives low in the machinery space on later puzzles.
+  if(D.aux){const C=M.cell(D.aux.r,D.aux.c),cx=G.x(C.x+C.w*.5),y1=G.y(C.y+C.h),fy=G.y(M.feed.y),fw=G.w*M.feed.w,fh=G.h*M.feed.h,fx=cx-fw*.5;line(cx,y1,cx,fy+4,ink,11);line(cx,y1,cx,fy+4,E.aux?'#d7b56a':'#a86f45',6);arcadeSteamBlit('feed',fx,fy,fw,fh);const aa=spin*1.2;circle(fx+fw*.27,fy+fh*.52,fh*.18,E.aux?'#d7b56a':'#87918a',ink,1);line(fx+fw*.27,fy+fh*.52,fx+fw*.27+Math.cos(aa)*fh*.15,fy+fh*.52+Math.sin(aa)*fh*.15,'#17313a',2)}
+
+  // Engine-room telegraph mounted in the deckhouse bulkhead.
+  const teleX=G.x(.865),teleY=G.y(.255);circle(teleX,teleY,17,'#d7b56a',ink,2);circle(teleX,teleY,12,'#fff0ce',ink,1);const ta=-2.35+D.rpm*2.0;line(teleX,teleY,teleX+Math.cos(ta)*10,teleY+Math.sin(ta)*10,'#c55c57',2);pxText(D.rpm>.82?'AHEAD':'STOP',teleX,teleY+28,'#fff7de',6,'center');
+  // Nameboard and restrained in-world status.
+  rect(G.x(.37),G.y(.276),G.w*.18,G.h*.022,'#31484a','#17313a',1);pxText('S.S. MAKEFAST',G.x(.46),G.y(.292),'#fff0ce',7,'center');pxText(sc.label,G.left+10,G.y(.045),'#fff7de',9,'left');pxText(`TURN ${D.moves}`,G.right-10,G.y(.045),'#fff7de',8,'right');
+
   let cue='TURN THE COPPER PIPES TO JOIN BOILER → ENGINE',sub=`Engine ${Math.round(D.rpm*100)}% · ${D.moves} turns`;
   if(D.aux&&!E.aux){cue=E.engine?'NOW FEED THE BOILER PUMP TOO':'JOIN BOILER → ENGINE AND FEED PUMP';sub=`Both machines need live steam · ${D.moves} turns`}
   if(E.leaks.length&&g.round<=2){cue='TURN THE COPPER PIPES TO JOIN BOILER → ENGINE';sub='White steam shows where the live line currently ends.'}
@@ -7409,7 +7480,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.29.8',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.29.9',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
