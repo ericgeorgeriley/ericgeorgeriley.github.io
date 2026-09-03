@@ -255,7 +255,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=25;
-const VERSION_LABEL='0.32.2';
+const VERSION_LABEL='0.32.4';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -518,7 +518,7 @@ const CONTENT={
   minigames:{
     ferry_lines:{title:'LINES ASHORE',icon:'⌁',group:'Passenger Ferry',engine:'lines',desc:'Work a changing series of real berthing jobs: choose useful line leads, control surge and drift, and make the ferry fast before weather, tide, wakes or an occupied berth get the better of her.',instruction:'TAP A DECK STATION • TAP A FREE BOLLARD TO THROW • HOLD HEAVE TO TAKE IN • HOLD EASE TO GIVE SLACK • READ THE TIDE, WIND, BERTH AND APPROACHING WAKES',duration:0,rewardThreshold:650,benchmark:2050,theme:'ferry'},
     ferry_galley:{title:'GALLEY SWAY',icon:'☕',group:'Passenger Ferry',engine:'galley',desc:'Run a working ferry galley through the short crossing: take live tickets, sequence kettle, urn, grill and soup around a limited breaker, lift hot food in its ready window and time liquid service with the ship’s roll before the berth closes the counter.',instruction:'TAP A TICKET • TAP ITS APPLIANCES TO START • TAP AGAIN WHEN READY • LIFT DRINKS NEAR LEVEL DECK • HIT PASS WHEN THE TICKET IS COMPLETE',duration:0,rewardThreshold:600,benchmark:2050,theme:'ferry'},
-    ferry_bags:{title:'BAGGAGE SCRAMBLE',icon:'▣',group:'Passenger Ferry',engine:'catch',desc:'Loose bags are rolling down the deck. Catch them in the baggage trolley before they reach the rail.',instruction:'DRAG THE BAGGAGE TROLLEY LEFT / RIGHT TO CATCH THE ROLLING BAGS',duration:24,rewardThreshold:540,benchmark:1750,theme:'ferry'},
+    ferry_bags:{title:'BAGGAGE SCRAMBLE',icon:'▣',group:'Passenger Ferry',engine:'bagthrow',desc:'Load the ferry baggage cage by judging each bag, the ship roll and the instant of release.',instruction:'HOLD TO WIND UP • RELEASE TO THROW • READ THE BAG AND THE DECK',duration:24,rewardThreshold:540,benchmark:1750,theme:'ferry'},
     container_crane:{title:'CRANE SWING',icon:'▥',group:'Container Ship',engine:'crane',desc:'Catch the swing and drop containers precisely into marked bays.',instruction:'TAP ANYWHERE WHEN THE HOOK IS ABOVE THE GREEN TARGET BAY',duration:26,rewardThreshold:550,benchmark:1750,theme:'container'},
     container_stack:{title:'STACK THE DECK',icon:'▦',group:'Container Ship',engine:'stack',desc:'Load a live cargo deck where every landed box changes the ship’s balance and can shift as the vessel lists.',instruction:'DROP FROM THE GANTRY • WATCH THE DECK LIGHTS • CARGO FALLS, STACKS AND CAN SLIDE AS THE SHIP TIPS',duration:28,rewardThreshold:600,benchmark:1900,theme:'container'},
     cruise_buffet:{title:'BUFFET BALANCE',icon:'◫',group:'Cruise Ship',engine:'balance',desc:'Stop plates and drinks skittering off a rolling buffet trolley.',instruction:'COUNTER THE ROLL • KEEP THE PLATES ON THE TRAY',duration:22,rewardThreshold:500,benchmark:1550,theme:'cruise'},
@@ -3264,7 +3264,7 @@ MINIGAME_META.poop_deck={title:'POOP DECK',icon:'⌃',group:'Seabirds',engine:'p
 const ARCADE_COPY={
   ferry_lines:{desc:'Work changing berthing jobs with real line tension, tide, wind, occupied bollards and passing wakes.',instruction:'TAP A DECK STATION • TAP A FREE BOLLARD • HEAVE TO TAKE IN • EASE A TAUT LINE • READ THE TIDE, WIND AND BERTH'},
   ferry_galley:{desc:'Run a tiny passenger-ferry galley as a live service puzzle. Tickets overlap, appliances have different cook windows and electrical loads, hot liquids should be lifted near level deck, and the berth clock never stops.',instruction:'SELECT A TICKET • START ONLY THE APPLIANCES IT NEEDS • LIFT FOOD IN THE READY BAND • TIME LIQUIDS WITH THE ROLL • PASS COMPLETE ORDERS'},
-  ferry_bags:{desc:'Catch rolling and bouncing luggage as the deck angle and traffic build.',instruction:'MOVE THE TROLLEY • CATCH THE BAGS • THREE LOSSES END THE RUN'},
+  ferry_bags:{desc:'Work the ferry baggage door with a single physical skill: hold to build a throw, then release when bag weight and ship motion line up with the cage.',instruction:'HOLD TO WIND UP • RELEASE TO THROW • LIGHT BAGS FLY • HEAVY CASES NEED MORE • THREE MISSES END THE RUN'},
   container_crane:{desc:'Work a shipboard crane through changing cargo, wire length, wind and vessel roll. Move the trolley to build or damp the swing, then release with the load’s momentum.',instruction:'LEFT / RIGHT MOVE THE TROLLEY • RELEASE TO DROP • ALLOW FOR SWING, WIND AND SHIP ROLL'},
   container_stack:{desc:'Build a balanced manifest from containers with changing width and weight.',instruction:'DROP THE LOAD • CONTROL STACK HEIGHT AND THE SHIP’S LIST'},
   cruise_buffet:{desc:'Keep differently weighted plates, cups and bottles on a rolling trolley through sudden wakes.',instruction:'COUNTER THE ROLL • EACH OBJECT HAS ITS OWN INERTIA'},
@@ -3303,7 +3303,7 @@ function arcadeGoalRatio(g){return g.engine==='depth'&&g.continuous?clamp(((g.de
 function arcadeRand(g,a=0,b=1){return a+(g.rr?.()??Math.random())*(b-a)}
 function arcadeChoice(g,list){return list[Math.floor(arcadeRand(g,0,list.length))%list.length]}
 function arcadeSetFeedback(g,text,tone='good',ms=820){g.feedback={text,tone,until:performance.now()+ms}}
-const ARCADE_HELPER_GAMES=new Set(['yacht_trim','ferry_lines','ferry_galley','container_crane','container_stack','trawler_net','trawler_sort','speedboat_slalom','tug_dock','tanker_channel','naval_radar','research_sonar','rescue_throw','pilot_transfer','dredger_scoop','barge_balance','cargo_tetris','cruise_deckchairs','tallship_rigging','sub_depth','carrier_landing','steam_route','poop_deck']);
+const ARCADE_HELPER_GAMES=new Set(['yacht_trim','ferry_lines','ferry_galley','ferry_bags','container_crane','container_stack','trawler_net','trawler_sort','speedboat_slalom','tug_dock','tanker_channel','naval_radar','research_sonar','rescue_throw','pilot_transfer','dredger_scoop','barge_balance','cargo_tetris','cruise_deckchairs','tallship_rigging','sub_depth','carrier_landing','steam_route','poop_deck']);
 function arcadeHelperEnabled(g){return!!g&&ARCADE_HELPER_GAMES.has(g.meta?.id||g.type)}
 function arcadeSetHelperCue(g,text,sub=''){if(!g)return;g.helperCue=text||'';g.helperSub=sub||''}
 function arcadeHideHelper(){const el=$('#arcadeHelper');if(el){el.classList.remove('show','good','bad','warn','neutral','interacting');el.classList.add('neutral')}}
@@ -3311,6 +3311,7 @@ function arcadeDefaultHelperCue(g){
   const id=g.meta?.id||g.type;
   if(id==='yacht_trim')return'DRAG THE RED MAINSHEET TAIL · TRIM IN LEFT · EASE RIGHT · READ THE TELLTALES';
   if(id==='ferry_galley')return'TAP TO POUR A SHORT MEASURE · WATCH THE MUG SLIDE · FILL TO THE GREEN MARK';
+  if(id==='ferry_bags')return'HOLD TO WIND UP · RELEASE TO THROW · READ BAG WEIGHT AND THE FERRY ROLL';
   if(id==='ferry_lines')return'CHOOSE A USEFUL LINE · HEAVE TO CONTROL THE SHIP · EASE A TAUT LINE';
   if(id==='container_crane')return'MOVE THE TROLLEY TO CONTROL SWING · RELEASE OVER THE TARGET';
   if(id==='container_stack')return'DROP LOW AND EVEN · WATCH LOCAL DECK LOADING';
@@ -3870,16 +3871,58 @@ function arcadeBargeMoment(g,ts,dt,running){
 }
 const ARCADE_BARGE_CART_CACHE=new Map();
 function arcadeBargeCartSprite(){
-  if(ARCADE_BARGE_CART_CACHE.has('cart'))return ARCADE_BARGE_CART_CACHE.get('cart');const[c,g]=pixelCanvas(96,54),ink='#17313a';
-  psRect(g,7,35,82,8,ink);psRect(g,12,28,72,10,'#d7b24d');psRect(g,17,17,54,13,'#53666a');psRect(g,20,19,48,3,'#7b8b8a');
-  for(let x=23;x<=61;x+=12){psRect(g,x,21,8,7,'#394e53');psRect(g,x+2,22,4,2,'#6f8080')}
-  psRect(g,72,13,12,16,'#e5b54e',ink);psRect(g,75,15,6,5,'#9bd8e2',ink);psLine(g,84,10,84,31,ink,2);psLine(g,84,10,90,10,ink,2);
-  for(const x of [20,43,66,80]){psCircle(g,x,44,6,ink);psCircle(g,x,44,3,'#77827d')}
-  psRect(g,10,31,6,4,'#df7c68');psRect(g,80,31,6,4,'#83bf6a');ARCADE_BARGE_CART_CACHE.set('cart',c);return c
+  if(ARCADE_BARGE_CART_CACHE.has('skid'))return ARCADE_BARGE_CART_CACHE.get('skid');
+  const[c,g]=pixelCanvas(116,52),ink='#17313a';
+  // Low marine ballast skid: slab weights, lifting eyes and deck rollers — deliberately not a vehicle/cab.
+  psRect(g,8,36,100,7,'#273f47',ink);psRect(g,13,31,90,6,'#d29c45',ink);
+  for(let i=0;i<4;i++){const x=19+i*21;psRect(g,x,17,18,14,i%2?'#56666a':'#617277',ink);psRect(g,x+3,20,12,3,'#7f8e8f');psCircle(g,x+9,16,2,'#d7d0b5',ink)}
+  psRect(g,15,27,86,4,'#e5b54e',ink);for(let x=19;x<95;x+=16){psLine(g,x,28,x+7,28,'#3a3430',2)}
+  for(const x of [17,38,59,80,101]){psCircle(g,x,43,4,ink);psCircle(g,x,43,2,'#7f8e8f')}
+  psRect(g,7,32,7,7,'#df7c68',ink);psRect(g,102,32,7,7,'#83bf6a',ink);
+  psRect(g,42,10,32,6,'#314a50',ink);for(let x=46;x<=68;x+=7)psRect(g,x,12,4,2,'#d7d0b5');
+  ARCADE_BARGE_CART_CACHE.set('skid',c);return c
 }
 function arcadeDrawBargeCart(x,y,s=1){const spr=arcadeBargeCartSprite(),w=spr.width*s,h=spr.height*s;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*.82),Math.round(w),Math.round(h))}
-function arcadeDrawBargeVehicle(x,y,s=1,flip=false){ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);const ink='#17313a';rect(-26*s,-11*s,52*s,15*s,'#d29c45',ink,2);rect(-12*s,-27*s,22*s,18*s,'#e5b54e',ink,2);rect(-8*s,-23*s,13*s,9*s,'#79aeba',ink,1);line(12*s,-18*s,29*s,-29*s,ink,4);line(28*s,-29*s,38*s,-18*s,ink,4);rect(34*s,-18*s,10*s,7*s,'#a86d45',ink,1);for(const xx of [-17,17])circle(xx*s,7*s,8*s,ink);ctx.restore()}
+function arcadeDrawBargeVehicle(x,y,s=1,flip=false){ctx.save();ctx.translate(x,y);if(flip)ctx.scale(-1,1);const ink='#17313a';rect(-27*s,-10*s,54*s,14*s,'#c8903e',ink,2);rect(-13*s,-27*s,23*s,18*s,'#e5b54e',ink,2);rect(-9*s,-23*s,14*s,9*s,'#79aeba',ink,1);line(13*s,-18*s,30*s,-29*s,ink,4);line(29*s,-29*s,39*s,-18*s,ink,4);rect(35*s,-18*s,11*s,7*s,'#a86d45',ink,1);for(const xx of [-18,18])circle(xx*s,7*s,8*s,ink);ctx.restore()}
 function arcadeBargePoint(cx,cy,angle,lx,ly){const c=Math.cos(angle),s=Math.sin(angle);return{x:cx+lx*c-ly*s,y:cy+lx*s+ly*c}}
+function arcadeBargeWaveValue(sc,ts){return(Math.sin(ts*sc.waveRate+sc.wavePhase)*.76+Math.sin(ts*sc.waveRate*1.93+sc.wavePhase*.37)*.24)*sc.wave}
+function arcadeBargeSeaPath(G,ts,B,sc,baseY,amp=1){
+  const pts=[],den=Math.max(.055,sc.wave+sc.wake*.7),moment=clamp((B.waveMoment+B.wakeMoment*.82)/den,-1,1),phase=ts*sc.waveRate+sc.wavePhase;
+  for(let i=0;i<=48;i++){
+    const u=i/48,x=lerp(G.left,G.right,u),cross=(u-.5)*2;
+    const local=Math.sin(phase+u*Math.PI*2.45)*2.0+Math.sin(phase*1.73-u*Math.PI*4.1)*.8;
+    const y=baseY+local*amp+moment*cross*13*amp;
+    pts.push([x,y])
+  }
+  return pts
+}
+function arcadeDrawBargeSea(B,sc,ts,G){
+  const sky=ctx.createLinearGradient(0,G.top,0,G.y(.31));sky.addColorStop(0,'#91cfdc');sky.addColorStop(.65,'#b9ded8');sky.addColorStop(1,'#d9dfc8');rect(G.left,G.top,G.w,G.h*.32,sky);
+  // Harbour silhouettes make the barge feel like working craft rather than an abstract platform.
+  const hy=G.y(.255);for(let i=0;i<8;i++){const x=G.x(.015+i*.135),w=28+(i%3)*13,h=9+(i%4)*5;rect(x,hy-h,w,h,'rgba(42,70,72,.28)');if(i%2===0){line(x+8,hy-h,x+8,hy-h-15,'rgba(42,70,72,.25)',2);line(x+8,hy-h-15,x+22,hy-h-9,'rgba(42,70,72,.22)',2)}}
+  const sea=ctx.createLinearGradient(0,G.y(.25),0,G.bottom);sea.addColorStop(0,'#559db3');sea.addColorStop(.48,'#317a94');sea.addColorStop(1,'#1f536c');rect(G.left,G.y(.25),G.w,G.h*.75,sea);
+  // Broad moving swell bands. Their phase is tied to the same wave oscillator that heels the barge.
+  for(let b=0;b<6;b++){
+    const y0=G.y(.32+b*.075),a=(2.4+b*.55)*(1+sc.wave*1.8),phase=ts*sc.waveRate*(1+b*.035)+sc.wavePhase+b*.72;
+    ctx.beginPath();for(let i=0;i<=42;i++){const u=i/42,x=lerp(G.left,G.right,u),y=y0+Math.sin(phase+u*Math.PI*(2.1+b*.08))*a+Math.sin(phase*1.8-u*5.4)*a*.28;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+    ctx.strokeStyle=`rgba(235,246,234,${(.09+b*.018).toFixed(3)})`;ctx.lineWidth=b>3?2:1;ctx.stroke()
+  }
+  // A rising future swell is rendered on the side that will create the next heel. This is visual telegraphing only; physics is unchanged.
+  const nowW=arcadeBargeWaveValue(sc,ts),ahead=arcadeBargeWaveValue(sc,ts+720),build=clamp((Math.abs(ahead)-Math.abs(nowW)+.035)/Math.max(.08,sc.wave*.7),0,1);
+  if(sc.wave>.09&&build>.08){const side=ahead>=0?-1:1,x0=side<0?G.x(.01):G.x(.99),toward=side<0?1:-1,reach=G.w*(.20+.11*build),yy=G.y(.50);ctx.save();ctx.globalAlpha=.22+.42*build;ctx.beginPath();ctx.moveTo(x0,yy+16);ctx.quadraticCurveTo(x0+toward*reach*.28,yy-18*build,x0+toward*reach*.58,yy+2);ctx.quadraticCurveTo(x0+toward*reach*.78,yy+15,x0+toward*reach,yy+9);ctx.strokeStyle='#eaf4e8';ctx.lineWidth=5;ctx.stroke();ctx.beginPath();ctx.moveTo(x0+toward*reach*.10,yy+11);ctx.quadraticCurveTo(x0+toward*reach*.34,yy-9*build,x0+toward*reach*.58,yy+3);ctx.strokeStyle='rgba(255,247,222,.78)';ctx.lineWidth=2;ctx.stroke();for(let k=0;k<6;k++)circle(x0+toward*reach*(.20+k*.07),yy+2+Math.sin(ts*.012+k)*5,2+(k%3===0?1:0),'rgba(255,247,222,.52)');ctx.restore()}
+  // Passing wash has a readable travel time all the way to the hull.
+  if(sc.wake&&B.wakeStart){
+    const span=Math.max(1,B.wakeImpactAt-B.wakeStart),p=clamp((ts-B.wakeStart)/span,0,1),side=B.wakeSide,x0=side<0?G.x(.02):G.x(.98),x=lerp(x0,G.cx,p),toward=side<0?1:-1;
+    ctx.save();ctx.globalAlpha=.35+.45*p;for(let j=0;j<4;j++){const yy=G.y(.42+j*.055);ctx.beginPath();ctx.moveTo(x-toward*28,yy);ctx.quadraticCurveTo(x,yy-8-j*1.5,x+toward*36,yy+1);ctx.strokeStyle='#fff7de';ctx.lineWidth=2+(j===1?2:0);ctx.stroke();for(let k=0;k<3;k++)circle(x-toward*(8+k*13),yy+3+Math.sin(ts*.01+k+j)*3,2+(k===0?1:0),'rgba(255,247,222,.55)')}ctx.restore();
+    drawTopBoat(side<0?G.x(.11):G.x(.89),G.y(.215),.54,side<0?.18:-.18,'cutter',defaultBoatAppearance('cutter'))
+  }
+}
+function arcadeDrawBargeForegroundWater(B,sc,ts,G,cx,bw){
+  const pts=arcadeBargeSeaPath(G,ts,B,sc,G.y(.735),1),fill=pts.concat([[G.right,G.bottom],[G.left,G.bottom]]);poly(fill,'rgba(31,92,119,.58)');
+  ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.strokeStyle='rgba(235,246,234,.42)';ctx.lineWidth=2;ctx.stroke();
+  const m=clamp((B.waveMoment+B.wakeMoment)/Math.max(.06,sc.wave+sc.wake*.7),-1,1),side=m>=0?-1:1,edgeX=cx+side*bw*.49,foam=Math.min(1,Math.abs(m)*.8+Math.abs(B.heel)*1.7);
+  if(foam>.15){ctx.save();ctx.globalAlpha=.18+.46*foam;ctx.beginPath();ctx.moveTo(edgeX+side*72,G.y(.728)+7);ctx.quadraticCurveTo(edgeX+side*35,G.y(.700)-foam*10,edgeX+side*3,G.y(.716));ctx.strokeStyle='#fff7de';ctx.lineWidth=3+foam*2;ctx.stroke();ctx.restore();for(let i=0;i<9;i++)circle(edgeX+side*(i*6+Math.sin(ts*.012+i)*3),G.y(.718)+Math.sin(ts*.008+i)*5,2+(i%3===0?1:0),`rgba(255,247,222,${(.14+foam*.35).toFixed(2)})`)}
+}
 function arcadeRenderBargeBalance(g,ts,G,dt,running){
   const B=g.barge,sc=B.scenario,sec=dt/1000;if(!B)return;
   if(running){
@@ -3887,37 +3930,45 @@ function arcadeRenderBargeBalance(g,ts,G,dt,running){
     const ext=arcadeBargeMoment(g,ts,dt,true),control=B.trolley*sc.authority,total=ext+control;
     B.heelV+=(total*2.38-B.heel*1.42-B.heelV*1.26)*sec;B.heelV=clamp(B.heelV,-.72,.72);B.heel=clamp(B.heel+B.heelV*sec,-.48,.48);
     const ah=Math.abs(B.heel),q=clamp(1-ah/sc.maxSafe,0,1);B.quality=q;
-    if(ah<sc.steadyHeel){g.roundProgress+=dt;g.score+=dt*(.012+.022*q)}else g.roundProgress=Math.max(0,g.roundProgress-dt*(ah>sc.maxSafe?.72:.24))
+    if(ah<sc.steadyHeel){g.roundProgress+=dt;g.score+=dt*(.012+.022*q)}else g.roundProgress=Math.max(0,g.roundProgress-dt*(ah>sc.maxSafe?.72:.24));
     if(ah>sc.strikeHeel)B.edgeWet+=dt*(ah>.41?1.8:1);else B.edgeWet=Math.max(0,B.edgeWet-dt*1.7);
     if(B.edgeWet>520&&ts>B.strikeCool){B.strikeCool=ts+1450;B.edgeWet=0;arcadeStrike(g,B.heel>0?'STARBOARD DECK AWASH':'PORT DECK AWASH',55);B.heel*=.58;B.heelV*=-.18}
     if(g.roundProgress>=g.roundGoal)arcadeAdvance(g,'EVEN KEEL')
   }else arcadeBargeMoment(g,ts,0,false);
 
-  const sky=ctx.createLinearGradient(0,G.top,0,G.y(.29));sky.addColorStop(0,'#9bd8e2');sky.addColorStop(1,'#c7e3d8');rect(G.left,G.top,G.w,G.h*.30,sky);
-  const sea=ctx.createLinearGradient(0,G.y(.26),0,G.bottom);sea.addColorStop(0,'#4d9fbe');sea.addColorStop(1,'#245f79');rect(G.left,G.y(.26),G.w,G.h*.74,sea);
-  line(G.left,G.y(.275),G.right,G.y(.275),'rgba(255,247,222,.42)',2);
-  for(let i=0;i<15;i++){const yy=G.y(.32+i*.046)+Math.sin(ts*.0014+i*.7)*2,shift=(ts*.025+i*43)%70;for(let x=G.left-shift;x<G.right;x+=70)line(x,yy,x+18+Math.sin(i)*5,yy,'rgba(255,247,222,.10)',1)}
-  for(let i=0;i<7;i++){const x=G.x(.05+i*.15),h=8+(i%3)*5;rect(x,G.y(.245)-h,28+(i%2)*16,h,'rgba(46,77,78,.25)');if(i%2===0)line(x+8,G.y(.245)-h,x+8,G.y(.245)-h-10,'rgba(46,77,78,.22)',2)}
-  if(sc.wake&&B.wakeStart){const pre=clamp((ts-B.wakeStart)/1650,0,1),dir=B.wakeSide,x=lerp(dir<0?G.x(.035):G.x(.965),G.cx,pre);for(let j=0;j<3;j++){const off=(j-1)*10;line(x+off,G.y(.34),x+off-dir*G.w*.10,G.y(.82),'rgba(255,247,222,.34)',2+j);for(let k=0;k<5;k++)circle(x+off-dir*k*10,G.y(.44+k*.07),2+(k%2),'rgba(255,247,222,.28)')}drawTopBoat(dir<0?G.x(.10):G.x(.90),G.y(.22),.52,dir<0?.2:-.2,'cutter',defaultBoatAppearance('cutter'))}
-
-  const cx=G.cx,cy=G.y(.615),bw=Math.min(G.w*.74,590),bh=Math.min(G.h*.235,176),angle=B.heel*.64,deckY=-bh*.29;
+  arcadeDrawBargeSea(B,sc,ts,G);
+  const phase=ts*sc.waveRate+sc.wavePhase,heave=Math.sin(phase)*3.5+Math.sin(phase*1.93)*1.3+Math.abs(B.wakeMoment)*13;
+  const cx=G.cx,cy=G.y(.635)+heave,bw=Math.min(G.w*.80,635),bh=Math.min(G.h*.245,182),angle=B.heel*.64,deckY=-bh*.30;
   ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);
-  poly([[-bw*.49,deckY],[-bw*.44,bh*.48],[-bw*.29,bh*.64],[bw*.29,bh*.64],[bw*.44,bh*.48],[bw*.49,deckY]],'#536970','#17313a',3);
-  poly([[-bw*.43,bh*.30],[-bw*.31,bh*.63],[bw*.31,bh*.63],[bw*.43,bh*.30]],'#2f5059','#17313a',2);line(-bw*.43,bh*.34,bw*.43,bh*.34,'#d7d0b5',2);
-  rect(-bw*.49,deckY-8,bw*.98,20,'#a7734e','#17313a',3);for(let x=-bw*.43;x<bw*.44;x+=28)line(x,deckY-5,x+5,deckY+7,'rgba(91,61,42,.28)',1);
-  for(const side of [-1,1]){line(side*bw*.46,deckY-8,side*bw*.46,deckY-31,'#d7d0b5',2);line(side*bw*.46,deckY-31,side*bw*.38,deckY-31,'#d7d0b5',2);circle(side*bw*.46,deckY-8,5,'#283f46','#17313a',1)}circle(-bw*.455,deckY-34,3,'#df7c68','#17313a',1);circle(bw*.455,deckY-34,3,'#83bf6a','#17313a',1)
-  if(sc.slosh){const tw=bw*.30,th=bh*.28,tx=-tw*.5,ty=bh*.18;roundedRect(tx,ty,tw,th,4,'rgba(30,65,73,.36)','#17313a',2);ctx.save();ctx.beginPath();ctx.rect(tx+2,ty+2,tw-4,th-4);ctx.clip();const tilt=B.slosh*10;poly([[tx,ty+th*.54+tilt],[tx+tw,ty+th*.54-tilt],[tx+tw,ty+th],[tx,ty+th]],'rgba(101,189,209,.72)');for(let i=0;i<4;i++)line(tx+7+i*tw*.24,ty+th*.60,tx+18+i*tw*.24,ty+th*.60,'rgba(255,247,222,.25)',1);ctx.restore();pxText('BALLAST',0,ty+th+11,'rgba(255,247,222,.55)',6,'center')}
-  line(-bw*.34,deckY-12,bw*.34,deckY-12,'#6b7977',4);for(let i=-4;i<=4;i++)circle(i*bw*.075,deckY-12,2,'#d7d0b5','#17313a',1);
-  const cartX=B.trolley*bw*.31;drawArcadeCrew(cartX+19,deckY-18,'#e5b54e','#527da0',.46);arcadeDrawBargeCart(cartX,deckY-19,.78);
-  rect(-bw*.11,deckY-28,bw*.09,16,'#805334','#17313a',2);rect(-bw*.105,deckY-25,bw*.08,4,'#b98359');circle(bw*.105,deckY-17,9,'#704630','#17313a',2);circle(bw*.105,deckY-17,3,'#d7d0b5');
-  if(sc.vehicle){const vx=B.vehicleX*bw*.27;arcadeDrawBargeVehicle(vx,deckY-14,.62,B.vehicleX<0)}
-  let craneTip=null;if(sc.crane){const baseX=-bw*.23,baseY=deckY-10,tipX=B.craneX*bw*.34,tipY=deckY-bh*.62;rect(baseX-8,baseY-30,16,30,'#d29c45','#17313a',2);circle(baseX,baseY-28,7,'#17313a');line(baseX,baseY-31,tipX,tipY,'#d29c45',7);line(baseX,baseY-31,tipX,tipY,'#17313a',2);craneTip=arcadeBargePoint(cx,cy,angle,tipX,tipY)}
-  for(let i=0;i<9;i++){const lx=-bw*.40+i*bw*.10;circle(lx,bh*.47,1.5,'#83908c')}
+  // Flat-bottomed steel work barge with broad deck, rubbing strake, draft marks and fenders.
+  poly([[-bw*.49,deckY+2],[-bw*.47,bh*.46],[-bw*.41,bh*.59],[bw*.41,bh*.59],[bw*.47,bh*.46],[bw*.49,deckY+2]],'#4a6269','#17313a',3);
+  rect(-bw*.465,bh*.31,bw*.93,bh*.19,'#36525b','#17313a',2);line(-bw*.455,bh*.36,bw*.455,bh*.36,'#819091',2);
+  for(let i=0;i<8;i++){const x=-bw*.40+i*bw*.115;line(x,bh*.35,x,bh*.48,'rgba(215,208,181,.22)',1)}
+  pxText('WB 07',-bw*.31,bh*.445,'rgba(215,208,181,.72)',7,'center');for(let i=0;i<4;i++){const y=bh*(.32+i*.045);line(bw*.43,y,bw*.465,y,'rgba(255,247,222,.65)',1)}
+  // Heavy timber deck and raised coaming instantly distinguish the craft from a rail vehicle.
+  rect(-bw*.49,deckY-8,bw*.98,24,'#9a704f','#17313a',3);rect(-bw*.455,deckY-17,bw*.91,8,'#6e6654','#17313a',2);
+  for(let x=-bw*.43;x<bw*.44;x+=25)line(x,deckY-5,x+5,deckY+10,'rgba(73,48,37,.30)',1);
+  // Deck-edge bitts, tyres and nav lights.
+  for(const side of [-1,1]){const sx=side*bw*.44;rect(sx-5,deckY-31,10,17,'#293f45','#17313a',2);circle(sx,deckY-33,6,'#293f45','#17313a',1);line(side*bw*.48,deckY-10,side*bw*.48,deckY-38,'#d7d0b5',2);circle(side*bw*.48,deckY-40,3,side<0?'#df7c68':'#83bf6a','#17313a',1);for(let j=0;j<2;j++)circle(side*bw*(.49-j*.012),bh*(.03+j*.24),9,'#263b41','#17313a',2)}
+  // Embedded transverse skidway rather than railway track.
+  rect(-bw*.35,deckY-13,bw*.70,5,'#4e5e5d','#17313a',1);for(let i=-6;i<=6;i++){const x=i*bw*.052;circle(x,deckY-11,2,'#c4bd9f','#17313a',1)}
+  const cartX=B.trolley*bw*.31;arcadeDrawBargeCart(cartX,deckY-17,.86);
+  // Static deck freight gives scale and context.
+  rect(-bw*.13,deckY-35,bw*.10,22,'#7f5538','#17313a',2);rect(-bw*.125,deckY-31,bw*.09,5,'#b98359');const winchX=bw*.13;rect(winchX-17,deckY-28,34,13,'#41565a','#17313a',2);circle(winchX-17,deckY-22,7,'#31464b','#17313a',2);circle(winchX+17,deckY-22,7,'#31464b','#17313a',2);for(let rr=4;rr<=11;rr+=3){ctx.beginPath();ctx.arc(winchX+36,deckY-21,rr,0,Math.PI*2);ctx.strokeStyle='#bca978';ctx.lineWidth=2;ctx.stroke()}line(winchX+17,deckY-22,winchX+26,deckY-22,'#bca978',2);
+  if(sc.vehicle){const vx=B.vehicleX*bw*.27;arcadeDrawBargeVehicle(vx,deckY-14,.68,B.vehicleX<0)}
+  let craneLocal=null;if(sc.crane){const baseX=-bw*.25,baseY=deckY-9,tipX=B.craneX*bw*.33,tipY=deckY-bh*.64;rect(baseX-10,baseY-34,20,34,'#c8903e','#17313a',2);rect(baseX-15,baseY-8,30,8,'#384d52','#17313a',2);circle(baseX,baseY-32,8,'#17313a');line(baseX,baseY-35,tipX,tipY,'#d29c45',8);line(baseX,baseY-35,tipX,tipY,'#17313a',2);craneLocal={x:tipX,y:tipY}}
+  if(sc.slosh){const tw=bw*.28,th=bh*.25,tx=bw*.18,ty=bh*.12;roundedRect(tx,ty,tw,th,4,'rgba(34,62,69,.76)','#17313a',2);ctx.save();ctx.beginPath();ctx.rect(tx+2,ty+2,tw-4,th-4);ctx.clip();const tilt=B.slosh*11;poly([[tx,ty+th*.53+tilt],[tx+tw,ty+th*.53-tilt],[tx+tw,ty+th],[tx,ty+th]],'rgba(93,182,204,.80)');ctx.restore();pxText('PART-FILLED TANK',tx+tw*.5,ty+th+10,'rgba(255,247,222,.58)',5,'center')}
   ctx.restore();
-  if(craneTip){const loadX=cx+B.craneX*bw*.34,loadY=cy-bh*.14;line(craneTip.x,craneTip.y,loadX,loadY-22,'#453d31',2);rect(loadX-23,loadY-22,46,27,'#a86d45','#17313a',2);rect(loadX-19,loadY-18,38,6,'#c18a55');line(loadX-18,loadY-22,loadX,loadY-33,'#d7d0b5',1);line(loadX+18,loadY-22,loadX,loadY-33,'#d7d0b5',1)}
-  const lowSide=B.heel>=0?1:-1,edge=arcadeBargePoint(cx,cy,angle,lowSide*bw*.49,deckY+4),wet=clamp((Math.abs(B.heel)-.17)/.20,0,1);if(wet>0){for(let i=0;i<7;i++)circle(edge.x+lowSide*(i*5+Math.sin(ts*.01+i)*3),edge.y+3+Math.sin(ts*.008+i)*4,2+(i%3),`rgba(255,247,222,${(.12+wet*.35).toFixed(2)})`)}
-  const waterY=G.y(.735);ctx.save();ctx.globalAlpha=.22;rect(G.left,waterY,G.w,G.bottom-waterY,'#1f6680');ctx.restore();for(let i=0;i<12;i++){const yy=waterY+i*9+Math.sin(ts*.002+i)*2;line(G.left,yy,G.right,yy,'rgba(255,247,222,.055)',1)}
-  const ah=Math.abs(B.heel);let cue;if(ah>.17)cue=B.heel>0?'MOVE BALLAST PORT ← · STARBOARD EDGE LOW':'MOVE BALLAST STARBOARD → · PORT EDGE LOW';else if(sc.wake&&B.wakeStart&&ts<B.wakeImpactAt)cue='WAKE COMING · GET READY TO COUNTER IT';else if(sc.crane&&Math.abs(B.craneX)>.58)cue='FOLLOW THE SUSPENDED LOAD WITH COUNTERWEIGHT';else if(sc.vehicle&&Math.abs(B.vehicleX)>.60)cue='MOVING PLANT IS SHIFTING THE CENTRE OF GRAVITY';else cue='KEEP HER LEVEL · ANTICIPATE THE NEXT LOAD';
+  if(craneLocal){const tip=arcadeBargePoint(cx,cy,angle,craneLocal.x,craneLocal.y),loadLocalY=deckY-bh*.05,load=arcadeBargePoint(cx,cy,angle,B.craneX*bw*.33,loadLocalY);line(tip.x,tip.y,load.x,load.y-22,'#453d31',2);rect(load.x-24,load.y-22,48,28,'#a86d45','#17313a',2);rect(load.x-20,load.y-18,40,6,'#c18a55');line(load.x-18,load.y-22,load.x,load.y-34,'#d7d0b5',1);line(load.x+18,load.y-22,load.x,load.y-34,'#d7d0b5',1)}
+  arcadeDrawBargeForegroundWater(B,sc,ts,G,cx,bw);
+
+  const ah=Math.abs(B.heel),ahead=arcadeBargeWaveValue(sc,ts+720),building=Math.abs(ahead)>Math.abs(B.waveMoment)+.025;let cue;
+  if(ah>.17)cue=B.heel>0?'BALLAST PORT ← · STARBOARD GUNWALE LOW':'BALLAST STARBOARD → · PORT GUNWALE LOW';
+  else if(sc.wake&&B.wakeStart&&ts<B.wakeImpactAt)cue=`PASSING WASH FROM ${B.wakeSide<0?'PORT':'STARBOARD'} · WATCH IT ARRIVE`;
+  else if(building&&sc.wave>.10)cue=ahead>0?'SWELL BUILDING TO PORT · PREPARE TO COUNTER':'SWELL BUILDING TO STARBOARD · PREPARE TO COUNTER';
+  else if(sc.crane&&Math.abs(B.craneX)>.58)cue='FOLLOW THE SUSPENDED LOAD WITH COUNTERWEIGHT';
+  else if(sc.vehicle&&Math.abs(B.vehicleX)>.60)cue='DECK PLANT IS SHIFTING THE CENTRE OF GRAVITY';
+  else cue='KEEP BOTH GUNWALES DRY · READ THE WATER BEFORE SHE ROLLS';
   const stability=Math.round(clamp(1-ah/sc.strikeHeel,0,1)*100),done=Math.round(clamp(g.roundProgress/g.roundGoal,0,1)*100);arcadeSetHelperCue(g,cue,`${sc.label} · ${stability}% level · ${done}% steady`)
 }
 
@@ -4147,6 +4198,113 @@ function arcadeSpawnCatch(g,ts,first=false){
   const r=g.round,d=arcadeDifficulty(g),kind=Math.floor(arcadeRand(g,0,3));g.items.push({x:arcadeRand(g,.12,.88),y:first?arcadeRand(g,.18,.58):.10,vx:arcadeRand(g,-.055,.055)*d,vy:arcadeRand(g,.11,.16)*d,gravity:[.038,.052,.045][kind]*d,bounce:.08,kind,caught:false,spin:arcadeRand(g,-2,2)});g.spawn=ts
 }
 function arcadeSetupCatch(g,r,d){arcadeResetCommon(g,6+Math.min(8,r));g.basket=.5;g.items=[];g.catchSpawn=Math.max(260,680-(r-1)*34);for(let i=0;i<2;i++)arcadeSpawnCatch(g,performance.now(),true)}
+
+
+// v0.32.3 Baggage Scramble: a one-action physical loading game.
+// The player reads the bag, the deck and the wake, then holds to wind up and releases to throw.
+const ARCADE_BAGTHROW_BAGS={
+  duffel:{label:'SOFT DUFFEL',mass:.78,windage:1.28,bounce:.34,kind:0,colour:'#527da0',accent:'#d9eef2'},
+  cabin:{label:'CABIN CASE',mass:.96,windage:1.00,bounce:.20,kind:1,colour:'#d6a84d',accent:'#fff7de'},
+  case:{label:'HARD CASE',mass:1.18,windage:.76,bounce:.12,kind:2,colour:'#a86d45',accent:'#e5b54e'},
+  trunk:{label:'HEAVY TRUNK',mass:1.50,windage:.52,bounce:.08,kind:3,colour:'#5f7778',accent:'#d8caa1'}
+};
+const ARCADE_BAGTHROW_SCENARIOS=[
+  {id:'first',label:'FIRST BAGS',note:'A wide cage and calm water. Learn how far a soft bag flies.',goal:4,cageX:.66,cageW:.25,roll:.022,rollRate:.00095,wind:0,wake:0,fill:0,bags:['duffel','duffel','cabin']},
+  {id:'rush',label:'BOARDING RUSH',note:'Cabin cases need a firmer throw than soft luggage.',goal:5,cageX:.68,cageW:.23,roll:.035,rollRate:.00105,wind:0,wake:0,fill:0,bags:['duffel','cabin','cabin','case']},
+  {id:'mixed',label:'MIXED LUGGAGE',note:'Read the shape before you wind up. The hard cases carry more weight.',goal:5,cageX:.69,cageW:.22,roll:.050,rollRate:.00112,wind:0,wake:0,fill:0,bags:['duffel','cabin','case','case']},
+  {id:'chop',label:'HARBOUR CHOP',note:'The ferry is rolling now. Release when the deck helps the throw, not when it fights it.',goal:5,cageX:.70,cageW:.21,roll:.070,rollRate:.00122,wind:0,wake:0,fill:0,bags:['duffel','cabin','case','trunk']},
+  {id:'wake',label:'TENDER WAKE',note:'A visible wake rolls through the loading door. Wait it out or use the lift.',goal:6,cageX:.70,cageW:.20,roll:.075,rollRate:.00126,wind:0,wake:4200,fill:1,bags:['duffel','cabin','case','trunk']},
+  {id:'door',label:'OPEN VEHICLE DOOR',note:'Cross-deck wind catches the soft bags more than the heavy cases.',goal:6,cageX:.71,cageW:.19,roll:.082,rollRate:.00130,wind:.095,wake:4300,fill:1,bags:['duffel','duffel','cabin','case','trunk']},
+  {id:'packed',label:'CAGE FILLING',note:'The pile is higher and the front lip matters. Clear it without sailing over the back.',goal:6,cageX:.72,cageW:.18,roll:.095,rollRate:.00136,wind:.070,wake:3600,fill:3,bags:['duffel','cabin','case','trunk']},
+  {id:'last',label:'LAST CALL',note:'Mixed bags, a packed cage and a lively ferry. Finish the load before sailing.',goal:7,cageX:.72,cageW:.17,roll:.108,rollRate:.00142,wind:.105,wake:3200,fill:3,bags:['duffel','cabin','case','trunk','trunk']}
+];
+function arcadeBagThrowScenario(g,r){
+  const base=ARCADE_BAGTHROW_SCENARIOS[Math.min(ARCADE_BAGTHROW_SCENARIOS.length-1,r-1)],sc={...base,tier:Math.max(0,r-8)};
+  if(r>8){sc.id='watch';sc.label=`SAILING WATCH ${r}`;sc.note='A fresh trolley is at the door. Read every bag and every movement of the ferry.';sc.goal=Math.min(9,7+Math.floor((r-8)/3));sc.cageX=Math.min(.745,.72+(r-8)*.0025);sc.cageW=Math.max(.145,.17-(r-8)*.002);sc.roll=Math.min(.145,.108+(r-8)*.004);sc.rollRate=Math.min(.00168,.00142+(r-8)*.000018);sc.wind=Math.min(.15,.105+(r-8)*.004);sc.wake=Math.max(2450,3200-(r-8)*70);sc.fill=Math.min(5,3+Math.floor((r-8)/4));sc.bags=['duffel','cabin','case','trunk']}
+  return sc
+}
+function arcadeBagThrowRoll(B,ts){
+  const sc=B.sc,base=Math.sin(ts*sc.rollRate+B.rollPhase)*sc.roll+Math.sin(ts*sc.rollRate*2.31+B.rollPhase*.47)*sc.roll*.22;
+  let wake=0;if(B.wakeAt){const q=(ts-B.wakeAt)/1450;if(q>=0&&q<=1)wake=Math.sin(q*Math.PI*2)*sc.roll*1.65;else if(q>1)B.wakeAt=0}
+  return clamp(base+wake,-.28,.28)
+}
+function arcadeBagThrowPick(g,B){
+  const list=B.sc.bags||['duffel','cabin','case'];let key=list[Math.floor(arcadeRand(g,0,list.length))%list.length];
+  // Avoid long runs of the same bag while keeping the sequence non-scripted.
+  if(key===B.lastKind&&list.length>1&&arcadeRand(g)<.58)key=list[(list.indexOf(key)+1+Math.floor(arcadeRand(g,0,list.length-1)))%list.length];
+  B.lastKind=key;return key
+}
+function arcadeBagThrowSpawn(g,ts=performance.now()){
+  const B=g.bagThrow;if(!B)return;const key=arcadeBagThrowPick(g,B),spec=ARCADE_BAGTHROW_BAGS[key];B.bag={key,spec,at:ts};B.holding=false;B.chargeAt=0;B.charge=0;B.readyAt=ts+420;B.flight=null
+}
+function arcadeSetupBagThrow(g,r,d){
+  const sc=arcadeBagThrowScenario(g,r),now=performance.now();arcadeResetCommon(g,sc.goal);g.bagThrow={sc,rollPhase:arcadeRand(g,0,Math.PI*2),roll:0,windSign:arcadeRand(g)<.5?-1:1,bag:null,flight:null,holding:false,chargeAt:0,charge:0,chargeMs:980,readyAt:now+350,settled:[],lastKind:'',wakeAt:0,nextWake:sc.wake?now+arcadeRand(g,2400,3900):Infinity,throwCount:0};
+  for(let i=0;i<(sc.fill||0);i++){const key=sc.bags[i%sc.bags.length]||'cabin';g.bagThrow.settled.push({key,x:arcadeRand(g,sc.cageX+.035,sc.cageX+sc.cageW-.035),rot:arcadeRand(g,-.18,.18)})}
+  arcadeBagThrowSpawn(g,now)
+}
+function arcadeBagThrowCharge(g,pressed,ts=performance.now()){
+  const B=g.bagThrow;if(!B||B.flight||ts<(B.readyAt||0))return false;
+  if(pressed){if(!B.holding){B.holding=true;B.chargeAt=ts;B.charge=0;arcadeSetFeedback(g,'WINDING UP','neutral',260)}return true}
+  if(!B.holding)return false;B.charge=clamp((ts-B.chargeAt)/B.chargeMs,.08,1.08);B.holding=false;arcadeBagThrowRelease(g,ts);return true
+}
+function arcadeBagThrowRelease(g,ts=performance.now()){
+  const B=g.bagThrow,bag=B?.bag;if(!B||!bag||B.flight)return;const spec=bag.spec,charge=clamp(B.charge,.08,1.08),massScale=Math.pow(spec.mass,.36),roll=arcadeBagThrowRoll(B,ts),wind=B.sc.wind*B.windSign;
+  const launchX=.225,launchY=.665,vx=(.275+.285*charge)/massScale+roll*.22+wind*spec.windage*.055,vy=-(.505+.135*charge)/massScale-roll*.16;
+  B.flight={key:bag.key,spec,x:launchX,y:launchY,px:launchX,py:launchY,vx,vy,rot:-.12-charge*.28,vr:(.9+charge*1.35)*(arcadeRand(g)<.5?-1:1),charge,at:ts};B.bag=null;B.throwCount++;arcadeSetFeedback(g,charge<.28?'SOFT THROW':charge>.92?'FULL HEAVE':'BAG AWAY','neutral',360);beep('soft')
+}
+function arcadeBagThrowResolve(g,good,text,quality=0){
+  const B=g.bagThrow;if(!B)return;if(good){const f=B.flight;if(f)B.settled.push({key:f.key,x:clamp(f.x,B.sc.cageX+.025,B.sc.cageX+B.sc.cageW-.025),rot:f.rot*.25});B.flight=null;const oldRound=g.round;arcadeProgress(g,1,170+Math.round(quality*180),quality>.72?'CENTRE OF THE CAGE':text);if(g.round===oldRound)arcadeBagThrowSpawn(g,performance.now()+140)}else{B.flight=null;arcadeStrike(g,text,42);if(!g.failed)arcadeBagThrowSpawn(g,performance.now()+220)}
+}
+function arcadeBagThrowDrawBag(spec,x,y,s=1,rot=0){
+  ctx.save();ctx.translate(x,y);ctx.rotate(rot);const ink='#17313a',w=(spec.kind===0?34:spec.kind===3?39:32)*s,h=(spec.kind===0?24:spec.kind===3?28:31)*s;
+  if(spec.kind===0){roundedRect(-w*.52,-h*.32,w,h*.70,7*s,spec.colour,ink,2);line(-w*.18,-h*.34,-w*.02,-h*.54,ink,2*s);line(-w*.02,-h*.54,w*.18,-h*.34,ink,2*s);rect(-w*.42,h*.08,w*.84,3*s,spec.accent)}
+  else{roundedRect(-w*.48,-h*.46,w,h,4*s,spec.colour,ink,2);roundedRect(-w*.18,-h*.64,w*.36,h*.18,3*s,'rgba(255,247,222,.16)',ink,2);rect(-w*.36,-h*.30,w*.72,3*s,spec.accent);if(spec.kind===3){for(const q of [-.30,.30])circle(q*w,h*.57,3.2*s,'#273f46',ink,1)}else{circle(-w*.31,h*.56,2.7*s,'#273f46',ink,1);circle(w*.31,h*.56,2.7*s,'#273f46',ink,1)}}
+  ctx.restore()
+}
+function arcadeBagThrowDrawCrew(x,y,charge=0,throwing=false,s=1.28){
+  const ink='#17313a',skin='#d9a472',shirt='#527da0',vest='#e5b54e',leg='#314b53';ctx.save();ctx.translate(x,y);ctx.scale(s,s);const lean=throwing?-.12:-charge*.13;ctx.rotate(lean);
+  // Legs and planted work boots make the wind-up readable from the silhouette alone.
+  line(-5,-12,-11,15,leg,6);line(5,-12,12,15,leg,6);roundedRect(-17,12,12,6,2,ink);roundedRect(7,12,12,6,2,ink);
+  roundedRect(-10,-43,20,32,5,shirt,ink,2);poly([[-9,-39],[0,-31],[9,-39],[9,-28],[0,-21],[-9,-28]],vest,ink,1);circle(0,-52,8,skin,ink,2);rect(-6,-60,12,4,'#273f46',ink,1);
+  const handBack=-16-charge*15,handY=-24+charge*9;line(-8,-35,handBack,handY,skin,5);line(8,-34,17+charge*6,-22-charge*4,skin,5);
+  ctx.restore()
+}
+function arcadeRenderBagThrow(g,ts,G,dt,running){
+  const B=g.bagThrow,sc=B.sc,sec=dt/1000;if(running){B.roll=arcadeBagThrowRoll(B,ts);if(sc.wake&&ts>B.nextWake){B.wakeAt=ts;B.nextWake=ts+sc.wake+arcadeRand(g,900,1900);arcadeSetFeedback(g,'WAKE THROUGH THE LOADING DOOR','warn',950)}if(B.holding)B.charge=clamp((ts-B.chargeAt)/B.chargeMs,0,1.08)}else B.roll=arcadeBagThrowRoll(B,ts);
+  const ink='#17313a',cream='#efe4bf',wall='#d5d0ba',metal='#60777a',deck='#8d6d4e';
+  rect(G.left,G.top,G.w,G.h,'#3a879c');for(let i=0;i<8;i++){const yy=G.y(.04+i*.035)+Math.sin(ts*.0015+i)*2;line(G.left,yy,G.right,yy,'rgba(255,255,255,.11)',1)}
+  const pivotY=G.y(.56),tilt=B.roll*.105;ctx.save();ctx.translate(G.cx,pivotY);ctx.rotate(tilt);ctx.translate(-G.cx,-pivotY);
+  // A close side-on baggage room, not an abstract play field.
+  rect(G.x(.035),G.y(.145),G.w*.93,G.h*.69,wall,ink,3);rect(G.x(.035),G.y(.145),G.w*.93,G.h*.075,cream,ink,2);rect(G.x(.035),G.y(.22),G.w*.93,G.h*.055,metal,ink,2);
+  pxText('MV MAKEFAST · PASSENGER BAGGAGE',G.x(.50),G.y(.194),'#17313a',8,'center');
+  // Open loading door gives the player a real horizon to read for roll, wind and wake.
+  const doorX=G.x(.055),doorY=G.y(.285),doorW=G.w*.17,doorH=G.h*.40;rect(doorX,doorY,doorW,doorH,'#367f96',ink,4);for(let i=0;i<5;i++)line(doorX+4,doorY+doorH*(.18+i*.14),doorX+doorW-4,doorY+doorH*(.18+i*.14),'rgba(255,255,255,.14)',1);line(doorX+4,doorY+doorH*.54,doorX+doorW-4,doorY+doorH*.54,'rgba(255,247,222,.72)',2);rect(doorX-10,doorY-5,10,doorH+10,'#465f63',ink,2);rect(doorX+doorW,doorY-5,10,doorH+10,'#465f63',ink,2);for(let i=0;i<5;i++)line(doorX-6,doorY+22+i*38,doorX+3,doorY+22+i*38,'#e5b54e',3);
+  // Bulkhead detail and fluorescent fittings keep the space unmistakably ferry-like.
+  for(const xx of [.34,.47,.60]){roundedRect(G.x(xx)-28,G.y(.29),56,25,6,'#d9eef2',ink,2);line(G.x(xx)-19,G.y(.302),G.x(xx)+19,G.y(.302),'rgba(54,127,150,.55)',3)}
+  rect(G.x(.27),G.y(.245),G.w*.36,10,'#fff7de',ink,1);rect(G.x(.67),G.y(.245),G.w*.20,10,'#fff7de',ink,1);
+  const floorTop=G.y(.66);rect(G.x(.035),floorTop,G.w*.93,G.h*.17,deck,ink,3);for(let i=0;i<10;i++)line(G.x(.05+i*.095),floorTop,G.x(.05+i*.095),G.y(.83),'rgba(71,49,35,.16)',1);for(let x=.27;x<.91;x+=.12){circle(G.x(x),G.y(.785),6,'#5f7778',ink,2);circle(G.x(x),G.y(.785),2,'#d9c9a7')}
+  // A small queue of luggage at the loading door gives the current bag some context.
+  arcadeBagThrowDrawBag(ARCADE_BAGTHROW_BAGS.cabin,G.x(.245),G.y(.635),.58,-.08);arcadeBagThrowDrawBag(ARCADE_BAGTHROW_BAGS.case,G.x(.285),G.y(.638),.56,.06);arcadeBagThrowDrawBag(ARCADE_BAGTHROW_BAGS.duffel,G.x(.325),G.y(.642),.58,.02);
+  // The cage is detailed enough to look like equipment rather than an empty rectangle.
+  const cx=G.x(sc.cageX),cw=G.w*sc.cageW,cRight=cx+cw,floorY=G.y(.755-Math.min(.12,B.settled.length*.012)),lipY=G.y(.625-Math.min(.055,B.settled.length*.006));shadow(cx+7,G.y(.79),cw-5,9,.18);roundedRect(cx,G.y(.365),cw,G.h*.40,7,'rgba(215,225,218,.22)',ink,4);rect(cx-8,G.y(.35),cw+16,18,'#5f7778',ink,2);pxText('BAGGAGE CAGE',cx+cw/2,G.y(.363),'#fff7de',8,'center');rect(cx+5,lipY,cw-10,7,'#5f7778',ink,2);for(let x=cx+14;x<cRight;x+=19)line(x,G.y(.38),x,G.y(.755),'rgba(23,49,58,.50)',2);for(let y=G.y(.415);y<G.y(.75);y+=27)line(cx+5,y,cRight-5,y,'rgba(23,49,58,.36)',1);circle(cx+13,G.y(.775),7,'#273f46',ink,2);circle(cRight-13,G.y(.775),7,'#273f46',ink,2);
+  const bagFloor=floorY;for(let i=0;i<B.settled.length;i++){const q=B.settled[i],spec=ARCADE_BAGTHROW_BAGS[q.key],row=Math.floor(i/4),slot=i%4,x=G.x(sc.cageX+.032)+slot*Math.max(20,(cw-44)/3),y=bagFloor-row*24-9;arcadeBagThrowDrawBag(spec,x,y,.58,q.rot||0)}
+  const charge=B.holding?B.charge:0,crewX=G.x(.36),crewY=G.y(.735);arcadeBagThrowDrawCrew(crewX,crewY,charge,!!B.flight,1.32);if(B.bag){const spec=B.bag.spec,bx=G.x(.39-charge*.055),by=G.y(.69+charge*.018);arcadeBagThrowDrawBag(spec,bx,by,.92,-.04-charge*.30);roundedRect(G.x(.325),G.y(.545),G.w*.15,27,6,'rgba(255,247,222,.90)',ink,2);pxText(spec.label,G.x(.40),G.y(.562),ink,7,'center')}
+  ctx.restore();
+  // Wake cue lives in the open door. No meter is needed.
+  if(sc.wake&&B.nextWake<Infinity){const until=B.nextWake-ts;if(until>0&&until<1700){const q=1-until/1700,x=lerp(G.x(.20),G.x(.075),q);for(let i=0;i<4;i++)line(x+i*5,G.y(.50+i*.014),x-45-i*8,G.y(.43+i*.018),'rgba(255,247,222,.82)',2)}}
+  if(sc.wind){const dir=B.windSign;for(let i=0;i<3;i++){const y=G.y(.33+i*.055),x=G.x(.245+i*.025);line(x,y,x+dir*34,y+Math.sin(ts*.003+i)*2,'rgba(217,238,242,.76)',2);line(x+dir*34,y,x+dir*27,y-5,'rgba(217,238,242,.76)',2)}}
+  if(running&&B.flight){const f=B.flight,spec=f.spec;f.px=f.x;f.py=f.y;f.vy+=1.15*sec;f.vx+=(sc.wind*B.windSign*spec.windage*.032+B.roll*.018)*sec;f.x+=f.vx*sec;f.y+=f.vy*sec;f.rot+=f.vr*sec;const floor=.755-Math.min(.12,B.settled.length*.012),lip=.625-Math.min(.055,B.settled.length*.006),cageL=sc.cageX,cageR=sc.cageX+sc.cageW;
+    const crossedFront=f.px<cageL&&f.x>=cageL;if(crossedFront&&f.y>lip){arcadeBagThrowResolve(g,false,'CLIPPED THE CAGE');return}
+    if(f.y>=floor&&f.vy>0){if(f.x>=cageL+.012&&f.x<=cageR-.012){const centre=cageL+sc.cageW*.52,quality=1-clamp(Math.abs(f.x-centre)/(sc.cageW*.50),0,1);arcadeBagThrowResolve(g,true,'STOWED',quality);return}else if(f.x<cageL){arcadeBagThrowResolve(g,false,'SHORT OF THE CAGE');return}else{arcadeBagThrowResolve(g,false,'OVER THE BACK');return}}
+    if(f.x>1.08||f.y>1.03){arcadeBagThrowResolve(g,false,f.x>cageR?'OVER THE BACK':'SHORT OF THE CAGE');return}
+  }
+  if(B.flight){const f=B.flight;arcadeBagThrowDrawBag(f.spec,G.x(f.x),G.y(f.y),.94,f.rot);circle(G.x(f.x),G.y(.76),clamp(12-(.76-f.y)*8,3,12),'rgba(23,49,58,.12)')}
+  const nextSpec=B.bag?.spec,windText=sc.wind?` · WIND ${B.windSign>0?'→':'←'}`:'',wakeSoon=sc.wake&&B.nextWake-ts<1550;
+  if(wakeSoon)arcadeSetHelperCue(g,'WAKE APPROACHING · WAIT FOR IT OR USE THE LIFT',`${g.roundProgress}/${g.roundGoal} stowed${windText}`);
+  else if(B.flight)arcadeSetHelperCue(g,'BAG AWAY · WATCH THE ARC',`${g.roundProgress}/${g.roundGoal} stowed${windText}`);
+  else if(B.holding)arcadeSetHelperCue(g,`WINDING UP · ${nextSpec?.label||'BAG'}`,`release when the bag and deck look right${windText}`);
+  else arcadeSetHelperCue(g,`${nextSpec?.label||'NEXT BAG'} · HOLD TO WIND UP`,`${sc.label} · ${g.roundProgress}/${g.roundGoal} stowed${windText}`)
+}
 
 const ARCADE_STEAM_DIRS=[
   {dr:-1,dc:0,bit:1,opp:4,name:'N'},
@@ -6352,7 +6510,7 @@ Object.assign(MINIGAME_META.ferry_galley,{engine:'galley',desc:'Pour ferry tea o
 
 function setupArcadeRound(g,first=false){
   const r=g.round||1,d=arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
-  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='deckbalance')arcadeSetupDeckBalance(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='trim')arcadeSetupTrim(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
+  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='deckbalance')arcadeSetupDeckBalance(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='bagthrow')arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='trim')arcadeSetupTrim(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
 }
 
 arcadeScoreRecord=function(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec};
@@ -7881,8 +8039,8 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 }
 
 renderArcadeGame=function(g,ts){
-  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='deckbalance')arcadeRenderDeckBalance(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='trim')arcadeRenderTrim(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='trim'&&g.engine!=='bargebalance'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
+  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='deckbalance')arcadeRenderDeckBalance(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='trim')arcadeRenderTrim(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='trim'&&g.engine!=='bargebalance'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
 };
 
 function arcadeTimingInput(g){
@@ -7936,6 +8094,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='deckbalance'){const B=g.deckbal;if(type==='down'){B.touching=true;B.finger=nx;B.fingerTarget=clamp(nx,.20,.80)}else if(type==='move'&&B.touching){B.finger=nx;B.fingerTarget=clamp(nx,.20,.80)}else if(type==='up'){if(B.touching){B.braces=(B.braces||0)+1;B.lastBraceAt=performance.now()}B.touching=false;B.finger=.5;B.fingerTarget=.5}}
   else if(e==='bargebalance'){const B=g.barge;if(type==='down'){B.dragging=true;B.trolleyTarget=clamp((nx-.5)/.34,-1,1)}else if(type==='move'&&B.dragging)B.trolleyTarget=clamp((nx-.5)/.34,-1,1);else if(type==='up')B.dragging=false}
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
+  else if(e==='bagthrow'){if(type==='down')arcadeBagThrowCharge(g,true,performance.now());else if(type==='up')arcadeBagThrowCharge(g,false,performance.now())}
   else if(e==='steam')arcadeSteamPointer(g,type,x,y,G)
   else if(e==='crane'&&type==='down'&&performance.now()>g.cool)arcadeCraneInput(g);
   else if(e==='stack'&&g.meta.id==='cargo_tetris')arcadeHoldPointer(g,type,x,y,G)
@@ -8018,6 +8177,7 @@ function arcadeControlSpec(g){
   if(e==='bargebalance')return[{a:'left',l:'← BALLAST',k:'A / ←',hold:true},{a:'right',l:'BALLAST →',k:'D / →',hold:true}];
   if(e==='deckbalance')return[{a:'action',l:'HOLD TO MOVE',k:'HOLD SPACE',primary:true,hold:true}];
   if(e==='galley')return[{a:'action',l:'POUR',k:'SPACE / TAP',primary:true}];
+  if(e==='bagthrow')return[{a:'action',l:'HOLD / THROW',k:'HOLD SPACE',primary:true,hold:true}];
   if(['steer','catch','balance','poop'].includes(e))return[{a:'left',l:'←',k:'A / ←'},{a:'right',l:'→',k:'D / →'}];
   if(e==='depth')return[{a:'up',l:'↑',k:'W / ↑'},{a:'down',l:'↓',k:'S / ↓'}];
   if(e==='pilot')return[{a:'pilotBack',l:'← FALL BACK',k:'A / ←',hold:true},{a:'pilotClose',l:'CLOSE IN',k:'W / ↑',hold:true},{a:'pilotTransfer',l:'TRANSFER',k:'SPACE',primary:true},{a:'pilotEase',l:'EASE OFF',k:'S / ↓',hold:true},{a:'pilotAhead',l:'AHEAD →',k:'D / →',hold:true}];
@@ -8041,6 +8201,7 @@ function arcadeApplyControl(action,pressed=true){
   const step=.075;
   if(g.engine==='deckbalance'&&g.deckbal){const B=g.deckbal;if(action==='action'){B.touching=!!pressed;B.fingerTarget=.5;if(!pressed){B.braces=(B.braces||0)+1;B.lastBraceAt=performance.now()}return true}if(action==='left'||action==='right'||action==='brace'){B.touching=false;B.lastBraceAt=performance.now();return true}}
   if(g.engine==='galley'&&action==='action'){if(pressed)arcadeGalleyPour(g,performance.now());return true}
+  if(g.engine==='bagthrow'&&action==='action')return arcadeBagThrowCharge(g,!!pressed,performance.now());
   if(g.engine==='stack'&&g.meta.id==='cargo_tetris'){if(action==='holdRotate'||action==='action'){if(pressed)return arcadeHoldRotate(g,1);return true}if(action==='holdUndo'&&pressed)return arcadeHoldUndo(g)}
   if(g.engine==='lines'){if(action==='linesHeave'||action==='action'){arcadeLinesAction(g,'heave',pressed);return true}if(action==='linesEase'||action==='down'){arcadeLinesAction(g,'ease',pressed);return true}}
   if(g.engine==='pilot'){
@@ -8124,7 +8285,7 @@ function arcadeShellKeydown(e){
   else if((key===' '||key==='Enter')&&g.engine==='rigging')handled=arcadeApplyControl('rigBrace',true);
   if(handled){e.preventDefault();e.stopImmediatePropagation()}
 }
-function arcadeShellKeyup(e){const g=minigame;if(!g||g.paused)return;let handled=false;if((e.key===' '||e.key==='Enter')&&g.engine==='deckbalance')handled=arcadeApplyControl('action',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='lines')handled=arcadeApplyControl('linesHeave',false);else if(['ArrowDown','s','S'].includes(e.key)&&g.engine==='lines')handled=arcadeApplyControl('linesEase',false);else if(g.engine==='pilot'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='pilot'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='pilot'&&['ArrowUp','w','W'].includes(e.key))handled=arcadeApplyControl('up',false);else if(g.engine==='pilot'&&['ArrowDown','s','S'].includes(e.key))handled=arcadeApplyControl('down',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='rigging')handled=arcadeApplyControl('rigBrace',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',false);else if(g.engine==='crane'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='crane'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='deckbalance'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='deckbalance'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='landing'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='landing'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='landing'&&['ArrowUp','w','W'].includes(e.key))handled=arcadeApplyControl('up',false);else if(g.engine==='landing'&&['ArrowDown','s','S'].includes(e.key))handled=arcadeApplyControl('down',false);else if(g.engine==='landing'&&['q','Q'].includes(e.key))handled=arcadeApplyControl('powerDown',false);else if(g.engine==='landing'&&['e','E'].includes(e.key))handled=arcadeApplyControl('powerUp',false);if(handled){e.preventDefault();e.stopImmediatePropagation()}}
+function arcadeShellKeyup(e){const g=minigame;if(!g||g.paused)return;let handled=false;if((e.key===' '||e.key==='Enter')&&g.engine==='deckbalance')handled=arcadeApplyControl('action',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='bagthrow')handled=arcadeApplyControl('action',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='lines')handled=arcadeApplyControl('linesHeave',false);else if(['ArrowDown','s','S'].includes(e.key)&&g.engine==='lines')handled=arcadeApplyControl('linesEase',false);else if(g.engine==='pilot'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='pilot'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='pilot'&&['ArrowUp','w','W'].includes(e.key))handled=arcadeApplyControl('up',false);else if(g.engine==='pilot'&&['ArrowDown','s','S'].includes(e.key))handled=arcadeApplyControl('down',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='rigging')handled=arcadeApplyControl('rigBrace',false);else if((e.key===' '||e.key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',false);else if(g.engine==='crane'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='crane'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='deckbalance'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='deckbalance'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='landing'&&['ArrowLeft','a','A'].includes(e.key))handled=arcadeApplyControl('left',false);else if(g.engine==='landing'&&['ArrowRight','d','D'].includes(e.key))handled=arcadeApplyControl('right',false);else if(g.engine==='landing'&&['ArrowUp','w','W'].includes(e.key))handled=arcadeApplyControl('up',false);else if(g.engine==='landing'&&['ArrowDown','s','S'].includes(e.key))handled=arcadeApplyControl('down',false);else if(g.engine==='landing'&&['q','Q'].includes(e.key))handled=arcadeApplyControl('powerDown',false);else if(g.engine==='landing'&&['e','E'].includes(e.key))handled=arcadeApplyControl('powerUp',false);if(handled){e.preventDefault();e.stopImmediatePropagation()}}
 window.addEventListener('keydown',arcadeShellKeydown,true);window.addEventListener('keyup',arcadeShellKeyup,true);
 document.addEventListener('selectstart',e=>{if(minigame)e.preventDefault()},{capture:true});
 document.addEventListener('dragstart',e=>{if(minigame)e.preventDefault()},{capture:true});
@@ -8137,7 +8298,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.32.2',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.32.4',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
