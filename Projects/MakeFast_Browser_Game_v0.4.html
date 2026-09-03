@@ -254,8 +254,8 @@
 // MakeFast runtime
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
-const VERSION=25;
-const VERSION_LABEL='0.32.4';
+const VERSION=26;
+const VERSION_LABEL='0.32.5';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -522,7 +522,7 @@ const CONTENT={
     container_crane:{title:'CRANE SWING',icon:'▥',group:'Container Ship',engine:'crane',desc:'Catch the swing and drop containers precisely into marked bays.',instruction:'TAP ANYWHERE WHEN THE HOOK IS ABOVE THE GREEN TARGET BAY',duration:26,rewardThreshold:550,benchmark:1750,theme:'container'},
     container_stack:{title:'STACK THE DECK',icon:'▦',group:'Container Ship',engine:'stack',desc:'Load a live cargo deck where every landed box changes the ship’s balance and can shift as the vessel lists.',instruction:'DROP FROM THE GANTRY • WATCH THE DECK LIGHTS • CARGO FALLS, STACKS AND CAN SLIDE AS THE SHIP TIPS',duration:28,rewardThreshold:600,benchmark:1900,theme:'container'},
     cruise_buffet:{title:'BUFFET BALANCE',icon:'◫',group:'Cruise Ship',engine:'balance',desc:'Stop plates and drinks skittering off a rolling buffet trolley.',instruction:'COUNTER THE ROLL • KEEP THE PLATES ON THE TRAY',duration:22,rewardThreshold:500,benchmark:1550,theme:'cruise'},
-    cruise_deckchairs:{title:'DECKCHAIR DASH',icon:'▧',group:'Cruise Ship',engine:'deckbalance',desc:'Set up the liner’s sun deck before the passengers arrive. Carry loungers, towels, tables, parasols and cushions across a rolling deck: keep your balancing finger under each load, release to brace for wakes and deck traffic, then set it down safely in the lounge bay.',instruction:'HOLD & DRAG LEFT / RIGHT TO BALANCE THE LOAD • RELEASE TO BRACE • READ THE SHIP, WIND AND DECK TRAFFIC • REACH THE LOUNGE BAY AND RELEASE TO SET DOWN',duration:0,rewardThreshold:650,benchmark:2200,theme:'cruise'},
+    cruise_deckchairs:{title:'ENGINE TELEGRAPH',icon:'⚙',group:'Engine Room',engine:'telegraph',desc:'Stand an engine-room watch on an island motor ship. Answer bridge bells with one brass telegraph handle, then manage the real lag, shaft momentum and reversing limits of the machinery underneath you.',instruction:'DRAG THE BRASS HANDLE TO ANSWER THE BRIDGE • WATCH THE SHAFT, NOT JUST THE BELL • CHECK THE ENGINE BEFORE REVERSING • PROTECT COLD MACHINERY',duration:0,rewardThreshold:650,benchmark:2200,theme:'engine'},
     trawler_net:{title:'HAUL THE NET',icon:'⌇',group:'Fishing Trawler',engine:'meter',desc:'Bring a live trawl home from the seabed, reading the warp, visible obstructions and the changing weight of the catch.',instruction:'HOLD HAUL TO WINCH • WATCH THE GEAR AHEAD • RELEASE WHEN THE WARP COMES HARD • GIVE A SNAG SLACK UNTIL THE NET ROLLS FREE',duration:0,rewardThreshold:550,benchmark:1650,theme:'trawler'},
     trawler_sort:{title:'SORT THE CATCH',icon:'><>',group:'Fishing Trawler',engine:'sort',desc:'Send the catch into the right crates before the gulls get interested.',instruction:'DRAG EACH FISH INTO THE MATCHING COLOURED CRATE',duration:26,rewardThreshold:600,benchmark:1850,theme:'trawler'},
     yacht_trim:{title:'YACHT TRIM',icon:'◢',group:'Sailing Yacht',engine:'trim',desc:'Work a live mainsail through changing points of sail, headers, gust fronts and squalls. Read the telltales, heel and wake rather than chasing a meter.',instruction:'DRAG THE RED MAINSHEET TAIL • TRIM IN LEFT / EASE RIGHT • STREAM BOTH TELLTALES FOR SPEED • EASE HARD GUSTS BEFORE THE YACHT LOADS UP',duration:0,rewardThreshold:600,benchmark:2000,theme:'yacht'},
@@ -560,7 +560,7 @@ const CONTENT={
     {id:'canvas',scene:'canvas',icon:'▤',title:['Canvas in the tide','A pale roll by the buoy'],log:['A dry roll of sailcloth had snagged on a marker buoy.','Something pale and tightly rolled tugged against a buoy line.'],interaction:{minigame:'yacht_trim'},rewards:[{kind:'cloth',weight:1}],weight:.8},
     {id:'arcade_ferry',scene:'arcadevessel',icon:'▤',title:['A ferry crossing the route','The ferry deck is busy'],log:['A broad island ferry eased across the route and invited a quick hand on deck.','A ferry horn sounded nearby; the deck crew could use an extra pair of hands.'],interaction:{minigames:['ferry_lines','ferry_galley','ferry_bags']},rewards:[{kind:'crate',weight:.55},{kind:'bottle',weight:.45}],weight:.72},
     {id:'arcade_container',scene:'arcadevessel',icon:'▥',title:['A container ship at anchor','Cranes over the water'],log:['A container vessel loomed beyond the swell with one awkward lift still to make.','A crane hook swung above a ship stacked high with colourful boxes.'],interaction:{minigames:['container_crane','container_stack']},rewards:[{kind:'crate',weight:.7},{kind:'crate',weight:.3}],weight:.58},
-    {id:'arcade_cruise',scene:'arcadevessel',icon:'◫',title:['A bright cruise ship','Music over the water'],log:['A white cruise ship rolled gently nearby and a little deckside commotion broke out.','Music and laughter carried across the water from a passing liner.'],interaction:{minigames:['cruise_buffet','cruise_deckchairs']},rewards:[{kind:'bottle',weight:.55},{kind:'glass',weight:.45}],weight:.55},
+    {id:'arcade_cruise',scene:'arcadevessel',icon:'◫',title:['A bright cruise ship','Music over the water'],log:['A white cruise ship rolled gently nearby and a little deckside commotion broke out.','Music and laughter carried across the water from a passing liner.'],interaction:{minigame:'cruise_buffet'},rewards:[{kind:'bottle',weight:.55},{kind:'glass',weight:.45}],weight:.55},
     {id:'arcade_trawler',scene:'arcadevessel',icon:'⌇',title:['A trawler hauling gear','Nets in the water'],log:['A working trawler slowed nearby with its net coming home heavy.','The winch on a trawler groaned as a wet net came over the stern.'],interaction:{minigames:['trawler_net','trawler_sort']},rewards:[{kind:'crate',weight:.55},{kind:'bottle',weight:.45}],weight:.72},
     {id:'arcade_yacht',scene:'arcadevessel',icon:'◢',title:['A yacht under full sail','Canvas on the horizon'],log:['A neat sailing yacht crossed the breeze and waved you alongside for a moment.','A yacht heeled into the wind nearby, all rope and bright canvas.'],interaction:{minigames:['yacht_tack','yacht_trim']},rewards:[{kind:'cloth',weight:.65},{kind:'glass',weight:.35}],weight:.65},
     {id:'arcade_speedboat',scene:'arcadevessel',icon:'≫',title:['Fast wake ahead','A speedboat darts past'],log:['A little speedboat carved a playful course through marker buoys nearby.','A quick boat skipped across the chop and left a clean set of wakes behind.'],interaction:{minigame:'speedboat_slalom'},rewards:[{kind:'bottle',weight:.55},{kind:'glass',weight:.45}],weight:.48},
@@ -672,7 +672,7 @@ const AT_SEA_MINIGAME_SCENARIOS={
   container_crane:{scene:'trader',icon:'▥',title:['A swinging lift nearby','Cargo over the water'],log:['A work pontoon is making one awkward lift and asks you to call the moment the load is square.','A crane barge has a pallet swinging over open water and could use another pair of eyes.'],rewardKind:'crate'},
   container_stack:{scene:'stonecargo',icon:'▦',title:['Recovered crates need stowing','A hold full of awkward boxes'],log:['Several small recovered crates have to be packed before the next patch of swell.','A cluster of boxes comes aboard in all the wrong shapes and needs a steady hand in the hold.'],rewardKind:'crate'},
   cruise_buffet:{scene:'breeze',icon:'◫',title:['Picnic in a rolling wake','Everything on the table moves'],log:['A friendly deck picnic meets a long rolling wake and every plate decides to travel at once.','The boat rolls gently beneath a tray of cups and snacks that suddenly needs full attention.'],rewardKind:'bottle'},
-  cruise_deckchairs:{scene:'breeze',icon:'▧',title:['Sun deck turnaround','The loungers need setting out'],log:['A deck steward is racing to finish the sun deck before the next wave of passengers comes up from breakfast.','Across the liner, loungers, towels and parasols still need carrying out while the ship rolls through a lively sea.'],rewardKind:'cloth'},
+  cruise_deckchairs:{scene:'arcadevessel',icon:'⚙',title:['A bell below decks','An engine-room watch to stand'],log:['A short-handed island motor ship asks you to take the engine-room telegraph while she works through a tight harbour approach.','A weathered coastal mailboat comes close enough to pass over one engine-room watch: the bridge bells are already ringing.'],rewardKind:'hardware'},
   trawler_net:{scene:'rigging',icon:'⌇',title:['A snagged net line','Something heavy on the warp'],log:['A length of old net catches under a floating spar and the line comes tight.','A small working net picked up along the route needs easing aboard without overloading the line.'],rewardKind:'timber'},
   trawler_sort:{scene:'seabirds',icon:'><>',title:['A little catch to sort','Gulls have noticed the basket'],log:['A neighbour hands over a mixed little catch and the gulls immediately become interested.','A small basket of catch comes aboard and needs sorting before the seabirds decide it belongs to them.'],rewardKind:'seeds'},
   yacht_trim:{scene:'breeze',icon:'◢',title:['The breeze shifts','A clean sailing patch'],log:['The wind moves a few points and the sail needs a little attention to keep its easy shape.','A bright patch of breeze crosses the route and invites a few minutes of careful trim.'],rewardKind:'cloth'},
@@ -3268,7 +3268,7 @@ const ARCADE_COPY={
   container_crane:{desc:'Work a shipboard crane through changing cargo, wire length, wind and vessel roll. Move the trolley to build or damp the swing, then release with the load’s momentum.',instruction:'LEFT / RIGHT MOVE THE TROLLEY • RELEASE TO DROP • ALLOW FOR SWING, WIND AND SHIP ROLL'},
   container_stack:{desc:'Build a balanced manifest from containers with changing width and weight.',instruction:'DROP THE LOAD • CONTROL STACK HEIGHT AND THE SHIP’S LIST'},
   cruise_buffet:{desc:'Keep differently weighted plates, cups and bottles on a rolling trolley through sudden wakes.',instruction:'COUNTER THE ROLL • EACH OBJECT HAS ITS OWN INERTIA'},
-  cruise_deckchairs:{desc:'Work a cruise-ship sun-deck turnaround one load at a time. Carry real deck furniture and service gear from the locker to a lounge bay while the ship rolls underneath you. Your finger is the steward’s balancing hand; letting go plants your feet and braces the load.',instruction:'HOLD & DRAG LEFT / RIGHT TO BALANCE • RELEASE TO BRACE • WATCH FOR WAKES, GUSTS AND CROSSING CREW • AT THE BAY, RELEASE TO SET THE LOAD DOWN'},
+  cruise_deckchairs:{desc:'Stand a proper engine-room telegraph watch. Bridge bells demand shaft speeds, but the machinery has inertia, reversing delay, cold-oil limits and a propeller the sea itself can keep turning.',instruction:'DRAG ONE BRASS HANDLE • ANSWER THE BELL • WATCH ACTUAL SHAFT RPM • CHECK TO STOP BEFORE REVERSING • BIG BELLS ON A COLD ENGINE BUILD STRAIN'},
   trawler_net:{desc:'Haul a real net along the bottom and up to the stern while swell, catch weight and visible seabed obstructions change the load on the warp.',instruction:'HAUL WHILE THE WARP IS HEALTHY • EASE WHEN IT LOADS UP • IF THE NET CATCHES, KEEP EASING UNTIL IT CLIMBS FREE'},
   trawler_sort:{desc:'Work a live sorting deck where species, size, bycatch, crawling shellfish, gulls and passing wakes all change what needs doing.',instruction:'DRAG WHITE FISH, OILY FISH AND SHELLFISH TO THEIR OWN BOXES • RETURN UNDERSIZE AND BYCATCH OVERBOARD • DON’T LEAVE GOOD CATCH FOR THE GULLS'},
   yacht_trim:{desc:'Trim a physical mainsail through generated sailing legs. Wind direction changes sail shape; gusts add heel and load; clean telltales turn good trim directly into boat speed.',instruction:'DRAG THE RED MAINSHEET TAIL • TRIM IN LEFT / EASE RIGHT • READ THE TELLTALES, HEEL AND WAKE • KEEP THE YACHT DRIVING TO THE NEXT MARK'},
@@ -3291,6 +3291,7 @@ const ARCADE_COPY={
 for(const [id,copy] of Object.entries(ARCADE_COPY))if(MINIGAME_META[id])Object.assign(MINIGAME_META[id],copy);
 AT_SEA_MINIGAME_SCENARIOS.poop_deck={scene:'seabirds',icon:'⌃',title:['Gulls over the mast','A very confident flock'],log:['A flock of gulls takes an unusual interest in the boat.','Several gulls wheel overhead with suspicious concentration.'],rewardKind:'bottle'};
 if(!VOYAGE_EVENT_TYPES.some(e=>e.id==='arcade_gulls'))VOYAGE_EVENT_TYPES.push({id:'arcade_gulls',scene:'seabirds',icon:'⌃',title:['Gulls over the mast','An occupied patch of sky'],log:['A flock of gulls settles into formation above the route.','White wings gather over the boat and the deck suddenly feels exposed.'],interaction:{minigame:'poop_deck'},rewards:[{kind:'bottle',weight:.55},{kind:'cloth',weight:.45}],weight:.58});
+if(!VOYAGE_EVENT_TYPES.some(e=>e.id==='arcade_engine_watch'))VOYAGE_EVENT_TYPES.push({id:'arcade_engine_watch',scene:'arcadevessel',icon:'⚙',title:['A bell below decks','The mailboat is short-handed'],log:['A weathered island motor ship comes alongside long enough to hand over one engine-room watch.','A little coastal mailboat is working close quarters and could use another engineer on the telegraph.'],interaction:{minigame:'cruise_deckchairs'},rewards:[{kind:'hardware',weight:.62},{kind:'brass',weight:.38}],weight:.56});
 
 const ARCADE_MAX_STRIKES=3;
 const ARCADE_PIECES=[
@@ -3327,7 +3328,7 @@ function arcadeDefaultHelperCue(g){
   if(id==='dredger_scoop')return'LOWER INTO CLEAN SEDIMENT · LIFT CLEAR OF SERVICES · DUMP IN HOPPER';
   if(id==='barge_balance')return'DRAG THE BALLAST CARRIAGE · MOVE WEIGHT TO THE HIGH SIDE · KEEP BOTH DECK EDGES DRY';
   if(id==='cargo_tetris')return'CHOOSE THE LOAD ORDER · BUILD SOLID SUPPORT · KEEP SPECIAL CARGO SAFE';
-  if(id==='cruise_deckchairs')return'HOLD TO DASH · RELEASE TO BRACE · READ THE ROLL, WAKES AND CROSSING CREW';
+  if(id==='cruise_deckchairs')return'ANSWER THE BRIDGE BELL · WATCH THE SHAFT · CHECK TO STOP BEFORE REVERSING';
   if(id==='tallship_rigging')return'MOVE ONE HOLD AT A TIME · BRACE IN GUSTS · MAKE THE PATTERN FAST';
   if(id==='sub_depth')return'KEEP CENTRED IN SAFE WATER · PRESSURE RISES AS YOU DIVE';
   if(id==='carrier_landing')return'KEEP THE DECK CENTRED · FLY THE BALL WITH POWER · CATCH A WIRE';
@@ -6504,13 +6505,173 @@ function arcadeRenderDeckBalance(g,ts,G,dt,running){
   pxText(sc.label,G.left+12,G.y(.075),ink,9,'left');pxText(`${B.jobIndex+1}/${g.roundGoal} · SECURE ${L.label}`,G.left+12,G.y(.108),'#42616a',7,'left');const playerN=.16+B.distance*.70,near=Math.abs(playerN-B.gearX)<.07,risk=clamp(Math.abs(B.wobble)*2.6+Math.abs(B.roll)*1.8,0,1),nearTraffic=B.traffic&&Math.abs((.16+B.traffic.x*.70)-playerN)<.11;let cue;if(near)cue=B.touching?'RELEASE · GRAB IT':'HOLD STEADY · SECURING';else if(B.gearX>.82)cue='GEAR AT THE RAIL · MOVE!';else if(B.wakeWarn>.42)cue='WHITE WAKE · RELEASE AND BRACE';else if(nearTraffic)cue='STEWARD CROSSING · BRACE';else if(B.touching)cue=risk>.54?'RELEASE · TOO MUCH LEAN':'HOLD · RUN WHILE SHE IS LEVEL';else cue='HOLD TO RUN · RELEASE TO BRACE';arcadeSetHelperCue(g,cue,`${Math.round(Math.abs(playerN-B.gearX)*100)} steps to ${L.short.toLowerCase()} · ${sc.note}`)
 }
 
-Object.assign(MINIGAME_META.cruise_deckchairs,{engine:'deckbalance',desc:'Loose sun-deck fittings are sliding toward the rail. Hold to run across the rolling promenade; release to brace and secure the gear. Read the ship, the wake and the object itself.',instruction:'HOLD TO RUN • RELEASE TO BRACE / SECURE • KEEP THE GEAR OFF THE RAIL'});
+const ARCADE_TELEGRAPH_NOTCHES=[
+  {n:-4,label:'FULL',side:'ASTERN',rpm:-1.00,deg:210},
+  {n:-3,label:'HALF',side:'ASTERN',rpm:-.72,deg:180},
+  {n:-2,label:'SLOW',side:'ASTERN',rpm:-.45,deg:150},
+  {n:-1,label:'DEAD SLOW',side:'ASTERN',rpm:-.23,deg:120},
+  {n:0,label:'STOP',side:'',rpm:0,deg:90},
+  {n:1,label:'DEAD SLOW',side:'AHEAD',rpm:.23,deg:60},
+  {n:2,label:'SLOW',side:'AHEAD',rpm:.45,deg:30},
+  {n:3,label:'HALF',side:'AHEAD',rpm:.72,deg:0},
+  {n:4,label:'FULL',side:'AHEAD',rpm:1.00,deg:330}
+];
+const ARCADE_TELEGRAPH_ROUNDS=[
+  {label:'FIRST BELL',note:'Answer three easy bridge bells and feel the shaft lag behind the handle.',orders:[1,2,0],response:1.18,drag:.56,deadline:8.4,settle:.55,tol:.085,sea:0,cold:0},
+  {label:'HARBOUR SHUTTLE',note:'Short manoeuvring bells. Do not chase the pointer; wait for the shaft.',orders:[1,2,1,0,-1,0],response:1.12,drag:.55,deadline:7.4,settle:.60,tol:.078,sea:0,cold:0},
+  {label:'LOADED MAILBOAT',note:'A heavy propeller carries its way. Start stopping before the next bell becomes urgent.',orders:[2,3,1,0,-1,0],response:.82,drag:.48,deadline:7.6,settle:.66,tol:.075,sea:0,cold:0},
+  {label:'FOLLOWING SEA',note:'The sea keeps turning the propeller even at STOP. Read the shaft, not just the handle.',orders:[1,0,-1,0,2,0],response:1.02,drag:.48,deadline:7.0,settle:.66,tol:.074,sea:.13,cold:0},
+  {label:'PILOT STATION',note:'The bridge is working close quarters now: small bells, quick checks and reversals.',orders:[2,1,0,-1,0,1,0,-2,0],response:1.00,drag:.50,deadline:6.2,settle:.62,tol:.070,sea:.06,cold:0},
+  {label:'COLD MORNING WATCH',note:'Cold machinery dislikes big lever movements. Warm her through the lower bells first.',orders:[2,3,1,0,-1,0],response:.92,drag:.47,deadline:7.2,settle:.68,tol:.070,sea:.02,cold:1},
+  {label:'NARROW HARBOUR',note:'The ship still has way on when the bridge changes its mind. Use STOP to check the shaft.',orders:[3,1,-1,0,-2,0,1,0],response:.92,drag:.48,deadline:7.0,settle:.64,tol:.066,sea:.08,cold:0},
+  {label:'CRASH ASTERN DRILL',note:'A direct reversal while the shaft is still turning ahead will not engage cleanly.',orders:[3,4,-4,-2,0,2,0],response:.88,drag:.55,deadline:9.4,settle:.62,tol:.065,sea:.04,cold:0,crash:true},
+  {label:'TIDEWAY MANOEUVRES',note:'Strong water windmills the shaft while the bridge sends an awkward working sequence.',orders:[2,0,-2,0,3,1,0,-1,0],response:.88,drag:.52,deadline:6.7,settle:.62,tol:.062,sea:.17,cold:0}
+];
+function arcadeTelegraphScenario(g,r){
+  if(r<=ARCADE_TELEGRAPH_ROUNDS.length)return{...ARCADE_TELEGRAPH_ROUNDS[r-1],orders:[...ARCADE_TELEGRAPH_ROUNDS[r-1].orders]};
+  const q=r-ARCADE_TELEGRAPH_ROUNDS.length,rr=[];let last=0;
+  const count=Math.min(12,7+Math.floor(q/2));
+  for(let i=0;i<count;i++){
+    let choices=i===count-1?[0]:[-3,-2,-1,0,1,2,3];
+    if(q>3)choices=[-4,-3,-2,-1,0,1,2,3,4];
+    let n=arcadeChoice(g,choices);if(i>0&&n===last)n=n===0?(last>0?-1:1):0;if(last*n<0)n=0;rr.push(n);last=n
+  }
+  if(rr[rr.length-1]!==0)rr.push(0);
+  return{label:`ENGINE WATCH ${r}`,note:'No two watches ring the same. Protect the machinery and answer the bridge cleanly.',orders:rr,response:Math.max(.78,.88-q*.012),drag:Math.max(.50,.54-q*.003),deadline:Math.max(6.2,6.8-q*.03),settle:.64,tol:Math.max(.058,.064-q*.0008),sea:Math.min(.20,.12+q*.01),cold:0,crash:q>1}
+}
+function arcadeTelegraphNotch(n){return ARCADE_TELEGRAPH_NOTCHES[n+4]||ARCADE_TELEGRAPH_NOTCHES[4]}
+function arcadeTelegraphOrderText(n){const N=arcadeTelegraphNotch(n);return n===0?'STOP':`${N.label} ${N.side}`}
+function arcadeTelegraphGeom(G){
+  const compact=G.w<620,cx=G.x(compact?.30:.27),cy=G.y(compact?.56:.56),r=Math.min(G.h*(compact?.30:.34),G.w*(compact?.27:.24));
+  return{cx,cy,r,engineX:G.x(compact?.65:.66),engineY:G.y(.59),engineW:G.w*(compact?.40:.43),engineH:G.h*.46}
+}
+function arcadeSetupTelegraph(g,r,d){
+  arcadeResetCommon(g,1);const sc=arcadeTelegraphScenario(g,r),now=performance.now();g.roundGoal=sc.orders.length;g.tele={sc,lever:0,dragging:false,shaft:0,shaftVisual:0,shaftAngle:0,stress:0,warm:sc.cold?.24:.78,oil:1,reverser:0,reverseReadyAt:0,orderIndex:-1,order:null,orderAt:0,orderDeadline:0,nextOrderAt:now+650,settledFor:0,lastUpdate:now,lastBellAt:0,missFlash:0,bellFlash:0,engineShake:0,seaPhase:arcadeRand(g,0,Math.PI*2),bridgeName:arcadeChoice(g,['M.V. KESTREL','M.V. BRAMBLE','M.V. TIDEWREN','M.V. MOSSWICK']),abuseCool:0};
+  g.roundProgress=0;arcadeSetHelperCue(g,'STAND BY ENGINE','The bridge bell will ring. Move the brass handle, then watch the shaft respond.')
+}
+function arcadeTelegraphSetLever(g,n,source='pointer'){
+  const T=g.tele;if(!T)return false;n=clamp(Math.round(n),-4,4);if(n===T.lever)return false;T.lever=n;T.bellFlash=performance.now()+150;beep('soft');
+  const N=arcadeTelegraphNotch(n);arcadeSetFeedback(g,n===0?'HANDLE TO STOP':`${N.label} ${N.side}`,'neutral',280);return true
+}
+function arcadeTelegraphNextOrder(g,ts){
+  const T=g.tele,sc=T.sc;if(T.orderIndex+1>=sc.orders.length)return;
+  T.orderIndex++;T.order=sc.orders[T.orderIndex];T.orderAt=ts;T.orderDeadline=ts+sc.deadline*1000;T.settledFor=0;T.lastBellAt=ts;T.bellFlash=ts+380;
+  beep('bell');const txt=arcadeTelegraphOrderText(T.order);arcadeSetFeedback(g,`BRIDGE: ${txt}`,'warn',650);arcadeSetHelperCue(g,`BRIDGE BELL · ${txt}`,T.order===0?'Bring the shaft itself to rest.':T.order*T.shaft<-.06?'Check the shaft before reversing.':'Move the handle, then let the machinery answer.')
+}
+function arcadeTelegraphFailOrder(g,ts,reason='BELL NOT ANSWERED'){
+  const T=g.tele;arcadeStrike(g,reason,45);T.missFlash=ts+420;T.settledFor=0;T.nextOrderAt=ts+850;T.order=null
+}
+function arcadeTelegraphCompleteOrder(g,ts){
+  const T=g.tele,N=arcadeTelegraphNotch(T.order),error=Math.abs(T.shaft-N.rpm),quick=clamp(1-(ts-T.orderAt)/(T.sc.deadline*1000),0,1),clean=clamp(1-T.stress,0,1),points=Math.round(145+quick*95+clean*80+Math.max(0,.08-error)*520);
+  arcadeRoundReward(g,points,error<T.sc.tol*.45?'BELL ANSWERED CLEAN':'BELL ANSWERED');g.roundProgress++;
+  T.order=null;T.settledFor=0;
+  if(g.roundProgress>=g.roundGoal){arcadeAdvance(g,'WATCH RELIEVED');return true}
+  T.nextOrderAt=ts+700;return false
+}
+function arcadeTelegraphUpdate(g,ts,dt,running){
+  const T=g.tele;if(!T)return;const sc=T.sc,sec=dt/1000;if(!running)return;
+  if(!T.order&&ts>=T.nextOrderAt){arcadeTelegraphNextOrder(g,ts);return}
+  // Sea can windmill the propeller. This is deliberately visible in the shaft and stern wash.
+  const seaPush=sc.sea?Math.sin(ts*.00135+T.seaPhase)*sc.sea+Math.sin(ts*.0029+T.seaPhase*.7)*sc.sea*.30:0;
+  let demanded=arcadeTelegraphNotch(T.lever).rpm;
+  // A marine reversing gear cannot simply be slammed through while the shaft is still turning the other way.
+  const opposite=demanded*T.shaft<-.025&&Math.abs(demanded)>.05&&Math.abs(T.shaft)>.12;
+  if(opposite){
+    demanded=0;T.reverser=0;T.reverseReadyAt=Math.max(T.reverseReadyAt,ts+280);
+    T.stress+=sec*(.15+Math.abs(T.lever)*.065)*Math.min(1.4,Math.abs(T.shaft)*2.0)
+  }else if(Math.abs(demanded)>.04){
+    if(ts<T.reverseReadyAt)demanded=0;else T.reverser=Math.sign(demanded)
+  }else T.reverser=0;
+  // Cold machinery can be worked, but large bells before warm oil comes round build stress quickly.
+  if(sc.cold&&Math.abs(T.lever)>=3&&T.warm<.52)T.stress+=sec*(.16+(3-Math.min(3,T.warm*3))*.035);
+  const warmTarget=.22+Math.abs(T.shaft)*.72;T.warm=clamp(T.warm+(warmTarget-T.warm)*sec*(sc.cold?.18:.32),.15,1);
+  const response=sc.response*(.72+T.warm*.28),target=demanded+seaPush*.34;
+  if(Math.abs(demanded)<.02){T.shaft+=(-T.shaft)*sc.drag*sec;T.shaft+=seaPush*.16*sec}
+  else T.shaft+=(target-T.shaft)*response*sec;
+  T.shaft=clamp(T.shaft,-1.08,1.08);T.stress=Math.max(0,T.stress-sec*.042);T.engineShake=lerp(T.engineShake,Math.min(1,Math.abs(T.shaft)*.72+T.stress*.65),Math.min(1,sec*4));T.shaftAngle+=(T.shaft*8.2)*sec;
+  if(T.stress>.96&&ts>T.abuseCool){T.abuseCool=ts+2600;T.stress=.58;arcadeStrike(g,'MACHINERY PROTESTS',60);if(g.failed)return}
+  if(T.order!==null){
+    const targetOrder=arcadeTelegraphNotch(T.order).rpm,error=Math.abs(T.shaft-targetOrder),handleMatch=T.lever===T.order;
+    // STOP is judged from the actual shaft, all other bells from shaft speed and correct side/handle.
+    const stopTol=sc.tol*1.25+.012,good=T.order===0?Math.abs(T.shaft)<stopTol:(handleMatch&&error<sc.tol);
+    T.settledFor=good?T.settledFor+dt:Math.max(0,T.settledFor-dt*1.4);
+    if(T.settledFor>=sc.settle*1000){if(arcadeTelegraphCompleteOrder(g,ts))return}
+    else if(ts>T.orderDeadline)arcadeTelegraphFailOrder(g,ts,opposite?'REVERSAL TOO LATE':'BELL NOT ANSWERED')
+  }
+  const N=T.order===null?null:arcadeTelegraphNotch(T.order),error=N?Math.abs(T.shaft-N.rpm):0;
+  let cue='STAND BY FOR THE NEXT BELL',sub=`Shaft ${Math.round(Math.abs(T.shaft)*110)} rpm · ${T.shaft>.04?'ahead':T.shaft<-.04?'astern':'stopped'}`;
+  if(N){
+    const txt=arcadeTelegraphOrderText(T.order),remaining=Math.max(0,(T.orderDeadline-ts)/1000);
+    if(opposite)cue='CHECK THE SHAFT · REVERSING GEAR WILL NOT ENGAGE YET';
+    else if(sc.cold&&Math.abs(T.lever)>=3&&T.warm<.52)cue='COLD OIL · WORK HER UP THROUGH A LOWER BELL';
+    else if(T.lever!==T.order)cue=`BRIDGE: ${txt}`;
+    else if(error>sc.tol)cue=T.order===0?'HANDLE STOP · WAIT FOR THE SHAFT':`HANDLE ANSWERED · LET THE SHAFT COME TO ${N.label}`;
+    else cue='HOLD IT · ENGINE ANSWERING';
+    sub=`${remaining.toFixed(1)}s · shaft ${Math.round(T.shaft*110)} rpm · machinery ${T.stress>.62?'strained':T.warm<.45?'cold':'sound'}`
+  }
+  arcadeSetHelperCue(g,cue,sub)
+}
+function arcadeTelegraphDrawFace(g,G,T,M,ts){
+  const {cx,cy,r}=M,ink='#17313a',brass='#c79c4e',brass2='#e0be6a',cream='#f1e3b8',red='#bb584d',green='#5f9672';
+  circle(cx,cy,r+17,'#263f45',ink,4);circle(cx,cy,r+9,brass,ink,3);circle(cx,cy,r-3,'#efe1b4',ink,2);circle(cx,cy,r*.69,'#d8c693','rgba(23,49,58,.55)',2);
+  // engraved sectors and detents
+  for(const N of ARCADE_TELEGRAPH_NOTCHES){const a=N.deg*Math.PI/180,x1=cx+Math.cos(a)*r*.67,y1=cy-Math.sin(a)*r*.67,x2=cx+Math.cos(a)*r*.84,y2=cy-Math.sin(a)*r*.84;line(x1,y1,x2,y2,N.n===0?red:ink,N.n===0?4:2);const tx=cx+Math.cos(a)*r*.93,ty=cy-Math.sin(a)*r*.93;pxText(N.label,tx,ty-2,N.n===0?red:ink,N.label==='DEAD SLOW'?4.5:5,'center');if(N.side)pxText(N.side,tx,ty+8,N.n<0?'#844f4a':'#416f68',4.2,'center')}
+  pxText('ENGINE ROOM',cx,cy+r*.34,ink,7,'center');pxText('TELEGRAPH',cx,cy+r*.45,ink,6,'center');
+  // physical handle
+  const H=arcadeTelegraphNotch(T.lever),a=H.deg*Math.PI/180,hx=cx+Math.cos(a)*r*.59,hy=cy-Math.sin(a)*r*.59;line(cx,cy,hx,hy,'#6d4a2f',13);line(cx,cy,hx,hy,brass2,7);circle(cx,cy,13,brass2,ink,3);circle(hx,hy,11,'#562f28',ink,3);circle(hx,hy,5,'#ad6252');
+  if(T.bellFlash>ts){circle(cx,cy-r*.04,r*.15,'rgba(229,181,78,.26)')}
+  // bridge repeater on top of the main instrument. Its pointer is not the player's handle.
+  const bx=cx,by=cy-r*.31,br=r*.20;circle(bx,by,br,'#31484a',ink,2);circle(bx,by,br-5,'#fff0ce',ink,1);if(T.order!==null){const O=arcadeTelegraphNotch(T.order),oa=O.deg*Math.PI/180;line(bx,by,bx+Math.cos(oa)*br*.68,by-Math.sin(oa)*br*.68,red,3)}circle(bx,by,3,ink);pxText('BRIDGE',bx,by+br+11,ink,5,'center');
+  if(T.order!==null)pxText(arcadeTelegraphOrderText(T.order),cx,cy+r*.59,red,7,'center');else pxText('STAND BY',cx,cy+r*.59,green,7,'center')
+}
+function arcadeTelegraphDrawEngine(g,G,T,M,ts){
+  const ink='#17313a',metal='#6d7d78',dark='#31484a',green='#527768',cream='#e7dab2',brass='#c79c4e',red='#bb584d',x=M.engineX,y=M.engineY,w=M.engineW,h=M.engineH,shake=(Math.sin(ts*.025)*T.engineShake*1.5);
+  ctx.save();ctx.translate(0,shake);
+  // engine-room deck plates and frames
+  rect(x-w*.52,y-h*.44,w*1.04,h*.87,'#253a3f',ink,2);for(let k=0;k<5;k++)line(x-w*.50+k*w*.25,y-h*.42,x-w*.50+k*w*.25,y+h*.41,'rgba(255,247,222,.06)',2);
+  rect(x-w*.47,y+h*.28,w*.94,h*.12,'#53615d',ink,2);for(let xx=x-w*.43;xx<x+w*.44;xx+=18)line(xx,y+h*.29,xx+8,y+h*.39,'rgba(23,49,58,.42)',2);
+  // big three-cylinder old marine diesel: visible machinery rather than another pipe puzzle
+  const baseY=y+h*.20,cylW=w*.15,cylH=h*.28,start=x-w*.35;
+  for(let i=0;i<3;i++){const cx=start+i*w*.21;rect(cx-cylW*.5,baseY-cylH,cylW,cylH,green,ink,3);roundedRect(cx-cylW*.42,baseY-cylH-18,cylW*.84,20,5,cream,ink,2);rect(cx-cylW*.30,baseY-cylH-31,cylW*.60,13,brass,ink,2);const phase=T.shaftAngle+i*Math.PI*2/3,piston=(Math.sin(phase)*.5+.5);line(cx,baseY-cylH+8,cx,baseY-12,cream,6);circle(cx,baseY-15-piston*18,7,brass,ink,2)}
+  rect(start-cylW*.72,baseY,w*.62,h*.09,dark,ink,3);
+  // flywheel and propeller shaft
+  const fx=x+w*.30,fy=baseY-h*.015,fr=Math.min(w*.13,h*.18);circle(fx,fy,fr,'#495953',ink,4);circle(fx,fy,fr*.74,'#2f4548',brass,3);for(let i=0;i<6;i++){const a=T.shaftAngle+i*Math.PI/3;line(fx,fy,fx+Math.cos(a)*fr*.70,fy+Math.sin(a)*fr*.70,brass,4)}circle(fx,fy,7,brass,ink,2);line(fx+fr,fy,x+w*.53,fy,brass,9);line(fx+fr,fy,x+w*.53,fy,ink,2);
+  pxText(T.bridgeName,x-w*.43,y-h*.36,'#fff0ce',6,'left');pxText('MAIN ENGINE',x-w*.43,y-h*.31,'rgba(255,247,222,.56)',5,'left');
+  ctx.restore();
+  // Tachometer is a physical engine-room gauge.
+  const gx=x+w*.34,gy=y-h*.29,gr=Math.min(28,w*.075);circle(gx,gy,gr,'#e8dbb6',ink,2);for(let i=0;i<=8;i++){const a=Math.PI*.8+i/8*Math.PI*1.4;const x1=gx+Math.cos(a)*gr*.66,y1=gy+Math.sin(a)*gr*.66,x2=gx+Math.cos(a)*gr*.84,y2=gy+Math.sin(a)*gr*.84;line(x1,y1,x2,y2,ink,1)}const rpm=clamp(Math.abs(T.shaft),0,1),a=Math.PI*.8+rpm*Math.PI*1.4;line(gx,gy,gx+Math.cos(a)*gr*.68,gy+Math.sin(a)*gr*.68,red,2);circle(gx,gy,3,ink);pxText('RPM',gx,gy+gr+9,'#fff0ce',5,'center');
+  // Reversing gear linkage visibly changes side only after the shaft is checked.
+  const rx=x+w*.05,ry=y-h*.30;roundedRect(rx-48,ry-15,96,30,7,'#20363a',ink,2);pxText(T.reverser<0?'ASTERN':T.reverser>0?'AHEAD':'NEUTRAL',rx,ry+4,T.reverser===0?'#e5b54e':'#83bf6a',6,'center');pxText('REVERSING GEAR',rx,ry-22,'rgba(255,247,222,.55)',5,'center');
+  // Two honest condition gauges; informational, never extra controls.
+  const meter=(mx,my,label,val,badLow=false)=>{rect(mx,my,78,9,'#1f3438',ink,1);rect(mx+2,my+2,74*clamp(val,0,1),5,badLow&&val<.45?'#e5b54e':val>.72&&label==='STRAIN'?red:'#83bf6a');pxText(label,mx+39,my-6,'rgba(255,247,222,.58)',4.8,'center')};
+  meter(x-w*.43,y+h*.34,'OIL WARM',T.warm,true);meter(x-w*.12,y+h*.34,'STRAIN',T.stress,false);
+  // Stern wash / windmilling cue: movement direction is readable from the shaft and water strip, not a hidden number.
+  const wy=y+h*.48;rect(x-w*.50,wy,w,34,'#477b85',ink,2);const dir=Math.sign(T.shaft||.001),amp=clamp(Math.abs(T.shaft),0,1);for(let i=0;i<6;i++){const p=((ts*.00035*(.2+amp)*dir+i/6)%1+1)%1,xx=x-w*.46+p*w*.92;line(xx,wy+9+(i%2)*8,xx-dir*(8+amp*15),wy+9+(i%2)*8,'rgba(255,247,222,.46)',2)}pxText(T.shaft>.05?'PROP WASH AHEAD':T.shaft<-.05?'PROP WASH ASTERN':'PROP STILL',x,wy+26,'#fff0ce',5,'center')
+}
+function arcadeRenderTelegraph(g,ts,G,dt,running){
+  const T=g.tele;if(!T)return;arcadeTelegraphUpdate(g,ts,dt,running);const M=arcadeTelegraphGeom(G),ink='#17313a';
+  // full engine room scene
+  ctx.fillStyle='#182f34';ctx.fillRect(0,0,canvas.width,canvas.height);rect(G.left,G.top,G.w,G.h,'#31484a',ink,3);
+  // overhead beams, lamps and pipework establish scale without becoming controls
+  rect(G.left,G.top,G.w,G.h*.12,'#263b3f',ink,2);for(let x=G.left+18;x<G.right;x+=72)line(x,G.top,x+24,G.top+G.h*.12,'rgba(255,247,222,.08)',3);
+  line(G.left+8,G.y(.18),G.right-8,G.y(.18),'#80684b',7);line(G.left+8,G.y(.18),G.right-8,G.y(.18),'#c2a46a',2);for(let x=G.left+42;x<G.right-30;x+=130){line(x,G.top+3,x,G.y(.13),'#6e5b44',2);circle(x,G.y(.145),8,'#e5b54e',ink,2)}
+  // watertight door and crew silhouette on far edge for engine-room scale
+  const dx=G.right-G.w*.10,dy=G.y(.56);roundedRect(dx-G.w*.055,dy-G.h*.20,G.w*.11,G.h*.36,18,'#405a5d',ink,3);roundedRect(dx-G.w*.043,dy-G.h*.17,G.w*.086,G.h*.30,14,'#284247',ink,2);circle(dx+G.w*.025,dy-G.h*.02,7,'#c79c4e',ink,2);drawArcadeCrew(dx-G.w*.12,G.y(.79),'#d2b06a','#4c7890',1.20);
+  arcadeTelegraphDrawFace(g,G,T,M,ts);arcadeTelegraphDrawEngine(g,G,T,M,ts);
+  pxText(T.sc.label,G.left+12,G.y(.075),'#fff0ce',9,'left');pxText(`BELL ${Math.min(T.orderIndex+1,T.sc.orders.length)}/${T.sc.orders.length}`,G.right-12,G.y(.075),'#fff0ce',7,'right');
+  if(T.order!==null){const rem=clamp((T.orderDeadline-ts)/(T.sc.deadline*1000),0,1),bx=G.left+12,by=G.y(.105),bw=G.w*.22;rect(bx,by,bw,7,'rgba(255,247,222,.12)');rect(bx,by,bw*rem,7,rem<.22?'#bb584d':'#e5b54e')}
+}
+function arcadeTelegraphPointer(g,type,x,y,G=arcadeGeom()){
+  const T=g.tele;if(!T)return;const M=arcadeTelegraphGeom(G),dx=x-M.cx,dy=M.cy-y,dist=Math.hypot(dx,dy);if(type==='down'){if(dist<M.r*1.16){T.dragging=true;arcadeTelegraphPointer(g,'move',x,y,G)}}else if(type==='move'&&T.dragging){let deg=Math.atan2(dy,dx)*180/Math.PI;if(deg<0)deg+=360;let best=0,bd=999;for(const N of ARCADE_TELEGRAPH_NOTCHES){let d=Math.abs(deg-N.deg);d=Math.min(d,360-d);if(d<bd){bd=d;best=N.n}}arcadeTelegraphSetLever(g,best)}else if(type==='up')T.dragging=false
+}
+
+Object.assign(MINIGAME_META.cruise_deckchairs,{title:'ENGINE TELEGRAPH',icon:'⚙',group:'Engine Room',engine:'telegraph',theme:'engine',desc:'Stand a short-handed island motor ship’s engine-room watch. One brass telegraph handle answers the bridge, but the shaft has real momentum and the reversing gear will not save a careless engineer.',instruction:'DRAG THE BRASS HANDLE • ANSWER THE BELL • WATCH THE SHAFT • CHECK TO STOP BEFORE REVERSING'});
 Object.assign(MINIGAME_META.ferry_galley,{engine:'galley',desc:'Pour ferry tea on a live rolling counter. Each tap sends one short measure from the kettle; the mug slides with the ship, the stream bends with the roll, and a good cup needs timing rather than menus.',instruction:'TAP TO POUR A SHORT MEASURE • WATCH THE MUG SLIDE • FILL TO THE GREEN MARK • DON’T OVERFILL'});
 
 
 function setupArcadeRound(g,first=false){
   const r=g.round||1,d=arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
-  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='deckbalance')arcadeSetupDeckBalance(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='bagthrow')arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='trim')arcadeSetupTrim(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
+  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='timing')arcadeSetupTiming(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='deckbalance')arcadeSetupDeckBalance(g,r,d);else if(g.engine==='telegraph')arcadeSetupTelegraph(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='catch')arcadeSetupCatch(g,r,d);else if(g.engine==='bagthrow')arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='trim')arcadeSetupTrim(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='lanes')arcadeSetupLanes(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d)
 }
 
 arcadeScoreRecord=function(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec};
@@ -6519,10 +6680,10 @@ showArcadeIntro=function(g){arcadeHideHelper();const meta=MINIGAME_META[g.type]|
 arcadeTopBoardHTML=function(){const played=Object.keys(MINIGAME_META).map(id=>({id,best:arcadeBest(id),round:arcadeScoreRecord(id).bestRound||0})).filter(x=>x.best>0).sort((a,b)=>b.best-a.best).slice(0,5);return played.length?`<div class="arcade-board">${played.map((r,i)=>`<div class="arcade-rank"><i>${i+1}</i><b>${MINIGAME_META[r.id].title}<small> · ${r.id==='sub_depth'?`${r.round}m`:`R${r.round}`}</small></b><b>${r.best.toLocaleString()}</b></div>`).join('')}</div>`:`<div class="card"><p>No scores yet. Every encounter keeps its own best score and best run.</p></div>`};
 const ARCADE_LIBRARY_SECTIONS=[
   {name:'Seamanship & Shiphandling',ids:['ferry_lines','yacht_trim','yacht_tack','speedboat_slalom','tug_dock','tanker_channel','pilot_transfer']},
-  {name:'Cargo, Deck & Rigging',ids:['container_crane','container_stack','barge_balance','cargo_tetris','cruise_deckchairs','tallship_rigging']},
+  {name:'Cargo, Deck & Rigging',ids:['container_crane','container_stack','barge_balance','cargo_tetris','tallship_rigging']},
   {name:'Working Boats & Rescue',ids:['trawler_net','trawler_sort','rescue_throw','dredger_scoop']},
-  {name:'Navigation & Specialist',ids:['naval_radar','research_sonar','sub_depth','carrier_landing','steam_route']},
-  {name:'Passenger & Deck Life',ids:['ferry_galley','ferry_bags','cruise_buffet','cruise_deckchairs','poop_deck']}
+  {name:'Navigation, Machinery & Specialist',ids:['naval_radar','research_sonar','sub_depth','carrier_landing','steam_route','cruise_deckchairs']},
+  {name:'Passenger & Deck Life',ids:['ferry_galley','ferry_bags','cruise_buffet','poop_deck']}
 ];
 arcadeLibraryHTML=function(){
   const known=new Set(),sections=[];
@@ -8039,8 +8200,8 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 }
 
 renderArcadeGame=function(g,ts){
-  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='deckbalance')arcadeRenderDeckBalance(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='trim')arcadeRenderTrim(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='trim'&&g.engine!=='bargebalance'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
+  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow','telegraph'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='timing')arcadeRenderTiming(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='deckbalance')arcadeRenderDeckBalance(g,ts,G,dt,running);else if(g.engine==='telegraph')arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='catch')arcadeRenderCatch(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='trim')arcadeRenderTrim(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='lanes')arcadeRenderLanes(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='trim'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
 };
 
 function arcadeTimingInput(g){
@@ -8091,6 +8252,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='timing'&&type==='down'&&performance.now()>g.cool)arcadeTimingInput(g);
   else if(e==='balance'&&(type==='down'||type==='move'))g.control=nx;
   else if(e==='galley')arcadeGalleyPointer(g,type,x,y,G)
+  else if(e==='telegraph')arcadeTelegraphPointer(g,type,x,y,G)
   else if(e==='deckbalance'){const B=g.deckbal;if(type==='down'){B.touching=true;B.finger=nx;B.fingerTarget=clamp(nx,.20,.80)}else if(type==='move'&&B.touching){B.finger=nx;B.fingerTarget=clamp(nx,.20,.80)}else if(type==='up'){if(B.touching){B.braces=(B.braces||0)+1;B.lastBraceAt=performance.now()}B.touching=false;B.finger=.5;B.fingerTarget=.5}}
   else if(e==='bargebalance'){const B=g.barge;if(type==='down'){B.dragging=true;B.trolleyTarget=clamp((nx-.5)/.34,-1,1)}else if(type==='move'&&B.dragging)B.trolleyTarget=clamp((nx-.5)/.34,-1,1);else if(type==='up')B.dragging=false}
   else if(e==='catch'&&(type==='down'||type==='move'))g.basket=clamp(nx,.08,.92);
@@ -8141,7 +8303,7 @@ arcadePointer=function(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='landing'&&(type==='down'||type==='move')){const dx=clamp(nx-.5,-.35,.35),dy=clamp(.52-ny,-.32,.32);g.plane.steer=clamp(dx*3.1,-1,1);g.plane.power=clamp(dy*3.0,-1,1);g.dragging=true}else if(e==='landing'&&type==='up'){g.plane.steer=0;g.plane.power=0;g.dragging=false;}
   else if(e==='poop'&&(type==='down'||type==='move'))g.inputX=clamp(nx,.14,.86)
 };
-arcadeKey=function(g,e){if(!g.started){if(e.key===' '||e.key==='Enter')beginArcadeRound();return}const left=['ArrowLeft','a','A'].includes(e.key),right=['ArrowRight','d','D'].includes(e.key);if(left||right){const dir=left?-1:1;if(g.engine==='steer'){if(g.theme==='tanker'){const V=g.tanker.active?g.tanker.other:g.tanker;V.rudderTarget=dir}else g.inputX=clamp(g.inputX+dir*.07,.05,.95);}if(g.engine==='catch')g.basket=clamp(g.basket+dir*.07,.08,.92);if(g.engine==='balance')g.control=clamp(g.control+dir*.06,0,1);if(g.engine==='deckbalance'&&g.deckbal){g.deckbal.touching=true;g.deckbal.fingerTarget=clamp(.5+dir*.18,.20,.80)}if(g.engine==='bargebalance'&&g.barge)g.barge.trolleyTarget=clamp(g.barge.trolleyTarget+dir*.14,-1,1);if(g.engine==='crane'&&!g.release){g.crane.trolley=clamp((g.crane.trolley??.47)+dir*.018,.29,.72);g.crane.omega-=dir*.045;g.crane.control=0}if(g.engine==='poop')g.inputX=clamp(g.inputX+dir*.08,.14,.86);if(g.engine==='trim'&&g.trim)g.trim.sheet=clamp(g.trim.sheet+dir*.055,.045,.965);if(g.engine==='depth')g.targetY=clamp(g.targetY+dir*.05,.08,.92);if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+dir*.05,.08,.92)}if((e.key===' '||e.key==='Enter')&&g.engine==='lines')arcadeApplyControl('linesHeave',true);if((e.key===' '||e.key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')arcadeApplyControl('tankerSwitch',true);if((e.key===' '||e.key==='Enter')&&g.engine==='deckbalance'&&g.deckbal){g.deckbal.touching=false;g.deckbal.finger=.5;g.deckbal.fingerTarget=.5;g.deckbal.handTarget=0;g.deckbal.lastBraceAt=performance.now()}if((e.key===' '||e.key==='Enter')&&['timing','crane','stack'].includes(g.engine))arcadePointer(g,'down',canvas.width/2,canvas.height/2)};
+arcadeKey=function(g,e){if(!g.started){if(e.key===' '||e.key==='Enter')beginArcadeRound();return}const left=['ArrowLeft','a','A'].includes(e.key),right=['ArrowRight','d','D'].includes(e.key);if(left||right){const dir=left?-1:1;if(g.engine==='steer'){if(g.theme==='tanker'){const V=g.tanker.active?g.tanker.other:g.tanker;V.rudderTarget=dir}else g.inputX=clamp(g.inputX+dir*.07,.05,.95);}if(g.engine==='catch')g.basket=clamp(g.basket+dir*.07,.08,.92);if(g.engine==='balance')g.control=clamp(g.control+dir*.06,0,1);if(g.engine==='telegraph'&&g.tele)arcadeTelegraphSetLever(g,g.tele.lever+dir,'key');if(g.engine==='deckbalance'&&g.deckbal){g.deckbal.touching=true;g.deckbal.fingerTarget=clamp(.5+dir*.18,.20,.80)}if(g.engine==='bargebalance'&&g.barge)g.barge.trolleyTarget=clamp(g.barge.trolleyTarget+dir*.14,-1,1);if(g.engine==='crane'&&!g.release){g.crane.trolley=clamp((g.crane.trolley??.47)+dir*.018,.29,.72);g.crane.omega-=dir*.045;g.crane.control=0}if(g.engine==='poop')g.inputX=clamp(g.inputX+dir*.08,.14,.86);if(g.engine==='trim'&&g.trim)g.trim.sheet=clamp(g.trim.sheet+dir*.055,.045,.965);if(g.engine==='depth')g.targetY=clamp(g.targetY+dir*.05,.08,.92);if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+dir*.05,.08,.92)}if((e.key===' '||e.key==='Enter')&&g.engine==='lines')arcadeApplyControl('linesHeave',true);if((e.key===' '||e.key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')arcadeApplyControl('tankerSwitch',true);if((e.key===' '||e.key==='Enter')&&g.engine==='deckbalance'&&g.deckbal){g.deckbal.touching=false;g.deckbal.finger=.5;g.deckbal.fingerTarget=.5;g.deckbal.handTarget=0;g.deckbal.lastBraceAt=performance.now()}if((e.key===' '||e.key==='Enter')&&['timing','crane','stack'].includes(g.engine))arcadePointer(g,'down',canvas.width/2,canvas.height/2)};
 renderMinigame=function(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'};
 
 // Plug-ins retain the content metadata but use the v0.26 progression handlers.
@@ -8151,7 +8313,7 @@ for(const [id,meta] of Object.entries(MINIGAME_META)){MINIGAME_PLUGINS[id]={...m
 // Arcade shell: responsive HUD, pausing, safe exit confirmation and optional alternate controls.
 let arcadeControlRepeat=null;
 function arcadeShellRoot(){return document.querySelector('.app')}
-function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt'])}
+function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool'])}
 function arcadeShiftPauseTimes(value,delta,seen=new Set()){
   if(!value||typeof value!=='object'||seen.has(value))return;seen.add(value);const keys=arcadePauseTimeKeys();
   for(const [k,v] of Object.entries(value)){if(typeof v==='number'&&Number.isFinite(v)&&v>0&&keys.has(k))value[k]=v+delta;else if(v&&typeof v==='object')arcadeShiftPauseTimes(v,delta,seen)}
@@ -8175,6 +8337,7 @@ function arcadeControlSpec(g){
   if(e==='steer'&&g.theme==='tanker')return[{a:'tankerPort',l:'PORT',k:'A / ←',hold:true},{a:'tankerSwitch',l:'SWITCH SHIP',k:'SPACE',primary:true},{a:'tankerStarboard',l:'STARBOARD',k:'D / →',hold:true}];
   if(e==='trim')return[{a:'left',l:'← TRIM IN',k:'A / ←'},{a:'right',l:'EASE →',k:'D / →'}];
   if(e==='bargebalance')return[{a:'left',l:'← BALLAST',k:'A / ←',hold:true},{a:'right',l:'BALLAST →',k:'D / →',hold:true}];
+  if(e==='telegraph')return[{a:'left',l:'← ASTERN',k:'A / ←'},{a:'right',l:'AHEAD →',k:'D / →'}];
   if(e==='deckbalance')return[{a:'action',l:'HOLD TO MOVE',k:'HOLD SPACE',primary:true,hold:true}];
   if(e==='galley')return[{a:'action',l:'POUR',k:'SPACE / TAP',primary:true}];
   if(e==='bagthrow')return[{a:'action',l:'HOLD / THROW',k:'HOLD SPACE',primary:true,hold:true}];
@@ -8199,6 +8362,7 @@ function arcadeControlSpec(g){
 function arcadeApplyControl(action,pressed=true){
   const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(action==='action'&&pressed){beginArcadeRound();return true}return false}
   const step=.075;
+  if(g.engine==='telegraph'&&g.tele){if((action==='left'||action==='right')&&pressed){arcadeTelegraphSetLever(g,g.tele.lever+(action==='right'?1:-1),'button');return true}}
   if(g.engine==='deckbalance'&&g.deckbal){const B=g.deckbal;if(action==='action'){B.touching=!!pressed;B.fingerTarget=.5;if(!pressed){B.braces=(B.braces||0)+1;B.lastBraceAt=performance.now()}return true}if(action==='left'||action==='right'||action==='brace'){B.touching=false;B.lastBraceAt=performance.now();return true}}
   if(g.engine==='galley'&&action==='action'){if(pressed)arcadeGalleyPour(g,performance.now());return true}
   if(g.engine==='bagthrow'&&action==='action')return arcadeBagThrowCharge(g,!!pressed,performance.now());
@@ -8298,7 +8462,7 @@ seaSprite=function(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteBa
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.32.4',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
+  version:'0.32.5',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
