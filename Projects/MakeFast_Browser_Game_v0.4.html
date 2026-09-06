@@ -255,7 +255,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=28;
-const VERSION_LABEL='0.33.0';
+const VERSION_LABEL='0.33.1';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -5131,7 +5131,7 @@ function arcadeSpeedSetup(g,r,d){
   ];
   g.racers=Array.from({length:rivals},(_,i)=>{
     const q=grid[i%grid.length],skill=clamp(lerp(.70,.96,tier)+arcadeRand(g,-.055,.055),.64,.985);
-    const pace=lerp(.948,1.012,tier)+arcadeRand(g,-.018,.018);
+    const pace=lerp(.970,1.018,tier)+arcadeRand(g,-.016,.016);
     return{
       id:i,x:clamp(q.x+arcadeRand(g,-.018,.018),.10,.90),vx:0,
       progress:q.p+arcadeRand(g,-.010,.010),
@@ -5214,17 +5214,17 @@ function arcadeSpeedUpdateAI(g,r,sec,dt,ts){
   const desired=clamp(course+avoid+weave+pass,.065,.935),recover=ts<r.bump?.44:1,steerGain=(1.05+r.skill*.78)*recover;
   r.vx+=(desired-r.x)*steerGain*sec;r.vx*=Math.pow(.934,dt/16.7);r.x=clamp(r.x+r.vx*sec,.055,.945);
 
-  // AI gets the same mechanic, but lower-skill rivals miss more gates and get a slightly smaller boost.
+  // CPU boats earn a near-player-strength boost from clean gates. Difficulty comes from how reliably they line up, not from secretly weaker boosts.
   for(const gate of g.raceGates){
     if(r.gateHits.has(gate.index)||r.progress<gate.progress)continue;r.gateHits.add(gate.index);
     const clean=Math.abs(r.x-gate.x)<gate.w*.5-.022;
-    if(clean)r.boost=Math.max(r.boost,.215+.070*r.skill);else r.slow=Math.max(r.slow,.040)
+    if(clean)r.boost=Math.max(r.boost,.340+.040*r.skill);else r.slow=Math.max(r.slow,.040)
   }
   if(ts>r.obstacleCool)for(const o of g.raceObstacles){if(Math.abs(o.progress-r.progress)<.037&&Math.abs(o.x-r.x)<o.r+.036){r.obstacleCool=ts+650;r.slow=Math.max(r.slow,.20);r.vx+=(r.x<o.x?-1:1)*.070;break}}
 
   r.boost=Math.max(0,r.boost-sec*.105);r.slow=Math.max(0,r.slow-sec*.105);
   const steerLoss=Math.min(.032,Math.abs(r.vx)*.085),gap=r.progress-g.raceProgress;
-  const catchup=gap<-.36?(.020+.010*(1-r.skill)):0,leaderBrake=gap>.24?(.028-.008*r.skill):0;
+  const catchup=gap<-.18?(.008+.020*clamp((-gap-.18)/.38,0,1)+.004*(1-r.skill)):0,leaderBrake=gap>.34?(.016-.004*r.skill):0;
   const target=r.speed*(1+r.boost-r.slow+catchup-leaderBrake)-steerLoss;
   r.speedNow+=(target-r.speedNow)*Math.min(1,sec*(1.75+r.skill*.65));r.progress+=Math.max(.075,r.speedNow)*sec
 }
@@ -6531,7 +6531,7 @@ function arcadeRenderSteer(g,ts,G,dt,running){
   const finishY=arcadeSpeedScreenY(g,g.raceFinish);if(finishY>-.08&&finishY<1.05){const y=G.y(finishY),sq=10;for(let i=0;i<Math.ceil(G.w/sq);i++)rect(G.left+i*sq,y-4,sq,8,i%2?'#17313a':'#fff7de');pxText('FINISH',G.cx,y-12,'#fff7de',8,'center')}
 
   // Rival wakes widen and brighten with speed; drafting sits in the calm centre line.
-  for(const r of g.racers){const sy=arcadeSpeedScreenY(g,r.progress);if(sy<-.12||sy>1.10)continue;const x=G.x(r.x),y=G.y(sy),wake=G.h*(.095+.05*clamp((r.speedNow-g.raceSpeed*.85)/Math.max(.01,g.raceSpeed*.5),0,1));line(x-5,y+24,x-24,y+wake,'rgba(255,255,255,.34)',2);line(x+5,y+24,x+24,y+wake,'rgba(255,255,255,.34)',2);line(x,y+25,x,y+wake*.78,'rgba(185,235,236,.14)',1)}
+  for(const r of g.racers){const sy=arcadeSpeedScreenY(g,r.progress);if(sy<-.12||sy>1.10)continue;const x=G.x(r.x),y=G.y(sy),boosting=r.boost>.04,wake=G.h*(.095+.05*clamp((r.speedNow-g.raceSpeed*.85)/Math.max(.01,g.raceSpeed*.5),0,1)+(boosting?.035:0));line(x-5,y+24,x-24,y+wake,boosting?'rgba(255,232,154,.58)':'rgba(255,255,255,.34)',boosting?3:2);line(x+5,y+24,x+24,y+wake,boosting?'rgba(255,232,154,.58)':'rgba(255,255,255,.34)',boosting?3:2);line(x,y+25,x,y+wake*.78,boosting?'rgba(255,240,180,.25)':'rgba(185,235,236,.14)',1)}
   for(const p of g.raceSpray||[]){const sy=arcadeSpeedScreenY(g,p.progress);if(sy<-.08||sy>1.05)continue;const a=clamp(1-p.age/p.life,0,1);circle(G.x(p.x),G.y(sy),p.size*(.6+a),`rgba(255,247,222,${(.12+.54*a).toFixed(2)})`)}
 
   for(const r of g.racers){const sy=arcadeSpeedScreenY(g,r.progress);if(sy<-.12||sy>1.10)continue;const depthScale=clamp(.70+(sy+.10)*.42,.70,1.14),lean=clamp(r.vx*1.7,-.16,.16);arcadeSpeedBoat(G.x(r.x),G.y(sy),depthScale,r.col,lean,false,r.boatType||0)}
@@ -7803,7 +7803,7 @@ function seaSprite(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteCo
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.33.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
+  version:'0.33.1',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
