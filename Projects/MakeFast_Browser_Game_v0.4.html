@@ -255,7 +255,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=28;
-const VERSION_LABEL='0.33.1';
+const VERSION_LABEL='0.33.2';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -3083,7 +3083,7 @@ const ARCADE_PIECES=[
 function arcadeDifficulty(g){return Math.min(3.1,1+Math.max(0,(g.round||1)-1)*.115)}
 function arcadeRoundText(g){return g.engine==='depth'&&g.continuous?'SILENT RUN':g.engine==='tug'?`JOB ${g.round||1}`:`ROUND ${g.round||1}`}
 function arcadeLives(g){return Math.max(0,(g.maxStrikes||ARCADE_MAX_STRIKES)-(g.strikes||0))}
-function arcadeGoalRatio(g){return g.engine==='depth'&&g.continuous?clamp(((g.depthMeters||0)%120)/120,0,1):clamp((g.roundProgress||0)/Math.max(1,g.roundGoal||1),0,1)}
+function arcadeGoalRatio(g){if(g.type==='speedboat_slalom'&&Number.isFinite(g.raceProgress)&&Number.isFinite(g.raceFinish)){const start=Number.isFinite(g.raceStartProgress)?g.raceStartProgress:0;return clamp((g.raceProgress-start)/Math.max(.001,g.raceFinish-start),0,1)}return g.engine==='depth'&&g.continuous?clamp(((g.depthMeters||0)%120)/120,0,1):clamp((g.roundProgress||0)/Math.max(1,g.roundGoal||1),0,1)}
 function arcadeRand(g,a=0,b=1){return a+(g.rr?.()??Math.random())*(b-a)}
 function arcadeChoice(g,list){return list[Math.floor(arcadeRand(g,0,list.length))%list.length]}
 function arcadeSetFeedback(g,text,tone='good',ms=820){g.feedback={text,tone,until:performance.now()+ms}}
@@ -5113,7 +5113,7 @@ function arcadeSpeedMakeScenery(g,i,count){
 }
 function arcadeSpeedSetup(g,r,d){
   arcadeResetCommon(g,1);
-  g.x=.5;g.vx=0;g.inputX=.5;g.courseSeed=arcadeRand(g,0,99);g.raceProgress=.03;g.raceFinish=arcadeSpeedRaceLength(g);
+  g.x=.5;g.vx=0;g.inputX=.5;g.courseSeed=arcadeRand(g,0,99);g.raceStartProgress=.03;g.raceProgress=g.raceStartProgress;g.raceFinish=arcadeSpeedRaceLength(g);
   g.raceSpeed=.198+Math.min(.086,(r-1)*.0075);g.raceSpeedNow=g.raceSpeed;g.raceBoost=0;g.raceDraft=0;g.raceSlow=0;
   g.raceBumpCool=0;g.raceWakeCool=0;g.raceObstacleCool=0;g.raceGullCool=0;g.raceFinishAt=0;g.racePlace=0;g.raceSpray=[];
   const gateCount=Math.min(22,12+Math.floor((r-1)*1.5));
@@ -7803,7 +7803,7 @@ function seaSprite(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteCo
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.33.1',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
+  version:'0.33.2',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
