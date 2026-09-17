@@ -259,7 +259,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=29;
-const VERSION_LABEL='0.34.0';
+const VERSION_LABEL='0.35.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -669,7 +669,7 @@ const BUILD_SITES=CONTENT.buildSites;
 const PROJECT_TEMPLATES=CONTENT.projects;
 
 // v0.34 modular arcade addition: Pufferfish Pinball lives in the registry like every other minigame.
-CONTENT.minigames.puffer_pinball={title:'PUFFERFISH PINBALL',icon:'◉',group:'Boat Deck Arcade',engine:'pinball',desc:'Turn the working deck into a physical pinball table. A rescued pufferfish ricochets between deck fittings while stern and side door-flaps act as flippers, lanes build multipliers, AIR changes the puffer’s size and a lit cargo track releases multiball.',instruction:'LEFT / RIGHT WORK THE SIDE FLAPS • HOLD SPACE TO CHARGE THE STERN LAUNCH FLAP • HIT AIR TO PUFF UP • COMPLETE THE THREE GOLD TRACKS FOR MULTIBALL • KEEP EVERY PUFFER ABOARD',duration:0,rewardThreshold:900,benchmark:3200,theme:'deck',wiki:{lore:'Deckhands swear the little puffer enjoys this more than anyone. The after-deck has been chalked into lanes, hatch coamings become bumpers, and the hinged boarding flaps are worked like enormous pinball bats.',fasting:'A pure attention-break minigame during a voyage. It does not change fasting time, calories, targets or health data; it only adds optional play and voyage rewards.',concept:'A continuous physics pinball table with variable ball radius, lane multipliers, combo scoring and earned multiball.'}};
+CONTENT.minigames.puffer_pinball={title:'PUFFERFISH PINBALL',icon:'🐡',group:'Boat Deck Arcade',engine:'pinball',desc:'A hand-built pinball boat: launch your puffer up a protected chute, flip the two stern doors, rescue outlanes with port and starboard hatches, light the three beacons, complete cargo banks for locks and multiball, then chase current jackpots. Puffing changes ball size, handling and bumper value.',instruction:'HOLD SPACE / LAUNCH, THEN RELEASE TO FIRE UP THE SEPARATE SHOOTER CHUTE. A / ← = PORT STERN + SIDE FLAPS; D / → = STARBOARD FLAPS. S / ↓ = LIMITED NUDGE. HIT 3 BEACONS FOR × MULTIPLIERS; HIT 4 CARGO TARGETS TWICE FOR THREE-PUFFER MULTIBALL; SHOOT BOTH CURRENTS FOR JACKPOTS. AIR BUOY PUFFS UP FOR 7s. 3 BALLS, TIMED BALL SAVES.',duration:0,rewardThreshold:900,benchmark:9000,theme:'deck',wiki:{lore:'A wayward puffer has become the archipelago’s favourite shipboard arcade mascot. The bosun built a timber-and-copper playfield with an enclosed starboard launch chute, separate stern boarding flaps, swinging side doors, beacon lamps, cargo lockers and buoy-powered bumpers.',fasting:'An optional focus break while the voyage timer continues normally. Pinball points, bonuses and game-over conditions do not change fasting hours, eating windows or health data.',concept:'120 Hz fixed-step pinball physics. A protected one-way shooter gate sends the ball onto the deck, with non-overlapping hinged stern flippers, side-door saves, material collisions, bumpers, slingshots, real outlanes, skill shots and adjustable shot aim through flipper timing. Three beacons raise the score/ball-bonus multipliers; four cargo targets fill one lock, and two locks unleash three-ball multiball. Alternating port/starboard currents earn extra saves or multiball jackpots and a super jackpot. An AIR buoy inflates the fish for seven seconds: larger hitbox and double pop-bumper base points but stronger drag. Seven quick bumper hits start double-score Squall mode. A nudge rescues a bad trajectory, but overusing it tilts the machine and disables flippers temporarily.'}};
 
 const MINIGAME_META=CONTENT.minigames;
 const VOYAGE_EVENT_TYPES=CONTENT.voyageEvents;
@@ -6132,7 +6132,7 @@ function setupArcadeRound(g,first=false){
 
 function arcadeScoreRecord(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec}
 function recordArcadeScore(id,score,run=null){const rec=arcadeScoreRecord(id),old=rec.best||0,oldRound=rec.bestRound||0,runMark=id==='sub_depth'?Math.max(0,Math.round(run?.depthMeters||0)):run?.bestRound||run?.round||1;rec.plays=(rec.plays||0)+1;rec.last=score;rec.best=Math.max(old,score);rec.bestRound=Math.max(oldRound,runMark);rec.bestStreak=Math.max(rec.bestStreak||0,run?.bestStreak||0);rec.recent=[{score,round:runMark,at:gameNow()},...(rec.recent||[])].slice(0,8);state.arcade.totalPlays=(state.arcade.totalPlays||0)+1;return{best:rec.best,bestRound:rec.bestRound,newBest:score>old&&score>0,newRound:runMark>oldRound}}
-function showArcadeIntro(g){arcadeHideHelper();const meta=MINIGAME_META[g.type]||g.meta,rec=arcadeScoreRecord(g.type),el=$('#arcadeIntro');$('#arcadeIntroKicker').textContent=(meta.group||'ARCADE ENCOUNTER').toUpperCase();$('#arcadeIntroTitle').textContent=meta.title;$('#arcadeIntroDesc').textContent=meta.desc;$('#arcadeIntroHow').textContent=meta.instruction;$('#arcadeIntroBest').textContent=`PERSONAL BEST ${rec.best?rec.best.toLocaleString():'—'} · BEST ${g.type==='sub_depth'?`${rec.bestRound||'—'}m`:`ROUND ${rec.bestRound||'—'}`} · ${rec.plays||0} PLAY${rec.plays===1?'':'S'}`;el.classList.add('show')}
+function showArcadeIntro(g){arcadeHideHelper();const meta=MINIGAME_META[g.type]||g.meta,rec=arcadeScoreRecord(g.type),el=$('#arcadeIntro');$('#arcadeIntroKicker').textContent=(meta.group||'ARCADE ENCOUNTER').toUpperCase();$('#arcadeIntroTitle').textContent=meta.title;$('#arcadeIntroDesc').textContent=meta.desc;$('#arcadeIntroHow').textContent=meta.instruction;$('#arcadeIntroBest').textContent=`PERSONAL BEST ${rec.best?rec.best.toLocaleString():'—'} · BEST ${g.engine==='pinball'?`MULTIPLIER ×${rec.bestRound||1}`:g.type==='sub_depth'?`${rec.bestRound||'—'}m`:`ROUND ${rec.bestRound||'—'}`} · ${rec.plays||0} PLAY${rec.plays===1?'':'S'}`;el.classList.add('show')}
 const ARCADE_LIBRARY_SECTIONS=[
   {name:'Seamanship & Shiphandling',ids:['ferry_lines','yacht_trim','speedboat_slalom','tug_dock','tanker_channel','pilot_transfer']},
   {name:'Cargo, Deck & Rigging',ids:['container_crane','container_stack','barge_balance','cargo_tetris','tallship_rigging']},
@@ -6154,7 +6154,7 @@ function beginArcadeRound(){if(!minigame||minigame.started)return;const t=perfor
   renderArcadeControls();
 }
 function startMinigame(type,seconds=null,opts={}){
-  if(!state.voyage)return;let plugin=MINIGAME_PLUGINS[type]||MINIGAME_PLUGINS[randomArcadeGameId()];type=Object.entries(MINIGAME_PLUGINS).find(([,p])=>p===plugin)?.[0]||type;state.totalMinigames++;state.voyage.minigamesPlayed++;save();const common={type,duration:Infinity,started:0,lastTick:performance.now(),score:0,done:false,title:plugin.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null};minigame=plugin.create(common);state.activeView='voyage';if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=true;syncMobilePanel()}$('#infoPanel').classList.add('arcade-mode');$('#gameHud').classList.add('show');$('#gameHudTitle').textContent=minigame.title;$('#gameHudObjective').textContent=plugin.instruction;$('#gameHudText').textContent=type==='sub_depth'?`DEPTH 0m · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:`ROUND 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`;$('#gameHudBar').style.width='0%';$('#arcadeStart').onclick=beginArcadeRound;fitResponsiveStage();renderUI();adaptiveMusicSync(true);showArcadeIntro(minigame);arcadeShellActivate();$('#gameHudPause').onclick=()=>arcadePauseMenu('pause');$('#gameHudLeave').onclick=()=>arcadePauseMenu('exit');$('#arcadeBack').onclick=()=>arcadePauseMenu('exit')
+  if(!state.voyage)return;let plugin=MINIGAME_PLUGINS[type]||MINIGAME_PLUGINS[randomArcadeGameId()];type=Object.entries(MINIGAME_PLUGINS).find(([,p])=>p===plugin)?.[0]||type;state.totalMinigames++;state.voyage.minigamesPlayed++;save();const common={type,duration:Infinity,started:0,lastTick:performance.now(),score:0,done:false,title:plugin.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null};minigame=plugin.create(common);state.activeView='voyage';if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=true;syncMobilePanel()}$('#infoPanel').classList.add('arcade-mode');$('#gameHud').classList.add('show');$('#gameHudTitle').textContent=minigame.title;$('#gameHudObjective').textContent=plugin.instruction;$('#gameHudText').textContent=type==='puffer_pinball'?`BALL 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:type==='sub_depth'?`DEPTH 0m · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:`ROUND 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`;$('#gameHudBar').style.width='0%';$('#arcadeStart').onclick=beginArcadeRound;fitResponsiveStage();renderUI();adaptiveMusicSync(true);showArcadeIntro(minigame);arcadeShellActivate();$('#gameHudPause').onclick=()=>arcadePauseMenu('pause');$('#gameHudLeave').onclick=()=>arcadePauseMenu('exit');$('#arcadeBack').onclick=()=>arcadePauseMenu('exit')
 }
 function endMinigame(reason='done'){
   if(!minigame)return;arcadeHideHelper();const g=minigame,score=Math.max(0,Math.round(g.score)),record=reason==='leave'?null:recordArcadeScore(g.type,score,g);if(reason!=='leave'&&g.eventId&&state.voyage)resolveEncounterEvent(g.eventId,score);if(reason!=='leave'&&g.rewardQualified&&state.voyage&&state.voyage.discoveries.length<5){const desired=g.rewardKind||null,chance=g.eventId?1:Math.min(.72,.42+boatFindChanceBonus());if(Math.random()<chance)addDiscovery(desired)}minigame=null;adaptiveMusicSync(true);$('#infoPanel').classList.remove('arcade-mode');$('#gameHud').classList.remove('show');$('#arcadeIntro').classList.remove('show');fitResponsiveStage();save();renderUI();if(!minigame)arcadeShellDeactivate();if(reason==='leave'){toast('Back on course.');return}const meta=MINIGAME_META[g.type],rank=arcadeLeaderboard(g.type).findIndex(r=>r.you)+1,kicker=record?.newBest?'NEW PERSONAL BEST':record?.newRound?(g.type==='sub_depth'?'NEW BEST DEPTH':'NEW BEST ROUND'):'RUN COMPLETE',runLine=g.type==='sub_depth'?`<b>Deepest point ${Math.round(g.depthMeters||0)}m</b>`:`<b>Round ${g.bestRound||g.round||1}</b>`;showModal(`<h2>${meta.icon} ${meta.title}</h2><div class="arcade-kicker">${kicker}</div><div class="arcade-result-score">${score.toLocaleString()}</div><div class="notice">${runLine} · Best ${record.best.toLocaleString()}${rank>0?` · Harbour board #${rank}`:''}<br>${g.bestStreak>1?`Best streak ×${g.bestStreak}. `:''}${g.mistakes?`${g.mistakes} mistake${g.mistakes===1?'':'s'}.`:''}</div><div class="divider"></div><div class="section-title">Harbour board</div>${arcadeLeaderboardHTML(g.type)}<div class="modal-actions"><button class="big-btn secondary" id="arcadeReplay">PLAY AGAIN</button><button class="big-btn ghost" id="arcadeReturn">BACK TO VOYAGE</button></div>`,false);$('#arcadeReplay').onclick=()=>{closeModal();startMinigame(g.type)};$('#arcadeReturn').onclick=closeModal
@@ -7577,43 +7577,598 @@ function arcadeRenderPoop(g,ts,G,dt,running){
 }
 
 
-// Pufferfish Pinball: isolated real-time physics engine. It only touches g.pinball and shared arcade score/life helpers.
+// -----------------------------------------------------------------------------
+// PUFFERFISH PINBALL / isolated v0.35 machine
+// Physical coordinates: 560 x 960 world units, fixed 120 Hz integration.
+// Only this engine's g.pinball is mutable; no saved-game schema is changed.
+// -----------------------------------------------------------------------------
+const PB={W:560,H:960,GRAVITY:530,STEP:1/120,INK:'#17313a',WOOD:'#ae7648',GOLD:'#e5b54e',PAPER:'#fff7de'};
+const PB_SPRITES=new Map();
+let PB_DECK_SPRITE=null;
+function pbNewBall(P,shooter=false,x=280,y=220,vx=0,vy=0){
+  const b={id:P.nextId++,x:shooter?487:x,y:shooter?813:y,vx,vy,r:11,puffed:false,puffUntil:0,shooter,ready:shooter,alive:true,last:{},trail:[],lastFlip:0,stuck:0,oldX:x,oldY:y};
+  P.balls.push(b);return b
+}
 function arcadeSetupPinball(g,r,d){
-  arcadeResetCommon(g,3);const now=performance.now();g.pinball={left:false,right:false,plunger:false,charge:0,multiplier:1,track:[false,false,false],multiball:false,bonus:0,lastHit:0,balls:[],bumpers:[{x:.36,y:.34,r:.052,v:120},{x:.64,y:.34,r:.052,v:120},{x:.50,y:.49,r:.058,v:160},{x:.29,y:.57,r:.037,v:90},{x:.71,y:.57,r:.037,v:90}],posts:[{x:.22,y:.72,r:.025},{x:.78,y:.72,r:.025}],laneX:[.31,.50,.69],nextId:1,tableTilt:0};arcadePinballServe(g,true,now)
+  arcadeResetCommon(g,3);
+  g.pinball={balls:[],nextId:1,left:false,right:false,plunger:false,charge:0,flips:{left:{x:166,y:822,a:-.12,w:0},right:{x:394,y:822,a:Math.PI+.12,w:0}},
+    lamps:[false,false,false],cargo:[false,false,false,false],orbit:[false,false],multiplier:1,locks:0,multiball:false,jackpot:[false,false],jackpotLit:false,superJackpot:0,
+    extraSaves:0,saveUntil:0,stormUntil:0,tiltUntil:0,nudges:[],nudgeCooldown:0,ballStart:0,launches:0,
+    pendingServeAt:0,ballBonus:0,bonusMultiplier:1,bonusBank:0,comboHits:0,comboUntil:0,lastSound:0,
+    fx:[],message:'HOLD SPACE • RELEASE TO LAUNCH',messageUntil:Infinity,service:'READY',elapsed:0,accumulator:0,activeTicks:0,lastPhysicsTick:0,
+    bumper:[{x:199,y:310,r:27,id:'port',color:'red'},{x:341,y:310,r:27,id:'starboard',color:'gold'},{x:270,y:411,r:31,id:'centre',color:'sea'}],
+    targets:[{x:106,y:398,id:0},{x:129,y:486,id:1},{x:431,y:398,id:2},{x:411,y:486,id:3}],
+    posts:[{x:76,y:666,r:13},{x:444,y:666,r:13},{x:139,y:744,r:12},{x:421,y:744,r:12}],
+    rollovers:[158,280,401],armedAt:0};
+  arcadePinballServe(g,true)
 }
-function arcadePinballServe(g,quiet=false,ts=performance.now()){const P=g.pinball;if(!P)return;P.balls=[{id:P.nextId++,x:.80,y:.82,vx:0,vy:0,r:.018,puffed:false,served:true,alive:true,lastBumper:0}];P.charge=0;if(!quiet)arcadeSetFeedback(g,'PUFFER BACK AT THE STERN FLAP','neutral',620)}
-function arcadePinballAddBall(g,x=.5,y=.28,vx=0,vy=.18){const P=g.pinball;P.balls.push({id:P.nextId++,x,y,vx,vy,r:.018,puffed:false,served:false,alive:true,lastBumper:0})}
-function arcadePinballSegmentHit(ball,x1,y1,x2,y2,r,impulse=0){const dx=x2-x1,dy=y2-y1,l2=dx*dx+dy*dy||1,t=clamp(((ball.x-x1)*dx+(ball.y-y1)*dy)/l2,0,1),px=x1+dx*t,py=y1+dy*t,nx=ball.x-px,ny=ball.y-py,dist=Math.hypot(nx,ny),min=r+ball.r;if(dist>=min||dist<.00001)return false;const ux=nx/dist,uy=ny/dist,push=min-dist+.001;ball.x+=ux*push;ball.y+=uy*push;const rel=ball.vx*ux+ball.vy*uy;if(rel<.08){ball.vx+=(Math.max(.12,-rel*1.75)+impulse)*ux;ball.vy+=(Math.max(.12,-rel*1.75)+impulse)*uy}return true}
-function arcadePinballCircleHit(g,b,c,ts){const dx=b.x-c.x,dy=b.y-c.y,dist=Math.hypot(dx,dy),min=b.r+c.r;if(dist>=min||dist<.00001)return false;const nx=dx/dist,ny=dy/dist;b.x=c.x+nx*(min+.001);b.y=c.y+ny*(min+.001);const dot=b.vx*nx+b.vy*ny,boost=.34+(c.v||80)/650;b.vx+=(boost-Math.min(0,dot)*1.8)*nx;b.vy+=(boost-Math.min(0,dot)*1.8)*ny;if(ts-b.lastBumper>80){b.lastBumper=ts;const pts=Math.round((c.v||80)*g.pinball.multiplier);arcadeRoundReward(g,pts,`×${g.pinball.multiplier} BUMPER`)}return true}
-function arcadePinballFlipper(P,side){const left=side==='left',active=left?P.left:P.right,pivot={x:left?.39:.61,y:.82},base=left?-.22:Math.PI+.22,up=left?-.70:Math.PI+.70,a=active?up:base,len=.16;return{x1:pivot.x,y1:pivot.y,x2:pivot.x+Math.cos(a)*len,y2:pivot.y+Math.sin(a)*len,active}}
-function arcadePinballScoreLane(g,b,ts){const P=g.pinball;if(b.vy>=0||b.y>.235||b.y<.12)return;for(let i=0;i<3;i++){if(Math.abs(b.x-P.laneX[i])<.035&&!P.track[i]){P.track[i]=true;arcadeRoundReward(g,180*P.multiplier,`TRACK ${i+1}`);b.vy=.12;if(P.track.every(Boolean)){P.multiplier=Math.min(5,P.multiplier+1);P.track=[false,false,false];if(!P.multiball){P.multiball=true;arcadePinballAddBall(g,.42,.24,-.22,.22);arcadePinballAddBall(g,.58,.24,.22,.22);arcadeSetFeedback(g,`MULTIBALL · SCORE ×${P.multiplier}`,'good',1300)}else arcadeSetFeedback(g,`ALL TRACKS · MULTIPLIER ×${P.multiplier}`,'good',1000)}}}}
-function arcadePinballStepBall(g,b,dt,ts){const P=g.pinball,sec=dt/1000;b.vy+=.57*sec;b.vx+=Math.sin(ts*.0011)*.004*sec;b.vx*=Math.pow(.997,dt/16.7);b.vy*=Math.pow(.999,dt/16.7);b.x+=b.vx*sec;b.y+=b.vy*sec;const minX=.18+b.r,maxX=.82-b.r,top=.13+b.r;if(b.x<minX){b.x=minX;b.vx=Math.abs(b.vx)*.82}if(b.x>maxX){b.x=maxX;b.vx=-Math.abs(b.vx)*.82}if(b.y<top){b.y=top;b.vy=Math.abs(b.vy)*.82}if(b.y>.965){b.alive=false;return}
-  // sloped lower rails / outlanes
-  arcadePinballSegmentHit(b,.18,.68,.33,.82,.012,.02);arcadePinballSegmentHit(b,.82,.68,.67,.82,.012,.02);arcadePinballSegmentHit(b,.18,.17,.27,.12,.010);arcadePinballSegmentHit(b,.82,.17,.73,.12,.010);
-  for(const c of P.bumpers)arcadePinballCircleHit(g,b,c,ts);for(const c of P.posts)arcadePinballCircleHit(g,b,{...c,v:45},ts);
-  const L=arcadePinballFlipper(P,'left'),R=arcadePinballFlipper(P,'right');if(arcadePinballSegmentHit(b,L.x1,L.y1,L.x2,L.y2,.020,L.active?.40:.08)&&L.active)b.vy-=.18;if(arcadePinballSegmentHit(b,R.x1,R.y1,R.x2,R.y2,.020,R.active?.40:.08)&&R.active)b.vy-=.18;
-  // side door kickers
-  if(b.y>.43&&b.y<.62&&b.x<.235&&P.left){b.vx=Math.abs(b.vx)+.45;b.vy-=.16;arcadeRoundReward(g,55*P.multiplier,'PORT FLAP')}if(b.y>.43&&b.y<.62&&b.x>.765&&P.right){b.vx=-Math.abs(b.vx)-.45;b.vy-=.16;arcadeRoundReward(g,55*P.multiplier,'STARBOARD FLAP')}
-  // AIR fitting toggles puffed state and radius
-  if(Math.hypot(b.x-.5,b.y-.49)<.082&&ts-P.lastHit>220){P.lastHit=ts;b.puffed=!b.puffed;b.r=b.puffed?.027:.018;arcadeSetFeedback(g,b.puffed?'PUFFER PUFFED · BIG BALL, BIG REBOUNDS':'PUFFER RELAXED · SMALLER & QUICKER','neutral',700)}
-  arcadePinballScoreLane(g,b,ts)
+function arcadePinballServe(g,quiet=false,ts=performance.now()){
+  const P=g.pinball;if(!P)return;
+  P.balls=[];pbNewBall(P,true);P.plunger=false;P.charge=0;P.pendingServeAt=0;P.ballStart=0;P.saveUntil=0;
+  P.message='HOLD SPACE • RELEASE TO LAUNCH';P.messageUntil=Infinity;P.service='BALL IN LAUNCH CHUTE';
+  if(!quiet)arcadeSetFeedback(g,'NEXT PUFFER READY · LAUNCH WHEN READY','neutral',850)
 }
-function arcadeRenderPinball(g,ts,G,dt,running){const P=g.pinball;if(!P)return;const deck=ctx.createLinearGradient(0,G.top,0,G.bottom);deck.addColorStop(0,'#c58b58');deck.addColorStop(1,'#87563d');roundedRect(G.x(.13),G.y(.08),G.w*.74,G.h*.89,18,deck,'#17313a',4);for(let i=0;i<9;i++)line(G.x(.15),G.y(.13+i*.095),G.x(.85),G.y(.13+i*.095),'rgba(92,55,37,.24)',2);
-  // rails, tracks and fittings
-  line(G.x(.18),G.y(.68),G.x(.33),G.y(.82),'#f2e7c5',5);line(G.x(.82),G.y(.68),G.x(.67),G.y(.82),'#f2e7c5',5);for(let i=0;i<3;i++){roundedRect(G.x(P.laneX[i]-.038),G.y(.11),G.w*.076,G.h*.15,7,P.track[i]?'#e5b54e':'rgba(255,247,222,.35)','#17313a',2);pxText(String(i+1),G.x(P.laneX[i]),G.y(.16),P.track[i]?'#18313a':'#fff7de',8,'center')}
-  P.bumpers.forEach((c,i)=>{circle(G.x(c.x),G.y(c.y),G.w*c.r,i===2?'#65bdd1':i<2?'#df7c68':'#e5b54e','#17313a',3);circle(G.x(c.x),G.y(c.y),G.w*c.r*.46,'#fff7de','#17313a',1)});P.posts.forEach(c=>circle(G.x(c.x),G.y(c.y),G.w*c.r,'#f2e7c5','#17313a',2));pxText('AIR',G.x(.5),G.y(.495),'#17313a',7,'center');
-  // actual hinged door flaps
-  const L=arcadePinballFlipper(P,'left'),R=arcadePinballFlipper(P,'right');line(G.x(L.x1),G.y(L.y1),G.x(L.x2),G.y(L.y2),P.left?'#e5b54e':'#fff7de',12);line(G.x(R.x1),G.y(R.y1),G.x(R.x2),G.y(R.y2),P.right?'#e5b54e':'#fff7de',12);line(G.x(.18),G.y(.44),G.x(.18),G.y(.62),P.left?'#e5b54e':'#d8cda8',10);line(G.x(.82),G.y(.44),G.x(.82),G.y(.62),P.right?'#e5b54e':'#d8cda8',10);roundedRect(G.x(.765),G.y(.76),G.w*.07,G.h*.15,5,P.plunger?'#e5b54e':'#d8cda8','#17313a',2);
-  if(running){if(P.plunger)P.charge=clamp(P.charge+dt/900,0,1);const substeps=Math.max(1,Math.ceil(dt/8)),step=dt/substeps;for(let n=0;n<substeps;n++)for(const b of P.balls)if(b.alive&&!b.served)arcadePinballStepBall(g,b,step,ts-dt+step*(n+1));}
-  for(const b of P.balls.filter(b=>b.alive)){const x=G.x(b.x),y=G.y(b.y),rad=Math.max(6,G.w*b.r);circle(x,y,rad,b.puffed?'#e5b54e':'#8ed4df','#17313a',2);circle(x-rad*.24,y-rad*.16,Math.max(1,rad*.10),'#18313a');line(x+rad*.52,y,x+rad*.82,y-rad*.08,'#18313a',1);if(b.puffed)for(let a=0;a<8;a++){const q=a*Math.PI/4;line(x+Math.cos(q)*rad*.74,y+Math.sin(q)*rad*.74,x+Math.cos(q)*rad*1.02,y+Math.sin(q)*rad*1.02,'#704630',1)}}
-  if(running){const served=P.balls.find(b=>b.alive&&b.served);if(served&&!P.plunger&&P.charge<=0){served.x=.80;served.y=.82}const alive=P.balls.filter(b=>b.alive);if(!alive.length){arcadeStrike(g,'PUFFER OVERBOARD',0);if(!g.failed)arcadePinballServe(g,false,ts)}else if(P.multiball&&alive.length<=1){P.multiball=false;arcadeSetFeedback(g,'MULTIBALL ENDED','neutral',500)}}
-  pxText(`×${P.multiplier}  ${P.multiball?'MULTIBALL · ':''}${P.balls.filter(b=>b.alive).length} PUFFER${P.balls.filter(b=>b.alive).length===1?'':'S'}`,G.cx,G.y(.095),'#fff7de',9,'center');arcadeSetHelperCue(g,'SIDE FLAPS SAVE THE OUTLANES · GOLD TRACKS BUILD MULTIBALL',`Multiplier ×${P.multiplier} · ${P.track.filter(Boolean).length}/3 tracks`)
+function pbMessage(P,text,ts=performance.now(),life=1400){P.message=text;P.messageUntil=ts+life}
+function pbAward(g,points,label,ts=performance.now(),special=false){
+  const P=g.pinball,storm=ts<P.stormUntil?2:1,amount=Math.round(points*P.multiplier*storm);
+  g.score=Math.max(0,g.score+amount);g.rewardQualified ||= g.score >= (g.meta?.rewardThreshold||900);
+  P.ballBonus+=Math.round(points*.14);P.bonusBank+=Math.round(points*.05);P.comboHits=ts<P.comboUntil?P.comboHits+1:1;P.comboUntil=ts+2700;
+  g.combo=P.comboHits;g.bestStreak=Math.max(g.bestStreak||0,g.combo);
+  if(special||ts>(P.messageUntil||0)-300)pbMessage(P,`+${amount.toLocaleString()}  ${label}`,ts,special?1800:760);
+  if(ts-P.lastSound>115){P.lastSound=ts;beep('soft')}
 }
-function arcadePinballControl(g,action,pressed){const P=g.pinball;if(!P)return false;if(action==='left'){P.left=!!pressed;return true}if(action==='right'){P.right=!!pressed;return true}if(action==='pinballLaunch'||action==='action'){if(pressed){P.plunger=true}else{const b=P.balls.find(x=>x.alive&&x.served);if(b){b.served=false;b.vy=-.78-P.charge*.78;b.vx=-.10-P.charge*.05;arcadeSetFeedback(g,`STERN FLAP · ${Math.round(P.charge*100)}%`,'good',420)}P.plunger=false;P.charge=0}return true}return false}
+function pbSpark(P,x,y,color='#fff7de',n=9){
+  for(let i=0;i<n;i++){const a=i*Math.PI*2/n+(P.nextId%7)*.13,v=75+(i*41)%150;P.fx.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-30,t:.42+(i%3)*.07,color})}
+  if(P.fx.length>80)P.fx.splice(0,P.fx.length-80)
+}
+function pbHitCooldown(b,id,ts,ms){if(ts-(b.last[id]||-1e9)<ms)return false;b.last[id]=ts;return true}
+// Positional correction and reflected normal velocity: same solver for rails,
+// bumpers, slings and animated hinge planks, with no repeated overlap scoring.
+function pbSegment(b,x1,y1,x2,y2,width=7,restitution=.8){
+  const dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy||1,t=clamp(((b.x-x1)*dx+(b.y-y1)*dy)/len,0,1),px=x1+t*dx,py=y1+t*dy;
+  let nx=b.x-px,ny=b.y-py,dist=Math.hypot(nx,ny),limit=b.r+width;
+  if(dist>=limit)return null;
+  if(dist<.00001){nx=-dy;ny=dx;dist=Math.hypot(nx,ny)||1}
+  nx/=dist;ny/=dist;b.x=px+nx*(limit+.12);b.y=py+ny*(limit+.12);
+  const incoming=b.vx*nx+b.vy*ny;
+  if(incoming<0){b.vx-=(1+restitution)*incoming*nx;b.vy-=(1+restitution)*incoming*ny}
+  return{nx,ny,t,impact:-incoming}
+}
+function pbCircle(b,x,y,r,restitution=.85){
+  let dx=b.x-x,dy=b.y-y,dist=Math.hypot(dx,dy),limit=b.r+r;
+  if(dist>=limit)return null;
+  if(dist<.00001){dx=b.vx||1;dy=b.vy||-1;dist=Math.hypot(dx,dy)||1}
+  const nx=dx/dist,ny=dy/dist;b.x=x+nx*(limit+.12);b.y=y+ny*(limit+.12);
+  const incoming=b.vx*nx+b.vy*ny;
+  if(incoming<0){b.vx-=(1+restitution)*incoming*nx;b.vy-=(1+restitution)*incoming*ny}
+  return{nx,ny,impact:-incoming}
+}
+function pbCap(b,max=1310){const speed=Math.hypot(b.vx,b.vy);if(speed>max){b.vx*=max/speed;b.vy*=max/speed}}
+function pbFlipperEndpoints(F,left){return {x1:F.x,y1:F.y,x2:F.x+Math.cos(F.a)*88,y2:F.y+Math.sin(F.a)*88}}
+function pbMoveFlippers(P,step,ts){
+  for(const [key,F] of Object.entries(P.flips)){
+    const left=key==='left',held=left?P.left:P.right,enabled=ts>=P.tiltUntil;
+    const base=left?-.12:Math.PI+.12,up=left?-.82:Math.PI+.82,target=held&&enabled?up:base,delta=target-F.a;
+    const move=clamp(delta,-17*step,17*step);F.a+=move;F.w=move/step
+  }
+}
+function pbFlipperCollision(P,b,side,ts){
+  const F=P.flips[side],left=side==='left',held=left?P.left:P.right,E=pbFlipperEndpoints(F,left);
+  const hit=pbSegment(b,E.x1,E.y1,E.x2,E.y2,10,.46);if(!hit)return;
+  const at=Math.max(.12,hit.t),wx=-Math.sin(F.a)*F.w*88*at,wy=Math.cos(F.a)*F.w*88*at;
+  const rel=(b.vx-wx)*hit.nx+(b.vy-wy)*hit.ny;
+  if(rel<0){b.vx-=(1.22)*rel*hit.nx;b.vy-=(1.22)*rel*hit.ny}
+  if(!held||ts<P.tiltUntil)return;
+  if(ts-b.lastFlip<105)return;b.lastFlip=ts;
+  // A timed strike has more power than a held flap, and contact nearer the tip
+  // changes lateral aim. The ball must be above the door for a clean hit.
+  if(b.y>F.y+16)return;
+  const snap=clamp(Math.abs(F.w)/15,0,1),power=490+snap*460+at*115;
+  b.vy=Math.min(b.vy,-power);
+  b.vx+=((left?1:-1)*(165+(at-.45)*195))+(b.x-280)*.10;
+  pbCap(b);if(pbHitCooldown(b,'flipper'+side,ts,120))pbSpark(P,b.x,b.y,'#ffe0a4',5)
+}
+function pbTopLane(g,b,ts){
+  const P=g.pinball;
+  if(b.y<138||b.y>204)return;
+  for(let i=0;i<3;i++){
+    if(Math.abs(b.x-P.rollovers[i])>27||!pbHitCooldown(b,'lane'+i,ts,780))continue;
+    pbAward(g,85,`BEACON ${i+1}`,ts);if(P.lamps[i])return;
+    P.lamps[i]=true;pbSpark(P,b.x,174,'#fff0a2',7);
+    if(P.lamps.every(Boolean)){
+      P.lamps.fill(false);P.multiplier=Math.min(6,P.multiplier+1);P.bonusMultiplier=Math.min(6,P.bonusMultiplier+1);
+      P.jackpotLit=true;P.ballBonus+=750;P.saveUntil=Math.max(P.saveUntil,ts+3200);
+      g.round=Math.max(g.round,1+P.multiplier-1);g.bestRound=Math.max(g.bestRound||1,g.round);
+      pbAward(g,620,'THREE BEACONS · MULTIPLIER UP',ts,true)
+    }return
+  }
+}
+function pbCargoTarget(g,b,c,ts){
+  const P=g.pinball;if(!pbHitCooldown(b,'cargo'+c.id,ts,280))return;
+  if(!P.cargo[c.id]){P.cargo[c.id]=true;pbAward(g,165,'CARGO '+(c.id+1),ts);pbSpark(P,c.x,c.y,'#ffd978',10)}
+  else pbAward(g,35,'CARGO TAP',ts);
+  if(!P.cargo.every(Boolean))return;
+  P.cargo.fill(false);P.locks++;
+  pbAward(g,800,`CARGO LOCK ${Math.min(P.locks,2)}/2`,ts,true);
+  P.saveUntil=Math.max(P.saveUntil,ts+4900);
+  if(P.locks>=2&&!P.multiball){
+    P.multiball=true;P.locks=0;P.jackpotLit=true;P.jackpot=[false,false];P.saveUntil=ts+10000;
+    pbNewBall(P,false,248,210,-185,215);pbNewBall(P,false,322,210,185,215);
+    pbAward(g,1600,'THREE-PUFFER MULTIBALL!',ts,true);pbSpark(P,280,235,'#fff2a3',22)
+  }
+}
+function pbOrbit(g,b,side,ts){
+  const P=g.pinball,idx=side==='left'?0:1;
+  if(!pbHitCooldown(b,'orbit'+idx,ts,1050))return;
+  pbAward(g,P.multiball?450:275,`${side.toUpperCase()} CURRENT`,ts,true);P.orbit[idx]=true;
+  pbSpark(P,b.x,b.y,side==='left'?'#8fe5df':'#e8cc72',8);
+  if(P.multiball&&P.jackpotLit){
+    const pts=P.jackpot[idx]?1250:2800;
+    P.jackpot[idx]=true;pbAward(g,pts,`JACKPOT ${side.toUpperCase()}`,ts,true);
+    if(P.jackpot.every(Boolean)){P.superJackpot++;pbAward(g,6200+P.superJackpot*1300,'SUPER JACKPOT · BOTH CURRENTS',ts,true);P.jackpot.fill(false);P.multiplier=Math.min(6,P.multiplier+1)}
+  }else if(P.orbit.every(Boolean)){
+    P.orbit.fill(false);P.extraSaves=Math.min(2,P.extraSaves+1);pbAward(g,900,'DOUBLE CURRENT · EXTRA SAVE',ts,true)
+  }
+}
+function pbStepBall(g,b,step,ts){
+  const P=g.pinball;b.oldX=b.x;b.oldY=b.y;
+  if(b.ready){b.x=487;b.y=813;return}
+  if(b.returnRamp!=null){
+    // Captive return guide: the shot travels visibly across the bow and is
+    // released with safe lateral clearance from the outside rail. It cannot
+    // contact bumpers or the stern flaps while it is inside this guide.
+    b.returnRamp=Math.min(1,b.returnRamp+step/.18);
+    const t=b.returnRamp,e=t*t*(3-2*t);
+    b.x=487-92*e;b.y=155+30*t+6*Math.sin(t*Math.PI);
+    if(t>=1){b.returnRamp=null;b.shooter=false;b.x=395;b.y=185;b.vx=-325;b.vy=-340;b.stuck=ts}
+    return
+  }
+  if(b.puffed&&ts>=b.puffUntil){b.puffed=false;b.r=11;pbSpark(P,b.x,b.y,'#a6ddea',8)}
+  b.vy+=PB.GRAVITY*step;
+  const drag=Math.pow(b.puffed?.9971:.9989,step*120);b.vx*=drag;b.vy*=drag;
+  b.x+=b.vx*step;b.y+=b.vy*step;
+  if(b.shooter){
+    // Shooter is isolated by a steel bulkhead: never touches either flipper,
+    // the side kickers or any scoring object on its way up the one-way gate.
+    if(b.x<475+b.r){b.x=475+b.r;b.vx=Math.abs(b.vx)*.5}
+    if(b.x>508-b.r){b.x=508-b.r;b.vx=-Math.abs(b.vx)*.5}
+    if(b.y<155){b.returnRamp=0;b.x=487;b.y=155;b.vx=0;b.vy=0;
+      pbSpark(P,449,145,'#ffe9a8',10);if(b.shotCharge>.35&&b.shotCharge<.88)pbAward(g,1150,'SKILL SHOT!',ts,true);
+      pbMessage(P,'ON DECK · AIM FOR THE THREE BEACONS',ts,1750)
+    }
+    if(b.y>842){b.y=842;b.vy=Math.min(b.vy,0)}return
+  }
+  if(b.x<62+b.r){b.x=62+b.r;b.vx=Math.abs(b.vx)*.81}
+  if(b.x>455-b.r){b.x=455-b.r;b.vx=-Math.abs(b.vx)*.81}
+  if(b.y<117+b.r){b.y=117+b.r;b.vy=Math.abs(b.vy)*.79}
+  // Outlanes are real hazards; lower deck has no invisible bounce floor.
+  if(b.y>902){b.alive=false;pbSpark(P,b.x,895,'#b3e5ea',15);return}
+  const hullSegments=[
+    // The curved bow guide is handled as a one-way return lane, rather than
+    // angled interior rails that can form ball-sized traps against the hull.
+    [62,645,118,704,8,.82],[455,645,400,704,8,.82],
+    [111,712,160,758,8,.74],[408,712,359,758,8,.74],
+    [66,838,124,871,8,.82],[454,838,396,871,8,.82],
+    [236,117,236,178,5,.84],[324,117,324,178,5,.84]
+  ];
+  for(const S of hullSegments)pbSegment(b,...S);
+  // Clockwise collision energy is returned via physical normal before a bumper
+  // imparts its powered solenoid kick, only once per actual contact.
+  for(const C of P.bumper){const hit=pbCircle(b,C.x,C.y,C.r,.88);if(!hit)continue;
+    if(hit.impact>0){b.vx+=hit.nx*225;b.vy+=hit.ny*225;pbCap(b)}
+    if(pbHitCooldown(b,C.id,ts,165)){
+      pbAward(g,(C.id==='centre'?125:95)*(b.puffed?2:1),b.puffed?'PUFF POWER':'POP BUMPER',ts);
+      pbSpark(P,C.x,C.y,C.id==='centre'?'#a2ecf0':'#ffe7a1',6);
+      if(P.comboHits>=7&&ts>=P.stormUntil){P.stormUntil=ts+18000;pbMessage(P,'SQUALL MODE · ALL SCORES DOUBLED!',ts,2150)}
+    }
+  }
+  for(const c of P.targets){if(pbCircle(b,c.x,c.y,15,.72))pbCargoTarget(g,b,c,ts)}
+  for(const c of P.posts)pbCircle(b,c.x,c.y,c.r,.81);
+  // Angled triangular slingshots redirect a descending ball toward the upper
+  // field rather than behaving as invisible horizontal bars.
+  for(const S of [[117,679,195,757,1],[443,679,365,757,-1]]){
+    const hit=pbSegment(b,S[0],S[1],S[2],S[3],9,.93);
+    if(hit&&hit.impact>48&&pbHitCooldown(b,'sling'+S[4],ts,155)){
+      b.vy=Math.min(b.vy,-335);b.vx+=S[4]*170;
+      pbAward(g,65,'SAIL SLING',ts);pbSpark(P,b.x,b.y,'#f5cc8a',7)
+    }
+  }
+  // AIR buoy changes physical hitbox and damping for seven seconds: puffing
+  // makes the fish larger and worth 2x on pop bumpers; unpuffed manoeuvres faster.
+  if(pbCircle(b,280,539,20,.9)&&pbHitCooldown(b,'air',ts,600)){
+    b.puffed=!b.puffed;b.r=b.puffed?17:11;b.puffUntil=b.puffed?ts+7500:0;
+    pbAward(g,110,b.puffed?'PUFF UP · 2× POPS':'DEFLATE · QUICKER',ts,true);
+    pbSpark(P,280,539,'#c0f3e4',11)
+  }
+  // Alternating orbit mouths; the ball must actually travel upwards into a
+  // mouth, so nudging a stationary ball beside an orbit cannot farm points.
+  if(b.oldY>=326&&b.y<326&&b.vy< -130){
+    if(b.x<118)pbOrbit(g,b,'left',ts);
+    else if(b.x>397)pbOrbit(g,b,'right',ts)
+  }
+  pbTopLane(g,b,ts);
+  // Hinged side doors are real timed saves, once per pass. Their strike zones
+  // are on the main field, NOT in the separately walled shooter chute.
+  if(b.y>657&&b.y<817&&ts>=P.tiltUntil){
+    if(b.x<116&&P.left&&pbHitCooldown(b,'sidePort',ts,480)){
+      b.x=125;b.vx=Math.max(215,Math.abs(b.vx)*.75);b.vy=Math.min(-450,b.vy-320);
+      pbAward(g,80,'PORT DOOR SAVE',ts);pbSpark(P,b.x,b.y,'#fff1ae',9)
+    }
+    if(b.x>402&&P.right&&pbHitCooldown(b,'sideStar',ts,480)){
+      b.x=393;b.vx=-Math.max(215,Math.abs(b.vx)*.75);b.vy=Math.min(-450,b.vy-320);
+      pbAward(g,80,'STARBOARD DOOR SAVE',ts);pbSpark(P,b.x,b.y,'#fff1ae',9)
+    }
+  }
+  if(b.y>740){pbFlipperCollision(P,b,'left',ts);pbFlipperCollision(P,b,'right',ts)}
+  pbCap(b);
+  if(Math.hypot(b.vx,b.vy)<56&&b.y<790&&ts-b.stuck>3000){b.vy+=110;b.vx+=(b.x<280?63:-63)}
+  if(Math.hypot(b.vx,b.vy)>70)b.stuck=ts;
+  if(!b.trail.length||Math.hypot(b.x-b.trail[b.trail.length-1][0],b.y-b.trail[b.trail.length-1][1])>7){b.trail.push([b.x,b.y]);if(b.trail.length>7)b.trail.shift()}
+}
+function pbBallCollisions(P){
+  for(let i=0;i<P.balls.length;i++)for(let j=i+1;j<P.balls.length;j++){
+    const a=P.balls[i],b=P.balls[j];if(!a.alive||!b.alive||a.shooter||b.shooter||a.ready||b.ready)continue;
+    const dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy),limit=a.r+b.r;if(dist>=limit||dist<.001)continue;
+    const nx=dx/dist,ny=dy/dist,over=(limit-dist)*.5;a.x-=nx*over;a.y-=ny*over;b.x+=nx*over;b.y+=ny*over;
+    const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(rel<0){const impulse=-.91*rel;a.vx-=impulse*nx;a.vy-=impulse*ny;b.vx+=impulse*nx;b.vy+=impulse*ny}
+  }
+}
+function pbLaunch(g,ts=performance.now()){
+  const P=g.pinball,b=P.balls.find(q=>q.alive&&q.ready);if(!b)return false;
+  b.ready=false;b.shooter=true;b.x=487;b.y=813;b.vx=0;b.vy=-(1030+P.charge*340);b.shotCharge=P.charge;
+  P.launches++;P.saveUntil=Math.max(P.saveUntil,ts+8600);P.ballStart=ts;P.charge=0;P.plunger=false;
+  pbMessage(P,`LAUNCHED · ${Math.round(-b.vy)} KNOTS`,ts,750);
+  return true
+}
+function pbNudge(g,ts=performance.now()){
+  const P=g.pinball;if(ts<P.nudgeCooldown||!P.balls.some(b=>b.alive&&!b.ready&&!b.shooter))return false;
+  P.nudgeCooldown=ts+690;P.nudges=P.nudges.filter(t=>ts-t<5600);P.nudges.push(ts);
+  if(P.nudges.length>=4){P.tiltUntil=ts+3800;P.nudges=[];P.multiplier=Math.max(1,P.multiplier-1);pbMessage(P,'TILT! · FLAPS LOCKED FOR 4 SECONDS',ts,2700);beep('error');return true}
+  for(const b of P.balls)if(b.alive&&!b.ready&&!b.shooter){b.vy-=280;b.vx+=(b.x<280?85:-85)}
+  pbMessage(P,`NUDGE ${P.nudges.length}/3 · WATCH THE TILT`,ts,700);return true
+}
+function pbUpdate(g,ts,dt){
+  const P=g.pinball;if(!P||!dt)return;const sec=Math.min(.100,Math.max(0,dt/1000));
+  P.elapsed+=sec;if(P.plunger&&P.balls.some(b=>b.ready))P.charge=clamp(P.charge+sec*.70,0,1);
+  P.accumulator=Math.min(.12,P.accumulator+sec);
+  let steps=0;while(P.accumulator>=PB.STEP&&steps<12){
+    P.accumulator-=PB.STEP;const at=ts-(P.accumulator*1000);pbMoveFlippers(P,PB.STEP,at);
+    for(const b of P.balls)if(b.alive)pbStepBall(g,b,PB.STEP,at);
+    pbBallCollisions(P);steps++;P.activeTicks++
+  }
+  for(const f of P.fx){f.x+=f.vx*sec;f.y+=f.vy*sec;f.vy+=230*sec;f.t-=sec}
+  P.fx=P.fx.filter(f=>f.t>0);
+  const drained=P.balls.filter(b=>!b.alive);P.balls=P.balls.filter(b=>b.alive);
+  if(drained.length&&P.balls.length){pbMessage(P,`${drained.length} PUFFER OVERBOARD · ${P.balls.length} STILL PLAYING`,ts,1200)}
+  if(P.multiball&&P.balls.length<=1){P.multiball=false;P.jackpotLit=false;pbMessage(P,'MULTIBALL COMPLETE · BUILD CARGO LOCKS AGAIN',ts,1750)}
+  if(!P.balls.length&&!P.pendingServeAt&&!g.failed){
+    if(ts<P.saveUntil){pbNewBall(P,true);P.charge=.40;pbMessage(P,'BALL SAVE! · RE-LAUNCH YOUR PUFFER',ts,1850)}
+    else if(P.extraSaves>0){P.extraSaves--;pbNewBall(P,true);P.charge=.40;pbMessage(P,'EXTRA SAVE! · RE-LAUNCH',ts,1850)}
+    else{
+      const bonus=Math.round(P.ballBonus*P.bonusMultiplier);g.score+=bonus;g.rewardQualified ||= g.score>=(g.meta?.rewardThreshold||900);
+      P.ballBonus=0;P.bonusMultiplier=1;P.multiplier=Math.max(1,P.multiplier-1);
+      arcadeStrike(g,`PUFFER OVERBOARD · BONUS +${bonus}`,0);
+      P.pendingServeAt=g.failed?0:ts+950;
+      pbMessage(P,`BALL BONUS +${bonus.toLocaleString()} · ${arcadeLives(g)} LEFT`,ts,1600)
+    }
+  }
+  if(P.pendingServeAt&&ts>=P.pendingServeAt&&!g.failed)arcadePinballServe(g,false,ts);
+  P.service=P.balls.some(b=>b.ready)?'CHARGE STERN LAUNCH':P.multiball?'MULTIBALL · JACKPOT CURRENTS':
+    ts<P.tiltUntil?'TILT · WAIT FOR THE HINGES':P.locks?'LOCK 1/2 · FINISH CARGO':'HIT CARGO • LIGHT BEACONS';
+  g.roundProgress=P.cargo.filter(Boolean).length+P.lamps.filter(Boolean).length;
+  g.roundGoal=7
+}
+// Every visual is cached pixel art, rendered with nearest-neighbour scaling.
+// The table and the animated sprites remain owned by this pinball module.
+function pbDeckArt(){
+  if(PB_DECK_SPRITE)return PB_DECK_SPRITE;
+  const[c,p]=pixelCanvas(280,480),ink='#17313a',sea='#387f94',wood='#b7804c',light='#d7a16b',dark='#835435',gold='#e0b24f',cream='#f8ecc6';
+  p.fillStyle='#276e88';p.fillRect(0,0,280,480);
+  for(let i=0;i<110;i++){const x=(i*67+17)%280,y=(i*47+13)%480;
+    psRect(p,x,y,6+i%4,1,i%3?'#5296a8':'#8ac8cb');if(i%7===0)psRect(p,x+2,y+3,9,1,'#d4efde')}
+  psOutlinePoly(p,[[46,5],[233,5],[265,37],[268,414],[252,462],[229,477],[51,477],[28,462],[12,414],[15,37]],'#294d55',ink,3);
+  psOutlinePoly(p,[[50,9],[230,9],[260,40],[260,416],[247,459],[226,469],[54,469],[34,459],[20,416],[20,41]],'#497581',cream,2);
+  psOutlinePoly(p,[[52,14],[227,14],[254,43],[254,411],[240,452],[221,463],[59,463],[41,452],[26,410],[26,43]],wood,ink,2);
+  for(let y=24;y<455;y+=13){psRect(p,28,y,223,2,dark);psRect(p,31,y+2,218,1,light);for(let x=42+(Math.floor(y/13)%2)*21;x<250;x+=52)psRect(p,x,y+3,2,9,'#9c643e')}
+  // Raised gunwales, corner knees, bolt heads and a distinct starboard launch well.
+  for(const [x,a] of [[25,1],[254,-1]]){
+    psRect(p,x-4,43,8,369,ink);psRect(p,x-2,43,4,369,'#e6d4aa');
+    for(let y=60;y<416;y+=27){psRect(p,x-3,y,7,3,'#8b7657');psRect(p,x-1,y+1,2,1,cream);psLine(p,x,y,x+a*9,y+8,'#6f563f',1)}
+  }
+  psOutlinePoly(p,[[234,79],[257,79],[257,428],[234,428]],'#344d52',ink,2);
+  psRect(p,237,85,17,336,'#a3b2a2');for(let y=91;y<415;y+=13){psRect(p,238,y,15,2,'#5c7774');psRect(p,239,y+2,12,1,'#d1d4b5')}
+  psRect(p,231,79,5,343,ink);psRect(p,233,80,1,342,cream);psRect(p,238,77,16,5,'#dfbd65');
+  // Physical one-way bow return chute, curving from the launch well to the
+  // starboard beacon. The gold paired rails show exactly where a shot exits.
+  psLine(p,248,78,214,83,ink,7);psLine(p,214,83,197,93,ink,7);
+  psLine(p,248,78,214,83,'#ead89e',3);psLine(p,214,83,197,93,'#ead89e',3);
+  psLine(p,248,85,214,90,'#8c7454',2);psLine(p,214,90,197,98,'#8c7454',2);
+  // Bow scallop, engraved inset compass, sea-charts and gear scattered neatly.
+  psOutlinePoly(p,[[58,17],[221,17],[242,44],[235,55],[46,55],[38,43]],'#4e777b',ink,2);
+  psRect(p,83,22,114,21,ink);psRect(p,85,24,110,17,'#f2ddb0');
+  psRect(p,89,26,102,3,'#b7804c');psRect(p,89,32,102,1,'#c29351');psRect(p,89,36,102,1,'#c29351');
+  for(const [x,y] of [[43,110],[215,104],[45,269],[217,289],[55,425],[223,431]]){
+    psCircle(p,x,y,7,ink);psCircle(p,x,y,5,'#c59e55');psCircle(p,x,y,2,'#fff2bd');
+    psLine(p,x-8,y,x+8,y,'#e8d9a8',1);psLine(p,x,y-8,x,y+8,'#e8d9a8',1)
+  }
+  // Tail drain has clear black water between separated, bolted stern paddles.
+  psOutlinePoly(p,[[116,416],[164,416],[176,457],[104,457]],'#224d62',ink,2);
+  for(let y=428;y<456;y+=5){psRect(p,111+(y%4),y,44,1,'#4e97aa')}
+  for(const x of [83,197]){psCircle(p,x,411,10,ink);psCircle(p,x,411,7,gold);psCircle(p,x,411,3,cream)}
+  for(let i=0;i<22;i++){
+    const x=(i*41+35)%220+27,y=(i*97+65)%380+55;
+    if(x>224||x<39||y<95||y>402)continue;psRect(p,x,y,2,2,i%2?'#8e5f3e':'#e6af69')
+  }
+  // Rope decorations never pretend to be a collision surface.
+  for(const xx of [31,224])for(let y=118;y<=342;y+=45){psLine(p,xx,y,xx+4,y+6,cream,1);psLine(p,xx+4,y+6,xx,y+12,cream,1)}
+  PB_DECK_SPRITE=c;return c
+}
+function pbSprite(kind,variant=0){
+  const key=kind+':'+variant;if(PB_SPRITES.has(key))return PB_SPRITES.get(key);
+  const[c,p]=pixelCanvas(42,42),ink='#17313a',cream='#fff7de',gold='#f0cc68',red='#d67a69',teal='#84d3d6',wood='#a86d45';
+  if(kind==='fish'){
+    const puff=variant===1||variant===3,blink=variant>=2;
+    if(puff)for(let i=0;i<12;i++){const a=i*Math.PI/6,x=Math.round(21+Math.cos(a)*17),y=Math.round(21+Math.sin(a)*16);psLine(p,21,21,x+Math.cos(a)*4,y+Math.sin(a)*4,ink,2);psLine(p,21,21,x,y,'#edd28b',1)}
+    psOutlinePoly(p,[[8,19],[1,12],[3,24],[9,25],[15,29],[28,28],[36,22],[29,15],[15,13]],'#c99a57',ink,2);
+    psCircle(p,21,21,puff?15:12,ink);psCircle(p,21,20,puff?13:10,puff?'#f3d778':'#8dd3cb');
+    psRect(p,12,14,15,2,puff?'#fff1b0':'#c3f0df');
+    psRect(p,27,16,blink?5:4,blink?1:5,ink);if(!blink)psRect(p,28,17,1,2,cream);
+    psRect(p,34,21,4,2,ink);psRect(p,31,25,3,2,'#d47f6b');psRect(p,14,25,5,2,'#dfb869');
+    psRect(p,16,17,2,2,'#e28c75');psRect(p,12,22,2,2,'#e28c75');
+  }else if(kind==='bumper'){
+    psCircle(p,21,22,19,ink);psCircle(p,21,21,16,variant===0?red:variant===1?gold:teal);psCircle(p,21,19,13,cream);
+    for(let i=0;i<8;i++){const a=i*Math.PI/4;psRect(p,Math.round(21+Math.cos(a)*13),Math.round(21+Math.sin(a)*13),3,3,variant===0?red:variant===1?gold:teal)}
+    psCircle(p,21,20,8,ink);psCircle(p,20,19,6,variant===0?red:variant===1?gold:teal);psRect(p,16,14,6,2,cream);
+  }else if(kind==='target'){
+    psRect(p,9,9,24,26,ink);psRect(p,11,11,20,22,variant?gold:'#7b9da1');psRect(p,13,13,16,17,variant?'#fff0b3':'#c9dbd0');
+    for(let i=0;i<3;i++)psRect(p,14+i*5,15,2,11,variant?'#e4ae50':'#667e7e');psRect(p,9,33,24,3,wood);psRect(p,12,31,18,2,ink);
+  }else if(kind==='air'){
+    psCircle(p,21,22,18,ink);psCircle(p,21,21,15,'#458e95');psCircle(p,21,21,12,'#b0e1d9');
+    for(let i=0;i<7;i++){const a=i*Math.PI*2/7;psCircle(p,Math.round(21+Math.cos(a)*9),Math.round(21+Math.sin(a)*9),2,cream)}
+    psCircle(p,21,21,5,cream);psCircle(p,21,21,2,'#4c8390');
+  }else if(kind==='lamp'){
+    psRect(p,10,5,22,32,ink);psRect(p,12,7,18,28,'#bf9555');psRect(p,14,9,14,25,variant?gold:'#46696b');
+    psRect(p,17,8,8,3,cream);psRect(p,16,14,10,11,variant?'#fff2b2':'#719392');psRect(p,18,16,6,7,variant?'#fffce2':'#274b56');
+    psRect(p,14,31,14,2,gold)
+  }else if(kind==='crate'){
+    psRect(p,5,10,32,27,ink);psRect(p,7,12,28,23,'#b37a4a');psRect(p,10,14,22,20,'#d19a60');
+    psLine(p,9,15,33,33,ink,2);psLine(p,33,15,9,33,ink,2);psRect(p,9,12,3,23,ink);psRect(p,30,12,3,23,ink);
+    if(variant){psRect(p,15,20,12,9,gold);psRect(p,18,22,6,5,cream)}
+  }else if(kind==='buoy'){
+    psCircle(p,21,23,15,ink);psCircle(p,21,21,12,'#d36e5f');psRect(p,11,17,20,7,cream);psRect(p,18,6,6,8,ink);psRect(p,19,5,4,7,gold);
+    psRect(p,17,22,8,3,'#d36e5f');psRect(p,10,29,22,2,'#af554d')
+  }else if(kind==='hinge'){
+    psCircle(p,21,21,14,ink);psCircle(p,21,21,11,'#ddb55a');psCircle(p,21,21,6,'#7b614a');psRect(p,17,18,8,2,cream);psRect(p,20,15,2,9,cream)
+  }else if(kind==='life'){
+    psCircle(p,21,21,16,cream);psCircle(p,21,21,10,ink);psCircle(p,21,21,7,'rgba(0,0,0,0)');
+    for(let i=0;i<4;i++){const a=i*Math.PI/2;psRect(p,Math.round(21+Math.cos(a)*12)-3,Math.round(21+Math.sin(a)*12)-3,6,6,'#d26a5f')}
+  }
+  PB_SPRITES.set(key,c);return c
+}
+function pbDrawSprite(kind,x,y,w,h=w,variant=0){const s=pbSprite(kind,variant);ctx.imageSmoothingEnabled=false;ctx.drawImage(s,Math.round(x-w/2),Math.round(y-h/2),Math.round(w),Math.round(h))}
+function pbText(text,x,y,size=15,color=PB.PAPER,align='center'){
+  ctx.textAlign=align;ctx.font=`1000 ${size}px ui-monospace,monospace`;ctx.fillStyle='#17313a';ctx.fillText(text,x+1,y+2);ctx.fillStyle=color;ctx.fillText(text,x,y);ctx.textAlign='left'
+}
+function pbBoardPanels(P,ts,g){
+  const blink=Math.sin(ts*.011)>0,cream='#fff7de',ink='#17313a',lit='#f0cf63';
+  // Copper-framed scoreboard and boat-name plate are part of the table sprite.
+  roundedRect(106,44,347,75,9,'#243f44','#edcb77',5);
+  roundedRect(113,51,333,61,5,'#17313a','#5b7a78',2);
+  pbText('PUFFERFISH  PINBALL',280,69,17,'#f2e3b7');
+  pbText(String(Math.floor(g.score)).padStart(7,'0'),280,103,34,lit);
+  for(let i=0;i<3;i++){
+    const x=P.rollovers[i],on=P.lamps[i],pulse=on||blink&&P.jackpotLit;
+    pbDrawSprite('lamp',x,172,53,56,pulse?1:0);
+    pbText(''+(i+1),x,181,13,pulse?ink:cream)
+  }
+  // Twin current/orbit channels have distinct insignia and lit arrow markers.
+  for(const [i,x] of [[0,87],[1,426]]){
+    roundedRect(x-25,229,50,82,8,P.orbit[i]?'#e8bd65':'#385e63',ink,4);
+    pbText(i?'S':'P',x,255,18,P.orbit[i]?ink:cream);
+    pbText(P.multiball&&P.jackpotLit?(P.jackpot[i]?'✓':'JP'):'↟',x,283,16,P.orbit[i]?ink:lit)
+  }
+  for(const [i,B] of P.bumper.entries()){
+    const flash=P.fx.some(f=>Math.hypot(f.x-B.x,f.y-B.y)<43);
+    if(flash){ctx.fillStyle='rgba(255,240,171,.20)';ctx.beginPath();ctx.arc(B.x,B.y,44,0,7);ctx.fill()}
+    pbDrawSprite('bumper',B.x,B.y,B.r*2.55,B.r*2.55,i)
+  }
+  // Cargo target bank and lock plaques communicate machine progression.
+  for(const T of P.targets){
+    pbDrawSprite('target',T.x,T.y,38,42,P.cargo[T.id]?1:0);
+    pbText(''+(T.id+1),T.x,T.y+5,11,P.cargo[T.id]?ink:cream)
+  }
+  pbDrawSprite('air',280,539,62,62,0);
+  pbText('AIR',280,544,12,ink);
+  pbText('PUFF / FAST',280,583,13,'#f5ddb1');
+  for(let i=0;i<2;i++){pbDrawSprite('crate',235+i*54,639,44,42,P.locks>i?1:0)}
+  pbText(`CARGO LOCK ${Math.min(P.locks,2)}/2`,280,685,13,'#fff1bb');
+  for(const x of [95,425]){
+    pbDrawSprite('buoy',x,650,41,41);
+    roundedRect(x-24,594,48,30,5,'#325961','#17313a',3);pbText(x<200?'PORT':'STAR',x,613,12,cream)
+  }
+  // Slings are padded, rope-topped triangular spars, matching their collision.
+  for(const S of [[117,679,195,757],[443,679,365,757]]){
+    line(S[0],S[1],S[2],S[3],'#17313a',20);line(S[0],S[1],S[2],S[3],'#ead7a4',12);
+    for(let j=0;j<5;j++){const t=(j+.5)/5;pbDrawSprite('hinge',S[0]+(S[2]-S[0])*t,S[1]+(S[3]-S[1])*t,12,12)}
+  }
+  for(const C of P.posts)pbDrawSprite('hinge',C.x,C.y,C.r*2.6,C.r*2.6);
+  // Draw side doors with hinges, plank grain, bolts and live signal lamp.
+  for(const [side,x] of [['left',71],['right',449]]){
+    const on=side==='left'?P.left:P.right,ey=on?743:777;
+    ctx.save();ctx.translate(x,716);ctx.rotate((side==='left'?1:-1)*(on?.44:0));
+    roundedRect(side==='left'?0:-18,0,18,92,4,'#17313a','#d4b777',3);
+    roundedRect(side==='left'?3:-15,5,12,80,3,on?'#e7ba61':'#bc8554','#704630',2);
+    for(let y=15;y<86;y+=15)rect(side==='left'?6:-12,y,6,2,'#f5d58d');
+    pbDrawSprite('hinge',side==='left'?9:-9,6,25,25);
+    ctx.restore();pbText(side==='left'?'←':'→',x,ey+80,19,on?'#ffe7a2':'#fff3c8')
+  }
+  // Two non-overlapping rear stern doors: tips are 68+ px apart at rest.
+  for(const side of ['left','right']){
+    const F=P.flips[side],E=pbFlipperEndpoints(F,side==='left'),on=side==='left'?P.left:P.right;
+    ctx.save();ctx.translate(F.x,F.y);ctx.rotate(F.a);
+    roundedRect(-8,-13,104,26,6,ink,'#dfbe7b',3);
+    roundedRect(0,-10,88,19,4,on&&ts>=P.tiltUntil?'#e4b654':'#d5ad76','#65452f',2);
+    for(let x=11;x<84;x+=15){rect(x,-6,7,2,'#fff0b9');rect(x,3,5,2,'#95623e')}
+    rect(13,-10,4,19,'#866044');rect(73,-10,4,19,'#866044');
+    ctx.restore();pbDrawSprite('hinge',F.x,F.y,37,37)
+  }
+  pbText('STERN DOORS',280,889,15,'#f3dba9');
+  if(P.balls.some(b=>b.ready)){
+    roundedRect(466,736,45,120,7,'#254850','#f0d582',3);
+    rect(472,849-Math.round(P.charge*100),31,Math.max(2,Math.round(P.charge*100)),P.charge>.8?'#e4bf55':'#78c6c2');
+    pbText('PULL',489,758,11,'#fff0c2');pbText('↓',489,806,21,'#fff0c2');
+  }
+  if(P.multiball||P.jackpotLit){pbText(P.multiball?'MULTIBALL  ★  JACKPOTS':'JACKPOTS LIT · HIT CURRENTS',280,714,17,blink?lit:cream)}
+  if(ts<P.stormUntil){pbText('SQUALL MODE  2×',280,734,19,blink?'#ffeaa2':'#a8e4ee')}
+  if(ts<P.tiltUntil){pbText('TILT · FLAPS DISABLED',280,792,21,'#f8b6a3')}
+}
+function pbBoardFish(P,ts){
+  for(const B of P.balls){
+    if(!B.alive)continue;
+    B.trail.forEach(([x,y],i)=>{ctx.globalAlpha=(i+1)/B.trail.length*.20;pbDrawSprite('fish',x,y,B.r*2.5,B.r*2.5,B.puffed?1:0)});
+    ctx.globalAlpha=1;
+    const wave=B.puffed?1+Math.sin(ts*.012+B.id)*.065:1,rad=B.r*2.8*wave;
+    pbDrawSprite('fish',B.x,B.y,rad,rad,(B.puffed?1:0)+(Math.floor(ts/230+B.id)%8===0?2:0));
+    if(B.shooter&&B.ready){pbText('●',B.x, B.y-28,13,'#fff2b8')}
+  }
+  for(const f of P.fx){ctx.globalAlpha=Math.min(1,f.t*2);rect(f.x,f.y,Math.max(2,3*f.t/.5),Math.max(2,3*f.t/.5),f.color)}ctx.globalAlpha=1
+}
+function pbBoardUI(g,P,ts){
+  const cream='#fff7de',gold='#e8c66e',ink='#17313a',life=arcadeLives(g);
+  roundedRect(74,899,412,54,7,'#1c3b47','#eac77c',4);
+  pbText(`×${P.multiplier}  ${'♥'.repeat(life)}${'·'.repeat(3-life)}  SAVE ${P.extraSaves}`,280,919,18,gold);
+  const msg=ts<P.messageUntil?P.message:P.service;
+  pbText(msg.length>47?msg.slice(0,45)+'…':msg,280,942,msg.length>38?11:13,cream);
+  if(P.balls.some(b=>b.ready))pbText('CHARGE',487,872,13,gold);
+  if(P.saveUntil>ts&&P.balls.some(b=>!b.ready)){
+    const ratio=clamp((P.saveUntil-ts)/8600,0,1);
+    roundedRect(114,866,331,13,4,'#25454e','#d8caa1',2);rect(117,869,Math.round(325*ratio),7,'#9adccf');
+    pbText('BALL SAVE',280,859,12,cream)
+  }
+  if(g.failed)pbText('END OF VOYAGE · FINAL SCORE',280,771,19,'#ffdbad')
+}
+// Illustrated deckhand stations use the free wings of a landscape stage.
+// They disappear entirely on narrow/mobile screens so the machine stays large.
+function pbSurround(g,P,ts,G,ox,oy,scale){
+  const leftSpace=ox-G.left,rightSpace=G.right-(ox+PB.W*scale);
+  const sea=ctx.createLinearGradient(0,G.top,0,G.bottom);sea.addColorStop(0,'#275b70');sea.addColorStop(.6,'#316f80');sea.addColorStop(1,'#17465d');
+  rect(G.left,G.top,G.w,G.h,sea);
+  for(let i=0;i<30;i++){
+    const x=G.left+(i*91+29)%(Math.max(1,G.w)),y=G.top+(i*37+22)%(Math.max(1,G.h));
+    const wave=Math.sin(ts*.0013+i*1.7)*3;
+    line(x,y+wave,x+12+(i%3)*4,y+wave,'rgba(202,244,227,.16)',i%4?1:2);
+    if(i%4===0)rect(x+4,y+wave+4,6,1,'rgba(244,249,218,.21)')
+  }
+  if(leftSpace<99||rightSpace<99)return;
+  const w=Math.min(164,leftSpace-20,rightSpace-20),h=Math.min(405,G.h*.90),y=G.top+(G.h-h)*.5;
+  function panel(x,title,side){
+    roundedRect(x+3,y+4,w,h,9,'rgba(14,43,54,.48)','#17313a',3);
+    roundedRect(x,y,w,h,9,'#e9d6aa','#17313a',3);
+    roundedRect(x+5,y+5,w-10,h-10,7,'#4a6c6d','#ddbe7c',2);
+    roundedRect(x+9,y+9,w-18,29,5,'#193b45','#e3b85e',2);
+    pxText(title,x+w*.5,y+27,'#f8ebc7',Math.min(10,w/11),'center');
+    for(const yy of [y+12,y+h-14])for(const xx of [x+13,x+w-13])circle(xx,yy,2,'#e1bc68','#17313a',1);
+    if(side==='left'){
+      ctx.drawImage(pbSprite('fish',1),Math.round(x+w*.5-31),Math.round(y+44),62,62);
+      pxText('BOSUN’S FIELD NOTES',x+w*.5,y+119,'#fff0c1',7,'center');
+      const rows=[['A / ←','PORT FLAPS'],['D / →','STARBOARD FLAPS'],['SPACE','HOLD • RELEASE'],['S / ↓','NUDGE / TILT']];
+      rows.forEach(([k,v],i)=>{
+        const yy=y+145+i*41;roundedRect(x+13,yy-14,w-26,32,4,'#e9d9b2','#17313a',2);
+        pxText(k,x+w*.5,yy-1,'#31575b',10,'center');pxText(v,x+w*.5,yy+11,'#705b40',Math.min(8,w/18),'center')
+      });
+      const yy=y+h-44;pxText('TAP FLAPS TO AIM',x+w*.5,yy,'#fff0c1',8,'center');
+      pxText('THE HATCH SAVES THE FISH',x+w*.5,yy+13,'#c4e0d5',6,'center');
+    }else{
+      pxText('CAPTAIN’S CHALLENGES',x+w*.5,y+58,'#f8e6b9',8,'center');
+      const missions=[
+        ['BEACON ROUTE',`${P.lamps.filter(Boolean).length}/3  → MULTIPLIER`, '#e5b54e'],
+        ['CARGO ROUTE',`${P.cargo.filter(Boolean).length}/4 · LOCK ${P.locks}/2`,'#f1c88a'],
+        ['CURRENT ROUTE',`${P.orbit.filter(Boolean).length}/2 · SAVE / JP`,'#94d5dd']
+      ];
+      const rowH=Math.max(38,Math.min(53,(h-188)/3)),rowGap=5;
+      missions.forEach(([head,detail,color],i)=>{
+        const yy=y+78+i*(rowH+rowGap);
+        roundedRect(x+11,yy,w-22,rowH,5,'#193d48','#b9cba9',2);
+        for(let j=0;j<3;j++)circle(x+25+j*15,yy+10,3,(i===0?P.lamps[j]:i===1?P.cargo[j]:P.orbit[j])?'#fff4c1':'#48676b','#17313a',1);
+        pxText(head,x+w*.5,yy+rowH*.57,color,Math.min(9,w/13),'center');
+        pxText(detail,x+w*.5,yy+rowH-7,'#ecedd4',Math.min(8,w/17),'center')
+      });
+      const yy=y+h-72;
+      pxText(`POPS ×${P.multiplier}`,x+w*.5,yy,'#f5db98',11,'center');
+      pxText(`BALL BONUS ${P.ballBonus}`,x+w*.5,yy+16,'#e7e6cd',8,'center');
+      pxText(`EXTRA SAVES ${P.extraSaves}`,x+w*.5,yy+32,'#b7e9dd',8,'center');
+      pxText('KEEP YOUR PUFFER ABOARD',x+w*.5,y+h-16,'#ffe1aa',Math.min(7,w/21),'center')
+    }
+  }
+  panel(ox-w-9,'DECKHANDBOOK','left');
+  panel(ox+PB.W*scale+9,'VOYAGE SCORECARD','right');
+}
+function arcadeRenderPinball(g,ts,G,dt,running){
+  const P=g.pinball;if(!P)return;
+  const physicalDt=running?Math.min(100,Math.max(0,ts-(P.lastPhysicsTick||ts))):0;
+  P.lastPhysicsTick=ts;if(running)pbUpdate(g,ts,physicalDt);
+  // Fixed world aspect prevents stretching collision circles into ellipses on
+  // mobile or wide desktop canvases. Margins are illustrated sea, not UI clutter.
+  const scale=Math.min((G.w-8)/PB.W,(G.h-8)/PB.H),ox=G.cx-PB.W*scale*.5,oy=G.top+(G.h-PB.H*scale)*.5;
+  rect(0,0,canvas.width,canvas.height,'#245e77');
+  pbSurround(g,P,ts,G,ox,oy,scale);
+  ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(pbDeckArt(),0,0,PB.W,PB.H);
+  pbBoardPanels(P,ts,g);pbBoardFish(P,ts);pbBoardUI(g,P,ts);
+  ctx.restore();ctx.imageSmoothingEnabled=false;
+  if(!g.started)return;
+  arcadeSetHelperCue(g,P.service,`×${P.multiplier} · ${P.cargo.filter(Boolean).length}/4 cargo · ${P.lamps.filter(Boolean).length}/3 beacons`)
+}
+function arcadePinballControl(g,action,pressed){
+  const P=g.pinball;if(!P)return false;
+  if(action==='left'||action==='right'){P[action]=!!pressed;return true}
+  if(action==='pinballNudge'){if(pressed)pbNudge(g);return true}
+  if(action==='pinballLaunch'||action==='action'){
+    if(pressed){if(!P.plunger&&P.balls.some(b=>b.ready))P.plunger=true}
+    else if(P.plunger){pbLaunch(g)}
+    return true
+  }
+  return false
+}
+// Headless-friendly invariants for a developer-console smoke test.
+function pbIntegrityTest(){
+  const fake={engine:'pinball',round:1,bestRound:1,score:0,strikes:0,maxStrikes:3,combo:0,bestStreak:0,meta:{rewardThreshold:900}};
+  arcadeSetupPinball(fake,1,1);const P=fake.pinball,left=pbFlipperEndpoints(P.flips.left,true),right=pbFlipperEndpoints(P.flips.right,false);
+  const gap=right.x2-left.x2;if(gap<50)throw Error('rear flipper overlap: '+gap);
+  if(P.balls[0].x<474||!P.balls[0].shooter)throw Error('shooter not isolated');
+  P.charge=.55;pbLaunch(fake,1000);let clock=1000,exited=false,drained=false;
+  for(let i=0;i<500;i++){clock+=1000/120;pbMoveFlippers(P,PB.STEP,clock);for(const b of P.balls)if(b.alive)pbStepBall(fake,b,PB.STEP,clock);if(!P.balls[0].shooter){exited=true;break}if(!P.balls[0].alive){drained=true;break}}
+  if(!exited||drained)throw Error('launch failed to enter field');
+  if(P.balls[0].x>=455)throw Error('shooter gate did not transfer to field');
+  for(let i=0;i<170;i++){clock+=1000/120;pbMoveFlippers(P,PB.STEP,clock);for(const b of P.balls)if(b.alive)pbStepBall(fake,b,PB.STEP,clock)}
+  if(!P.balls[0].alive||P.balls[0].returnRamp!=null)throw Error('first ball stuck or drained immediately after launch');
+  if(Math.hypot(P.balls[0].x-395,P.balls[0].y-185)<2)throw Error('ball did not advance beyond return ramp');
+  return {gap:Math.round(gap),launchExited:true,ballX:Math.round(P.balls[0].x),score:fake.score}
+}
+// Rule invariants are independent of the active voyage and do not touch saved data.
+function pbRulesTest(){
+  const fake={engine:'pinball',round:1,bestRound:1,score:0,strikes:0,maxStrikes:3,combo:0,bestStreak:0,meta:{rewardThreshold:900}};
+  arcadeSetupPinball(fake,1,1);
+  const P=fake.pinball,b=P.balls[0];let ts=1000;
+  for(const target of P.targets)pbCargoTarget(fake,b,target,ts+=350);
+  if(P.locks!==1||P.balls.length!==1||P.multiball)throw Error('first cargo lock failed');
+  for(const target of P.targets)pbCargoTarget(fake,b,target,ts+=350);
+  if(!P.multiball||P.balls.length!==3||!P.jackpotLit)throw Error('multiball was not served');
+  pbOrbit(fake,b,'left',ts+=1100);pbOrbit(fake,b,'right',ts+=1100);
+  if(P.superJackpot!==1)throw Error('two-current super jackpot failed');
+  const multiplier=P.multiplier;
+  for(let i=0;i<3;i++){b.x=P.rollovers[i];b.y=174;pbTopLane(fake,b,ts+=1000)}
+  if(P.multiplier!==multiplier+1||P.bonusMultiplier!==2||P.lamps.some(Boolean))throw Error('beacon multiplier reset failed');
+  b.ready=false;b.shooter=false;let tipped=false;
+  for(let i=0;i<4;i++){pbNudge(fake,ts+=800);tipped=tipped||P.tiltUntil>ts}
+  if(!tipped)throw Error('tilt limiter did not engage');
+  return {multiballBalls:3,superJackpot:P.superJackpot,multiplier:P.multiplier,tilt:true,score:fake.score};
+}
+window.__MakeFastPinballTest={integrity:pbIntegrityTest,rules:pbRulesTest,geometry:()=>({world:[PB.W,PB.H],flippers:[166,394],shooterX:487})};
 
 function renderArcadeGame(g,ts){
-  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow','telegraph','sail'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='telegraph')arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='sail')arcadeRenderSail(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);else if(g.engine==='pinball')arcadeRenderPinball(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='sail'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
+  const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow','telegraph','sail','pinball'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='telegraph')arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='sail')arcadeRenderSail(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);else if(g.engine==='pinball')arcadeRenderPinball(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&g.engine!=='pinball'&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.engine!=='pinball'&&g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='sail'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&g.engine!=='pinball'&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
 }
 
 function arcadeCraneInput(g){
@@ -7706,7 +8261,7 @@ function arcadePointer(g,type,x,y){if(!g.started||g.failed||g.paused||performanc
   else if(e==='poop'&&(type==='down'||type==='move'))g.inputX=clamp(nx,.14,.86)
 }
 function arcadeKey(g,e){if(!g.started){if(e.key===' '||e.key==='Enter')beginArcadeRound();return}const left=['ArrowLeft','a','A'].includes(e.key),right=['ArrowRight','d','D'].includes(e.key);if(left||right){const dir=left?-1:1;if(g.engine==='steer'){if(g.theme==='tanker'){const V=g.tanker.active?g.tanker.other:g.tanker;V.rudderTarget=dir}else g.inputX=clamp(g.inputX+dir*.07,.05,.95);}if(g.engine==='balance')g.control=clamp(g.control+dir*.06,0,1);if(g.engine==='telegraph'&&g.tele)arcadeTelegraphSetLever(g,g.tele.lever+dir,'key');if(g.engine==='bargebalance'&&g.barge)g.barge.trolleyTarget=clamp(g.barge.trolleyTarget+dir*.085,-1,1);if(g.engine==='crane'&&!g.release){g.crane.trolley=clamp((g.crane.trolley??.47)+dir*.018,.29,.72);g.crane.omega-=dir*.045;g.crane.control=0}if(g.engine==='poop')g.inputX=clamp(g.inputX+dir*.08,.14,.86);if(g.engine==='sail'&&g.sail)g.sail.sheet=clamp(g.sail.sheet+dir*.050,.055,.88);if(g.engine==='depth')g.targetY=clamp(g.targetY+dir*.05,.08,.92);if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+dir*.05,.08,.92)}if((e.key===' '||e.key==='Enter')&&g.engine==='lines')arcadeApplyControl('linesHeave',true);if((e.key===' '||e.key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')arcadeApplyControl('tankerSwitch',true);if((e.key===' '||e.key==='Enter')&&['crane','stack'].includes(g.engine))arcadePointer(g,'down',canvas.width/2,canvas.height/2)}
-function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
+function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.engine==='pinball')$('#gameHudText').textContent=g.paused?`PAUSED · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`BALL ${Math.min(3,(g.strikes||0)+1)} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
 
 // Plug-ins retain the content metadata but use the v0.26 progression handlers.
 const ARCADE_ENGINE_IDS=new Set(['lines','galley','bagthrow','balance','crane','stack','meter','sort','sail','steer','tug','radar','sonar','aim','pilot','dredge','bargebalance','rigging','depth','landing','steam','telegraph','poop','pinball']);
@@ -7734,27 +8289,27 @@ if(MINIGAME_REGISTRY_ERRORS.length)console.error('MakeFast minigame registry err
 // Arcade shell: responsive HUD, pausing, safe exit confirmation and optional alternate controls.
 let arcadeControlRepeat=null;
 function arcadeShellRoot(){return document.querySelector('.app')}
-function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool'])}
+function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool','saveUntil','stormUntil','tiltUntil','nudgeCooldown','pendingServeAt','puffUntil','comboUntil','messageUntil','ballStart','lastSound','lastFlip','stuck','armedAt'])}
 function arcadeShiftPauseTimes(value,delta,seen=new Set()){
   if(!value||typeof value!=='object'||seen.has(value))return;seen.add(value);const keys=arcadePauseTimeKeys();
   for(const [k,v] of Object.entries(value)){if(typeof v==='number'&&Number.isFinite(v)&&v>0&&keys.has(k))value[k]=v+delta;else if(v&&typeof v==='object')arcadeShiftPauseTimes(v,delta,seen)}
 }
 function arcadeSetPaused(paused){
   const g=minigame;if(!g)return false;
-  if(paused){if(g.paused)return true;g.paused=true;g.pauseStartedAt=performance.now();if(g.engine==='meter'&&g.theme!=='yacht')g.hold=false;if(g.engine==='sail'&&g.sail)g.sail.sheetControl=0;clearInterval(arcadeControlRepeat);arcadeControlRepeat=null;return true}
+  if(paused){if(g.paused)return true;g.paused=true;g.pauseStartedAt=performance.now();if(g.engine==='meter'&&g.theme!=='yacht')g.hold=false;if(g.engine==='sail'&&g.sail)g.sail.sheetControl=0;if(g.engine==='pinball'&&g.pinball){g.pinball.left=false;g.pinball.right=false;g.pinball.plunger=false}clearInterval(arcadeControlRepeat);arcadeControlRepeat=null;return true}
   if(!g.paused)return true;const now=performance.now(),delta=Math.max(0,now-(g.pauseStartedAt||now));g.paused=false;g.pauseStartedAt=0;arcadeShiftPauseTimes(g,delta);g.lastTick=now;return true
 }
 function arcadePauseMenu(reason='pause'){
   if(!minigame)return;const g=minigame,started=!!g.started;arcadeSetPaused(true);
   const title=reason==='exit'?'End this game?':'Game paused';
   const copy=started?'Your run is paused. Resume from exactly where you stopped, or end this run and return to the voyage.':'This game has not started yet. You can go back to it or leave the encounter.';
-  showModal(`<h2>${title}</h2><p>${copy}</p><div class="notice"><b>${MINIGAME_META[g.type]?.title||g.title}</b><br>${started?`Round ${g.round||1} · ${Math.max(0,Math.round(g.score||0)).toLocaleString()} pts`:'Ready to start'}</div><div class="modal-actions"><button class="big-btn secondary" id="arcadeResumeGame">${started?'RESUME GAME':'KEEP GAME'}</button><button class="big-btn ghost" id="arcadeConfirmEnd">END GAME</button></div>`,false);
+  showModal(`<h2>${title}</h2><p>${copy}</p><div class="notice"><b>${MINIGAME_META[g.type]?.title||g.title}</b><br>${started?`${g.engine==='pinball'?`Ball ${Math.min(3,(g.strikes||0)+1)} · ×${g.pinball?.multiplier||1}`:`Round ${g.round||1}`} · ${Math.max(0,Math.round(g.score||0)).toLocaleString()} pts`:'Ready to start'}</div><div class="modal-actions"><button class="big-btn secondary" id="arcadeResumeGame">${started?'RESUME GAME':'KEEP GAME'}</button><button class="big-btn ghost" id="arcadeConfirmEnd">END GAME</button></div>`,false);
   $('#arcadeResumeGame').onclick=()=>{arcadeSetPaused(false);closeModal();renderArcadeControls()};
   $('#arcadeConfirmEnd').onclick=()=>{closeModal();if(minigame){minigame.paused=false;endMinigame('leave')}}
 }
 function arcadeControlSpec(g){
   if(!g)return[];const e=g.engine;
-  if(e==='pinball')return[{a:'left',l:'PORT FLAPS',k:'A / ←',hold:true},{a:'pinballLaunch',l:'STERN LAUNCH',k:'HOLD SPACE',primary:true,hold:true},{a:'right',l:'STARBOARD FLAPS',k:'D / →',hold:true}];
+  if(e==='pinball')return[{a:'left',l:'PORT FLAP',k:'HOLD A / ←',hold:true},{a:'right',l:'STAR FLAP',k:'HOLD D / →',hold:true},{a:'pinballLaunch',l:'CHARGE / FIRE',k:'HOLD / RELEASE SPACE',primary:true,hold:true},{a:'pinballNudge',l:'NUDGE',k:'S / ↓'}];
   if(e==='lines')return[{a:'linesEase',l:'EASE',k:'S / ↓',hold:true},{a:'linesHeave',l:'HEAVE',k:'HOLD SPACE',primary:true,hold:true}];
   if(e==='steer'&&g.theme==='tanker')return[{a:'tankerPort',l:'PORT',k:'A / ←',hold:true},{a:'tankerSwitch',l:'SWITCH SHIP',k:'SPACE',primary:true},{a:'tankerStarboard',l:'STARBOARD',k:'D / →',hold:true}];
   if(e==='sail')return[{a:'sailSheetIn',l:'PULL SHEET IN',k:'HOLD · A / ←',hold:true,role:'sheet-in'},{a:'sailTack',l:'HOLD TILLER',k:'TO TACK · SPACE',primary:true,hold:true,role:'sail-tack'},{a:'sailSheetOut',l:'EASE SHEET OUT',k:'HOLD · D / →',hold:true,role:'sheet-out'}];
@@ -7783,7 +8338,7 @@ function arcadeControlSpec(g){
 function arcadeApplyControl(action,pressed=true){
   const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(action==='action'&&pressed){beginArcadeRound();return true}return false}
   const step=.075;
-  if(g.engine==='pinball'&&['left','right','pinballLaunch','action'].includes(action))return arcadePinballControl(g,action,pressed);
+  if(g.engine==='pinball'&&['left','right','pinballLaunch','pinballNudge','action'].includes(action))return arcadePinballControl(g,action,pressed);
   if(g.engine==='sail'&&g.sail){if(action==='sailSheetIn'){g.sail.sheetControl=pressed?-1:(g.sail.sheetControl<0?0:g.sail.sheetControl);return true}if(action==='sailSheetOut'){g.sail.sheetControl=pressed?1:(g.sail.sheetControl>0?0:g.sail.sheetControl);return true}}
   if(g.engine==='telegraph'&&g.tele){if((action==='left'||action==='right')&&pressed){arcadeTelegraphSetLever(g,g.tele.lever+(action==='right'?1:-1),'button');return true}}
   if(g.engine==='galley'&&action==='action'){if(pressed)arcadeGalleyPour(g,performance.now());return true}
@@ -7847,6 +8402,7 @@ function arcadeShellKeydown(e){
   if(g.engine==='pinball'&&['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left',true);
   else if(g.engine==='pinball'&&['ArrowRight','d','D'].includes(key))handled=arcadeApplyControl('right',true);
   else if(g.engine==='pinball'&&(key===' '||key==='Enter'))handled=arcadeApplyControl('pinballLaunch',true);
+  else if(g.engine==='pinball'&&['ArrowDown','s','S'].includes(key))handled=arcadeApplyControl('pinballNudge',true);
   else if(g.engine==='stack'&&g.meta.id==='cargo_tetris'&&(['r','R',' ','Enter'].includes(key)))handled=arcadeApplyControl('holdRotate',true);
   else if(g.engine==='stack'&&g.meta.id==='cargo_tetris'&&['u','U'].includes(key))handled=arcadeApplyControl('holdUndo',true);
   else if(['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left');
@@ -7881,7 +8437,7 @@ function seaSprite(kind='dolphin',variant=0){if(kind!=='gull')return seaSpriteCo
 function drawVoyageGullSplats(x,y,s=1){const n=Math.min(8,state.voyage?.gullSplats||0);if(!n)return;const seed=hashString(`${state.voyage?.id||'voyage'}:splats`),rr=rng(seed);for(let i=0;i<n;i++){const dx=(rr()-.5)*42*s,dy=(-5+rr()*17)*s,r=(1.5+rr()*2.4)*s;circle(x+dx,y+dy,r,'rgba(246,242,211,.92)','rgba(111,91,56,.55)',Math.max(1,s*.6));if(r>2)circle(x+dx+r*.45,y+dy-r*.3,Math.max(1,r*.28),'rgba(255,253,241,.85)')}}
 
 window.__MakeFastArcadeCore={
-  version:'0.34.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
+  version:'0.35.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
