@@ -145,6 +145,22 @@
   .fast-history{display:grid;gap:5px}.fast-history-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:6px;align-items:center;border:2px solid var(--ink);background:#fff;border-radius:6px;padding:7px;cursor:pointer;color:var(--ink);text-align:left;width:100%}.fast-history-item>span{font-size:7px;color:var(--ink-soft)}.fast-history-item div b{font-size:8px;display:block}.fast-history-item div small{font-size:7px;color:var(--ink-soft);display:block;margin-top:2px}.fast-history-item>strong{font-size:9px}.fast-history-item.assumed{background:#f5f1df;border-style:dashed}.fast-history-item .assumed-badge{display:inline-block;margin-left:4px;padding:1px 3px;border:1px solid var(--ink-soft);border-radius:3px;font-size:6px;color:var(--ink-soft);vertical-align:1px}.fast-day.has-assumed{background:#f5f1df;border-style:dashed}.chart-dot.assumed{fill:#f5f1df;stroke-dasharray:1 1}.assumed-note{background:#f5f1df;border:2px dashed var(--ink-soft);border-radius:7px;padding:7px;font-size:7px;line-height:1.45;color:var(--ink-soft);margin-bottom:8px}
   .fast-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:7px;color:var(--ink-soft);margin-top:6px}.fast-legend i{display:inline-block;width:10px;height:5px;border:1px solid var(--ink);vertical-align:middle;margin-right:3px}.fast-legend .actual{background:var(--sea)}.fast-legend .target{background:var(--gold)}
 
+
+  /* Lazy Tidebook asset inspection: renders real internal sprites, never unlocks or edits a save. */
+  .wiki-gallery{margin-top:10px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:linear-gradient(155deg,#f7efcf,#e4f2ed)}
+  .wiki-gallery-heading{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-size:8px;font-weight:1000;color:var(--ink)}
+  .wiki-gallery-heading span{font-size:7px;color:var(--ink-soft);font-weight:800}
+  .wiki-zoom-btn{border:2px solid var(--ink);border-radius:5px;padding:5px 7px;background:#fffdf1;color:var(--ink);font-weight:1000;font-size:7px;cursor:pointer;white-space:nowrap}.wiki-zoom-btn:hover{background:#dff1cf}.wiki-gallery-zoom .wiki-gallery-grid{gap:9px}.wiki-gallery-zoom .wiki-preview figcaption{font-size:9px;padding:8px}.wiki-gallery-zoom .wiki-gallery{margin-top:4px}.wiki-gallery-zoom h2{font-size:15px;margin-bottom:5px}.wiki-gallery-zoom p{font-size:9px;line-height:1.4}
+  .wiki-gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+  .wiki-gallery-grid.single{grid-template-columns:1fr}
+  .wiki-preview{min-width:0;border:2px solid rgba(24,49,58,.66);border-radius:7px;background:linear-gradient(#d7eee7 0 70%,#bdd5b0 70% 100%);overflow:hidden}
+  .wiki-preview canvas{display:block;width:100%;height:auto;aspect-ratio:208/144;image-rendering:pixelated;image-rendering:crisp-edges;position:static!important;transform:none!important;touch-action:auto!important}
+  .wiki-preview figcaption{padding:5px 6px;border-top:1px solid rgba(24,49,58,.38);background:rgba(255,253,241,.9);font-weight:900;font-size:7px;color:var(--ink);text-align:center}
+  .wiki-gallery-note{font-size:7px;line-height:1.45;color:var(--ink-soft);margin:7px 0 0}
+  .wiki-gallery-error{display:block;padding:18px 5px;text-align:center;color:#9c5047;font-size:8px}
+  @media(max-width:520px){.wiki-gallery-zoom .wiki-gallery-grid{grid-template-columns:1fr}}
+  @media(max-width:430px){.wiki-gallery{padding:6px}.wiki-gallery-grid{gap:4px}.wiki-preview figcaption{font-size:6px;padding:4px}}
+
   /* Tidebook Wiki */
   .wiki-toolbar{display:grid;grid-template-columns:minmax(0,1fr) 118px;gap:6px;margin-bottom:9px}.wiki-toolbar input,.wiki-toolbar select{width:100%;border:2px solid var(--ink);border-radius:6px;background:#fff;padding:7px 8px;color:var(--ink);font-size:8px;font-weight:900}.wiki-count{font-size:7px;color:var(--ink-soft);margin:-2px 0 8px}.wiki-list{display:grid;gap:7px}.wiki-entry{border:3px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden;box-shadow:2px 2px 0 var(--shadow)}.wiki-entry summary{list-style:none;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:7px;align-items:center;padding:8px;cursor:pointer}.wiki-entry summary::-webkit-details-marker{display:none}.wiki-icon{width:30px;height:30px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:6px;background:var(--paper);font-size:14px}.wiki-entry summary b{display:block;font-size:9px}.wiki-entry summary small{display:block;margin-top:2px;font-size:6px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.3px}.wiki-chevron{font-size:9px;color:var(--sea-dark)}.wiki-entry[open] .wiki-chevron{transform:rotate(180deg)}.wiki-body{padding:0 9px 9px;border-top:2px dashed #d8cda8}.wiki-block{margin-top:8px}.wiki-block b{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.5px;color:var(--sea-dark);margin-bottom:3px}.wiki-block p{margin:0;font-size:8px;line-height:1.45;color:var(--ink-soft)}.wiki-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.wiki-tag{display:inline-flex;border:1px solid rgba(24,49,58,.36);border-radius:999px;padding:2px 5px;background:var(--cream);font-size:6px;font-weight:900;color:var(--ink-soft)}.wiki-empty{border:2px dashed rgba(24,49,58,.35);border-radius:8px;padding:12px;text-align:center;font-size:8px;color:var(--ink-soft);background:rgba(255,255,255,.45)}
 
@@ -258,8 +274,8 @@
 // MakeFast runtime
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
-const VERSION=33;
-const VERSION_LABEL='0.37.5';
+const VERSION=34;
+const VERSION_LABEL='0.37.6';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -1496,17 +1512,131 @@ function wikiAssetEntries(){
   (CONTENT.discoveries||[]).forEach(d=>entries.push({id:`find-${d.kind}`,category:'Finds',icon:d.icon||'◆',title:d.name,lore:d.desc,use:`Voyage find that converts into game stock (${Object.entries(d.stock||{}).map(([k,v])=>`${v} ${CONTENT.materials?.[k]?.name||k}`).join(', ')||'story/world effect'}). No fasting effect.`,tags:['find','voyage reward']}));
   Object.entries(CONTENT.biomes||{}).forEach(([id,b])=>entries.push({id:`biome-${id}`,category:'Biomes',icon:'◭',title:b.label,lore:({meadow:'Rounded valleys, grassy hills and sheltering streams.',pine:'Long forested peninsulas and wooded headlands.',marsh:'Low-lying wetland with winding tidal channels.',cliff:'Fractured stone scarps, narrow landings and offshore rocks.',orchard:'Sheltered bays, fruit trees and terraced slopes.',dune:'A long sandy spit, wind-shaped beaches and a sheltered lagoon.'})[id]||'A distinctive part of the archipelago.',use:`Generates its own island geometry, colours, planting and eligible building sites. Resident and discovery preferences favour the local environment; construction opportunities and island capacity differ. This has no effect on fasting duration.`,tags:['biome','terrain','geography',id]}));
   (CONTENT.projects||[]).forEach(p=>entries.push({id:`project-${p.id}`,category:'Projects',icon:'⌂',title:p.name,lore:p.desc,use:`Island construction asset unlocked through population/site rules and supplied with game materials. ${p.pop?`Requires population ${p.pop}. `:''}${p.signature?`A signature landmark found on selected ${p.biomes?.join(' or ')} islands, with its own illustrated sprite. `:p.biomes?.length?`Found on ${p.biomes.join(' or ')} islands. `:''}${p.sites?.length?`Possible sites: ${p.sites.map(site=>CONTENT.buildSites[site]?.name||site).join(', ')}; geography may restrict these. `:''}World progression only; it does not alter fasting records.`,tags:['project','island',...(p.biomes||[]),...(p.signature?['signature','landmark']:[])]}));
+  // Gallery entries are generated from asset registries. No unlock state or world data is changed.
+  (CONTENT.npcVessels||[]).forEach(v=>entries.push({id:`npcboat-${v.id}`,category:'Working boats',icon:v.icon||'⛵',title:v.name,lore:v.desc||'A working vessel of the archipelago.',use:'An independently simulated world vessel; its illustrated boat is available to inspect here whether or not commissioned.',tags:['boat','working fleet','sprite',v.role]}));
+  const propNames={broadleaf:'Broadleaf tree',pine:'Pine tree',willow:'Willow tree',fruit:'Fruit tree',scrub:'Dune scrub',rock:'Coastal rock',flowers:'Wildflowers'};
+  Object.entries(propNames).forEach(([id,title])=>entries.push({id:`prop-${id}`,category:'Nature sprites',icon:'✿',title,lore:`A ${title.toLowerCase()} growing or resting around the archipelago.`,use:'World scenery varies by biome and instance. The panels show real sprite variants, not separately drawn concept art.',tags:['nature','vegetation','sprite',id]}));
+  Object.entries(CONTENT.residentArchetypes||{}).forEach(([id,d])=>entries.push({id:`person-${id}`,category:'Residents',icon:'☻',title:(d.occupations||[id])[0],lore:`One of the island residents’ professions: ${(d.occupations||[]).join(', ')}.`,use:'Example resident appearance and walking frames. Actual residents have their own names, outfits and colours; this preview does not create one.',tags:['resident','crew','animated',id]}));
+  const animalLabels={cat:'Harbour cat',dog:'Island dog',duck:'Duck',goose:'Goose',chicken:'Chicken',sheep:'Sheep',goat:'Goat',rabbit:'Rabbit',crab:'Shore crab'};
+  Object.entries(animalLabels).forEach(([id,title])=>entries.push({id:`animal-${id}`,category:'Wildlife',icon:'✦',title,lore:`A small ${title.toLowerCase()} seen about the islands.`,use:'These are the actual idle and moving animal frames used in the world, including possible stowaways. Previewing them does not trigger an encounter.',tags:['animal','wildlife','sprite','animation',id]}));
+  Object.entries(ARCADE_CATCH_SPECIES).forEach(([id,d])=>entries.push({id:`catch-${id}`,category:'Marine catches',icon:'◈',title:d.name,lore:`An illustrated ${d.name.toLowerCase()} encountered in shipboard fishing games.`,use:'The authentic two-frame catch sprite, shown for reference only. Catch and release rules continue to work within their original minigames.',tags:['fish','catch','wildlife','arcade',d.cat]}));
+  const seaNames={dolphin:'Dolphin',gull:'Seagull',wreck:'Drifting wreck',bottle:'Message bottle',seaglass:'Sea glass',crate:'Floating crate',kelp:'Kelp'};
+  Object.entries(seaNames).forEach(([id,title])=>entries.push({id:`sea-${id}`,category:'Sea sprites',icon:'≈',title,lore:`A ${title.toLowerCase()} that appears in the maritime world.`,use:'Preview of the actual sea sprite. Where animated, the frames are shown together.',tags:['sea','sprite','nature',id]}));
+  const harbourProps={house:'Harbour cottage',lighthouse:'Lighthouse tower',windmill:'Windmill',boatyard:'Boatyard workshop',market:'Market stall',market_hall:'Covered market',tea:'Tea house',garden:'Garden',ferry:'Jetty',map_room:'Chart room',observatory:'Hilltop lookout'};
+  Object.entries(harbourProps).forEach(([id,title])=>entries.push({id:`structure-${id}`,category:'Harbour assets',icon:'⌂',title,lore:`A ${title.toLowerCase()} from the established island artwork.`,use:'Actual base-building sprite, including its palette variants. Compare with newer signature landmarks and project previews.',tags:['building','reference art','sprite',id]}));
+  (CONTENT.boatVisuals?.paints||[]).forEach(v=>entries.push({id:`paint-${v.id}`,category:'Boat customisation',icon:'◈',title:v.name,lore:'An individual hull paint prepared in the shipwright’s colour book.',use:'A real cutter sprite rendered using this paint. The preview does not purchase or equip it.',tags:['paint','hull','livery']}));
+  (CONTENT.boatVisuals?.sails||[]).forEach(v=>entries.push({id:`sail-${v.id}`,category:'Boat customisation',icon:'△',title:v.name,lore:'A sailcloth design for the traditional sailer.',use:'A real sailer sprite rendered with this sail. No equipment is changed.',tags:['sail','cloth','livery']}));
+  (CONTENT.boatVisuals?.pennants||[]).forEach(v=>entries.push({id:`pennant-${v.id}`,category:'Boat customisation',icon:'⚑',title:v.name,lore:'A colourful little flag for your vessel.',use:'An actual boat sprite with this pennant colour; previewing it leaves your current flag alone.',tags:['flag','boat','customisation']}));
+  (CONTENT.boatVisuals?.upgrades||[]).forEach(v=>entries.push({id:`upgrade-${v.id}`,category:'Boat equipment',icon:'⚙',title:v.name,lore:v.desc,use:'Inspect this fitting on a sample vessel. No materials are spent and your boat is unchanged.',tags:['boat','fitting','upgrade']}));
+  for(const [id,title] of Object.entries({crate:'Cargo crate',bag:'Luggage',cup:'Galley cup',ring:'Life ring',bucket:'Deck bucket',freighter:'Freighter',ferry:'Arcade ferry',barge:'Working barge',tanker:'Tanker',dredger:'Dredger'}))entries.push({id:`arcadeprop-${id}`,category:'Arcade assets',icon:'▦',title,lore:'Detailed sprite artwork used by the shipboard arcade.',use:'Direct rendering of the arcade asset with its existing variants; viewing it does not start a minigame.',tags:['arcade','sprite',id]});
   Object.entries(MINIGAME_META).forEach(([id,m])=>entries.push({id:`game-${id}`,category:'Minigames',icon:m.icon||'▦',title:m.title,lore:m.wiki?.lore||m.desc,use:m.wiki?.fasting||'Optional shipboard play during a voyage. Scores, strikes and rewards are game systems only and do not alter fasting time or completion.',concept:m.wiki?.concept||m.desc,instruction:m.instruction,tags:['minigame',m.group,m.engine]}));
   return entries
 }
 function tidebookWikiEntries(){return [...wikiCoreEntries(),...wikiAssetEntries()].sort((a,b)=>a.category.localeCompare(b.category)||a.title.localeCompare(b.title))}
 function wikiEsc(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+function wikiVisualType(id){
+  if(!id)return null;
+  if(id==='emergency-anchorage')return'anchorage';
+  if(id==='island-geography'||id==='signature-landmarks')return'overview';
+  const prefixes={catch:'catch',project:'project',boat:'boat',npcboat:'npcboat',material:'material',find:'find',biome:'biome',prop:'prop',person:'person',animal:'animal',sea:'sea',structure:'structure',paint:'paint',sail:'sail',pennant:'pennant',upgrade:'upgrade',arcadeprop:'arcadeprop',game:'game'};
+  return prefixes[id.split('-')[0]]||null;
+}
+function wikiGalleryHTML(entry){
+  const type=wikiVisualType(entry.id);if(!type)return'';
+  const stages=type==='project'?[[0,'0% · Groundworks'],[.35,'35% · Frame'],[.7,'70% · Building'],[1,'100% · Complete']]:
+    type==='catch'||type==='sea'&&entry.id!=='sea-gull'?[[0,'Frame 1'],[1,'Frame 2']]:
+    ['prop','structure','boat','npcboat','person','animal','sea','arcadeprop'].includes(type)?[[0,'Original'],[1,'Variant / frame 2'],[2,'Variant / frame 3']]:[[0,'Actual artwork']];
+  const note=type==='project'?'Construction stages render using the same worksite and completed-asset drawing logic as the island. Preview percentages represent contributed materials.':
+    ['find','material'].includes(type)?'An existing representative sprite is shown where the object has no dedicated world sprite; this is labelled in the preview. The Tidebook icon remains the authoritative inventory symbol.':
+    type==='game'?'A representative sprite from this game’s art family, not a screenshot of its entire interactive playfield.':
+    type==='biome'?'A deterministic sample island generated with the actual biome terrain renderer. The sample exists only in this gallery.':
+    type==='overview'?'Illustrative examples use the original in-game renderers; opening the gallery never discovers an island or completes a project.':
+    'Live sprite functions are shared with the game. Variants, costumes and animation frames are shown where available.';
+  return `<section class="wiki-gallery" aria-label="Visual inspection of ${wikiEsc(entry.title)}"><div class="wiki-gallery-heading">ASSET INSPECTION <button class="wiki-zoom-btn" type="button" data-wiki-zoom="${wikiEsc(entry.id)}" aria-label="Enlarge ${wikiEsc(entry.title)} artwork">ENLARGE ↗</button><span>${stages.length} ${type==='project'?'construction stages':'views'}</span></div><div class="wiki-gallery-grid ${stages.length===1?'single':''}">${stages.map(([v,label])=>`<figure class="wiki-preview" style="margin:0"><canvas width="208" height="144" data-wiki-preview="${wikiEsc(entry.id)}" data-wiki-stage="${v}" role="img" aria-label="${wikiEsc(entry.title)}: ${wikiEsc(label)}"></canvas><figcaption>${wikiEsc(label)}</figcaption></figure>`).join('')}</div><p class="wiki-gallery-note">${wikiEsc(note)}</p></section>`;
+}
 function fastingWikiHTML(){
   const all=tidebookWikiEntries(),cats=['All',...new Set(all.map(e=>e.category))],q=(fastingLogUI.wikiQuery||'').trim().toLowerCase(),cat=fastingLogUI.wikiCategory||'All';
   const visible=all.filter(e=>(cat==='All'||e.category===cat)&&(!q||[e.title,e.category,e.lore,e.use,e.concept,e.instruction,...(e.tags||[])].join(' ').toLowerCase().includes(q)));
-  return `<div class="section"><div class="section-title">Tidebook Wiki <span>${all.length} entries</span></div><div class="card"><h3>Ship's encyclopedia</h3><p>Game lore and practical explanations live together here. Asset lists are generated from MakeFast's own registries, and each minigame contributes its concept and controls automatically.</p></div><div class="wiki-toolbar"><input id="wikiSearch" value="${wikiEsc(fastingLogUI.wikiQuery||'')}" placeholder="SEARCH THE TIDEBOOK…" aria-label="Search Tidebook wiki"><select id="wikiCategory" aria-label="Wiki category">${cats.map(c=>`<option ${c===cat?'selected':''}>${wikiEsc(c)}</option>`).join('')}</select></div><div class="wiki-count">SHOWING ${visible.length} OF ${all.length} ENTRIES</div><div class="wiki-list">${visible.map(e=>`<details class="wiki-entry"><summary><span class="wiki-icon">${wikiEsc(e.icon||'•')}</span><span><b>${wikiEsc(e.title)}</b><small>${wikiEsc(e.category)}</small></span><span class="wiki-chevron">▼</span></summary><div class="wiki-body"><div class="wiki-block"><b>In the world</b><p>${wikiEsc(e.lore||'')}</p></div><div class="wiki-block"><b>What it does</b><p>${wikiEsc(e.use||'')}</p></div>${e.concept?`<div class="wiki-block"><b>Game concept</b><p>${wikiEsc(e.concept)}</p></div>`:''}${e.instruction?`<div class="wiki-block"><b>How to play</b><p>${wikiEsc(e.instruction)}</p></div>`:''}${e.tags?.length?`<div class="wiki-tags">${e.tags.filter(Boolean).map(t=>`<span class="wiki-tag">${wikiEsc(t)}</span>`).join('')}</div>`:''}</div></details>`).join('')||'<div class="wiki-empty">No Tidebook entries match that search.</div>'}</div></div>`
+  return `<div class="section"><div class="section-title">Tidebook Wiki <span>${all.length} entries</span></div><div class="card"><h3>Illustrated ship's encyclopedia</h3><p>Open any illustrated entry to inspect genuine game sprites, scenery and construction stages. All previews are free, read-only and available before unlocking their assets. Search or filter below; minigames still supply their own explanations and controls.</p></div><div class="wiki-toolbar"><input id="wikiSearch" value="${wikiEsc(fastingLogUI.wikiQuery||'')}" placeholder="SEARCH THE TIDEBOOK…" aria-label="Search Tidebook wiki"><select id="wikiCategory" aria-label="Wiki category">${cats.map(c=>`<option ${c===cat?'selected':''}>${wikiEsc(c)}</option>`).join('')}</select></div><div class="wiki-count">SHOWING ${visible.length} OF ${all.length} ENTRIES · OPEN AN ENTRY TO VIEW ARTWORK</div><div class="wiki-list">${visible.map(e=>`<details class="wiki-entry" data-wiki-entry="${wikiEsc(e.id)}"><summary><span class="wiki-icon">${wikiEsc(e.icon||'•')}</span><span><b>${wikiEsc(e.title)}</b><small>${wikiEsc(e.category)} ${wikiVisualType(e.id)?'· VISUAL PREVIEW':''}</small></span><span class="wiki-chevron">▼</span></summary><div class="wiki-body">${wikiGalleryHTML(e)}<div class="wiki-block"><b>In the world</b><p>${wikiEsc(e.lore||'')}</p></div><div class="wiki-block"><b>What it does</b><p>${wikiEsc(e.use||'')}</p></div>${e.concept?`<div class="wiki-block"><b>Game concept</b><p>${wikiEsc(e.concept)}</p></div>`:''}${e.instruction?`<div class="wiki-block"><b>How to play</b><p>${wikiEsc(e.instruction)}</p></div>`:''}${e.tags?.length?`<div class="wiki-tags">${e.tags.filter(Boolean).map(t=>`<span class="wiki-tag">${wikiEsc(t)}</span>`).join('')}</div>`:''}</div></details>`).join('')||'<div class="wiki-empty">No Tidebook entries match that search.</div>'}</div></div>`;
 }
-function bindFastingWikiControls(){const q=$('#wikiSearch'),c=$('#wikiCategory');if(q)q.oninput=()=>{fastingLogUI.wikiQuery=q.value;renderLogPanel();requestAnimationFrame(()=>{$('#wikiSearch')?.focus();const z=$('#wikiSearch');if(z)z.setSelectionRange(z.value.length,z.value.length)})};if(c)c.onchange=()=>{fastingLogUI.wikiCategory=c.value;renderLogPanel()}}
+function wikiPaintBackdrop(g,W,H){g.imageSmoothingEnabled=false;g.fillStyle='#d8eee7';g.fillRect(0,0,W,H);g.fillStyle='#b9d5b0';g.fillRect(0,H*.77,W,H*.23);g.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<5;i++)g.fillRect(14+i*42,14+(i%2)*7,17,2)}
+function wikiBlit(g,spr,cx,cy,maxW=160,maxH=111,scaleCap=3){
+  if(!spr||!spr.width||!spr.height)throw new Error('Sprite unavailable');
+  const sc=Math.min(scaleCap,maxW/spr.width,maxH/spr.height),w=Math.max(1,Math.round(spr.width*sc)),h=Math.max(1,Math.round(spr.height*sc));
+  g.imageSmoothingEnabled=false;g.drawImage(spr,Math.round(cx-w/2),Math.round(cy-h/2),w,h);
+}
+function wikiAssetSprite(id,stage=0){
+  const key=id.slice(id.indexOf('-')+1),type=wikiVisualType(id),v=Math.floor(stage);
+  if(type==='catch')return arcadeCatchSprite(key,v);
+  if(type==='boat'){const a=defaultBoatAppearance(key),alt=CONTENT.boatVisuals.paints[(Math.abs(hashString(key))+3)%CONTENT.boatVisuals.paints.length];return createBoatSprite(key,v===1?{...a,hull:alt.hull,trim:alt.trim}:a,v===2)}
+  if(type==='npcboat'){const t=(CONTENT.npcVessels||[]).find(a=>a.id===key);if(!t)return null;const a=defaultBoatAppearance(t.sprite||'cutter');return createBoatSprite(t.sprite||'cutter',{...a,role:t.role||'neighbour',variant:v===1?1:a.variant},v===2)}
+  if(type==='prop')return propSprite(key,v);
+  if(type==='structure')return key==='windmill'?mfWindmillSprite(v,v*2):key==='boatyard'?mfBoatyardSprite(v,v*2):buildingSprite(key,v);
+  if(type==='person')return residentSprite(`wiki-${key}`,['#df7c68','#65bdd1','#83bf6a'][v%3],'#e5b54e',key,0,v%2,v===2);
+  if(type==='animal')return animalSprite(key,v,v===2);
+  if(type==='sea')return seaSprite(key,v);
+  if(type==='arcadeprop')return arcadeSprite(key,v);
+  if(type==='paint'){const a=CONTENT.boatVisuals.paints.find(x=>x.id===key);return a?createBoatSprite('cutter',{...defaultBoatAppearance('cutter'),hull:a.hull,trim:a.trim}):null}
+  if(type==='sail'){const a=CONTENT.boatVisuals.sails.find(x=>x.id===key);return a?createBoatSprite('sailer',{...defaultBoatAppearance('sailer'),sailBase:a.base,sailAccent:a.accent,sailPattern:a.pattern}):null}
+  if(type==='pennant'){const a=CONTENT.boatVisuals.pennants.find(x=>x.id===key);return a?createBoatSprite('sailer',{...defaultBoatAppearance('sailer'),pennant:a.color}):null}
+  if(type==='upgrade')return createBoatSprite('cutter',{...defaultBoatAppearance('cutter'),upgrades:{[key]:true}});
+  if(type==='material'){const mapping={timber:['arcade','crate'],hardware:['arcade','crate'],stone:['prop','rock'],glass:['sea','seaglass'],brass:['arcade','ring'],seeds:['prop','flowers'],cloth:['arcade','bag'],charts:['sea','bottle'],stories:['sea','bottle']},m=mapping[key];return !m?null:m[0]==='arcade'?arcadeSprite(m[1],0):m[0]==='prop'?propSprite(m[1],0):seaSprite(m[1],0)}
+  if(type==='find'){const mapping={bottle:['sea','bottle'],seaglass:['sea','seaglass'],glass:['sea','seaglass'],crate:['sea','crate'],stone:['prop','rock'],seeds:['prop','flowers'],cloth:['arcade','bag'],bell:['pinball','bell'],traveller:['person','maker'],chart:['sea','bottle']},m=mapping[key];return !m?null:m[0]==='arcade'?arcadeSprite(m[1]):m[0]==='pinball'?pbSprite(m[1]):m[0]==='person'?residentSprite('wiki-traveller','#527da0','#e5b54e','maker'):m[0]==='prop'?propSprite(m[1]):seaSprite(m[1])}
+  if(type==='game'){
+    const meta=MINIGAME_META[key];if(!meta)return null;
+    if(meta.engine==='pinball')return pbSprite('fish',0);
+    if(meta.engine==='poop')return seaSprite('gull',1);
+    if(meta.theme==='speedboat')return arcadeSpeedBoatSprite(0,'#df7c68',true);
+    if(meta.theme==='submarine')return arcadeDepthSprite('sub',0);
+    const mapping={ferry:'ferry',container:'freighter',tug:'barge',tanker:'tanker',dredger:'dredger',barge:'barge',trawler:'ferry',research:'ferry',cruise:'ferry',yacht:'ferry',naval:'freighter',carrier:'freighter',rescue:'ferry',pilot:'ferry',tallship:'ferry'};
+    return arcadeSprite(mapping[meta.theme]||'ferry');
+  }
+  return null;
+}
+function wikiPaintProject(g,id,progress){
+  const t=(CONTENT.projects||[]).find(x=>x.id===id.slice(8));if(!t)return;
+  const pos={x:104,y:112};
+  if(progress<1){mfDrawProjectConstructionSite({id:'wiki-only',biome:'meadow'}, {templateId:t.id}, 0,t,pos,progress,g);return}
+  // The finished preview composes exactly the same sprites and relative positions as drawProjectOnIsland.
+  const blit=(spr,x,y,scale,ay=.86)=>{const w=Math.round(spr.width*scale),h=Math.round(spr.height*scale);g.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*ay),w,h)};
+  if(t.signature){blit(mfLandmarkSprite(t.feature),pos.x,pos.y,islandBuildingScale('house',1.0),.87);return}
+  if(t.draw==='market_square'){blit(buildingSprite('market',0),pos.x-18,pos.y,islandBuildingScale('market',.82));blit(buildingSprite('market',1),pos.x+23,pos.y+10,islandBuildingScale('market',.76));return}
+  if(t.draw==='cottages'){blit(buildingSprite('house',0),pos.x-18,pos.y,islandBuildingScale('house',.82));blit(buildingSprite('house',1),pos.x+20,pos.y+12,islandBuildingScale('house',.76));return}
+  const kind=t.draw||'house',spr=kind==='windmill'?mfWindmillSprite(0,0):kind==='boatyard'?mfBoatyardSprite(0,0):buildingSprite(kind,0),sc=islandBuildingScale(kind,kind==='market_hall'?1.02:kind==='boatyard'?1:kind==='ferry'?.96:.92);
+  blit(spr,pos.x,pos.y,sc);
+  if(kind==='boatyard')blit(createBoatSprite('shallow',defaultBoatAppearance('shallow')),pos.x+37,pos.y+27,.67,.55);
+}
+function wikiDrawPreview(c){
+  const id=c.dataset.wikiPreview,stage=Number(c.dataset.wikiStage||0),type=wikiVisualType(id),g=c.getContext('2d'),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H);wikiPaintBackdrop(g,W,H);
+  try{
+    if(type==='project'){wikiPaintProject(g,id,stage);return}
+    if(type==='biome'||type==='overview'&&id==='island-geography'){
+      const name=type==='biome'?id.slice(6):'meadow',sample={id:`wiki-${name}`,biome:name,home:false,known:true,features:['jetty'],projects:[],residents:[],stock:{},shape:makeIslandShape(`wiki-${name}`,name)};
+      const spr=islandTerrainSprite(sample);wikiBlit(g,spr,W/2,H/2+2,190,135,1.1);return;
+    }
+    if(type==='anchorage'){wikiBlit(g,mfAnchorageRockSprite(0),W/2,H/2,165,120);return}
+    if(type==='overview'){wikiBlit(g,mfLandmarkSprite('pine_watch'),W/2,H/2,150,120);return}
+    const spr=wikiAssetSprite(id,stage);
+    if(spr)wikiBlit(g,spr,W/2,H/2,type==='structure'||type==='npcboat'||type==='boat'?164:150,118,['animal','sea','catch'].includes(type)?3.7:3);
+    else{
+      const entry=tidebookWikiEntries().find(e=>e.id===id);g.font='bold 38px monospace';g.textAlign='center';g.fillStyle='#18313a';g.fillText(entry?.icon||'◆',W/2,H/2+15);g.font='bold 9px monospace';g.fillText('TIDEBOOK ICON · NO DEDICATED SPRITE',W/2,H-9);g.textAlign='left';
+    }
+  }catch(error){console.warn('Wiki visual preview failed:',id,error);g.fillStyle='#a94d44';g.font='bold 10px monospace';g.textAlign='center';g.fillText('PREVIEW UNAVAILABLE',W/2,H/2);g.textAlign='left'}
+}
+function wikiDrawGallery(root){root.querySelectorAll('canvas[data-wiki-preview]').forEach(c=>wikiDrawPreview(c))}
+function wikiRenderVisuals(details){if(!details?.open)return;wikiDrawGallery(details)}
+function wikiOpenZoom(id){
+  const entry=tidebookWikiEntries().find(e=>e.id===id);if(!entry||!wikiVisualType(id))return;
+  showModal(`<div class="wiki-gallery-zoom"><h2>${wikiEsc(entry.title)} · Asset inspection</h2><p>The same sprites and construction stages used in the game. These previews are read-only.</p>${wikiGalleryHTML(entry)}<div class="modal-actions"><button class="big-btn secondary" type="button" data-close>BACK TO TIDEBOOK</button></div></div>`,true);
+  wikiDrawGallery($('#modal'));
+}
+function bindFastingWikiControls(){
+  const q=$('#wikiSearch'),c=$('#wikiCategory');
+  if(q)q.oninput=()=>{fastingLogUI.wikiQuery=q.value;renderLogPanel();requestAnimationFrame(()=>{$('#wikiSearch')?.focus();const z=$('#wikiSearch');if(z)z.setSelectionRange(z.value.length,z.value.length)})};
+  if(c)c.onchange=()=>{fastingLogUI.wikiCategory=c.value;renderLogPanel()};
+  $$('.wiki-entry[data-wiki-entry]').forEach(details=>{details.addEventListener('toggle',()=>wikiRenderVisuals(details));details.querySelectorAll('[data-wiki-zoom]').forEach(b=>b.addEventListener('click',()=>wikiOpenZoom(b.dataset.wikiZoom)))});
+}
 
 function realFastingSessions(){return state.sessions.filter(s=>!s.simulated&&Number.isFinite(+s.endedAt)&&Number.isFinite(+s.startedAt)&&Number.isFinite(+s.durationMs)).slice().sort((a,b)=>a.endedAt-b.endedAt)}
 function zonedYMD(ts){
@@ -2750,11 +2880,14 @@ function mfProjectConstructionSpec(t,pos){
   if(t.draw==='windmill')return{sprite:mfWindmillSprite(variant,0),scale:islandBuildingScale('windmill',.96),ax:.5,ay:.86};
   const kind=t.draw||'house';return{sprite:buildingSprite(kind,variant),scale:islandBuildingScale(kind,.92),ax:.5,ay:.86};
 }
-function mfDrawConstructionReveal(sprite,x,y,scale,ax=.5,ay=.86,prog=.5){
+function mfDrawConstructionReveal(sprite,x,y,scale,ax=.5,ay=.86,prog=.5,target=ctx){
   const w=Math.round(sprite.width*scale),h=Math.round(sprite.height*scale),left=Math.round(x-w*ax),top=Math.round(y-h*ay),reveal=clamp(.18+prog*.74,.12,.96);
-  ctx.save();ctx.imageSmoothingEnabled=false;ctx.beginPath();ctx.rect(left-2,top+h*(1-reveal),w+4,h*reveal+4);ctx.clip();ctx.globalAlpha=.92;ctx.drawImage(sprite,left,top,w,h);ctx.restore();
+  target.save();target.imageSmoothingEnabled=false;target.beginPath();target.rect(left-2,top+h*(1-reveal),w+4,h*reveal+4);target.clip();target.globalAlpha=.92;target.drawImage(sprite,left,top,w,h);target.restore();
 }
-function mfDrawProjectConstructionSite(isl,p,index,t,pos,prog){
+function mfDrawProjectConstructionSite(isl,p,index,t,pos,prog,target=ctx){
+  const rect=(x,y,w,h,c)=>{target.fillStyle=c;target.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
+  const line=(x,y,xx,yy,c,lw=2)=>{target.strokeStyle=c;target.lineWidth=lw;target.beginPath();target.moveTo(x,y);target.lineTo(xx,yy);target.stroke()};
+  const shadow=(x,y,w,h,a=.14)=>rect(x,y,w,h,`rgba(18,46,55,${a})`);
   const spec=mfProjectConstructionSpec(t,pos),sprite=spec.sprite,scale=spec.scale,ax=spec.ax,ay=spec.ay;
   const w=Math.max(34,sprite.width*scale*.86),h=Math.max(22,sprite.height*scale*.54),seed=Math.abs(hashString(`${isl.id}:${p.templateId}:${index}`)),sway=Math.sin(frame*.0035+(seed%17))*.7;
   shadow(pos.x-w*.56,pos.y+10,w*1.12,8,.19);
@@ -2766,10 +2899,10 @@ function mfDrawProjectConstructionSite(isl,p,index,t,pos,prog){
   line(pos.x-w*.32,pos.y-h*.18,pos.x+w*.02+sway,pos.y+h*.04,'#ba845d',2);line(pos.x+w*.32,pos.y-h*.18,pos.x-w*.02+sway,pos.y+h*.04,'#ba845d',2);
   if(prog>.28)rect(pos.x-w*.34,pos.y-h*.06,w*.68,3,'#d8ba7b');
   if(prog>.55)rect(pos.x-w*.30,pos.y-h*.24,w*.60,3,'#d8ba7b');
-  mfDrawConstructionReveal(sprite,pos.x,pos.y+1,scale,ax,ay,prog);
-  if(prog<.88){ctx.save();ctx.globalAlpha=.28;rect(pos.x-w*.30,pos.y-h*.03,w*.60,3,'#fff7de');ctx.restore()}
+  mfDrawConstructionReveal(sprite,pos.x,pos.y+1,scale,ax,ay,prog,target);
+  if(prog<.88){target.save();target.globalAlpha=.28;rect(pos.x-w*.30,pos.y-h*.03,w*.60,3,'#fff7de');target.restore()}
   // Small project sign gives the site a crafted feel without clutter.
-  rect(pos.x+w*.33,pos.y-h*.03,7,16,'#704630','#18313a',1);rect(pos.x+w*.30,pos.y-h*.16,15,9,'#f2dfaa','#18313a',1);line(pos.x+w*.31,pos.y-h*.12,pos.x+w*.43,pos.y-h*.10,'#a76956',1);line(pos.x+w*.31,pos.y-h*.09,pos.x+w*.39,pos.y-h*.07,'#6a8f77',1);
+  rect(pos.x+w*.33,pos.y-h*.03,7,16,'#704630');rect(pos.x+w*.30,pos.y-h*.16,15,9,'#f2dfaa');line(pos.x+w*.31,pos.y-h*.12,pos.x+w*.43,pos.y-h*.10,'#a76956',1);line(pos.x+w*.31,pos.y-h*.09,pos.x+w*.39,pos.y-h*.07,'#6a8f77',1);
 }
 function drawProjectOnIsland(isl,p,index){
   const t=projectTemplate(p.templateId);if(!t)return;const pos=projectSitePos(p,index,isl),prog=projectProgress(p);
@@ -9641,6 +9774,7 @@ document.addEventListener('visibilitychange',()=>{
 window.__MakeFastAudio={status:()=>AdaptiveMusic.status(),state:AdaptiveMusic.state,sync:(force=true)=>adaptiveMusicSync(force),wake:()=>AdaptiveMusic.wake(),director:()=>AdaptiveMusic.status()};
 window.__MakeFastBoat={createBoatSprite,renderBoatPreviewCanvas,playerBoatAppearance,defaultBoatAppearance,npcBoatAppearance,boatTypes:BOAT_TYPES,npcTypes:NPC_VESSEL_TYPES,holdCapacity:playerBoatCapacity,passengerCapacity:playerPassengerCapacity,parcelCapacity:playerParcelCapacity,helpLoad:()=>({passengers:playerPassengerCount(),parcels:playerParcelCount()}),stats:boatEffectiveStats,findChanceBonus:boatFindChanceBonus,rewardThreshold:boatRewardThreshold,seaFinds:()=>ensureSeaFinds()};
 window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaSprite,drawPixelSprite,worldSpriteCache,islandArt:ISLAND_ART,visibleResidentLimit,islandAnimals,lifeStats:mfIslandLifeStats};
+window.__MakeFastWikiGallery={entries:()=>tidebookWikiEntries().map(e=>({id:e.id,category:e.category,visual:wikiVisualType(e.id)})),preview:(id,stage=0)=>{const c=document.createElement('canvas');c.width=208;c.height=144;c.dataset.wikiPreview=id;c.dataset.wikiStage=String(stage);wikiDrawPreview(c);return c},html:fastingWikiHTML};
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
 window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket,pinball:minigame.pinball}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
