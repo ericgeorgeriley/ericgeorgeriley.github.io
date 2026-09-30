@@ -11178,7 +11178,7 @@ try{const priorSim=worldSimulating;worldSimulating=true;state.islands.forEach(is
 if(window.__MakeFastBoat){window.__MakeFastBoat.holdCapacity=playerBoatCapacity;window.__MakeFastBoat.passengerCapacity=playerPassengerCapacity;window.__MakeFastBoat.parcelCapacity=playerParcelCapacity;window.__MakeFastBoat.helpLoad=()=>({passengers:playerPassengerCount(),parcels:playerParcelCount(),cargoSlots:mfV38BoatUsedSlots(),cargoCapacity:playerBoatCapacity()});window.__MakeFastBoat.storageLayout=mfV38BoatLayout}
 // ------------------------------------------------------------------------------
 
-// Startup
+// sStartup
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
 })();
