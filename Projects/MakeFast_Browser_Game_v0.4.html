@@ -254,6 +254,32 @@
 .mf39-friends{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--ink-soft);line-height:1.2}.mf39-friends b{font-size:10px;color:var(--ink)}.mf39-friends i{font-style:normal;color:#acb8b4;letter-spacing:1px;font-size:17px}.mf39-friends i.on{color:var(--coral)}
 .mf39-lore{margin-top:5px!important}.mf39-clue-reference{display:grid;gap:6px}.mf39-clue-reference .mf39-clue{background:#fff;border:2px solid rgba(24,49,58,.35);padding:7px;border-radius:7px;font-size:9px;line-height:1.4}.mf39-clue-reference .mf39-clue.found{background:#e8f3de}.mf39-clue b{display:block;margin-bottom:3px}.mf39-clue small{color:var(--ink-soft);font-size:8px}.mf39-field-warning{font-size:10px;line-height:1.4;border-left:4px solid var(--sea-dark);padding:6px 9px;background:#e7f3ef;margin:9px 0}
 @media(max-width:520px){.mf39-person-header{grid-template-columns:68px minmax(0,1fr);gap:9px;top:-16px}.mf39-person-header canvas{width:68px!important;height:74px!important}.mf39-person-heading h2{font-size:13px}.mf39-friends i{font-size:14px}.mf39-person-heading p{font-size:8px}}
+/* v0.40.0 dockside vessel conversations and bartering */
+.mf40-vessel-header{display:grid;grid-template-columns:80px minmax(0,1fr);align-items:start;gap:12px;margin-bottom:12px}
+.mf40-vessel-header canvas{position:static!important;width:80px!important;height:86px!important;border:3px solid var(--ink);border-radius:9px;background:#d7ede5;image-rendering:pixelated}
+.mf40-vessel-header div{min-width:0}.mf40-vessel-header small{display:block;color:var(--sea-dark);font-size:8px;font-weight:1000;letter-spacing:.4px;margin-bottom:4px}
+.mf40-vessel-header h2{font-size:17px;line-height:1.2;margin:0 0 5px}.mf40-vessel-header p{font-size:9px;margin:0 0 7px}.mf40-vessel-header b{font-size:11px}
+.mf40-vessel-section{margin:12px 0;padding:10px;background:#fffdf1;border:2px solid var(--ink);border-radius:9px}
+.mf40-vessel-section h3{display:flex;align-items:baseline;justify-content:space-between;gap:5px;font-size:10px;text-transform:uppercase;letter-spacing:.3px;margin:0 0 8px}
+.mf40-vessel-section h3 small{font-size:8px;color:var(--ink-soft);text-transform:none;letter-spacing:0}
+.mf40-vessel-section p{margin:5px 0 8px;font-size:10px;line-height:1.5;color:var(--ink-soft)}
+.mf40-vessel-section .mf40-help{font-size:8px;color:var(--ink-soft);line-height:1.45;margin:5px 0 9px}
+.mf40-captain-note{font-size:10px;line-height:1.5;padding:8px;background:#e3f1f0;border-left:4px solid var(--sea-dark);margin:8px 0}
+.mf40-stock{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 13px;font-size:9px}
+.mf40-good{display:inline-flex;align-items:center;vertical-align:middle;gap:4px;border:2px solid var(--ink);border-radius:7px;padding:3px 6px;background:#fff;min-width:0;font-size:9px}
+.mf40-good .mf-material-icon{width:33px!important;height:33px!important;flex:0 0 33px!important}
+.mf40-good b{white-space:normal;font-size:9px;line-height:1.3}
+.mf40-deal{border:2px solid var(--ink);border-radius:8px;padding:8px;margin-top:8px;background:#fff;box-shadow:2px 2px 0 var(--shadow)}
+.mf40-deal.ready{background:#f0f9ed}.mf40-deal.blocked{background:#fff9e9}
+.mf40-deal-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}.mf40-deal-heading b{font-size:9px}.mf40-deal-heading span{font-size:7px;color:var(--ink-soft);font-weight:900}
+.mf40-exchange{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);gap:4px;align-items:center}
+.mf40-exchange>div{min-width:0}.mf40-exchange small{display:block;font-weight:1000;font-size:7px;color:var(--ink-soft);margin-bottom:4px}
+.mf40-exchange .mf40-good{max-width:100%;width:100%}.mf40-arrow{text-align:center;font-size:17px;font-weight:900;color:var(--sea-dark)}
+.mf40-deal .big-btn{margin-top:6px;padding:7px;font-size:9px}.mf40-deal button:disabled{display:block!important;opacity:.6;cursor:not-allowed}
+.mf40-port-log{display:grid;gap:7px}.mf40-port-log>div{border-left:3px solid var(--sea-dark);padding:3px 0 4px 8px;background:#f2f8f3}
+.mf40-port-log b{display:block;font-size:9px}.mf40-port-log span{display:block;font-size:8px;line-height:1.45;color:var(--ink-soft);margin-top:3px}
+@media(max-width:520px){.mf40-vessel-section{padding:8px}.mf40-exchange{grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr)}.mf40-good{padding:3px;gap:2px}.mf40-good .mf-material-icon{width:27px!important;height:27px!important;flex-basis:27px!important}.mf40-vessel-header{gap:9px}}
+
 </style>
 <style>
 /* Illustrated Harbour Stories: pixel previews share the live sprite cache and respect reduced motion. */
@@ -352,8 +378,8 @@
 // MakeFast runtime
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
-const VERSION=45;
-const VERSION_LABEL='0.39.0';
+const VERSION=46;
+const VERSION_LABEL='0.40.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -975,7 +1001,7 @@ function residentHTML(p){
 }
 function vesselCardHTML(v){
   const t=vesselType(v.typeId),dest=getIsland(v.destinationId),home=getIsland(v.homeId),status=v.status==='sailing'?`Under way → ${dest?.name||'open water'}`:`Alongside · ${getIsland(v.locationId)?.name||home?.name||'the quay'}`,hint=hsVesselNewsReady(v)?'? CREW NEWS':'';
-  return`<div class="traffic" data-vessel-id="${v.id}"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${v.name}</b><span class="item-sub">${t.name} · ${status}</span>${hint?`<span class="item-hint">${hint}</span>`:''}</div></div>`
+  const d=mf40EnsureVessel(v),tradeHint=v.status==='docked'&&mf40GoodsQuantity(d.tradeStock)?' · ⇄ MEET CAPTAIN / BARTER':'';return`<div class="traffic" data-vessel-id="${v.id}"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${wikiEsc(v.name)}</b><span class="item-sub">${wikiEsc(t.name)} · ${wikiEsc(status)} · Captain ${wikiEsc(v.captainName)}</span>${hint||tradeHint?`<span class="item-hint">${hint}${tradeHint}</span>`:''}</div></div>`
 }
 function worldLogHTML(items,limit=8){return(items||[]).slice(0,limit).map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${fmtDate(e.at)} · ${formatClockInZone(e.at,state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}
 function materialName(k){return MATERIALS[k]?.name||k}
@@ -1013,6 +1039,189 @@ function defaultState(){
     sim:{active:false,offsetMs:0}, achievements:{}, lastSavedAt:nowReal()
   }
 }
+
+// v0.40.0: working captains, persistent ship's stores, changing port exchanges and recorded crossings.
+// Freight (v.cargo) remains separate from the captain's small bartering locker (v.tradeStock).
+const MF40_VESSEL_GOODS={
+ neighbour:['timber','stories','seeds'],fishing:['glass','timber','stone'],trade:['hardware','cloth','stone'],
+ mail:['stories','charts','cloth'],ferry:['stories','timber','cloth'],work:['timber','hardware','stone'],
+ survey:['charts','glass','stone'],naturalist:['seeds','glass','stone'],cargo:['stone','timber','hardware'],
+ visitor:['cloth','stories','seeds'],tender:['hardware','timber','cloth']
+};
+const MF40_VESSEL_WANTS={
+ neighbour:['cloth','seeds','hardware','stories'],fishing:['cloth','hardware','seeds'],
+ trade:['seeds','timber','glass','stories'],mail:['cloth','seeds','hardware'],ferry:['timber','hardware','stories'],
+ work:['glass','cloth','seeds'],survey:['hardware','cloth','brass'],naturalist:['cloth','hardware','stories'],
+ cargo:['seeds','glass','cloth'],visitor:['glass','seeds','stories'],tender:['cloth','glass','stories']
+};
+const MF40_GOODS_VALUE={timber:2,hardware:3,stone:2,glass:3,brass:5,seeds:1,cloth:2,charts:5,stories:1};
+const MF40_CAPTAIN_VOICES={
+ neighbour:['knows which jetty is safest after rain','likes bringing neighbours a little something from another shore','keeps notes of who still owes the harbour a cup of tea'],
+ fishing:['reads the water by the birds above it','can tell a useful piece of driftwood from a lost plank','takes pride in returning with something for the next harbour'],
+ trade:['keeps an untidy but remarkably accurate ledger','notices surpluses before anyone calls them surplus','prefers a fair barter to a long argument about coin'],
+ mail:['remembers which envelope belongs to which family','keeps the most delicate parcels tucked beneath the chart table','says a letter ought to travel as reliably as a tide'],
+ ferry:['knows passengers by their favourite seat','always waits a moment for someone running along the pier','regards a smooth landing as a small personal victory'],
+ work:['has opinions about every jetty in the archipelago','keeps spare fixings wrapped in an oilcloth','measures a successful voyage in repairs made'],
+ survey:['compares old bearings against every new coastline','has filled the margins of the ship log with soundings','is seldom completely satisfied with a chart'],
+ naturalist:['catalogues little things washed into sheltered coves','follows the seasons rather than the busiest harbour','stops to watch birds whenever the tide allows it'],
+ cargo:['knows which settlements are short of building stock','will rearrange a load three times to keep it dry','takes the quiet satisfaction of a well-balanced hold seriously'],
+ visitor:['knows the tea rooms at almost every harbour','takes the scenic route when the weather permits','collects odd little stories from the passengers'],
+ tender:['can tie a mooring knot one-handed','is happiest working close to a lively quay','notices the small harbour jobs other crews pass by']
+};
+const MF40_VOYAGE_REFLECTIONS=[
+ 'The crossing was quieter than the departure suggested.',
+ 'The weather changed its mind once, but the cargo stayed dry.',
+ 'A distant light kept the final approach company.',
+ 'The crew compared bearings over the last stretch of water.',
+ 'There was time to watch the gulls before the harbour came into view.',
+ 'The last mile took more careful steering than the rest of the passage.',
+ 'A good deal of rope was coiled and recoiled on the way in.',
+ 'The captain made a point of checking the cargo before landfall.'
+];
+function mf40Vessel(id){return worldState().vessels.find(v=>v.id===id)||null}
+function mf40Pick(list,seed){return list[Math.abs(hashString(String(seed)))%list.length]}
+function mf40AddStock(stock,m,n){if(n>0)stock[m]=Math.max(0,stock[m]||0)+n}
+function mf40GoodsQuantity(stock){return Object.values(stock||{}).reduce((a,n)=>a+Math.max(0,n||0),0)}
+function mf40EnsureVessel(v){
+ if(!v)return null;
+ if(!v.mf40){
+  const pool=MF40_VESSEL_GOODS[v.role]||MF40_VESSEL_GOODS.neighbour,
+    stock={},idx=Math.abs(hashString(`${v.id}:first-locker`))%pool.length,
+    first=pool[idx],second=pool[(idx+1)%pool.length];
+  // Initial crew provisions are modest and created only once; future port acquisitions debit actual stock.
+  mf40AddStock(stock,first,first==='charts'||first==='brass'?1:2);
+  if(second!==first)mf40AddStock(stock,second,1);
+  v.mf40={tradeStock:stock,portHistory:[],barters:[],offers:[],offerToken:'',startedAt:v.createdAt||nowReal(),lastArrival:null};
+ }
+ const d=v.mf40;if(!d.tradeStock||typeof d.tradeStock!=='object')d.tradeStock={};
+ if(!Array.isArray(d.portHistory))d.portHistory=[];
+ if(!Array.isArray(d.barters))d.barters=[];
+ if(!Array.isArray(d.offers))d.offers=[];
+ return d;
+}
+function mf40VesselVisitToken(v){return `${v.trips||0}:${v.locationId||v.homeId}`}
+function mf40CaptainLine(v){
+ const voice=MF40_CAPTAIN_VOICES[v.role]||MF40_CAPTAIN_VOICES.neighbour,
+  habit=mf40Pick(voice,`${v.id}:captain-voice`),home=getIsland(v.homeId),d=mf40EnsureVessel(v),last=d.portHistory[0],
+  resident=v.captainSource==='resident'?residentById(v.captainPersonId):null;
+ const first=resident?`${wikiEsc(v.captainName)} calls ${wikiEsc(home?.name||'the islands')} home and ${wikiEsc(habit)}. Ashore, their work is ${wikiEsc((resident.occupation||'island life').toLowerCase())}.`:
+  `Captain ${wikiEsc(v.captainName)} first worked out of ${wikiEsc(home?.name||'a small harbour')} and ${wikiEsc(habit)}.`;
+ const second=last?`Since calling at ${wikiEsc(getIsland(last.originId)?.name||'another shore')}, the captain has been considering what the next harbour might need.`:
+  `Their earliest voyages followed the short island routes.`;
+ return `${first} ${second}`;
+}
+function mf40Arrival(v,dest,at){
+ const d=mf40EnsureVessel(v),freight=mfV381CleanStock(v.cargo||{}),landed={...freight},originId=v.originId||v.homeId,
+  reflection=mf40Pick(MF40_VOYAGE_REFLECTIONS,`${v.id}:${v.trips}:passage`);
+ // A portion of actual incoming freight is retained in the trading locker rather than duplicated on the island.
+ const order=Object.keys(landed).sort((a,b)=>(landed[b]||0)-(landed[a]||0));
+ for(const m of order){if(mf40GoodsQuantity(d.tradeStock)>=7)break;const n=Math.min(landed[m],m==='charts'||m==='brass'?1:2,7-mf40GoodsQuantity(d.tradeStock));if(n){landed[m]-=n;if(!landed[m])delete landed[m];mf40AddStock(d.tradeStock,m,n)}}
+ const entry={originId,destinationId:dest.id,arrivedAt:at,mission:v.mission||'',freight,landed:{...landed},reflection};
+ d.portHistory.unshift(entry);d.portHistory=d.portHistory.slice(0,5);d.lastArrival=at;d.offers=[];d.offerToken='';
+ // New local stock is physically purchased from the destination stores. Never take the last unit.
+ if(mf40GoodsQuantity(d.tradeStock)<8){const prefs=[...(MF40_VESSEL_GOODS[v.role]||[]),...Object.keys(dest.stock||{})];
+  const pool=[...new Set(prefs)].filter(m=>(dest.stock?.[m]||0)>=2&&mf40GoodsQuantity(d.tradeStock)<8);
+  if(pool.length){const m=mf40Pick(pool,`${v.id}:${v.trips}:${dest.id}:local-goods`);dest.stock[m]--;mf40AddStock(d.tradeStock,m,1)}}
+ return landed;
+}
+function mf40Depart(v,origin,dest,at){
+ const d=mf40EnsureVessel(v);d.offers=[];d.offerToken='';
+ d.departedFrom=origin.id;d.headingTo=dest.id;d.departedAt=at;
+ // All untraded captain's stock sails on to the next port. Freight travels in v.cargo separately.
+}
+function mf40TradeOffers(v){
+ const d=mf40EnsureVessel(v),token=mf40VesselVisitToken(v);
+ if(v.status!=='docked')return [];
+ if(d.offerToken===token)return d.offers;
+ d.offerToken=token;
+ const available=Object.entries(d.tradeStock).filter(([m,n])=>MATERIALS[m]&&n>0)
+  .sort((a,b)=>(Math.abs(hashString(`${v.id}:${token}:${a[0]}`))%1000)-(Math.abs(hashString(`${v.id}:${token}:${b[0]}`))%1000));
+ const wants=MF40_VESSEL_WANTS[v.role]||MF40_VESSEL_WANTS.neighbour,
+  demand=projectNeeds(getIsland(v.homeId)),needed=Object.keys(demand).filter(m=>demand[m]>0);
+ d.offers=available.slice(0,Math.min(v.role==='trade'||v.role==='cargo'?4:3,available.length)).map(([m,availableN],i)=>{
+  const opts=[...new Set([...needed,...wants,...Object.keys(MATERIALS)])].filter(x=>x!==m),
+    want=opts[Math.abs(hashString(`${v.id}:${token}:${m}:want`)+i)%opts.length],
+    qty=Math.min(availableN,(MF40_GOODS_VALUE[m]||2)>=4?1:(availableN>=3?2:1)),
+    speciality=(MF40_VESSEL_GOODS[v.role]||[]).includes(m),price=Math.max(1,Math.min(5,Math.ceil(qty*(MF40_GOODS_VALUE[m]||2)*(speciality?.85:1.05)/(MF40_GOODS_VALUE[want]||2))));
+  return{id:`${token}/${m}`,m,want,qty,price,sold:false,source:speciality?'Captain’s speciality':'Passing cargo'};
+ });
+ return d.offers;
+}
+function mf40TradeCheck(v,o,isl){
+ if(!mfCanMeetVessel(v)||!o||o.sold)return{ok:false,reason:'The offer is no longer available.'};
+ if((mf40EnsureVessel(v).tradeStock[o.m]||0)<o.qty)return{ok:false,reason:'That cargo has already been claimed.'};
+ const plan=mfV381ExchangePlan(isl,{[o.want]:o.price},{[o.m]:o.qty});
+ return{ok:!!plan.ok,reason:!plan.affordable?`Need ${mfBundleLabel(plan.missing)} from boat or shore stores.`:!plan.fits?`Make storage room for ${mfBundleLabel(plan.spaceMissing)}.`:'',plan};
+}
+function mf40Bundle(m,n){return `<span class="mf40-good">${mfMaterialIconSVG(m)}<span><b>${n} ${wikiEsc(materialName(m))}</b></span></span>`}
+function mf40TradeHTML(v,isl){const d=mf40EnsureVessel(v),offers=mf40TradeOffers(v),goods=Object.entries(d.tradeStock).filter(([m,n])=>MATERIALS[m]&&n>0);
+ return `<section class="mf40-vessel-section"><h3>Captain’s trading hold <small>${mf40GoodsQuantity(d.tradeStock)} items aboard</small></h3>
+ <p class="mf40-help">This is the captain's personal bartering stock, not freight already delivered to the island. It travels with the boat and changes as the vessel visits new ports.</p>
+ <div class="mf40-stock">${goods.length?goods.map(([m,n])=>mf40Bundle(m,n)).join(''):'The trading locker is empty until the next call.'}</div>
+ <h3>Quayside offers <small>${offers.filter(o=>!o.sold).length} remaining this visit</small></h3>
+ <p class="mf40-help">Payment can come from your boat and this island’s stores. Each offer is limited to one exchange per visit.</p>
+ ${offers.length?offers.map(o=>{const check=mf40TradeCheck(v,o,isl);return `<div class="mf40-deal ${check.ok?'ready':'blocked'}"><div class="mf40-deal-heading"><b>${wikiEsc(o.source)}</b><span>${o.sold?'TAKEN':o.m==='charts'||o.m==='brass'?'SPECIALIST STOCK':'QUAYSIDE BARTER'}</span></div>
+ <div class="mf40-exchange"><div><small>YOU GIVE</small>${mf40Bundle(o.want,o.price)}</div><span class="mf40-arrow">→</span><div><small>YOU RECEIVE</small>${mf40Bundle(o.m,o.qty)}</div></div>
+ <p class="mf40-help">${check.ok?`${mfV381TradeSourceText(check.plan)} · ${mfV381TradeRewardText(check.plan)}.`:check.reason}</p>
+ <button class="big-btn secondary" data-mf40-trade="${wikiEsc(o.id)}" ${check.ok?'':'disabled'}>${o.sold?'ALREADY TRADED':check.ok?'EXCHANGE':!check.plan?.affordable?'NEED GOODS':'NO ROOM'}</button></div>`}).join(''):'<p class="muted">No more offers at this call. The crew will gather new stock as they travel.</p>'}</section>`;
+}
+function mf40Exchange(vesselId,offerId){
+ const v=mf40Vessel(vesselId),isl=currentIsland();if(!mfCanMeetVessel(v)){toast('The vessel must be alongside at your harbour.');return false}
+ const o=mf40TradeOffers(v).find(o=>o.id===offerId),check=mf40TradeCheck(v,o,isl);if(!check.ok){toast(check.reason||'That exchange is unavailable.');mf40OpenVesselDetails(vesselId);return false}
+ const d=mf40EnsureVessel(v);if(!mfV381ApplyExchangePlan(isl,check.plan))return false;
+ d.tradeStock[o.m]-=o.qty;if(d.tradeStock[o.m]<=0)delete d.tradeStock[o.m];mf40AddStock(d.tradeStock,o.want,o.price);o.sold=true;
+ d.barters.unshift({at:gameNow(),portId:isl.id,gave:{[o.m]:o.qty},received:{[o.want]:o.price}});d.barters=d.barters.slice(0,6);
+ state.journal.unshift(`At ${isl.name}, you bartered ${o.price} ${materialName(o.want)} for ${o.qty} ${materialName(o.m)} with Captain ${v.captainName} aboard ${v.name}.`);
+ save();renderUI();mf40OpenVesselDetails(v.id);toast(`Exchange complete with ${v.captainName}.`);return true;
+}
+function mf40CrewTalk(vesselId){
+ const v=mf40Vessel(vesselId);if(!mfCanMeetVessel(v)){toast('Meet the captain when the boat is alongside your harbour.');return false}
+ const d=mf40EnsureVessel(v),token=mf40VesselVisitToken(v),p=v.captainSource==='resident'?residentById(v.captainPersonId):null;
+ if(d.talkedToken!==token){d.talkedToken=token;if(p)mfAddRelationship(p,1);save()}
+ const last=d.portHistory[0],stock=Object.entries(d.tradeStock).filter(([m,n])=>MATERIALS[m]&&n>0),
+  line=mf40Pick([
+   `“${last?last.reflection:'There are a few more crossings in us yet.'} ${stock.length?'I have kept a little of the cargo aboard for a fair exchange.':'The hold is quiet for now.'}”`,
+   `“Every new harbour changes what we can bring to the next. ${last?`We came from ${getIsland(last.originId)?.name||'the neighbouring coast'} this time.`:'We have only just begun to keep a proper log.'}”`,
+   `“${stock.length?`We still have ${materialName(stock[0][0]).toLowerCase()} aboard. I would sooner see it put to use than sit on it.`:'The crew will gather another few goods at the next port.'}”`
+  ],`${v.id}:${token}:conversation`);
+ showModal(`<h2>A word with Captain ${wikiEsc(v.captainName)}</h2><p>${wikiEsc(v.name)} · alongside at ${wikiEsc(currentIsland().name)}</p><div class="notice">${wikiEsc(line)}</div><p class="muted">The captain remembers this conversation during the present port visit; the subject changes as the boat completes new crossings.</p><div class="modal-actions"><button class="big-btn secondary" data-mf40-back="${wikiEsc(v.id)}">BACK TO THE BOAT</button></div>`);
+ $('[data-mf40-back]')?.addEventListener('click',()=>mf40OpenVesselDetails(v.id));return true;
+}
+function mf40CaptainSprite(v){const p=v.captainSource==='resident'?residentById(v.captainPersonId):null;if(p)return p;
+ const h=Math.abs(hashString(`${v.id}:captain-look`)),outfits=CONTENT.outfits||['#df7c68','#65bdd1','#83bf6a','#e5b54e'];
+ return{id:v.captainPersonId||v.id,name:v.captainName,archetype:roleCaptainArchetype(vesselType(v.typeId))||'trader',outfit:Array.isArray(outfits)&&typeof outfits[h%outfits.length]==='string'?outfits[h%outfits.length]:['#df7c68','#65bdd1','#83bf6a','#e5b54e'][h%4],accent:['#e5b54e','#d8eef3','#a86d45','#df7c68'][(h>>3)%4],style:h%4};
+}
+function mf40DrawCaptain(v){const c=$('#mf40CaptainPortrait');if(!c)return;const g=c.getContext('2d');if(!g)return;
+ const p=mf40CaptainSprite(v);g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=false;g.fillStyle='#d7ede5';g.fillRect(0,0,80,86);g.fillStyle='#8dbdcc';g.fillRect(0,68,80,18);
+ const spr=residentSprite(p.id||p.name,p.outfit,p.accent||'#e5b54e',p.archetype||'trader',p.style||0,0,false);g.drawImage(spr,8,4,64,80);
+}
+function mf40HistoryHTML(v){const d=mf40EnsureVessel(v),last=d.portHistory[0];if(!d.portHistory.length)return `<p class="mf40-help">This captain's detailed log starts with their next completed crossing. ${v.trips||0} earlier voyages are recorded in the older harbour register.</p>`;
+ return `<div class="mf40-port-log">${d.portHistory.slice(0,3).map(h=>`<div><b>${wikiEsc(getIsland(h.originId)?.name||'Open water')} → ${wikiEsc(getIsland(h.destinationId)?.name||'the quay')}</b><span>${wikiEsc(h.mission||'A coastal passage')} · ${wikiEsc(h.reflection||'A safe arrival.')}${Object.keys(h.freight||{}).length?`<br>Carried ${wikiEsc(cargoLabel(h.freight))}.`:''}</span></div>`).join('')}</div>`;
+}
+function mf40OpenVesselDetails(id){
+ const v=mf40Vessel(id);if(!v)return;const t=vesselType(v.typeId),d=mf40EnsureVessel(v),home=getIsland(v.homeId),isl=mfCanMeetVessel(v)?currentIsland():null,
+  origin=getIsland(v.originId||v.locationId),dest=getIsland(v.destinationId||v.locationId),here=!!isl,
+  status=v.status==='sailing'?`${wikiEsc(origin?.name||'Open water')} → ${wikiEsc(dest?.name||'Open water')} · ${fmtDuration(Math.max(0,v.arrivalAt-gameNow()),true)} remaining`:`Alongside at ${wikiEsc(getIsland(v.locationId)?.name||'the quay')}`;
+ if(!here){
+  // At sea or in a different harbour this is a chart entry, NEVER a remote conversation or trade.
+  showModal(`<h2>${wikiEsc(v.name)}</h2><p>${wikiEsc(t.name)} · Captain ${wikiEsc(v.captainName)}</p><div class="notice"><b>${v.status==='sailing'?'Under way':'In a different harbour'}</b><br>${status}</div><p>${wikiEsc(v.mission||'Working between islands.')}</p><div class="card"><h3>Chart tracking only</h3><p>The captain and cargo cannot be contacted while this vessel is away from your quay. Follow the boat on the chart and meet the crew when you are both alongside.</p></div><div class="modal-actions"><button class="big-btn secondary" data-vessel-chart="${wikiEsc(v.id)}">TRACK ON CHART</button><button class="big-btn ghost" data-close>CLOSE</button></div>`);
+ }else{
+  const latest=d.portHistory[0],last=latest?`Most recent call: ${getIsland(latest.originId)?.name||'another island'} → ${getIsland(latest.destinationId)?.name||'this quay'}. ${latest.reflection}`:`${v.name} is preparing for its first recorded working crossing.`,
+   currentNews=hsVesselNewsReady(v),baggage=(v.passengers||[]).length;
+  showModal(`<div class="mf40-vessel-header"><canvas id="mf40CaptainPortrait" width="80" height="86" role="img" aria-label="Portrait of Captain ${wikiEsc(v.captainName)}"></canvas><div><small>ALONGSIDE · CAPTAIN ABOARD</small><h2>${wikiEsc(v.name)}</h2><p>${wikiEsc(t.name)} · ${wikiEsc(isl.name)}</p><b>Captain ${wikiEsc(v.captainName)}</b></div></div>
+   <div class="mf40-vessel-section"><h3>Meet the captain</h3><p>${mf40CaptainLine(v)}</p><div class="mf40-captain-note">“${wikiEsc(last)}”</div><button class="big-btn secondary" data-mf40-chat="${wikiEsc(v.id)}">TALK TO THE CAPTAIN</button>${currentNews?`<button class="big-btn secondary" style="margin-top:6px" data-vessel-rumour="${wikiEsc(v.id)}">ASK ABOUT THEIR PASSAGE</button>`:'<p class="mf40-help">You have heard the crew’s latest news. Another conversation may follow a later crossing.</p>'}</div>
+   <div class="mf40-vessel-section"><h3>Ship's particulars</h3><p><b>Home:</b> ${wikiEsc(home?.name||'the archipelago')} · <b>Crossings:</b> ${v.trips||0}<br><b>Work:</b> ${wikiEsc(v.mission||t.desc)}${baggage?`<br><b>Passengers aboard:</b> ${baggage}`:''}<br><b>Next departure:</b> ${v.nextActionAt&&v.nextActionAt>gameNow()?`about ${fmtDuration(v.nextActionAt-gameNow(),true)} away`:'when the crew is ready'}</p></div>
+   <div class="mf40-vessel-section"><h3>Recent passages</h3>${mf40HistoryHTML(v)}</div>
+   ${mf40TradeHTML(v,isl)}
+   <div class="modal-actions"><button class="big-btn ghost" data-vessel-chart="${wikiEsc(v.id)}">SEE ON CHART</button><button class="big-btn ghost" data-close>CLOSE</button></div>`);
+  $('#modal')?.classList.add('mf40-vessel-modal');mf40DrawCaptain(v);
+  $$('[data-mf40-trade]').forEach(b=>b.addEventListener('click',()=>mf40Exchange(id,b.dataset.mf40Trade)));
+  $('[data-mf40-chat]')?.addEventListener('click',()=>mf40CrewTalk(id));
+  $('[data-vessel-rumour]')?.addEventListener('click',e=>shareVesselRumour(e.currentTarget.dataset.vesselRumour));
+ }
+ $('[data-vessel-chart]')?.addEventListener('click',()=>{closeModal();setView('chart');chartView.selection={kind:'vessel',id};requestAnimationFrame(updateMapInfoOverlay)});
+}
+
 
 let state=loadState();
 function loadState(){
@@ -1318,10 +1527,10 @@ function makeNpcVessel(typeId,homeId){
   const captain=chooseResidentCaptain(home,type,seed),usedPersonNames=worldPersonNameSet();let captainPersonId,captainName,captainSource;
   if(captain){captainPersonId=captain.id;captainName=captain.name;captainSource='resident'}else{captainPersonId=`crew:${id}`;captainName=uniquePersonName(`crew-${id}`,usedPersonNames);captainSource='crew'}
   const createdAt=worldState().lastSimAt||nowReal(),v={id,typeId,role:type.role,name:uniqueVesselName(seed,worldVesselNameSet()),homeId,locationId:homeId,status:'docked',originId:homeId,destinationId:homeId,departAt:0,arrivalAt:0,nextActionAt:0,cargo:{},passengers:[],captainPersonId,captainName,captainSource,mission:'Waiting by the quay',trips:0,createdAt};
-  v.nextActionAt=nextNpcActionAt(v,home,createdAt,rr);return v;
+  mf40EnsureVessel(v);v.nextActionAt=nextNpcActionAt(v,home,createdAt,rr);return v;
 }
 function ensureWorldFleet(){
-  const w=worldState(),known=state.islands.filter(i=>i.known&&population(i)>0);let total=w.vessels.length;
+  const w=worldState(),known=state.islands.filter(i=>i.known&&population(i)>0);w.vessels.forEach(mf40EnsureVessel);let total=w.vessels.length;
   for(const isl of known){
     for(const type of NPC_VESSEL_TYPES){
       if(total>=42)break;if(!npcRuleMet(type.unlock,isl))continue;if(type.commission&&!isl.commissionedVessels.includes(type.id))continue;
@@ -1387,7 +1596,7 @@ function mfRecordArrivalStock(kind,isl,at,stock={},meta={}){
 }
 function beginNpcTrip(v,dest,at,{cargo={},passengers=[],mission='Crossing between islands'}={}){
   const origin=getIsland(v.locationId)||getIsland(v.homeId),type=vesselType(v.typeId);if(!origin||!dest)return false;
-  v.status='sailing';v.originId=origin.id;v.destinationId=dest.id;v.departAt=at;v.arrivalAt=at+npcTravelMs(origin,dest,type);v.cargo=cargo;v.passengers=passengers;v.mission=mission;v.trips=(v.trips||0)+1;
+  mf40Depart(v,origin,dest,at);v.status='sailing';v.originId=origin.id;v.destinationId=dest.id;v.departAt=at;v.arrivalAt=at+npcTravelMs(origin,dest,type);v.cargo=cargo;v.passengers=passengers;v.mission=mission;v.trips=(v.trips||0)+1;
   logWorld(contentLine('copy.world.departed',{vessel:v.name,origin:origin.name,destination:dest.name}),at,false,type.icon);return true;
 }
 function maybeCreateWorldLiftRequest(isl,at,rr){
@@ -1411,8 +1620,8 @@ function revealSurveyRoute(from,at,vessel){
   if(state.islands.length>=28)return false;const n=createChartRumour(from,`${vessel.name}’s sounding notes`);if(!n)return false;const txt=contentLine('copy.world.survey',{vessel:vessel.name,destination:from.name});logWorld(`${txt} An unnamed coastline was pencilled onto the chart.`,at,true,'⌁');return true;
 }
 function resolveNpcArrival(v,at){
-  const dest=getIsland(v.destinationId),type=vesselType(v.typeId);if(!dest)return;ensureIslandData(dest);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=nextNpcActionAt(v,dest,at,Math.random);
-  if(Object.keys(v.cargo||{}).length){const landed={...v.cargo};Object.entries(landed).forEach(([m,n])=>addStock(dest,m,n));mfRecordArrivalStock('delivery',dest,at,landed,{vesselId:v.id,vesselName:v.name,icon:type.icon});logWorld(contentLine('copy.world.cargo',{vessel:v.name,cargo:cargoLabel(landed),destination:dest.name}),at,true,type.icon,{type:'cargo',islandId:dest.id,vesselId:v.id,vesselName:v.name,stock:landed})}
+  const dest=getIsland(v.destinationId),type=vesselType(v.typeId);if(!dest)return;ensureIslandData(dest);const landed=mf40Arrival(v,dest,at);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=nextNpcActionAt(v,dest,at,Math.random);
+  if(Object.keys(landed).length){Object.entries(landed).forEach(([m,n])=>addStock(dest,m,n));mfRecordArrivalStock('delivery',dest,at,landed,{vesselId:v.id,vesselName:v.name,icon:type.icon});logWorld(contentLine('copy.world.cargo',{vessel:v.name,cargo:cargoLabel(landed),destination:dest.name}),at,true,type.icon,{type:'cargo',islandId:dest.id,vesselId:v.id,vesselName:v.name,stock:landed})}
   (v.passengers||[]).forEach(ps=>{const person=ensureResidentData(ps.person,ps.person.id,dest.biome);if(!dest.residents.some(p=>p.id===person.id))dest.residents.push(person);person.note=contentLine('copy.residents.movedNote',{origin:getIsland(ps.originId)?.name||'another island'});const req=state.liftRequests.find(r=>r.id===ps.requestId);if(req)req.status='delivered';logWorld(contentLine('copy.world.passenger',{person:person.name,vessel:v.name,destination:dest.name}),at,true,'☻')});
   if(type.role==='work')worldSupplyProject(dest,v,at,2);else if(type.role==='tender')worldSupplyProject(dest,v,at,1);
   if(type.role==='survey'){const rr=rng(hashString(`${v.id}-${v.trips}-survey`));if(rr()<.16)revealSurveyRoute(dest,at,v)}
@@ -1922,7 +2131,7 @@ function dismissTransientVoyageNotice(){const n=$('#voyageNote');if(n){n.classLi
 function syncMobilePanel(){
   const panel=$('#infoPanel');if(!panel)return;const mobile=window.matchMedia('(max-width:900px)').matches;
   if(!panelDrag.active){panel.style.transform='';panel.classList.remove('dragging');panel.classList.toggle('sheet-collapsed',mobile&&mobilePanelCollapsed)}
-  if(mobile&&!mobilePanelCollapsed){dismissTransientVoyageNotice();worldSelection=null;updateWorldInfoOverlay();if($('#modal')?.classList.contains('mf39-person-modal'))closeModal()}
+  if(mobile&&!mobilePanelCollapsed){dismissTransientVoyageNotice();worldSelection=null;updateWorldInfoOverlay();if($('#modal')?.classList.contains('mf39-person-modal')||$('#modal')?.classList.contains('mf40-vessel-modal'))closeModal()}
   if(mobile){fitResponsiveStage();updateVoyagePeek();requestAnimationFrame(positionFloatingOverlays)}
 }
 function toggleMobilePanel(force){if(!window.matchMedia('(max-width:900px)').matches)return;mobilePanelCollapsed=typeof force==='boolean'?force:!mobilePanelCollapsed;syncMobilePanel()}
@@ -2067,14 +2276,14 @@ function chartSelectionHTML(sel){
   }
   if(sel.kind==='vessel'){
     const v=worldState().vessels.find(x=>x.id===sel.id);if(!v)return'';const t=vesselType(v.typeId),dest=getIsland(v.destinationId),origin=getIsland(v.originId||v.locationId),cargo=cargoLabel(v.cargo),load=[cargo==='a few parcels'?'':cargo,(v.passengers||[]).length?`${v.passengers.length} passenger${v.passengers.length===1?'':'s'}`:''].filter(Boolean).join(' · '),eta=v.status==='sailing'?fmtDuration(Math.max(0,v.arrivalAt-gameNow()),true):'';
-    return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>• ${v.name}</b><span>${t.name} · Captain ${v.captainName}<br>${v.status==='sailing'?`${origin?.name||'Open water'} → ${dest?.name||'Open water'} · ${eta} away`:`Alongside at ${getIsland(v.locationId)?.name||'the quay'}`}<br>${v.mission||'Going about the island rounds.'}${load?`<br>Aboard: ${load}`:''}</span><div class="map-info-actions"><span>Chart entry only · visit the harbour to meet the crew</span></div>`;
+    return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>• ${wikiEsc(v.name)}</b><span>${wikiEsc(t.name)} · Captain ${wikiEsc(v.captainName)}<br>${v.status==='sailing'?`${wikiEsc(origin?.name||'Open water')} → ${wikiEsc(dest?.name||'Open water')} · ${eta} away`:`Alongside at ${wikiEsc(getIsland(v.locationId)?.name||'the quay')}`}<br>${wikiEsc(v.mission||'Working the island rounds.')}${load?`<br>Freight: ${wikiEsc(load)}`:''}${v.mf40?.portHistory?.[0]?`<br>Previous call: ${wikiEsc(getIsland(v.mf40.portHistory[0].originId)?.name||'another shore')} → ${wikiEsc(getIsland(v.mf40.portHistory[0].destinationId)?.name||'last port')}`:''}</span><div class="map-info-actions">${mfCanMeetVessel(v)?`<button data-map-board="${wikiEsc(v.id)}">MEET CAPTAIN AT QUAY</button>`:'<span>Tracking only — meet the crew when docked at your quay.</span>'}</div>`;
   }
   if(sel.kind==='player'){const dest=state.voyage?getIsland(state.voyage.destinationId):currentIsland();return `<button class="map-info-close" data-map-close aria-label="Close">×</button><b>◆ YOU ARE HERE</b><span>${state.voyage?`Under way toward ${dest?.known?dest.name:'a pencilled-in shore'} · ${Math.round(voyageProgress()*100)}% charted`:`Alongside at ${currentIsland().name}`}</span>`}
   return'';
 }
 function updateMapInfoOverlay(){
   const el=$('#mapInfo');if(!el)return;const show=state.activeView==='chart'&&!!chartView.selection&&!minigame;el.classList.toggle('show',show);if(!show){el.innerHTML='';return}el.innerHTML=chartSelectionHTML(chartView.selection);positionFloatingOverlays();
-  el.querySelector('[data-map-close]')?.addEventListener('click',()=>{chartView.selection=null;updateMapInfoOverlay()});el.querySelector('[data-map-focus]')?.addEventListener('click',e=>focusChartIsland(e.currentTarget.dataset.mapFocus));el.querySelector('[data-map-inspect]')?.addEventListener('click',e=>inspectIsland(e.currentTarget.dataset.mapInspect));el.querySelector('[data-map-course]')?.addEventListener('click',e=>{setCourseTo(e.currentTarget.dataset.mapCourse);updateMapInfoOverlay()});
+  el.querySelector('[data-map-close]')?.addEventListener('click',()=>{chartView.selection=null;updateMapInfoOverlay()});el.querySelector('[data-map-focus]')?.addEventListener('click',e=>focusChartIsland(e.currentTarget.dataset.mapFocus));el.querySelector('[data-map-inspect]')?.addEventListener('click',e=>inspectIsland(e.currentTarget.dataset.mapInspect));el.querySelector('[data-map-course]')?.addEventListener('click',e=>{setCourseTo(e.currentTarget.dataset.mapCourse);updateMapInfoOverlay()});el.querySelector('[data-map-board]')?.addEventListener('click',e=>mf40OpenVesselDetails(e.currentTarget.dataset.mapBoard));
 }
 function hitTestChart(x,y){
   const hits=(chartView.hitAreas||[]).filter(h=>Math.hypot(x-h.x,y-h.y)<=h.r).sort((a,b)=>{const pa=a.kind==='island'?0:a.kind==='vessel'?1:2,pb=b.kind==='island'?0:b.kind==='vessel'?1:2;return pa-pb||a.r-b.r});if(!hits.length){chartView.selection=null;updateMapInfoOverlay();return}const h=hits[0];chartView.selection={kind:h.kind,id:h.id};updateMapInfoOverlay();
@@ -2426,16 +2635,13 @@ function shareVesselRumour(id){return hsAskVessel(id)}
 function openResidentDetails(id,options={}){
   const p=residentById(id),isl=residentHomeIsland(id);if(!mfCanSocialiseHere(p,isl)){toast('Visit this island to meet its residents.');return}mfEnsureSocialData(p);const req=residentWaitingRequest(p,isl),cap=residentCaptainVessel(p.id),away=residentAwayAssignment(p.id),canSocialise=mfCanSocialiseHere(p,isl);if(!options.skipTalk){p.chatIndex=(p.chatIndex||0)+1;mfRegisterConversation(p,isl)}const memory=mfMemoryLine(p);save();const hasBerth=playerHasPassengerSpace(),requestHTML=req?`<div class="mf-favour-card mf-journey-favour"><h3>Journey favour</h3><p>${p.name} is hoping to reach ${getIsland(req.targetId)?.name||'another island'}. ${hasBerth?'There is a berth free aboard.':'The passenger berths are full just now.'}</p>${canSocialise&&hasBerth?`<button class="big-btn ghost" data-person-course="${req.targetId}">OFFER LIFT · MARK ROUTE</button>`:''}</div>`:'';showModal(`<h2>${p.name}</h2><p>${wikiEsc(p.social?.storyVocation||p.occupation||'Island resident')}${isl?` · ${isl.name}`:''}</p><div class="notice">${residentLore(p,isl)}</div><p>${p.note||''}${cap?`<br><b>Boat:</b> Captain of ${cap.name}`:''}${away?.kind==='passenger'?'<br><b>At the moment:</b> travelling between islands.':''}</p>${memory?`<div class="mf-memory"><b>They remember</b>${wikiEsc(memory)}</div>`:''}${hsCharacterChronicleHTML(p)}${hsResidentWorkHTML(p)}${mfRelationshipHTML(p)}${mfResidentWaterTalkHTML(p)}${hsResidentStoryHTML(p)}<details class="hs-social-fold"><summary>FAVOURS & PASSENGER REQUESTS</summary>${requestHTML}${mfFavourSectionHTML(p,isl,canSocialise)}${mfErrandSectionHTML(p,isl,canSocialise)}</details><details class="hs-social-fold"><summary>TRADING AT THE QUAY</summary>${mfTradeSectionHTML(p,isl,canSocialise)}</details><div class="modal-actions"><button class="big-btn ghost" data-close>CLOSE</button></div>`);$('[data-person-course]')?.addEventListener('click',e=>{if(setCourseTo(e.currentTarget.dataset.personCourse))closeModal()});$('[data-person-rumour]')?.addEventListener('click',e=>shareResidentRumour(e.currentTarget.dataset.personRumour));hsBindResidentStories();hsBindResidentWork(p);$$('[data-mf-trade]').forEach(b=>b.addEventListener('click',()=>mfCompleteTrade(p.id,b.dataset.mfTrade)));$('[data-mf-favour]')?.addEventListener('click',e=>mfCompleteFavour(p.id,e.currentTarget.dataset.mfFavour));$('[data-mf-errand]')?.addEventListener('click',e=>mfAcceptErrand(p.id,e.currentTarget.dataset.mfErrand));$('[data-mf-errand-course]')?.addEventListener('click',e=>{if(setCourseTo(e.currentTarget.dataset.mfErrandCourse))closeModal()})
 }
-function openVesselDetails(id){
-  const v=worldState().vessels.find(x=>x.id===id);if(!v)return;const t=vesselType(v.typeId),home=getIsland(v.homeId),dest=getIsland(v.destinationId),origin=getIsland(v.originId||v.locationId),load=[Object.keys(v.cargo||{}).length?cargoLabel(v.cargo):'',(v.passengers||[]).length?`${v.passengers.length} passenger${v.passengers.length===1?'':'s'}`:''].filter(Boolean).join(' · ');
-  showModal(`<h2>${v.name}</h2><p>${t.name} · Captain ${v.captainName}</p><div class="notice">${v.mission||'Going about the island rounds.'}</div><p><b>Home:</b> ${home?.name||'the archipelago'}<br><b>Now:</b> ${v.status==='sailing'?`${origin?.name||'Open water'} → ${dest?.name||'Open water'} · ${fmtDuration(Math.max(0,v.arrivalAt-gameNow()),true)} away`:`Alongside at ${getIsland(v.locationId)?.name||'the quay'}`}${load?`<br><b>Aboard:</b> ${load}`:''}<br><b>Crossings made:</b> ${v.trips||0}</p>${mfCanMeetVessel(v)?mfVesselWaterTalkHTML(v):'<p class="muted">Only the vessel’s whereabouts are noted here. Meet the crew at your current harbour.</p>'}<div class="modal-actions"><button class="big-btn ghost" data-vessel-chart="${v.id}">FIND ON CHART</button><button class="big-btn ghost" data-close>CLOSE</button></div>`);
-  $('[data-vessel-rumour]')?.addEventListener('click',e=>{shareVesselRumour(e.currentTarget.dataset.vesselRumour);openVesselDetails(id)});$('[data-vessel-chart]')?.addEventListener('click',()=>{closeModal();setView('chart');chartView.selection={kind:'vessel',id};requestAnimationFrame(updateMapInfoOverlay)})
-}
+function openVesselDetails(id){return mf40OpenVesselDetails(id)}
+
 function worldSelectionHTML(sel){
   if(!sel||state.activeView==='chart'||state.phase!=='ashore'||state.anchorage)return'';
   if(sel.kind==='animal')return'';
   if(sel.kind==='resident'){const p=residentById(sel.id),isl=residentHomeIsland(sel.id);if(!p)return'';return `<canvas class="world-info-avatar" data-world-avatar width="72" height="64" aria-hidden="true"></canvas><div class="world-info-copy"><b>${p.name}</b><small>${p.occupation||'Island resident'}${isl?` · ${isl.name}`:''}</small><span>${residentLore(p,isl)}</span><div class="world-info-actions"><button data-world-person="${p.id}">TALK</button></div></div>`}
-  if(sel.kind==='vessel'){const v=worldState().vessels.find(x=>x.id===sel.id);if(!v)return'';const t=vesselType(v.typeId);return `<canvas class="world-info-avatar" data-world-avatar width="72" height="64" aria-hidden="true"></canvas><div class="world-info-copy"><b>${v.name}</b><small>${t.name} · Captain ${v.captainName}</small><span>${v.mission||'Working the island routes.'}</span><div class="world-info-actions"><button data-world-vessel="${v.id}">TALK</button></div></div>`}
+  if(sel.kind==='vessel'){const v=mf40Vessel(sel.id);if(!v||!mfCanMeetVessel(v))return'';const t=vesselType(v.typeId),d=mf40EnsureVessel(v),goods=Object.entries(d.tradeStock).filter(([m,n])=>MATERIALS[m]&&n>0).map(([m,n])=>`${n} ${materialName(m)}`).slice(0,2);return `<canvas class="world-info-avatar" data-world-avatar width="72" height="64" aria-hidden="true"></canvas><div class="world-info-copy"><b>${wikiEsc(v.name)}</b><small>${wikiEsc(t.name)} · Captain ${wikiEsc(v.captainName)}</small><span>Alongside: ${wikiEsc(v.mission||'Making a harbour call.')}${goods.length?`<br>Trading hold: ${wikiEsc(goods.join(' · '))}`:''}</span><div class="world-info-actions"><button data-world-vessel="${wikiEsc(v.id)}">MEET CAPTAIN & TRADE</button></div></div>`}
   return''
 }
 function updateWorldInfoOverlay(){
@@ -11247,6 +11453,84 @@ function mf39AnimalVisitLine(a){const isl=currentIsland(),key=String(a.id),token
 interactWithAnimal=function(id){if(state.phase!=='ashore'||state.anchorage||state.activeView==='chart')return;const a=animalById(id);if(!a||!islandAnimals(currentIsland()).some(local=>local.id===id))return;const prev=mfAnimalReactions.get(id),count=(prev?.count||0)+1,text=mf39AnimalVisitLine(a),glyph=['♥','♪','!'][Math.abs(hashString(`${id}:${count}`))%3];mfAnimalReactions.set(id,{until:performance.now()+1800,count,text,glyph});showAnimalDialogue(a,text,count);save()};
 const mf39OldStowPlan=mfPlanStowaway;mfPlanStowaway=function(v,origin){mf39OldStowPlan(v,origin);const plan=v?.stowawayPlan;if(!plan)return;const pool=MF_LIFE_ANIMAL_NAMES[plan.species]||[];const claimed=new Set((state.islands||[]).flatMap(i=>[...(i.animalGuests||[]).filter(a=>a.species===plan.species).map(a=>a.name),...Object.values(i.mf39AnimalNames||{})]));const choices=pool.filter(n=>!claimed.has(n));if(choices.length){plan.name=choices[Math.abs(hashString(`${v.id}:${plan.species}:stow39`))%choices.length];plan.seed=hashString(`${v.id}:${plan.species}:${plan.name}`)}};
 
+
+// v0.40.0: Stowaways now board as a real named animal from the departure island.
+// The older species-only plan chose an unrelated second name, and v0.39's
+// unused-name selection exaggerated that mismatch.
+function mf40AttachActualStowaway(v,origin){
+  const plan=v?.stowawayPlan;
+  if(!plan||plan.revealed||plan.sourceAnimalId||!origin||origin.temporary)return;
+  // Select only animals that actually appeared on this island; never draw
+  // another name from the species pool for the animal supposedly boarding.
+  const visible=islandAnimals(origin).filter(a=>MF_STOWAWAY_FLAVOUR[a.species]);
+  const matching=visible.filter(a=>a.species===plan.species);
+  const pool=matching.length?matching:visible;
+  if(!pool.length){v.stowawayPlan=null;return;}
+  const animal=pool[Math.abs(hashString(`${v.id}:${origin.id}:actual-stowaway`))%pool.length];
+  Object.assign(plan,{
+    sourceAnimalId:animal.id,
+    originId:origin.id,
+    species:animal.species,
+    name:animal.name,
+    seed:animal.seed,
+    sourceGuest:!!animal.guest
+  });
+}
+const mf40SpeciesOnlyStowawayPlan=mfPlanStowaway;
+mfPlanStowaway=function(v,origin){
+  mf40SpeciesOnlyStowawayPlan(v,origin);
+  mf40AttachActualStowaway(v,origin);
+};
+// Departed ambient animals are not silently regenerated at their former home.
+// Visiting guest animals are physically removed from their former guest list.
+const mf40IslandAnimalsBeforeDepartures=islandAnimals;
+islandAnimals=function(isl){
+  if(!isl)return[];
+  const departed=isl.mfDepartedAnimalIds||[];
+  const animals=mf40IslandAnimalsBeforeDepartures(isl);
+  if(!departed.length)return animals;
+  return animals.filter(a=>a.guest||!departed.includes(a.id)).map((a,i)=>({...a,index:i}));
+};
+const mf40StowawayRevealBeforeIdentity=mfUpdateVoyageStowaway;
+mfUpdateVoyageStowaway=function(){
+  const v=state.voyage,plan=v?.stowawayPlan;
+  // Unrevealed voyages from old saves can still bind to an actual departure
+  // animal without changing animals that have already been shown to the player.
+  if(plan&&!plan.revealed&&!plan.sourceAnimalId)
+    mf40AttachActualStowaway(v,getIsland(plan.originId||v.originId));
+  const previouslyRevealed=!!plan?.revealed;
+  mf40StowawayRevealBeforeIdentity();
+  if(previouslyRevealed||!plan?.revealed||!v?.stowaway||!plan.sourceAnimalId)return;
+  const animal=v.stowaway,origin=getIsland(plan.originId);
+  animal.id=plan.sourceAnimalId;
+  animal.originId=plan.originId;
+  animal.seed=plan.seed;
+  state.boatAnimals=[animal];
+  if(origin){
+    ensureIslandData(origin);
+    if(plan.sourceGuest){
+      origin.animalGuests=origin.animalGuests.filter(a=>a.id!==plan.sourceAnimalId);
+    }else{
+      origin.mfDepartedAnimalIds=origin.mfDepartedAnimalIds||[];
+      if(!origin.mfDepartedAnimalIds.includes(plan.sourceAnimalId))
+        origin.mfDepartedAnimalIds.push(plan.sourceAnimalId);
+    }
+  }
+  save();
+  renderUI();
+};
+const mf40LandStowawayWithProvenance=mfLandStowaway;
+mfLandStowaway=function(dest,a){
+  mf40LandStowawayWithProvenance(dest,a);
+  const guest=dest?.animalGuests?.find(x=>x.id===a?.id);
+  if(guest&&a.originId)guest.originId=a.originId;
+};
+boatStowawayCardHTML=function(){
+  const a=(state.boatAnimals||[])[0];if(!a)return'';
+  const origin=a.originId?getIsland(a.originId):null;
+  return `<div class="boat-stowaway-card"><canvas id="boatStowawayPortrait" width="72" height="60"></canvas><div><b>${wikiEsc(a.name)} · ${wikiEsc(MF_LIFE_ANIMAL_LABELS[a.species]||a.species)}</b>${origin?`<span>Sneaked aboard at ${wikiEsc(origin.name)}.</span>`:''}<span>${wikiEsc(a.flavour||'A very small extra passenger has made itself comfortable on deck.')}</span></div></div>`;
+};
+
 // The field-note illustrations are reference-only. Real island markers are the interaction.
 let mf39WorldClueInteraction=false;
 hsExploreHTML=function(s,step){const seen=hsSceneSeen(s),needed=step.scene.required,ready=hsSceneReady(s,step),details=step.scene.spots.map((p,i)=>`<div class="mf39-clue ${seen.includes(p.id)?'found':''}"><b>${seen.includes(p.id)?'✓ ':''}${i+1}. ${wikiEsc(p.label)}</b><small>${wikiEsc(seen.includes(p.id)?p.text:p.hint)}</small></div>`).join('');return `<div class="hs-exploration"><h3>${wikiEsc(step.scene.title)}</h3><p class="mf39-field-warning">Field notes are hints, not buttons. Close this page and tap the numbered markers on the island itself to record at least ${needed} clues, including the telling mark.</p><button class="big-btn secondary" id="mf39ExploreIsland">SEARCH THE ACTUAL ISLAND</button><canvas id="hsSceneCanvas" width="560" height="188" aria-label="Reference illustration for this island" role="img"></canvas><div class="hs-scene-legend">${seen.length} / ${needed} observations · ${seen.includes(step.scene.key)?'Telling clue found':'Telling clue still to find'}</div><div class="mf39-clue-reference">${details}</div><button class="big-btn secondary" id="hsSceneConclude" ${ready?'':'disabled'}>COMPARE FINDINGS</button></div>`};
@@ -11265,6 +11549,7 @@ for(const island of state.islands||[]){for(const person of island.residents||[])
 ensureRouteTrafficHistory();backfillRoutePaths();if(state.voyage&&!Array.isArray(state.voyage.coursePath)){const va=getIsland(state.voyage.originId),vb=getIsland(state.voyage.destinationId);state.voyage.coursePath=planSafeCourse(va,vb)||[{x:va?.x||0,y:va?.y||0},{x:vb?.x||0,y:vb?.y||0}]}const startupNow=nowReal(),startupWorldGap=Math.max(0,startupNow-(worldState().lastSimAt||startupNow)),startupIdleFrom=state.idle?.lastPassageAt||state.lastSavedAt||startupNow;simulateWorldTo(startupNow,startupWorldGap>10*60000);const startupBackground=state.phase==='ashore'?simulateBackgroundPassages(startupIdleFrom,startupNow,{summarize:startupWorldGap>10*60000}):[];ensureChartRumours(3);save();fitResponsiveStage();syncMobilePanel();renderUI();refreshLocalWeather(false);requestAnimationFrame(animationLoop);if(!state.onboarded)setTimeout(onboarding,120);else if((startupWorldGap>10*60000||startupBackground.length)&&worldState().pendingSummary.length)setTimeout(showOfflineWorldSummary,260);
 
 })();
+
 </script>
 </body>
 </html>
