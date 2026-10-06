@@ -254,7 +254,7 @@
 .mf39-friends{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--ink-soft);line-height:1.2}.mf39-friends b{font-size:10px;color:var(--ink)}.mf39-friends i{font-style:normal;color:#acb8b4;letter-spacing:1px;font-size:17px}.mf39-friends i.on{color:var(--coral)}
 .mf39-lore{margin-top:5px!important}.mf39-clue-reference{display:grid;gap:6px}.mf39-clue-reference .mf39-clue{background:#fff;border:2px solid rgba(24,49,58,.35);padding:7px;border-radius:7px;font-size:9px;line-height:1.4}.mf39-clue-reference .mf39-clue.found{background:#e8f3de}.mf39-clue b{display:block;margin-bottom:3px}.mf39-clue small{color:var(--ink-soft);font-size:8px}.mf39-field-warning{font-size:10px;line-height:1.4;border-left:4px solid var(--sea-dark);padding:6px 9px;background:#e7f3ef;margin:9px 0}
 @media(max-width:520px){.mf39-person-header{grid-template-columns:68px minmax(0,1fr);gap:9px;top:-16px}.mf39-person-header canvas{width:68px!important;height:74px!important}.mf39-person-heading h2{font-size:13px}.mf39-friends i{font-size:14px}.mf39-person-heading p{font-size:8px}}
-/* v0.40.0 dockside vessel conversations and bartering */
+/* v0.41.0 stronger shipboard minigames: Seabed Cipher and Cattleships */
 .mf40-vessel-header{display:grid;grid-template-columns:80px minmax(0,1fr);align-items:start;gap:12px;margin-bottom:12px}
 .mf40-vessel-header canvas{position:static!important;width:80px!important;height:86px!important;border:3px solid var(--ink);border-radius:9px;background:#d7ede5;image-rendering:pixelated}
 .mf40-vessel-header div{min-width:0}.mf40-vessel-header small{display:block;color:var(--sea-dark);font-size:8px;font-weight:1000;letter-spacing:.4px;margin-bottom:4px}
@@ -378,8 +378,8 @@
 // MakeFast runtime
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
-const VERSION=46;
-const VERSION_LABEL='0.40.0';
+const VERSION=47;
+const VERSION_LABEL='0.41.0';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -665,8 +665,8 @@ const CONTENT={
     speedboat_slalom:{title:'ISLAND REGATTA',icon:'≫',group:'Speedboat',engine:'steer',desc:'Three lively island racing regions, but every cup draws brand-new, seeded two-lap courses: unpredictable bends, gates, shoals and bonus routes. Powerful SURGE helps you overtake, light hazards slow or shove everyone, and only high-speed impacts against heavy objects cause spin-outs.',instruction:'STEER: DRAG, HOLD A / LEFT OR D / RIGHT. FOLLOW EACH NEW COURSE; GATES AND OBSTACLES CHANGE EVERY CUP. COLLECT STARS, DRAFT RIVALS AND PRESS SPACE / SURGE AT 60% CHARGE. LIGHT HAZARDS SLOW, SOLID OBJECTS SHOVE; HITTING HEAVY OBJECTS AT BOOST SPEED CAN SPIN YOU. RUB RAILS WITH RIVALS TO FIGHT FOR POSITION. TWO LAPS PER GENERATED COURSE · THREE RACES PER CUP.',duration:0,rewardThreshold:800,benchmark:6500,theme:'speedboat',wiki:{lore:'The three island yacht clubs change their marker buoys, windward bends and floating obstacles for every championship. Each course carries a chart number so captains can recognise a memorable run.',fasting:'A purely optional arcade activity; finishing faster or racing longer never changes your real fasting history or targets.',concept:'Every new cup generates three reproducible circuit layouts from a run seed. Each region keeps its harbour, rocky or lantern identity while bends, widths, alternating gate sides, obstacles, pickups and scenery change. Both laps share the same layout so skill and memory matter. Strong SURGE, drafting and pickups create overtaking opportunities. A lighter obstacle field leaves space to draft, trade rail bumps and overtake. Soft hazards slow boats, solid objects deflect them, and only boosted high-speed impacts on heavy obstacles spin a racer. CPU boats follow the same collision rules; scores, cup standings and personal bests remain persistent.'}},
     tug_dock:{title:'TUG DUTY',icon:'●',group:'Tugboat',engine:'tug',desc:'Work an endless harbour watch with tenders, fishing boats, ferries, coasters, barges and tankers that all carry different mass and rotational inertia.',instruction:'DRIVE THE TUG • PUSH AT THE RIGHT PART OF THE HULL • MATCH POSITION, SPEED AND HEADING • HOLD HER ON THE FENDERS',duration:28,rewardThreshold:550,benchmark:1800,theme:'tug'},
     tanker_channel:{title:'NARROW CHANNEL',icon:'═',group:'Oil Tanker',engine:'steer',desc:'Con a loaded tanker through increasingly confined tidal channels with real yaw inertia, bank effect, buoy gates and crossing traffic.',instruction:'RUDDER EARLY • COUNTER-RUDDER BEFORE THE BEND ENDS • KEEP CLEAR OF SHOALS, MARKS AND TRAFFIC',duration:0,rewardThreshold:700,benchmark:2200,theme:'tanker',heavy:true},
-    naval_radar:{title:'RADAR WATCH',icon:'◎',group:'Naval Vessel',engine:'radar',desc:'Read relative motion directly from the scope as vessel tracks build and project toward your ship.',instruction:'TAP A CONTACT • LET TWO SWEEPS BUILD ITS TRACK • ALERT ONLY IF THE PROJECTED LINE ENTERS THE DANGER RING',duration:0,rewardThreshold:550,benchmark:1800,theme:'naval'},
-    research_sonar:{title:'SONAR HUNT',icon:'◉',group:'Research Ship',engine:'sonar',desc:'Find successive seabed returns with larger survey grids and tighter ping budgets.',instruction:'PING EFFICIENTLY • FOLLOW THE ECHO • FIND EACH TARGET BEFORE PINGS RUN OUT',duration:0,rewardThreshold:450,benchmark:1550,theme:'research'},
+    naval_cattleships:{title:'CATTLESHIPS',icon:'♈',group:'Naval Vessel',engine:'cattle',desc:'Play the patrol fleet’s famously misnamed woolly chart exercise. Call squares on a hidden flotilla, send startled sheep bobbing safely overboard, finish each boat to clear its wake, and use one shepherd’s whistle if the search goes cold.',instruction:'CALL AN UNTRIED GRID SQUARE • A HIT PUTS ONE SHEEP IN THE DRINK • FINISH A BOAT TO CLEAR THE WATER AROUND IT • ONE BLEAT WHISTLE PER ROUND REVEALS A USEFUL ROW OR COLUMN',duration:0,rewardThreshold:650,benchmark:2350,theme:'naval'},
+    research_cipher:{title:'SEABED CIPHER',icon:'◇',group:'Research Ship',engine:'cipher',desc:'Reconstruct a hidden seabed sample strip from comparative analysis. Every pass reports specimens in the exact layer and correct specimens placed in the wrong layer; crack the core in as few passes as possible.',instruction:'CHOOSE A SPECIMEN • TAP LAYERS TO BUILD YOUR CORE STRIP • ANALYSE THE PASS • GREEN = EXACT LAYER • GOLD = RIGHT SPECIMEN, WRONG LAYER • SOLVE BEFORE THE PASS BUDGET RUNS OUT',duration:0,rewardThreshold:700,benchmark:2600,theme:'research'},
     rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Work changing rescue scenes where the ring flies in the wind, then drifts with the current until the survivor can reach it.',instruction:'PULL BACK FROM THE BOAT • RELEASE TO THROW • LEAD THE SURVIVOR • READ WIND, CURRENT, WAVES AND WRECKAGE',duration:0,rewardThreshold:500,benchmark:1900,theme:'rescue'},
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'pilot',desc:'Work progressively harder pilot ships through changing speed, swell and wake, then choose the instant the two decks rise together for the transfer.',instruction:'MATCH SPEED • COME ALONGSIDE • THE GREEN CIRCLE GROWS AS THE SWELL CLOSES THE GAP • JUMP FOR THE DECK OR LADDER',duration:0,rewardThreshold:550,benchmark:1750,theme:'pilot'},
     dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Operate a real suspended dredging grab through layered sediment, rock and live seabed services as the crane and vessel move in the swell.',instruction:'POSITION THE GRAB • LET IT SETTLE • CLOSE INTO CLEAN SEDIMENT • LIFT CLEAR • OPEN OVER THE HOPPER',duration:0,rewardThreshold:550,benchmark:1750,theme:'dredger'},
@@ -684,13 +684,13 @@ const CONTENT={
     {id:'trader',scene:'trader',icon:'◁',title:['Red sail on the horizon','A neighbour at sea'],log:['A little red-sailed trader crossed the route and dipped its flag.','Another boat passed at a comfortable distance and exchanged a wave.'],ambient:true,weight:.8},
     {id:'squall',scene:'squall',icon:'☂',title:['Rain on the water','A soft squall'],log:['A soft squall swept over the deck and left the sea shining.','Rain stitched the water for a few minutes before moving on.'],ambient:true,weight:.8,conditions:{weather:['rain','breezy','clear']}},
     {id:'bottle',scene:'bottle',icon:'✉',title:['Something in the wake','A bottle in the swell'],log:['A sealed bottle bobbed into view.','A glass bottle flashed between two small waves.'],interaction:{minigame:'rescue_throw'},rewards:[{kind:'bottle',weight:1}],weight:1},
-    {id:'signal',scene:'signal',icon:'✦',title:['A distant lantern','A light across the water','Someone is signalling'],log:['A tiny lantern flashed a careful pattern from far off the route.','A point of light blinked in a deliberate rhythm beyond the mist.'],interaction:{minigame:'naval_radar'},rewards:[{kind:'chart',weight:.7},{kind:'bottle',weight:.3}],conditions:{phase:['dusk','night','dawn']},weight:1.1},
-    {id:'shoal',scene:'shoal',icon:'◎',title:['A mark beneath the keel','An odd echo below'],log:['The sounder picked up an odd shape beneath the boat.','A clean echo returned from something resting on the seabed.'],interaction:{minigame:'research_sonar'},rewards:[{kind:'crate',weight:.65},{kind:'stone',weight:.35}],weight:1},
+    {id:'signal',scene:'signal',icon:'✦',title:['A woolly challenge by signal lamp','Grid references in the dark'],log:['A patrol vessel flashed over a numbered grid and invited you to find its hidden flock boats.','Signal lamps blinked a playful chart challenge: somewhere beyond the haze, sheep were waiting aboard tiny practice craft.'],interaction:{minigame:'naval_cattleships'},rewards:[{kind:'chart',weight:.7},{kind:'bottle',weight:.3}],conditions:{phase:['dusk','night','dawn']},weight:1.1},
+    {id:'shoal',scene:'shoal',icon:'◇',title:['A striped core from the shallows','The seabed sampler comes up full'],log:['A little corer returned with a neat stack of mixed seabed layers ready to be decoded.','The research winch brought up a puzzling sample strip whose layers need reconstructing.'],interaction:{minigame:'research_cipher'},rewards:[{kind:'crate',weight:.65},{kind:'stone',weight:.35}],weight:1},
     {id:'shipwreck',scene:'shipwreck',icon:'⚓',title:['Wreckage off the route','A broken mast ahead','Timbers in the swell'],log:['A weathered mast and scattered planks marked the remains of a small wreck.','Broken spars rose between the waves, with something still caught among them.'],interaction:{minigame:'rescue_throw'},rewards:[{kind:'traveller',weight:.25},{kind:'crate',weight:.35},{kind:'glass',weight:.25},{kind:'timber',weight:.15}],weight:.9},
     {id:'seaglass',scene:'seaglass',icon:'◆',title:['Colour in the shallows','Sea glass in the wake','A bright patch below'],log:['Green and blue glass flashed beneath a patch of clear water.','Polished pieces of old glass glittered just below the surface.'],interaction:{minigame:'dredger_scoop'},rewards:[{kind:'glass',weight:1}],weight:.85},
     {id:'rigging',scene:'rigging',icon:'✚',title:['A loose line on deck','Rigging in the breeze'],log:['A gust rattled the rigging and loosened a few fittings.','One of the deck lines began tapping against the mast.'],interaction:{minigame:'tallship_rigging'},rewards:[{kind:'timber',weight:.6},{kind:'cloth',weight:.4}],weight:.9},
     {id:'breeze',scene:'breeze',icon:'≈',title:['The wind turns kindly','A fair breeze'],log:['A clean breeze arrived from the west.','The sail filled cleanly and the boat found an easy rhythm.'],interaction:{minigame:'yacht_trim'},rewards:[{kind:'glass',weight:.55},{kind:'cloth',weight:.45}],weight:1},
-    {id:'wildlife',scene:'wildlife',icon:'☼',title:['Life in the blue','Movement beyond starboard'],log:['Dark shapes surfaced beyond the starboard rail.','A patch of water ahead suddenly came alive.'],interaction:{minigame:'research_sonar'},rewards:[{kind:'seeds',weight:.55},{kind:'glass',weight:.45}],weight:1},
+    {id:'wildlife',scene:'wildlife',icon:'☼',title:['Life in the blue','Movement beyond starboard'],log:['Dark shapes surfaced beyond the starboard rail.','A patch of water ahead suddenly came alive.'],interaction:{minigame:'trawler_net'},rewards:[{kind:'seeds',weight:.55},{kind:'glass',weight:.45}],weight:1},
     {id:'castaway',scene:'castaway',icon:'☻',title:['A hand from a dinghy','Someone between islands'],log:['A lone traveller waved from a little dinghy just off the route.','A small boat drifted nearby with one relieved passenger aboard.'],interaction:{minigame:'rescue_throw'},rewards:[{kind:'traveller',weight:1}],weight:.65},
     {id:'stonecargo',scene:'stonecargo',icon:'⬟',title:['Old quay stones','Stone in the netting'],log:['A few dressed stones were caught together in floating netting.','Old masonry bobbed strangely beneath a tangle of rope.'],interaction:{minigame:'barge_balance'},rewards:[{kind:'stone',weight:1}],weight:.75},
     {id:'canvas',scene:'canvas',icon:'▤',title:['Canvas in the tide','A pale roll by the buoy'],log:['A dry roll of sailcloth had snagged on a marker buoy.','Something pale and tightly rolled tugged against a buoy line.'],interaction:{minigame:'yacht_trim'},rewards:[{kind:'cloth',weight:1}],weight:.8},
@@ -702,8 +702,8 @@ const CONTENT={
     {id:'arcade_speedboat',scene:'arcadevessel',icon:'≫',title:['Fast wake ahead','A speedboat darts past'],log:['A little speedboat carved a playful course through marker buoys nearby.','A quick boat skipped across the chop and left a clean set of wakes behind.'],interaction:{minigame:'speedboat_slalom'},rewards:[{kind:'bottle',weight:.55},{kind:'glass',weight:.45}],weight:.48},
     {id:'arcade_tug',scene:'arcadevessel',icon:'●',title:['A tug at work','Harbour traffic needs a hand'],log:['A compact tug worked the shoulder of a larger vessel near the channel.','A tugboat crew signalled for help bringing the next arrival safely onto the fenders.'],interaction:{minigame:'tug_dock'},rewards:[{kind:'crate',weight:.6},{kind:'timber',weight:.4}],weight:.58},
     {id:'arcade_tanker',scene:'arcadevessel',icon:'═',title:['A tanker in the channel','A very large neighbour'],log:['A long tanker moved almost imperceptibly through the marked channel.','A tanker captain watched the channel buoys with intense patience.'],interaction:{minigame:'tanker_channel'},rewards:[{kind:'crate',weight:.6},{kind:'bell',weight:.4}],weight:.4},
-    {id:'arcade_naval',scene:'arcadevessel',icon:'◎',title:['Radar lights on a grey ship','Signals from a patrol vessel'],log:['A grey patrol vessel swept the water with radar and flashed a friendly signal.','A radar mast turned steadily on a ship holding station beyond the route.'],interaction:{minigame:'naval_radar'},rewards:[{kind:'chart',weight:.7},{kind:'bell',weight:.3}],weight:.42},
-    {id:'arcade_research',scene:'arcadevessel',icon:'◉',title:['A research ship on station','Survey gear over the side'],log:['A research vessel hovered over a patch of deep water with sensors deployed.','A survey crew lowered bright instruments into the sea nearby.'],interaction:{minigame:'research_sonar'},rewards:[{kind:'chart',weight:.55},{kind:'glass',weight:.45}],weight:.62},
+    {id:'arcade_naval',scene:'arcadevessel',icon:'♈',title:['A woolly flotilla off the bow','A patrol crew challenges you'],log:['A grey patrol vessel had laid out a harmless grid exercise using little sheep-carrying boats and waved you into the game.','A patrol crew held up a chart covered in squares while tiny practice craft — each improbably full of sheep — scattered across the water.'],interaction:{minigame:'naval_cattleships'},rewards:[{kind:'chart',weight:.7},{kind:'bell',weight:.3}],weight:.42},
+    {id:'arcade_research',scene:'arcadevessel',icon:'◇',title:['A research ship with sample trays out','A core strip needs decoding'],log:['A research vessel had a row of tiny seabed specimens laid out under a scanner and asked you to reconstruct the hidden sequence.','A survey crew raised a fresh core and offered you the analysis desk while the samples were still dripping.'],interaction:{minigame:'research_cipher'},rewards:[{kind:'chart',weight:.55},{kind:'glass',weight:.45}],weight:.62},
     {id:'arcade_rescue',scene:'arcadevessel',icon:'◯',title:['A rescue launch in the swell','Lifeboat crew practising'],log:['A rescue launch practised throwing lines across a lively patch of sea.','A bright rescue boat turned into the waves with a crew drilling on deck.'],interaction:{minigame:'rescue_throw'},rewards:[{kind:'bottle',weight:.6},{kind:'bottle',weight:.4}],weight:.52},
     {id:'arcade_pilot',scene:'arcadevessel',icon:'⇆',title:['Pilot boat alongside','Two boats matching speed'],log:['A pilot boat ran neatly alongside a larger ship for a careful transfer.','A pilot launch rose and fell beside a towering hull, matching speed exactly.'],interaction:{minigame:'pilot_transfer'},rewards:[{kind:'chart',weight:.7},{kind:'bottle',weight:.3}],weight:.5},
     {id:'arcade_dredger',scene:'arcadevessel',icon:'⌄',title:['A dredger working the channel','Bucket over the side'],log:['A dredger lifted dark seabed material beside a marked channel.','A heavy bucket rose dripping from a squat working vessel nearby.'],interaction:{minigame:'dredger_scoop'},rewards:[{kind:'stone',weight:.65},{kind:'crate',weight:.35}],weight:.48},
@@ -829,8 +829,8 @@ const AT_SEA_MINIGAME_SCENARIOS={
   speedboat_slalom:{scene:'shoal',icon:'≫',title:['Markers scattered ahead','A playful line through the buoys'],log:['A set of spare channel markers makes a harmless little weaving course in open water.','Bright practice buoys have been laid through a quiet patch of sea and make an inviting slalom.'],rewardKind:'bottle'},
   tug_dock:{scene:'trader',icon:'●',title:['A drifting tender needs a nudge','A workboat has lost its angle'],log:['A small unmanned tender is drifting broadside and only needs a gentle push back toward its tow.','A squat workboat has come awkwardly across the swell and asks for a careful nudge into line.'],rewardKind:'timber'},
   tanker_channel:{scene:'shoal',icon:'═',title:['A long buoyed channel','Deep water between the marks'],log:['The route narrows briefly between well-marked shoals, rewarding patient, tiny corrections.','A broad deep-water lane threads between banks on either side; the marks are clear and there is no hurry.'],rewardKind:'chart'},
-  naval_radar:{scene:'signal',icon:'◎',title:['Contacts in the haze','A radar practice buoy'],log:['A patch of haze fills with harmless echoes from buoys, birds and distant boats.','A survey beacon begins a friendly radar exercise, mixing real contacts with clutter.'],rewardKind:'chart'},
-  research_sonar:{scene:'shoal',icon:'◉',title:['An interesting seabed return','A survey ping under the keel'],log:['The sounder finds an unusually clean return below the route and there is time for a closer look.','A patch of seabed throws back a curious echo that invites a few careful pings.'],rewardKind:'stone'},
+  naval_cattleships:{scene:'signal',icon:'♈',title:['A woolly grid challenge','Practice boats among the haze'],log:['A patrol launch lays out a harmless chart game: find the little livestock boats before the call sheet runs out.','A signal crew offers one of the islands’ stranger seamanship drills — tiny boats, numbered squares and an unreasonable quantity of sheep.'],rewardKind:'chart'},
+  research_cipher:{scene:'shoal',icon:'◇',title:['A seabed core to decode','Fresh samples from below'],log:['A clean sample strip comes aboard with its layer order scrambled in the field notes — ideal for a quick reconstruction.','A research tray holds several familiar seabed finds, but only comparative passes will recover their true order.'],rewardKind:'stone'},
   rescue_throw:{scene:'bottle',icon:'◯',title:['A practice ring overboard','A floating marker needs a line'],log:['A spare lifering slips over the side beside a floating marker — a perfect excuse for a practice throw.','A harmless training float is bobbing just out of reach and needs a line placed neatly beside it.'],rewardKind:'bottle'},
   pilot_transfer:{scene:'trader',icon:'⇆',title:['A packet between boats','Matching speed for a handover'],log:['A nearby launch has a small mail packet to pass across while both boats hold the same speed.','Two boats settle alongside for a routine handover and the safe transfer window is wonderfully precise.'],rewardKind:'bottle'},
   dredger_scoop:{scene:'seaglass',icon:'⌄',title:['A shallow gravel patch','Something bright on the bottom'],log:['Clear water reveals a patch of clean gravel with a few useful pieces among it.','A sandy pocket beside the route shows bright material on the bottom and invites a careful scoop.'],rewardKind:'stone'},
@@ -1040,6 +1040,7 @@ function defaultState(){
   }
 }
 
+// v0.41.0: Radar Watch and Sonar Hunt replaced by Cattleships and Seabed Cipher.
 // v0.40.0: working captains, persistent ship's stores, changing port exchanges and recorded crossings.
 // Freight (v.cargo) remains separate from the captain's small bartering locker (v.tradeStock).
 const MF40_VESSEL_GOODS={
@@ -3851,13 +3852,13 @@ const ARCADE_PIECES=[
   [[0,0]],[[0,0],[1,0]],[[0,0],[0,1]],[[0,0],[1,0],[0,1]],[[0,0],[1,0],[2,0]],[[0,0],[0,1],[1,1]],[[0,0],[1,0],[1,1]]
 ];
 function arcadeDifficulty(g){return Math.min(3.1,1+Math.max(0,(g.round||1)-1)*.115)}
-function arcadeRoundText(g){return g.engine==='depth'&&g.continuous?'SILENT RUN':g.engine==='tug'?`JOB ${g.round||1}`:`ROUND ${g.round||1}`}
+function arcadeRoundText(g){return g.engine==='depth'&&g.continuous?'SILENT RUN':g.engine==='tug'?`JOB ${g.round||1}`:g.engine==='cipher'?`CORE ${g.round||1}`:g.engine==='cattle'?`FLOCK ${g.round||1}`:`ROUND ${g.round||1}`}
 function arcadeLives(g){return Math.max(0,(g.maxStrikes||ARCADE_MAX_STRIKES)-(g.strikes||0))}
-function arcadeGoalRatio(g){if(g.type==='speedboat_slalom'&&Number.isFinite(g.raceProgress)&&Number.isFinite(g.raceFinish)){const start=Number.isFinite(g.raceStartProgress)?g.raceStartProgress:0;return clamp((g.raceProgress-start)/Math.max(.001,g.raceFinish-start),0,1)}return g.engine==='depth'&&g.continuous?clamp(((g.depthMeters||0)%120)/120,0,1):clamp((g.roundProgress||0)/Math.max(1,g.roundGoal||1),0,1)}
+function arcadeGoalRatio(g){if(g.type==='speedboat_slalom'&&Number.isFinite(g.raceProgress)&&Number.isFinite(g.raceFinish)){const start=Number.isFinite(g.raceStartProgress)?g.raceStartProgress:0;return clamp((g.raceProgress-start)/Math.max(.001,g.raceFinish-start),0,1)}if(g.engine==='cipher'&&g.cipher)return clamp((g.cipher.attempts||0)/Math.max(1,g.cipher.maxAttempts||1),0,1);return g.engine==='depth'&&g.continuous?clamp(((g.depthMeters||0)%120)/120,0,1):clamp((g.roundProgress||0)/Math.max(1,g.roundGoal||1),0,1)}
 function arcadeRand(g,a=0,b=1){return a+(g.rr?.()??Math.random())*(b-a)}
 function arcadeChoice(g,list){return list[Math.floor(arcadeRand(g,0,list.length))%list.length]}
 function arcadeSetFeedback(g,text,tone='good',ms=820){g.feedback={text,tone,until:performance.now()+ms}}
-const ARCADE_HELPER_GAMES=new Set(['yacht_trim','ferry_lines','ferry_galley','ferry_bags','container_crane','container_stack','trawler_net','trawler_sort','tug_dock','tanker_channel','naval_radar','research_sonar','rescue_throw','pilot_transfer','dredger_scoop','barge_balance','cargo_tetris','engine_telegraph','tallship_rigging','sub_depth','carrier_landing','steam_route']);
+const ARCADE_HELPER_GAMES=new Set(['yacht_trim','ferry_lines','ferry_galley','ferry_bags','container_crane','container_stack','trawler_net','trawler_sort','tug_dock','tanker_channel','naval_cattleships','research_cipher','rescue_throw','pilot_transfer','dredger_scoop','barge_balance','cargo_tetris','engine_telegraph','tallship_rigging','sub_depth','carrier_landing','steam_route']);
 function arcadeHelperEnabled(g){return!!g&&ARCADE_HELPER_GAMES.has(g.meta?.id||g.type)}
 function arcadeSetHelperCue(g,text,sub=''){if(!g)return;g.helperCue=text||'';g.helperSub=sub||''}
 function arcadeHideHelper(){const el=$('#arcadeHelper');if(el){el.classList.remove('show','good','bad','warn','neutral','interacting');el.classList.add('neutral');el.style.top='';const title=$('#arcadeHelperText'),sub=$('#arcadeHelperSub');if(title)title.textContent='';if(sub)sub.textContent=''}}
@@ -3874,8 +3875,8 @@ function arcadeDefaultHelperCue(g){
   if(id==='speedboat_slalom')return'WEAVE PORT ↔ STARBOARD · AVOID SPIN-OUTS · SURGE TO PASS';
   if(id==='tug_dock')return'PUSH WHERE YOU NEED MOVEMENT · MATCH POSITION, SPEED AND HEADING';
   if(id==='tanker_channel')return'STEER THE ACTIVE SHIP · SWITCH EARLY · BUILD A CLEAR PASS';
-  if(id==='naval_radar')return'TRACK A BRIGHT RETURN · LET TWO SWEEPS BUILD ITS COURSE';
-  if(id==='research_sonar')return'STEER THE TOWFISH · PING · CLOSE THE RETURN · MARK WHEN RESOLVED';
+  if(id==='naval_cattleships')return'CALL UNTRIED WATER · FINISH A BOAT · USE THE BLEAT WHISTLE ONLY WHEN YOU NEED IT';
+  if(id==='research_cipher')return'COMPARE PASSES · GREEN IS EXACT · GOLD IS THE RIGHT SPECIMEN IN THE WRONG LAYER';
   if(id==='rescue_throw')return'PULL BACK TO AIM · LEAD WIND IN AIR AND CURRENT AFTER SPLASHDOWN';
   if(id==='pilot_transfer')return'MATCH SPEED · COME ABREAST · TRANSFER WHEN THE GAP SETTLES';
   if(id==='dredger_scoop')return'LOWER INTO CLEAN SEDIMENT · LIFT CLEAR OF SERVICES · DUMP IN HOPPER';
@@ -3892,6 +3893,8 @@ function arcadeDefaultHelperCue(g){
 function arcadeHelperProgress(g){
   const id=g.meta?.id||g.type;
   if(id==='cargo_tetris'&&g.hold){const H=g.hold,sc=H.scenario,trim=sc.trim?Math.abs(arcadeHoldTrim(g)):0,tw=!sc.trim?'':trim<.11?' · EVEN TRIM':trim<=sc.trimLimit?' · TRIM OK':' · TRIM NEEDS WORK';return`${H.placements.length}/${H.manifest.length} stowed${tw}${H.rehandles?` · ${H.rehandles} rehandle${H.rehandles===1?'':'s'}`:''}`}
+  if(id==='research_cipher'&&g.cipher)return`Pass ${Math.min(g.cipher.maxAttempts,g.cipher.attempts+1)}/${g.cipher.maxAttempts} · ${g.cipher.len} layers · ${g.cipher.allowRepeat?'repeats possible':'no repeats'}`;
+  if(id==='naval_cattleships'&&g.cattle)return`${g.cattle.hitCount}/${g.cattle.totalSheep} sheep overboard · ${g.cattle.shotsLeft} calls left${g.cattle.whistles?' · whistle ready':''}`;
   if(id==='sub_depth')return`${Math.round(g.depthMeters||0)}m · ${arcadeLives(g)} lives`;if(id==='speedboat_slalom')return`${g.raceCircuit?.name||'Regatta'} · lap ${g.raceLap||1}/2 · race ${g.round||1}/3`;
   if(Number.isFinite(g.roundProgress)&&Number.isFinite(g.roundGoal)&&g.roundGoal>1)return`${g.roundProgress}/${g.roundGoal} · round ${g.round||1}`;
   return`Round ${g.round||1} · ${arcadeLives(g)} lives`
@@ -6399,142 +6402,140 @@ function arcadeSetupTug(g,r,d){
   g.secureMs=0;g.roundProgress=0;g.bumpCool=0;g.escapeCool=0;g.contactFlash=0;g.obstacleCool=0;g.jobStartedAt=performance.now();g.wakes=[];
   g.dockTolerance={posX:Math.max(.035,.052-(r-1)*.0012),posY:Math.max(.050,.072-(r-1)*.0015),angle:Math.max(.17,.34-(r-1)*.012),speed:Math.max(.024,.042-(r-1)*.0010)};
 }
-function arcadeRadarCPA(b){
-  const vv=b.vx*b.vx+b.vy*b.vy,range=Math.hypot(b.x,b.y);
-  if(vv<.000001)return{tcpa:99,cpa:range,closing:false,range,px:b.x,py:b.y};
-  const tcpa=-(b.x*b.vx+b.y*b.vy)/vv,t=Math.max(0,tcpa),px=b.x+b.vx*t,py=b.y+b.vy*t;
-  return{tcpa,cpa:Math.hypot(px,py),closing:tcpa>0&&(b.x*b.vx+b.y*b.vy)<0,range,px,py}
+const ARCADE_CIPHER_SPECIMENS=[
+  {id:'basalt',label:'BASALT',col:'#526565'},
+  {id:'shell',label:'SHELL',col:'#efe3b8'},
+  {id:'coral',label:'CORAL',col:'#df7c68'},
+  {id:'glass',label:'SEA GLASS',col:'#65bdd1'},
+  {id:'timber',label:'TIMBER',col:'#a86d45'},
+  {id:'iron',label:'IRON',col:'#81908d'},
+  {id:'kelp',label:'KELP',col:'#6ea66b'},
+  {id:'amber',label:'AMBER',col:'#e5b54e'}
+];
+function arcadeCipherEvaluate(secret,guess,poolSize){
+  let exact=0;const a=Array(poolSize).fill(0),b=Array(poolSize).fill(0);
+  for(let i=0;i<secret.length;i++){if(secret[i]===guess[i])exact++;else{a[secret[i]]++;b[guess[i]]++}}
+  let shifted=0;for(let i=0;i<poolSize;i++)shifted+=Math.min(a[i],b[i]);
+  return{exact,shifted,absent:secret.length-exact-shifted}
 }
-function arcadeRadarDanger(g,b){
-  if(!b||b.kind!=='vessel')return false;
-  const q=arcadeRadarCPA(b);
-  return q.closing&&q.tcpa>0&&q.tcpa<24&&q.cpa<g.radarDanger
+function arcadeCipherSecret(g,len,poolSize,allowRepeat){
+  if(allowRepeat)return Array.from({length:len},()=>Math.floor(arcadeRand(g,0,poolSize))%poolSize);
+  const bag=Array.from({length:poolSize},(_,i)=>i);for(let i=bag.length-1;i>0;i--){const j=Math.floor(arcadeRand(g,0,i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}return bag.slice(0,len)
 }
-function arcadeRadarBearing(b){
-  const deg=(Math.atan2(b.x,-b.y)*180/Math.PI+360)%360;
-  return String(Math.round(deg)).padStart(3,'0')+'°'
+function arcadeSetupCipher(g,r,d){
+  const len=r<4?4:r<8?5:6,poolSize=r<3?6:r<6?7:8,allowRepeat=r>=3;
+  const maxAttempts=len===4?Math.max(6,8-Math.floor((r-1)/4)):len===5?8:9;
+  arcadeResetCommon(g,1);
+  const secret=arcadeCipherSecret(g,len,poolSize,allowRepeat),starter=Array.from({length:len},(_,i)=>i%poolSize);
+  g.cipher={len,poolSize,allowRepeat,maxAttempts,secret,current:starter,selected:0,cursor:0,history:[],attempts:0,startedAt:performance.now(),scanAt:0,lastExact:0,lastShifted:0,revealUntil:0,pendingResetAt:0};
 }
-function arcadeRadarTrackQuality(b){return Math.min(3,b.trail?.length||0)}
-function arcadeRadarNewWeatherPatch(g){
-  const a=arcadeRand(g,0,Math.PI*2),r=arcadeRand(g,.42,.83);
-  return{a,r,w:arcadeRand(g,.10,.19),h:arcadeRand(g,.07,.14),phase:arcadeRand(g,0,6.28),strength:arcadeRand(g,.055,.13)}
-}
-function arcadeRadarMakeContact(g,ts,index){
-  const isClutter=index>=0&&index%6===5;
-  if(isClutter){
-    const a=arcadeRand(g,0,Math.PI*2),r=arcadeRand(g,.36,.86);
-    return{id:++g.radarId,x:Math.cos(a)*r,y:Math.sin(a)*r,vx:0,vy:0,kind:'clutter',born:ts,trail:[],lastPaint:0,lastSweep:-1,jitter:arcadeRand(g,0,10),resolved:false,index}
+function arcadeCipherSelect(g,index){const C=g.cipher;if(!C)return false;C.selected=clamp(index|0,0,C.poolSize-1);arcadeSetFeedback(g,ARCADE_CIPHER_SPECIMENS[C.selected].label,'neutral',260);return true}
+function arcadeCipherPlace(g,slot){const C=g.cipher;if(!C||slot<0||slot>=C.len)return false;C.current[slot]=C.selected;C.cursor=(slot+1)%C.len;return true}
+function arcadeCipherAnalyse(g){
+  const C=g.cipher;if(!C||C.pendingResetAt)return false;const now=performance.now();
+  if(C.current.some(v=>!Number.isInteger(v))){arcadeSetFeedback(g,'FILL EVERY LAYER FIRST','warn',520);return false}
+  const guess=C.current.slice(),result=arcadeCipherEvaluate(C.secret,guess,C.poolSize);C.history.push({guess,exact:result.exact,shifted:result.shifted,at:now});C.attempts++;C.lastExact=result.exact;C.lastShifted=result.shifted;C.scanAt=now;
+  if(result.exact===C.len){
+    const elapsed=Math.max(0,(now-C.startedAt)/1000),spare=C.maxAttempts-C.attempts,fast=Math.max(0,260-elapsed*7),clean=C.attempts<=2?260:C.attempts===3?150:C.attempts===4?70:0;
+    arcadeProgress(g,1,Math.round(560+spare*105+fast+clean),C.attempts===1?'IMPOSSIBLE FIRST PASS!':`CORE CRACKED IN ${C.attempts} PASSES`);return true
   }
-  const wantDanger=index%3===0 || (g.round>3&&index%5===2);
-  let b=null;
-  for(let tries=0;tries<60;tries++){
-    const a=arcadeRand(g,0,Math.PI*2),r=arcadeRand(g,.67,.91);
-    const x=Math.cos(a)*r,y=Math.sin(a)*r;
-    const speed=arcadeRand(g,.030,.052)*(1+Math.min(.28,(g.round-1)*.018));
-    let heading;
-    if(wantDanger){
-      const toward=Math.atan2(-y,-x);
-      heading=toward+arcadeRand(g,-.20,.20)
-    }else{
-      heading=arcadeRand(g,0,Math.PI*2)
+  if(C.attempts>=C.maxAttempts){
+    C.revealUntil=now+1250;arcadeStrike(g,'CORE PASS BUDGET USED',95);if(g.failed)g.failAt=now+1250;else{C.pendingResetAt=now+1250;g.roundPauseUntil=now+1250}return false
+  }
+  C.current=guess.slice();
+  arcadeSetFeedback(g,`${result.exact} EXACT · ${result.shifted} DISPLACED`,result.exact?'good':'neutral',760);beep('soft');return true
+}
+function arcadeCipherGeometry(G,g){
+  const C=g.cipher,left=G.x(.055),right=G.x(.945),top=G.y(.115),bottom=G.y(.945),w=right-left,h=bottom-top;
+  const histTop=top+h*.145,histBottom=top+h*.555,currentY=top+h*.660,paletteY=top+h*.860;
+  const currentSize=Math.min(44,Math.max(26,Math.min((w*.66)/C.len,h*.14))),currentGap=Math.min(8,Math.max(3,currentSize*.14)),currentW=C.len*currentSize+(C.len-1)*currentGap,currentX=left+(w-currentW)/2;
+  const palGap=4,palCell=Math.min(46,Math.max(25,Math.min((w-palGap*(C.poolSize-1))/C.poolSize,h*.15))),palW=C.poolSize*palCell+(C.poolSize-1)*palGap,palX=left+(w-palW)/2;
+  return{left,right,top,bottom,w,h,histTop,histBottom,currentY,currentSize,currentGap,currentX,paletteY,palCell,palGap,palX}
+}
+function drawArcadeCipherSpecimen(index,x,y,size,alpha=1){
+  const S=ARCADE_CIPHER_SPECIMENS[index]||ARCADE_CIPHER_SPECIMENS[0],q=size/26;ctx.save();ctx.globalAlpha*=alpha;ctx.translate(x,y);
+  if(S.id==='basalt'){poly([[-9*q,7*q],[-11*q,-1*q],[-5*q,-9*q],[5*q,-10*q],[11*q,-2*q],[8*q,8*q],[0,11*q]],S.col,'#17313a',Math.max(1,q*1.4));line(-4*q,-5*q,3*q,4*q,'rgba(255,255,255,.24)',Math.max(1,q))}
+  else if(S.id==='shell'){ctx.beginPath();ctx.moveTo(-11*q,8*q);ctx.quadraticCurveTo(0,-12*q,11*q,8*q);ctx.lineTo(0,11*q);ctx.closePath();ctx.fillStyle=S.col;ctx.fill();ctx.strokeStyle='#17313a';ctx.lineWidth=Math.max(1,q*1.3);ctx.stroke();for(let i=-2;i<=2;i++)line(0,9*q,i*4*q,-2*q,'#b79f76',Math.max(1,q*.7))}
+  else if(S.id==='coral'){line(0,10*q,0,-7*q,S.col,Math.max(3,q*3));line(0,-2*q,-8*q,-8*q,S.col,Math.max(2,q*2.4));line(1*q,-4*q,8*q,-11*q,S.col,Math.max(2,q*2.4));line(-2*q,3*q,-9*q,0,S.col,Math.max(2,q*2.1));circle(0,10*q,3*q,S.col,'#17313a',1)}
+  else if(S.id==='glass'){poly([[0,-12*q],[10*q,-2*q],[5*q,11*q],[-7*q,9*q],[-11*q,-3*q]],S.col,'#17313a',Math.max(1,q*1.3));poly([[-4*q,-5*q],[2*q,-9*q],[6*q,-3*q],[1*q,1*q]],'rgba(255,255,255,.45)')}
+  else if(S.id==='timber'){ctx.save();ctx.rotate(-.18);roundedRect(-11*q,-7*q,22*q,14*q,3*q,S.col,'#17313a',Math.max(1,q*1.2));line(-7*q,-3*q,7*q,-3*q,'#704630',Math.max(1,q));line(-5*q,3*q,8*q,3*q,'#704630',Math.max(1,q));ctx.restore()}
+  else if(S.id==='iron'){roundedRect(-10*q,-10*q,20*q,20*q,4*q,S.col,'#17313a',Math.max(1,q*1.3));circle(0,0,5*q,'#596b69','#17313a',Math.max(1,q));for(const a of [0,Math.PI/2,Math.PI,Math.PI*1.5])circle(Math.cos(a)*7*q,Math.sin(a)*7*q,1.4*q,'#d8e0da')}
+  else if(S.id==='kelp'){for(let k=-1;k<=1;k++){ctx.beginPath();ctx.moveTo(k*4*q,11*q);ctx.bezierCurveTo((k*4-8)*q,2*q,(k*4+8)*q,-3*q,k*4*q,-12*q);ctx.strokeStyle=S.col;ctx.lineWidth=Math.max(2,q*2.6);ctx.stroke()}circle(0,10*q,3*q,'#4f7e55','#17313a',1)}
+  else{circle(0,0,10*q,S.col,'#17313a',Math.max(1,q*1.3));circle(-3*q,-3*q,3*q,'rgba(255,255,255,.32)');drawSparkle(5*q,-5*q,'#fff7de')}
+  ctx.restore()
+}
+function arcadeCipherPointer(g,type,x,y,G){
+  if(type!=='down')return;const C=g.cipher,M=arcadeCipherGeometry(G,g);
+  for(let i=0;i<C.poolSize;i++){const bx=M.palX+i*(M.palCell+M.palGap),by=M.paletteY-M.palCell*.50;if(x>=bx&&x<=bx+M.palCell&&y>=by&&y<=by+M.palCell){arcadeCipherSelect(g,i);return}}
+  for(let i=0;i<C.len;i++){const bx=M.currentX+i*(M.currentSize+M.currentGap),by=M.currentY-M.currentSize*.50;if(x>=bx&&x<=bx+M.currentSize&&y>=by&&y<=by+M.currentSize){C.cursor=i;arcadeCipherPlace(g,i);arcadeSetFeedback(g,`${ARCADE_CIPHER_SPECIMENS[C.selected].label} · LAYER ${i+1}`,'neutral',260);return}}
+}
+
+const ARCADE_CATTLE_NAMES=['EWE TWO','WOOL PACKET','BELLWETHER','RAMBLER','FLEECE LIGHT','BAA-LINE','LAMB CHOPPER','SHEARWATER'];
+function arcadeCattleKey(r,c){return`${r},${c}`}
+function arcadeCattleShipAt(g,r,c){const C=g.cattle;for(const ship of C.fleet)for(const cell of ship.cells)if(cell.r===r&&cell.c===c)return{ship,cell};return null}
+function arcadeCattlePlaceFleet(g,size,lengths){
+  const fleet=[],occupied=new Set();
+  const clear=(cells)=>{for(const p of cells)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(occupied.has(arcadeCattleKey(p.r+dr,p.c+dc)))return false;return true};
+  for(let si=0;si<lengths.length;si++){
+    const length=lengths[si];let placed=null;
+    for(let tries=0;tries<500&&!placed;tries++){
+      const horizontal=arcadeRand(g,0,1)<.5,r=Math.floor(arcadeRand(g,0,horizontal?size:size-length+1)),c=Math.floor(arcadeRand(g,0,horizontal?size-length+1:size));
+      const cells=Array.from({length},(_,i)=>({r:r+(horizontal?0:i),c:c+(horizontal?i:0),hit:false}));if(clear(cells))placed={id:si,length,horizontal,cells,name:ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length],sunk:false,sunkAt:0}
     }
-    const t={x,y,vx:Math.cos(heading)*speed,vy:Math.sin(heading)*speed,kind:'vessel'};
-    if(arcadeRadarDanger(g,t)===wantDanger){b=t;break}
+    if(!placed){
+      outer:for(let horizontal of [true,false])for(let r=0;r<size;r++)for(let c=0;c<size;c++){const cells=Array.from({length},(_,i)=>({r:r+(horizontal?0:i),c:c+(horizontal?i:0),hit:false}));if(cells.every(p=>p.r<size&&p.c<size)&&clear(cells)){placed={id:si,length,horizontal,cells,name:ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length],sunk:false,sunkAt:0};break outer}}
+    }
+    if(placed){fleet.push(placed);for(const p of placed.cells)occupied.add(arcadeCattleKey(p.r,p.c))}
   }
-  if(!b){
-    const a=arcadeRand(g,0,Math.PI*2),r=.80;
-    b={x:Math.cos(a)*r,y:Math.sin(a)*r,vx:-Math.cos(a)*.038,vy:-Math.sin(a)*.038,kind:'vessel'}
-  }
-  return Object.assign(b,{id:++g.radarId,born:ts,trail:[],lastPaint:0,lastSweep:-1,resolved:false,index,alerted:false})
+  return fleet
 }
-function arcadeNewRadarContact(g,ts,forcedReal=null){
-  const b=arcadeRadarMakeContact(g,ts,g.radarSpawned++);
-  if(forcedReal===true&&b.kind==='clutter'){b.kind='vessel';b.vx=-b.x*.045;b.vy=-b.y*.045}
-  g.blips.push(b);g.spawn=ts;return b
+function arcadeSetupCattle(g,r,d){
+  const size=r<3?6:r<6?7:8,lengths=r<3?[3,2,2]:r<6?[4,3,2]:[4,3,3,2],totalSheep=lengths.reduce((a,b)=>a+b,0),density=Math.max(.60,.74-Math.floor((r-1)/2)*.018),maxShots=Math.max(totalSheep+7,Math.ceil(size*size*density));
+  arcadeResetCommon(g,totalSheep);const fleet=arcadeCattlePlaceFleet(g,size,lengths);
+  g.cattle={size,fleet,totalSheep,hitCount:0,shots:{},shotsTaken:0,maxShots,shotsLeft:maxShots,missStreak:0,whistles:1,whistleHint:null,splashes:[],revealUntil:0,pendingResetAt:0,lastCall:null};
 }
-function arcadeRadarAlert(g){
-  const b=g.blips.find(x=>x.id===g.radarSelected);
-  if(!b){arcadeSetFeedback(g,'SELECT A VESSEL TRACK','neutral',520);return}
-  if(b.kind==='clutter'){arcadeStrike(g,'FALSE ALERT · SEA RETURN',35);b.resolved=true;g.radarSelected=null;return}
-  const quality=arcadeRadarTrackQuality(b);
-  if(quality<2){arcadeSetFeedback(g,'WATCH ONE MORE SWEEP','neutral',600);return}
-  if(arcadeRadarDanger(g,b)){
-    b.alerted=true;b.resolved=true;g.radarSelected=null;g.radarResolved++;
-    arcadeProgress(g,1,390,'BRIDGE ALERTED')
+function arcadeCattleMarkWake(g,ship){
+  const C=g.cattle,occupied=new Set(C.fleet.flatMap(s=>s.cells.map(p=>arcadeCattleKey(p.r,p.c))));
+  for(const p of ship.cells)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const r=p.r+dr,c=p.c+dc;if(r<0||c<0||r>=C.size||c>=C.size)continue;const k=arcadeCattleKey(r,c);if(!occupied.has(k)&&!C.shots[k])C.shots[k]='clear'}
+}
+function arcadeCattleFailRound(g){
+  const C=g.cattle,now=performance.now();C.revealUntil=now+1250;arcadeStrike(g,'CALL SHEET EXHAUSTED',90);if(g.failed)g.failAt=now+1250;else{C.pendingResetAt=now+1250;g.roundPauseUntil=now+1250}
+}
+function arcadeCattleCall(g,r,c){
+  const C=g.cattle;if(!C||C.pendingResetAt)return false;const k=arcadeCattleKey(r,c);if(C.shots[k]){arcadeSetFeedback(g,C.shots[k]==='clear'?'CREW ALREADY CLEARED THAT WAKE':'SQUARE ALREADY CALLED','neutral',340);return false}
+  C.shotsTaken++;C.shotsLeft--;C.lastCall={r,c,at:performance.now()};const found=arcadeCattleShipAt(g,r,c);C.splashes.push({r,c,at:performance.now(),hit:!!found});C.splashes=C.splashes.slice(-16);
+  if(found&&!found.cell.hit){
+    found.cell.hit=true;C.shots[k]='hit';C.hitCount++;C.missStreak=0;const pts=125+Math.min(125,(g.combo||0)*28);arcadeRoundReward(g,pts,'SHEEP OVERBOARD');g.roundProgress=C.hitCount;
+    if(found.ship.cells.every(p=>p.hit)&&!found.ship.sunk){found.ship.sunk=true;found.ship.sunkAt=performance.now();arcadeCattleMarkWake(g,found.ship);g.score+=210+found.ship.length*55;arcadeSetFeedback(g,`${found.ship.name} · ALL SHEEP OFF! CREW REELING THEM IN`,'good',1050)}
+    if(C.hitCount>=C.totalSheep){const efficiency=C.shotsLeft*22+(C.whistles?180:0)+Math.max(0,140-C.shotsTaken*2);g.score+=efficiency;arcadeAdvance(g,`FLOCK FOUND · ${C.shotsTaken} CALLS`);return true}
   }else{
-    arcadeStrike(g,'FALSE ALERT · PASSING CLEAR',40);
-    b.alerted=true;b.resolved=true;g.radarSelected=null;g.radarResolved++
+    C.shots[k]='miss';C.missStreak++;g.combo=0;g.score=Math.max(0,g.score-6);arcadeSetFeedback(g,C.missStreak>=4&&C.whistles?'SPLASH · NO SHEEP · THE WHISTLE MAY HELP':'SPLASH · CLEAR WATER',C.missStreak>=4?'warn':'neutral',520)
   }
+  if(C.shotsLeft<=0&&C.hitCount<C.totalSheep)arcadeCattleFailRound(g);return true
 }
-function arcadeSetupRadar(g,r,d){
-  const goal=4+Math.min(4,Math.floor((r-1)/2));
-  arcadeResetCommon(g,goal);
-  g.blips=[];g.radarId=0;g.radarSelected=null;g.radarSpawned=0;g.radarResolved=0;
-  g.radarDanger=Math.max(.125,.19-(r-1)*.006);
-  g.sweepRate=.00115+Math.min(.00035,(r-1)*.000035);
-  g.spawn=performance.now();g.radarSeed=arcadeRand(g,0,6.28);
-  g.radarSea=Math.min(.24,.035+(r-1)*.018);
-  const weatherCount=r<3?0:Math.min(3,Math.floor((r-1)/3));
-  g.radarWeather=Array.from({length:weatherCount},()=>arcadeRadarNewWeatherPatch(g));
-  for(let i=0;i<Math.min(4,goal);i++)arcadeNewRadarContact(g,performance.now()-i*350,true)
+function arcadeCattleWhistle(g){
+  const C=g.cattle;if(!C||!C.whistles||C.pendingResetAt){arcadeSetFeedback(g,'THE WHISTLE IS SPENT','neutral',420);return false}
+  const unhit=C.fleet.flatMap(s=>s.cells.filter(p=>!p.hit));if(!unhit.length)return false;const axis=arcadeRand(g,0,1)<.5?'row':'col',indexes=[...new Set(unhit.map(p=>axis==='row'?p.r:p.c))],index=indexes[Math.floor(arcadeRand(g,0,indexes.length))%indexes.length];
+  C.whistles=0;C.whistleHint={axis,index,until:performance.now()+3800};g.score=Math.max(0,g.score-65);const label=axis==='row'?`ROW ${String.fromCharCode(65+index)}`:`COLUMN ${index+1}`;arcadeSetFeedback(g,`BAA! · SOMETHING ANSWERS FROM ${label}`,'good',1100);beep('soft');renderArcadeControls();return true
 }
-function sonarSurveyGeometry(G,g){
-  const left=G.x(.055),right=G.x(.945),top=G.y(.105),bottom=G.y(.805);
-  return{left,right,top,bottom,w:right-left,h:bottom-top,cx:(left+right)/2,cy:(top+bottom)/2}
-}
-function arcadeSonarNewTarget(g,index=0){
-  const kinds=['wreck','vent','whale','rock','crates','ray'];
-  const kind=kinds[Math.floor(arcadeRand(g,0,kinds.length))%kinds.length];
-  const research=kind==='wreck'||kind==='vent'||kind==='crates';
-  const x=arcadeRand(g,.20,.86),y=arcadeRand(g,.15,.82);
-  return{id:++g.sonarId,x,y,kind,research,marked:false,phase:arcadeRand(g,0,6.28),drift:kind==='whale'||kind==='ray'?arcadeRand(g,-.012,.012):0}
-}
-function arcadeSonarCanyon(g,y){
-  const bend=Math.sin(y*8.2+g.sonarSeed)*.075+Math.sin(y*3.7+g.sonarSeed*.4)*.045;
-  const half=Math.max(.19,.32-(g.round-1)*.008)+Math.sin(y*10.1+g.sonarSeed)*.025;
-  return{c:.5+bend,l:.5+bend-half,r:.5+bend+half}
-}
-function arcadeSonarNearest(g){
-  let best=null,bd=99;
-  for(const t of g.sonarTargets){if(t.marked)continue;const d=Math.hypot(t.x-g.sonar.x,t.y-g.sonar.y);if(d<bd){bd=d;best=t}}
-  return best?{t:best,d:bd}:null
-}
-function arcadeSonarPing(g){
-  if(g.sonarPing>0||g.sonarMarkFlash>0)return;
-  g.sonarPing=.001;g.sonarPingAt=performance.now();g.sonarPings++;
-  const n=arcadeSonarNearest(g);
-  if(!n){g.sonarRead='NO RETURN';return}
-  const dx=n.t.x-g.sonar.x,dy=n.t.y-g.sonar.y;
-  g.sonarBearing=Math.atan2(dx,-dy);
-  g.sonarRange=n.d;
-  g.sonarLock=n.t.id;
-  g.sonarRead=n.d<.10?'IMAGE RESOLVING':n.d<.22?'STRONG RETURN':n.d<.38?'CLEAR RETURN':'FAINT RETURN';
-  arcadeSetFeedback(g,g.sonarRead,n.d<.22?'good':'neutral',420);beep('soft')
-}
-function arcadeSonarMark(g){
-  const t=g.sonarTargets.find(x=>x.id===g.sonarLock&&!x.marked);
-  if(!t){arcadeSetFeedback(g,'PING A CONTACT FIRST','neutral',450);return}
-  const d=Math.hypot(t.x-g.sonar.x,t.y-g.sonar.y);
-  if(d>.115){arcadeSetFeedback(g,'MOVE CLOSER · IMAGE NOT RESOLVED','neutral',500);return}
-  t.marked=true;g.sonarMarkFlash=.8;
-  if(t.research){
-    arcadeProgress(g,1,420,t.kind==='wreck'?'WRECK LOGGED':t.kind==='vent'?'VENT LOGGED':'CARGO DEBRIS LOGGED');
-    g.sonarFinds++;g.sonarLock=null;g.sonarRead='TARGET LOGGED'
-  }else{
-    arcadeStrike(g,t.kind==='whale'?'MARINE LIFE · NOT A SURVEY TARGET':t.kind==='ray'?'RAY · LET IT PASS':'ROCK OUTCROP',35);
-    g.sonarLock=null;g.sonarRead='CONTACT DISMISSED'
+function arcadeCattleGeometry(G,g){
+  const C=g.cattle,wide=G.w>=560&&G.w/Math.max(1,G.h)>1.35;
+  if(wide){
+    const maxW=G.w*.54,maxH=G.h*.76,cell=Math.max(21,Math.min(40,Math.floor(Math.min(maxW/C.size,maxH/C.size)))),side=cell*C.size,gridX=G.x(.04)+20,gridY=G.top+28;
+    const panel={x:gridX+side+20,y:G.top+4,w:Math.max(150,G.right-(gridX+side+30)),h:G.h-8};return{wide,cell,side,gridX,gridY,panel}
   }
+  const gridY=G.top+30,manifestH=54,gap=12,maxW=G.w*.84,available=Math.max(C.size*20,G.bottom-gridY-manifestH-gap),cell=Math.max(20,Math.min(72,Math.floor(Math.min(maxW/C.size,available/C.size)))),side=cell*C.size,gridX=G.cx-side/2;
+  return{wide,cell,side,gridX,gridY,panel:null}
 }
-function arcadeSetupSonar(g,r,d){
-  arcadeResetCommon(g,3+Math.min(4,Math.floor((r-1)/2)));
-  g.sonar={x:.50,y:.78,vx:0,vy:0,targetX:.50,targetY:.78};
-  g.sonarId=0;g.sonarTargets=[];g.sonarSeed=arcadeRand(g,0,20);g.sonarPing=0;g.sonarPingAt=0;g.sonarPings=0;
-  g.sonarBearing=0;g.sonarRange=0;g.sonarLock=null;g.sonarRead='PING TO SEARCH';g.sonarFinds=0;g.sonarMarkFlash=0;g.sonarBottom=.86;
-  const count=Math.min(10,5+Math.floor(r/2));
-  // Guarantee enough research targets to complete the round.
-  for(let i=0;i<count;i++)g.sonarTargets.push(arcadeSonarNewTarget(g,i));
-  let good=g.sonarTargets.filter(t=>t.research).length;
-  while(good<g.roundGoal){const t=arcadeSonarNewTarget(g,g.sonarTargets.length);t.kind=['wreck','vent','crates'][good%3];t.research=true;g.sonarTargets.push(t);good++}
+function drawArcadeSheep(x,y,size,wet=false,phase=0,alpha=1){
+  ctx.save();ctx.globalAlpha*=alpha;const bob=wet?Math.sin(performance.now()*.004+phase)*size*.08:0;ctx.translate(x,y+bob);const q=size/24;
+  for(const [ox,oy,rr] of [[-6,-1,6],[0,-4,7],[6,-1,6],[-3,4,6],[4,4,6]])circle(ox*q,oy*q,rr*q,'#fff7de','#17313a',Math.max(1,q));
+  circle(8*q,0,5*q,'#4d5550','#17313a',Math.max(1,q));poly([[8*q,-4*q],[12*q,-8*q],[13*q,-2*q]],'#4d5550','#17313a',1);circle(10*q,-1*q,1*q,'#fff7de');
+  if(wet){for(let i=0;i<3;i++)circle((-8+i*8)*q,8*q,1.4*q,'rgba(220,247,248,.70)')}
+  ctx.restore()
+}
+function arcadeCattlePointer(g,type,x,y,G){
+  if(type!=='down')return;const C=g.cattle,M=arcadeCattleGeometry(G,g);if(x<M.gridX||y<M.gridY||x>=M.gridX+M.side||y>=M.gridY+M.side)return;const c=Math.floor((x-M.gridX)/M.cell),r=Math.floor((y-M.gridY)/M.cell);arcadeCattleCall(g,r,c)
 }
 function arcadeNewAimTarget(g){
   const r=g.round||1,R=g.rescue||{},cycle=(r-1)%7,tier=Math.floor((r-1)/7),scale=1+Math.min(.65,tier*.14);
@@ -7154,7 +7155,7 @@ function arcadeTelegraphPointer(g,type,x,y,G=arcadeGeom()){
 
 function setupArcadeRound(g,first=false){
   const r=g.round||1,d=arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
-  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='telegraph')arcadeSetupTelegraph(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='bagthrow')arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='sail')arcadeSetupSail(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='radar')arcadeSetupRadar(g,r,d);else if(g.engine==='sonar')arcadeSetupSonar(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d);else if(g.engine==='pinball')arcadeSetupPinball(g,r,d)
+  if(g.engine==='pilot')arcadeSetupPilot(g,r,d);else if(g.engine==='lines')arcadeSetupLines(g,r,d);else if(g.engine==='balance')arcadeSetupBalance(g,r,d);else if(g.engine==='galley')arcadeSetupGalley(g,r,d);else if(g.engine==='telegraph')arcadeSetupTelegraph(g,r,d);else if(g.engine==='bargebalance')arcadeSetupBargeBalance(g,r,d);else if(g.engine==='bagthrow')arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')arcadeSetupSteam(g,r,d);else if(g.engine==='crane')arcadeSetupCrane(g,r,d);else if(g.engine==='stack')arcadeSetupStack(g,r,d);else if(g.engine==='sort')arcadeSetupSort(g,r,d);else if(g.engine==='sail')arcadeSetupSail(g,r,d);else if(g.engine==='meter')arcadeSetupMeter(g,r,d);else if(g.engine==='steer')arcadeSetupSteer(g,r,d);else if(g.engine==='tug')arcadeSetupTug(g,r,d);else if(g.engine==='cattle')arcadeSetupCattle(g,r,d);else if(g.engine==='cipher')arcadeSetupCipher(g,r,d);else if(g.engine==='aim')arcadeSetupAim(g,r,d);else if(g.engine==='dredge')arcadeSetupDredge(g,r,d);else if(g.engine==='rigging')arcadeSetupRigging(g,r,d);else if(g.engine==='depth')arcadeSetupDepth(g,r,d);else if(g.engine==='landing')arcadeSetupLanding(g,r,d);else if(g.engine==='poop')arcadeSetupPoop(g,r,d);else if(g.engine==='pinball')arcadeSetupPinball(g,r,d)
 }
 
 function arcadeScoreRecord(id){if(!state.arcade)state.arcade={scores:{},totalPlays:0};if(!state.arcade.scores)state.arcade.scores={};const rec=state.arcade.scores[id]||(state.arcade.scores[id]={best:0,plays:0,last:0,recent:[]});if(!Number.isFinite(+rec.bestRound))rec.bestRound=0;if(!Number.isFinite(+rec.bestStreak))rec.bestStreak=0;return rec}
@@ -7166,7 +7167,7 @@ const ARCADE_LIBRARY_SECTIONS=[
   {name:'Seamanship & Shiphandling',ids:['ferry_lines','yacht_trim','speedboat_slalom','tug_dock','tanker_channel','pilot_transfer']},
   {name:'Cargo, Deck & Rigging',ids:['container_crane','container_stack','barge_balance','cargo_tetris','tallship_rigging']},
   {name:'Working Boats & Rescue',ids:['trawler_net','trawler_sort','rescue_throw','dredger_scoop']},
-  {name:'Navigation, Machinery & Specialist',ids:['naval_radar','research_sonar','sub_depth','carrier_landing','steam_route','engine_telegraph']},
+  {name:'Navigation, Machinery & Specialist',ids:['naval_cattleships','research_cipher','sub_depth','carrier_landing','steam_route','engine_telegraph']},
   {name:'Passenger & Deck Life',ids:['puffer_pinball','ferry_galley','ferry_bags','cruise_buffet','poop_deck']}
 ];
 function arcadeLibraryHTML(){
@@ -7183,7 +7184,7 @@ function beginArcadeRound(){if(!minigame||minigame.started)return;arcadeHideHelp
   renderArcadeControls();
 }
 function startMinigame(type,seconds=null,opts={}){
-  if(!state.voyage)return;let plugin=MINIGAME_PLUGINS[type]||MINIGAME_PLUGINS[randomArcadeGameId()];type=Object.entries(MINIGAME_PLUGINS).find(([,p])=>p===plugin)?.[0]||type;state.totalMinigames++;state.voyage.minigamesPlayed++;save();const common={type,duration:Infinity,started:0,lastTick:performance.now(),score:0,done:false,title:plugin.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null,storyTrialId:opts.storyTrialId||null,storyTrialStep:opts.storyTrialStep??null,storyTrialVoyageId:opts.storyTrialVoyageId||null};minigame=plugin.create(common);state.activeView='voyage';if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=true;syncMobilePanel()}$('#infoPanel').classList.add('arcade-mode');$('#gameHud').classList.add('show');$('#gameHudTitle').textContent=minigame.title;$('#gameHudObjective').textContent=type==='speedboat_slalom'?'WEAVE FOR GATES · DODGE HAZARDS · SURGE TO PASS':plugin.instruction;$('#gameHudText').textContent=type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${arcadeBest(type).toLocaleString()}`:type==='puffer_pinball'?`BALL 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:type==='sub_depth'?`DEPTH 0m · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:`ROUND 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`;$('#gameHudBar').style.width='0%';$('#arcadeStart').onclick=beginArcadeRound;fitResponsiveStage();renderUI();adaptiveMusicSync(true);showArcadeIntro(minigame);arcadeShellActivate();$('#gameHudPause').onclick=()=>arcadePauseMenu('pause');$('#gameHudLeave').onclick=()=>arcadePauseMenu('exit');$('#arcadeBack').onclick=()=>arcadePauseMenu('exit')
+  if(!state.voyage)return;const legacyArcade={naval_radar:'naval_cattleships',research_sonar:'research_cipher'};type=legacyArcade[type]||type;let plugin=MINIGAME_PLUGINS[type]||MINIGAME_PLUGINS[randomArcadeGameId()];type=Object.entries(MINIGAME_PLUGINS).find(([,p])=>p===plugin)?.[0]||type;state.totalMinigames++;state.voyage.minigamesPlayed++;save();const common={type,duration:Infinity,started:0,lastTick:performance.now(),score:0,done:false,title:plugin.title,eventId:opts.eventId||null,rewardKind:opts.rewardKind||null,storyTrialId:opts.storyTrialId||null,storyTrialStep:opts.storyTrialStep??null,storyTrialVoyageId:opts.storyTrialVoyageId||null};minigame=plugin.create(common);state.activeView='voyage';if(window.matchMedia('(max-width:900px)').matches){mobilePanelCollapsed=true;syncMobilePanel()}$('#infoPanel').classList.add('arcade-mode');$('#gameHud').classList.add('show');$('#gameHudTitle').textContent=minigame.title;$('#gameHudObjective').textContent=type==='speedboat_slalom'?'WEAVE FOR GATES · DODGE HAZARDS · SURGE TO PASS':plugin.instruction;$('#gameHudText').textContent=type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${arcadeBest(type).toLocaleString()}`:type==='puffer_pinball'?`BALL 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:type==='sub_depth'?`DEPTH 0m · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`:`ROUND 1 · 3 LIVES · BEST ${arcadeBest(type).toLocaleString()}`;$('#gameHudBar').style.width='0%';$('#arcadeStart').onclick=beginArcadeRound;fitResponsiveStage();renderUI();adaptiveMusicSync(true);showArcadeIntro(minigame);arcadeShellActivate();$('#gameHudPause').onclick=()=>arcadePauseMenu('pause');$('#gameHudLeave').onclick=()=>arcadePauseMenu('exit');$('#arcadeBack').onclick=()=>arcadePauseMenu('exit')
 }
 function endMinigame(reason='done'){
   if(!minigame)return;arcadeHideHelper();const g=minigame,score=Math.max(0,Math.round(g.score)),record=reason==='leave'?null:recordArcadeScore(g.type,score,g);if(reason!=='leave'&&g.eventId&&state.voyage)resolveEncounterEvent(g.eventId,score);if(g.storyTrialId)hsCompleteSpecialistTrial(g,reason,score);if(reason!=='leave'&&g.rewardQualified&&state.voyage&&state.voyage.discoveries.length<5){const desired=g.rewardKind||null,chance=g.eventId?1:Math.min(.72,.42+boatFindChanceBonus());if(Math.random()<chance)addDiscovery(desired)}minigame=null;adaptiveMusicSync(true);$('#infoPanel').classList.remove('arcade-mode');$('#gameHud').classList.remove('show');$('#arcadeIntro').classList.remove('show');fitResponsiveStage();save();renderUI();if(!minigame)arcadeShellDeactivate();if(reason==='leave'){toast('Back on course.');return}const meta=MINIGAME_META[g.type],raceCupHTML=g.type==='speedboat_slalom'?arcadeSpeedStandingsHTML(g):'',rank=arcadeLeaderboard(g.type).findIndex(r=>r.you)+1,kicker=record?.newBest?'NEW PERSONAL BEST':record?.newRound?(g.type==='sub_depth'?'NEW BEST DEPTH':'NEW BEST ROUND'):'RUN COMPLETE',runLine=g.type==='sub_depth'?`<b>Deepest point ${Math.round(g.depthMeters||0)}m</b>`:`<b>Round ${g.bestRound||g.round||1}</b>`;showModal(`<h2>${meta.icon} ${meta.title}</h2><div class="arcade-kicker">${kicker}</div><div class="arcade-result-score">${score.toLocaleString()}</div><div class="notice">${runLine} · Best ${record.best.toLocaleString()}${rank>0?` · Harbour board #${rank}`:''}<br>${g.bestStreak>1?`Best streak ×${g.bestStreak}. `:''}${g.mistakes?`${g.mistakes} mistake${g.mistakes===1?'':'s'}.`:''}</div>${raceCupHTML}<div class="divider"></div><div class="section-title">Harbour board</div>${arcadeLeaderboardHTML(g.type)}<div class="modal-actions"><button class="big-btn secondary" id="arcadeReplay">PLAY AGAIN</button><button class="big-btn ghost" id="arcadeReturn">BACK TO VOYAGE</button></div>`,false);$('#arcadeReplay').onclick=()=>{closeModal();startMinigame(g.type,null,g.storyTrialId?{storyTrialId:g.storyTrialId,storyTrialStep:g.storyTrialStep,storyTrialVoyageId:g.storyTrialVoyageId}:{})};$('#arcadeReturn').onclick=closeModal
@@ -7706,266 +7707,74 @@ function arcadeRenderTug(g,ts,G,dt,running){
   const statusY=G.y(.895),labels=[['POSITION',D.posOK],['SPEED',D.speedOK],['HEADING',D.angleOK]];for(let i=0;i<3;i++){const x=G.x(.18+i*.22);roundedRect(x,statusY,94,22,6,labels[i][1]?'#dff1cf':'rgba(255,247,222,.88)',labels[i][1]?'#4f8b56':'#17313a',2);pxText(labels[i][0],x+47,statusY+14,labels[i][1]?'#315b42':'#17313a',7,'center')}
   arcadeSetHelperCue(g,D.posOK&&D.angleOK&&D.speedOK?'HOLD HER ON THE FENDERS':D.posOK&&!D.angleOK?'WORK THE BOW OR STERN TO LINE HER UP':!D.speedOK&&D.posOK?'EASE OFF — TOO MUCH WAY ON':'PUSH AT THE HULL WHERE YOU NEED THE MOVEMENT',`${P.tonnes}t · berth ${H.parked.length+1}/${arcadeTugCapacity(g)}`);
 }
-function arcadeRenderRadar(g,ts,G,dt,running){
-  const sec=dt/1000,scopeCx=G.cx,scopeCy=G.y(.46),scopeR=Math.min(G.w*.405,G.h*.36);
-  const sweep=(ts*g.sweepRate)%(Math.PI*2),turn=Math.floor((ts*g.sweepRate)/(Math.PI*2));
-
-  // Keep the picture busy but readable. New returns enter only after older traffic clears.
-  if(running&&g.radarSpawned<g.roundGoal+2&&ts-g.spawn>Math.max(1650,2800-g.round*80)&&g.blips.length<5)arcadeNewRadarContact(g,ts);
-
-  for(const b of g.blips){
-    if(running&&b.kind==='vessel'){b.x+=b.vx*sec;b.y+=b.vy*sec}
-    if(b.kind==='clutter'){
-      b.x+=Math.sin(ts*.0011+b.jitter)*.0000016*dt;
-      b.y+=Math.cos(ts*.0013+b.jitter)*.0000013*dt
-    }
-    const rr=Math.hypot(b.x,b.y),a=Math.atan2(b.y,b.x);
-    const da=Math.abs(Math.atan2(Math.sin(a-sweep),Math.cos(a-sweep)));
-    if(da<.070&&b.lastSweep!==turn){
-      b.lastSweep=turn;b.lastPaint=ts;
-      if(b.kind==='vessel'){b.trail.push({x:b.x,y:b.y,at:ts});b.trail=b.trail.slice(-4)}
-      else if(arcadeRand(g,0,1)>.45)b.trail=[{x:b.x+arcadeRand(g,-.010,.010),y:b.y+arcadeRand(g,-.010,.010),at:ts}]
-    }
-
-    // A danger contact reaching the inner ring before an alert is the actual failure state.
-    if(running&&b.kind==='vessel'&&!b.alerted&&rr<g.radarDanger*.92){
-      b.resolved=true;g.radarResolved++;
-      if(b.id===g.radarSelected)g.radarSelected=null;
-      arcadeStrike(g,'CLOSE APPROACH · BRIDGE NOT WARNED',65)
-    }else if(running&&rr>1.06){
-      b.resolved=true;g.radarResolved++;
-      if(b.id===g.radarSelected)g.radarSelected=null;
-      if(b.kind==='vessel'&&!arcadeRadarDanger(g,b)){
-        arcadeProgress(g,1,125,'PASSED CLEAR')
-      }else if(b.kind==='clutter'){
-        arcadeProgress(g,1,70,'SEA RETURN FADED')
-      }
-    }
+function arcadeRenderCipher(g,ts,G,dt,running){
+  const C=g.cipher;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}const M=arcadeCipherGeometry(G,g);
+  // Research desk and core archive.
+  roundedRect(M.left,M.top,M.w,M.h,12,'#213f46','#102a31',3);rect(M.left+7,M.top+7,M.w-14,M.h-14,'#315961');
+  for(let i=0;i<13;i++){const y=M.top+18+i*(M.h-36)/12;line(M.left+10,y,M.right-10,y,'rgba(220,240,230,.045)',1)}
+  roundedRect(M.left+12,M.top+10,M.w-24,M.h*.105,7,'rgba(255,247,222,.94)','#17313a',2);
+  pxText('SEABED CORE ARCHIVE',M.left+22,M.top+30,'#17313a',9,'left');
+  pxText(`${C.len} LAYERS · ${C.poolSize} SPECIMENS · ${C.allowRepeat?'REPEATS POSSIBLE':'NO REPEATS'}`,M.right-22,M.top+30,'#42616a',7,'right');
+  const reveal=C.revealUntil>ts;
+  const secretSize=Math.min(26,(M.w*.36)/C.len),secretGap=3,secretW=C.len*secretSize+(C.len-1)*secretGap,secretX=M.left+M.w*.50-secretW/2;
+  for(let i=0;i<C.len;i++){const x=secretX+i*(secretSize+secretGap),y=M.top+M.h*.105-secretSize*.15;roundedRect(x,y-secretSize*.5,secretSize,secretSize,5,reveal?'#fff7de':'#17313a',reveal?'#df7c68':'#829795',1.5);if(reveal)drawArcadeCipherSpecimen(C.secret[i],x+secretSize/2,y,secretSize*.68,.90);else pxText('?',x+secretSize/2,y+4,'#fff7de',9,'center')}
+  // Previous passes: the same visual grammar every time, so deductions become readable at a glance.
+  const history=C.history.slice(-6),rows=Math.max(1,history.length),rowH=Math.min(44,(M.histBottom-M.histTop)/Math.max(1,rows));
+  for(let ri=0;ri<history.length;ri++){
+    const H=history[history.length-1-ri],y=M.histBottom-(ri+.5)*rowH,slot=Math.min(27,rowH*.62),gap=3,total=H.guess.length*slot+(H.guess.length-1)*gap,x0=M.left+20;
+    pxText(`P${C.history.length-ri}`,x0,y+3,'#d7e6dc',7,'left');const sx=x0+28;
+    for(let i=0;i<H.guess.length;i++){roundedRect(sx+i*(slot+gap),y-slot/2,slot,slot,4,'rgba(255,247,222,.90)','#17313a',1);drawArcadeCipherSpecimen(H.guess[i],sx+i*(slot+gap)+slot/2,y,slot*.68,.93)}
+    const fx=sx+total+13,pip=7,pips=[];for(let i=0;i<H.exact;i++)pips.push('#83bf6a');for(let i=0;i<H.shifted;i++)pips.push('#e5b54e');while(pips.length<C.len)pips.push('#455b60');
+    for(let i=0;i<pips.length;i++){const col=i%Math.ceil(C.len/2),row=Math.floor(i/Math.ceil(C.len/2));circle(fx+col*(pip+3),y-5+row*(pip+3),pip/2,pips[i],'#17313a',1)}
+    pxText(`${H.exact} EXACT · ${H.shifted} SHIFTED`,M.right-18,y+3,H.exact===C.len?'#9fd28c':'#d7e6dc',7,'right')
   }
-  g.blips=g.blips.filter(b=>!b.resolved);
-
-  // Radar console bezel.
-  roundedRect(scopeCx-scopeR-18,scopeCy-scopeR-18,scopeR*2+36,scopeR*2+36,18,'#253d43','#12282e',3);
-  circle(scopeCx,scopeCy,scopeR,'#0d2d28','#83bf6a',3);
-
-  // Clear range rings and danger ring.
-  for(let q=.25;q<=1;q+=.25)circle(scopeCx,scopeCy,scopeR*q,'rgba(0,0,0,0)','rgba(105,168,99,.38)',1);
-  circle(scopeCx,scopeCy,scopeR*g.radarDanger,'rgba(223,124,104,.055)','#df7c68',2);
-  pxText('DANGER',scopeCx,scopeCy-scopeR*g.radarDanger-7,'#df7c68',6,'center');
-
-  for(let a=0;a<12;a++){
-    const ang=a*Math.PI/6;
-    line(scopeCx+Math.cos(ang)*scopeR*.91,scopeCy+Math.sin(ang)*scopeR*.91,scopeCx+Math.cos(ang)*scopeR,scopeCy+Math.sin(ang)*scopeR,'rgba(105,168,99,.42)',1)
+  if(!history.length)pxText('FIRST PASS IS YOUR BASELINE — CHANGE ONLY WHAT THE ANALYSIS TEACHES YOU',G.cx,(M.histTop+M.histBottom)/2,'rgba(255,247,222,.68)',7,'center');
+  line(M.left+14,M.currentY-M.currentSize*.72,M.right-14,M.currentY-M.currentSize*.72,'rgba(255,247,222,.16)',1);
+  pxText(`BUILD PASS ${Math.min(C.maxAttempts,C.attempts+1)} / ${C.maxAttempts}`,G.cx,M.currentY-M.currentSize*.72-8,'#fff7de',8,'center');
+  for(let i=0;i<C.len;i++){
+    const x=M.currentX+i*(M.currentSize+M.currentGap),sel=i===C.cursor;roundedRect(x,M.currentY-M.currentSize/2,M.currentSize,M.currentSize,6,sel?'#fff0c8':'#fff7de',sel?'#e5b54e':'#17313a',sel?3:2);drawArcadeCipherSpecimen(C.current[i],x+M.currentSize/2,M.currentY,M.currentSize*.72,1);pxText(String(i+1),x+M.currentSize/2,M.currentY+M.currentSize*.39,'#42616a',5,'center')
   }
-  pxText('000',scopeCx,scopeCy-scopeR+12,'#83bf6a',6,'center');
-  pxText('090',scopeCx+scopeR-4,scopeCy+3,'#83bf6a',6,'right');
-  pxText('180',scopeCx,scopeCy+scopeR-5,'#83bf6a',6,'center');
-  pxText('270',scopeCx-scopeR+4,scopeCy+3,'#83bf6a',6,'left');
-
-  // Own ship, stronger and more recognizable.
-  poly([[scopeCx,scopeCy-10],[scopeCx+6,scopeCy+8],[scopeCx,scopeCy+5],[scopeCx-6,scopeCy+8]],'#fff7de','#17313a',1);
-  line(scopeCx,scopeCy-14,scopeCx,scopeCy-22,'#fff7de',1);
-
-  // Subtle sea clutter; round one is intentionally clean.
-  const clutterN=Math.round(8+g.radarSea*32);
-  for(let i=0;i<clutterN;i++){
-    const a=i*2.399+(g.radarSeed||0),rr=(i%3===0?.25:.72)+((i*17)%21)/100;
-    const r=clamp(rr,0,1)*scopeR,alpha=.045+((i*7)%7)/100;
-    circle(scopeCx+Math.cos(a)*r,scopeCy+Math.sin(a)*r,1,`rgba(131,191,106,${alpha})`)
-  }
-  for(const w of g.radarWeather){
-    const x=scopeCx+Math.cos(w.a)*w.r*scopeR,y=scopeCy+Math.sin(w.a)*w.r*scopeR;
-    for(let i=0;i<7;i++){
-      const ox=Math.sin(w.phase+i*1.8)*w.w*scopeR,oy=Math.cos(w.phase*.8+i*2.2)*w.h*scopeR;
-      circle(x+ox,y+oy,2+(i%2),`rgba(131,191,106,${w.strength})`)
-    }
-  }
-
-  // Track history first.
-  for(const b of g.blips){
-    if(!b.trail?.length)continue;
-    for(let i=0;i<b.trail.length;i++){
-      const p=b.trail[i],alpha=.22+i*.16;
-      circle(scopeCx+p.x*scopeR,scopeCy+p.y*scopeR,2.3,`rgba(255,247,222,${alpha})`);
-      if(i>0){
-        const prev=b.trail[i-1];
-        line(scopeCx+prev.x*scopeR,scopeCy+prev.y*scopeR,scopeCx+p.x*scopeR,scopeCy+p.y*scopeR,'rgba(229,181,78,.56)',1.4)
-      }
-    }
-  }
-
-  // Selected track gets an explicit visual projection to closest approach.
-  const selected=g.blips.find(x=>x.id===g.radarSelected);
-  if(selected&&selected.kind==='vessel'&&arcadeRadarTrackQuality(selected)>=2){
-    const q=arcadeRadarCPA(selected);
-    const x1=scopeCx+selected.x*scopeR,y1=scopeCy+selected.y*scopeR;
-    const x2=scopeCx+q.px*scopeR,y2=scopeCy+q.py*scopeR;
-    const danger=arcadeRadarDanger(g,selected);
-    line(x1,y1,x2,y2,danger?'#df7c68':'#83bf6a',2);
-    circle(x2,y2,6,'rgba(0,0,0,0)',danger?'#df7c68':'#83bf6a',2);
-    pxText(danger?'INTERCEPT':'PASS CLEAR',x2,y2-10,danger?'#df7c68':'#83bf6a',6,'center')
-  }
-
-  // Sweep.
-  const sx=scopeCx+Math.cos(sweep)*scopeR,sy=scopeCy+Math.sin(sweep)*scopeR;
-  ctx.save();ctx.beginPath();ctx.moveTo(scopeCx,scopeCy);ctx.arc(scopeCx,scopeCy,scopeR,sweep-.18,sweep);ctx.closePath();ctx.fillStyle='rgba(131,191,106,.075)';ctx.fill();ctx.restore();
-  line(scopeCx,scopeCy,sx,sy,'rgba(157,223,124,.94)',2);
-
-  // Current painted returns.
-  for(const b of g.blips){
-    const age=ts-(b.lastPaint||0),fresh=clamp(1-age/4300,0,1);if(fresh<=.03)continue;
-    const x=scopeCx+b.x*scopeR,y=scopeCy+b.y*scopeR,sel=b.id===g.radarSelected;
-    if(sel){
-      circle(x,y,14,'rgba(229,181,78,.08)','#e5b54e',2);
-      line(x-19,y,x-11,y,'#e5b54e',1);line(x+11,y,x+19,y,'#e5b54e',1)
-    }
-    if(b.kind==='clutter')rect(x-2,y-2,4,4,`rgba(131,191,106,${.24+fresh*.35})`);
-    else{
-      const q=arcadeRadarTrackQuality(b);
-      line(x-5-q,y,x+5+q,y,`rgba(255,247,222,${.35+fresh*.62})`,2);
-      circle(x,y,2.5,`rgba(255,247,222,${.40+fresh*.60})`)
-    }
-  }
-
-  // Compact bottom instrument strip: qualitative, not a spreadsheet.
-  const stripY=G.y(.835),stripH=G.h*.105;
-  roundedRect(G.x(.08),stripY,G.w*.84,stripH,9,'rgba(255,247,222,.94)','#17313a',2);
-  if(!selected){
-    pxText('TAP A BRIGHT RETURN',G.cx,stripY+20,'#17313a',9,'center');
-    pxText('TWO SWEEPS REVEAL ITS COURSE',G.cx,stripY+39,'#42616a',7,'center')
-  }else{
-    const quality=arcadeRadarTrackQuality(selected);
-    const left=G.x(.105);
-    pxText(`TRACK ${String(selected.id).padStart(2,'0')}`,left,stripY+17,'#17313a',8,'left');
-    pxText(selected.kind==='clutter'?'UNSTABLE SEA RETURN':`BRG ${arcadeRadarBearing(selected)}`,left,stripY+34,'#42616a',7,'left');
-    const qx=G.x(.47);
-    if(selected.kind==='clutter'){
-      pxText('NO COURSE',qx,stripY+17,'#8ba1a6',8,'center');pxText('IGNORE',qx,stripY+35,'#4f8b56',7,'center')
-    }else if(quality<2){
-      pxText('BUILDING TRACK',qx,stripY+17,'#e5b54e',8,'center');pxText('WAIT FOR SWEEP',qx,stripY+35,'#42616a',7,'center')
-    }else{
-      const danger=arcadeRadarDanger(g,selected);
-      pxText(danger?'CROSSES RED RING':'PASSES OUTSIDE',qx,stripY+17,danger?'#df7c68':'#4f8b56',8,'center');
-      pxText(danger?'ALERT BRIDGE':'NO ACTION',qx,stripY+35,danger?'#b8574f':'#4f8b56',7,'center')
-    }
-    const lampsX=G.x(.73);
-    for(let i=0;i<3;i++){
-      const lit=i<quality;
-      circle(lampsX+i*18,stripY+25,5,lit?'#83bf6a':'#c7c2ad','#17313a',1)
-    }
-    pxText('SWEEPS',lampsX+18,stripY+44,'#42616a',6,'center')
-  }
-
-  arcadeSetHelperCue(g,selected?(selected.kind==='clutter'?'SEA CLUTTER · IGNORE':arcadeRadarTrackQuality(selected)<2?'HOLD THE TRACK FOR ANOTHER SWEEP':arcadeRadarDanger(g,selected)?'PROJECTED COURSE CROSSES RED RING · ALERT BRIDGE':'PROJECTED COURSE PASSES CLEAR · NO ACTION'):'TAP A BRIGHT RETURN · TWO SWEEPS REVEAL ITS COURSE',`${g.roundProgress}/${g.roundGoal} contacts resolved`)
-}
-function arcadeRenderSonar(g,ts,G,dt,running){
-  const S=sonarSurveyGeometry(G,g),sec=dt/1000,F=g.sonar;
-  if(running){
-    F.vx+=(F.targetX-F.x)*2.6*sec;F.vy+=(F.targetY-F.y)*2.2*sec;
-    F.vx*=Math.pow(.92,dt/16.7);F.vy*=Math.pow(.92,dt/16.7);
-    F.x=clamp(F.x+F.vx*sec,.07,.93);F.y=clamp(F.y+F.vy*sec,.08,.90);
-    const c=arcadeSonarCanyon(g,F.y);
-    if(F.x<c.l+.025){F.x=c.l+.025;F.vx=Math.abs(F.vx)*.35;arcadeSetFeedback(g,'TOWFISH NEAR CANYON WALL','neutral',280)}
-    if(F.x>c.r-.025){F.x=c.r-.025;F.vx=-Math.abs(F.vx)*.35;arcadeSetFeedback(g,'TOWFISH NEAR CANYON WALL','neutral',280)}
-    for(const t of g.sonarTargets){if(!t.marked&&t.drift){t.x+=t.drift*sec;if(t.x<.12||t.x>.88)t.drift*=-1}}
-    if(g.sonarPing>0){g.sonarPing+=sec*.72;if(g.sonarPing>1.05)g.sonarPing=0}
-    g.sonarMarkFlash=Math.max(0,g.sonarMarkFlash-sec)
-  }
-
-  // Deep-water survey scene with a seabed canyon rather than a board/grid.
-  rect(S.left,S.top,S.w,S.h,'#123b46');
-  for(let i=0;i<18;i++){
-    const yy=S.top+((i*47+ts*.008)%(S.h+30))-15;
-    line(S.left+10+(i*83)%Math.max(20,S.w-30),yy,S.left+35+(i*83)%Math.max(20,S.w-30),yy+5,'rgba(101,189,209,.08)',1)
-  }
-  const lp=[],rp=[];
-  for(let i=0;i<=24;i++){
-    const ny=i/24,c=arcadeSonarCanyon(g,ny);
-    lp.push([S.left,S.top+ny*S.h],[S.left+c.l*S.w,S.top+ny*S.h]);
-    rp.push([S.left+c.r*S.w,S.top+ny*S.h],[S.right,S.top+ny*S.h])
-  }
-  // Draw rocky canyon banks as layered slabs.
-  const leftEdge=[],rightEdge=[];
-  for(let i=0;i<=28;i++){
-    const ny=i/28,c=arcadeSonarCanyon(g,ny);
-    leftEdge.push([S.left+c.l*S.w,S.top+ny*S.h]);rightEdge.push([S.left+c.r*S.w,S.top+ny*S.h])
-  }
-  poly([[S.left,S.top],...leftEdge,[S.left,S.bottom]],'#294c4e','#17313a',2);
-  poly([[S.right,S.top],...rightEdge,[S.right,S.bottom]],'#294c4e','#17313a',2);
-  for(let i=0;i<18;i++){
-    const ny=(i+.4)/18,c=arcadeSonarCanyon(g,ny),side=i%2?c.l:c.r;
-    const x=S.left+side*S.w+(i%2?-1:1)*8,y=S.top+ny*S.h;
-    circle(x,y,5+(i%4)*2,i%3?'#3e5b55':'#52675b','#17313a',1)
-  }
-
-  // Targets exist in the world. They are dim silhouettes until close/ping-resolved.
-  for(const t of g.sonarTargets){
-    if(t.marked)continue;
-    const x=S.left+t.x*S.w,y=S.top+t.y*S.h,d=Math.hypot(t.x-F.x,t.y-F.y);
-    const revealed=(g.sonarLock===t.id&&g.sonarRange<.23)||d<.075;
-    ctx.save();ctx.globalAlpha=revealed?.92:.20;
-    if(t.kind==='wreck'){
-      poly([[x-17,y+7],[x-11,y-7],[x+11,y-8],[x+19,y+5],[x+5,y+9]],'#7a6650','#17313a',1);rect(x-3,y-14,10,7,'#6b5948','#17313a',1);line(x+3,y-14,x+3,y-23,'#8d795f',1)
-    }else if(t.kind==='vent'){
-      poly([[x-12,y+10],[x-6,y-8],[x+2,y-14],[x+11,y+10]],'#4e6259','#17313a',1);
-      for(let k=0;k<3;k++)circle(x+Math.sin(ts*.002+k)*5,y-18-k*7,3+k,'rgba(160,201,187,.35)')
-    }else if(t.kind==='crates'){
-      rect(x-14,y-7,12,12,'#8a704f','#17313a',1);rect(x+1,y-10,14,15,'#735f48','#17313a',1);line(x-12,y-5,x-4,y+3,'#c0a373',1)
-    }else if(t.kind==='whale'){
-      poly([[x-18,y],[x-7,y-7],[x+10,y-5],[x+18,y],[x+8,y+5],[x-8,y+5]],'#5e8290','#17313a',1);poly([[x-17,y],[x-25,y-6],[x-22,y+5]],'#5e8290','#17313a',1)
-    }else if(t.kind==='ray'){
-      poly([[x-17,y],[x,y-9],[x+17,y],[x,y+8]],'#567879','#17313a',1);line(x,y+7,x+2,y+19,'#567879',2)
-    }else{
-      poly([[x-14,y+8],[x-9,y-8],[x+4,y-13],[x+15,y+6],[x+4,y+11]],'#56665b','#17313a',1)
-    }
-    ctx.restore()
-  }
-
-  const fx=S.left+F.x*S.w,fy=S.top+F.y*S.h;
-  // Ping ring and directional return.
-  if(g.sonarPing>0){
-    const pr=g.sonarPing*Math.max(S.w,S.h)*.52;
-    circle(fx,fy,pr,'rgba(0,0,0,0)',`rgba(101,189,209,${Math.max(0,.65-g.sonarPing*.55)})`,2);
-  }
-  if(g.sonarLock){
-    const t=g.sonarTargets.find(q=>q.id===g.sonarLock&&!q.marked);
-    if(t){
-      const tx=S.left+t.x*S.w,ty=S.top+t.y*S.h,alpha=clamp(1-(ts-g.sonarPingAt)/4200,.12,.82);
-      line(fx,fy,tx,ty,`rgba(229,181,78,${alpha})`,1);
-      if(g.sonarRange<.23)circle(tx,ty,14,'rgba(229,181,78,.08)','#e5b54e',2)
-    }
-  }
-
-  // Detailed research towfish: cable, fins, nose transducer, lamps and bubbles.
-  line(fx,fy-19,fx-28,fy-55,'rgba(207,220,199,.65)',2);
-  ctx.save();ctx.translate(fx,fy);ctx.rotate(clamp(F.vx*2,-.25,.25));
-  poly([[-22,4],[-15,-8],[12,-9],[24,-1],[15,8],[-14,9]],'#d5b455','#17313a',2);
-  poly([[-8,-8],[-17,-17],[1,-10]],'#c89d45','#17313a',1);poly([[-7,8],[-16,17],[2,9]],'#c89d45','#17313a',1);
-  circle(17,-1,5,'#65bdd1','#17313a',1);rect(-18,-4,7,8,'#485e61','#17313a',1);
-  line(3,-9,3,-17,'#fff7de',1);circle(3,-18,2,'#df7c68');
-  ctx.restore();
-  for(let i=0;i<3;i++)circle(fx-20-i*7,fy+8+Math.sin(ts*.004+i)*4,2+i,'rgba(255,255,255,.25)');
-
-  // Sonar console instruments.
-  roundedRect(G.x(.07),G.y(.825),G.w*.86,G.h*.115,9,'rgba(255,247,222,.94)','#17313a',2);
-  const n=arcadeSonarNearest(g),lock=g.sonarTargets.find(q=>q.id===g.sonarLock&&!q.marked);
-  pxText(g.sonarRead,G.x(.10),G.y(.852),'#17313a',8,'left');
-  if(lock){
-    const deg=(Math.atan2(lock.x-F.x,-(lock.y-F.y))*180/Math.PI+360)%360;
-    pxText(`BEARING ${String(Math.round(deg)).padStart(3,'0')}°`,G.x(.10),G.y(.880),'#42616a',7,'left');
-    pxText(`RANGE ${(Math.hypot(lock.x-F.x,lock.y-F.y)*900).toFixed(0)}m`,G.x(.10),G.y(.904),'#42616a',7,'left')
-  }else{
-    pxText('ACTIVE SONAR READY',G.x(.10),G.y(.883),'#42616a',7,'left')
-  }
-  const statusX=G.x(.67);
-  pxText(`${g.roundProgress}/${g.roundGoal} LOGGED`,statusX,G.y(.855),'#17313a',8,'center');
-  pxText(`PINGS ${g.sonarPings}`,statusX,G.y(.881),'#42616a',7,'center');
-  const close=lock&&Math.hypot(lock.x-F.x,lock.y-F.y)<.115;
-  roundedRect(G.x(.79),G.y(.845),G.w*.11,30,5,close?'#83bf6a':'#c7c2ad','#17313a',1);
-  pxText(close?'IMAGE':'SEARCH',G.x(.845),G.y(.864),'#17313a',6,'center');
-  arcadeSetHelperCue(g,close?'IMAGE RESOLVED · MARK THE TARGET':lock?'FOLLOW THE BEARING · CLOSE THE RANGE':'STEER THE TOWFISH · PING FOR A RETURN',`${g.roundProgress}/${g.roundGoal} logged · ${g.sonarPings} pings`)
+  const scanAge=ts-C.scanAt;if(scanAge>=0&&scanAge<520){const q=scanAge/520,x=M.currentX+q*(C.len*M.currentSize+(C.len-1)*M.currentGap);line(x,M.currentY-M.currentSize*.62,x,M.currentY+M.currentSize*.62,`rgba(101,189,209,${1-q})`,3)}
+  pxText(`SPECIMEN TRAY · SELECTED: ${ARCADE_CIPHER_SPECIMENS[C.selected].label}`,G.cx,M.paletteY-M.palCell*.68,'#d7e6dc',7,'center');
+  for(let i=0;i<C.poolSize;i++){const x=M.palX+i*(M.palCell+M.palGap),y=M.paletteY-M.palCell*.50,sel=i===C.selected;roundedRect(x,y,M.palCell,M.palCell,5,sel?'#dff1cf':'rgba(255,247,222,.92)',sel?'#83bf6a':'#17313a',sel?3:2);drawArcadeCipherSpecimen(i,x+M.palCell/2,y+M.palCell/2,M.palCell*.64,1);pxText(String(i+1),x+M.palCell/2,y+M.palCell-4,'#42616a',5,'center')}
+  const cue=C.attempts===0?'START WITH THE BASELINE · ANALYSE IT · USE THE COUNTS TO REBUILD THE CORE':C.lastExact?`KEEP ${C.lastExact} EXACT LAYER${C.lastExact===1?'':'S'} · REPOSITION THE ${C.lastShifted} DISPLACED SAMPLE${C.lastShifted===1?'':'S'}`:'NO EXACT LAYERS YET · CHANGE THE ARRANGEMENT, NOT JUST ONE SLOT';
+  arcadeSetHelperCue(g,cue,`Pass ${Math.min(C.maxAttempts,C.attempts+1)}/${C.maxAttempts} · green exact · gold correct specimen / wrong layer`)
 }
 
+function arcadeRenderCattle(g,ts,G,dt,running){
+  const C=g.cattle;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}const M=arcadeCattleGeometry(G,g),reveal=C.revealUntil>ts;
+  // Chart table / water board.
+  roundedRect(M.gridX-24,M.gridY-24,M.side+46,M.side+46,11,'#d7c797','#17313a',3);rect(M.gridX,M.gridY,M.side,M.side,'#2f8198');
+  const hint=C.whistleHint&&C.whistleHint.until>ts?C.whistleHint:null;
+  for(let r=0;r<C.size;r++)for(let c=0;c<C.size;c++){
+    const x=M.gridX+c*M.cell,y=M.gridY+r*M.cell,k=arcadeCattleKey(r,c),state=C.shots[k];
+    const hinted=hint&&((hint.axis==='row'&&hint.index===r)||(hint.axis==='col'&&hint.index===c));rect(x+1,y+1,M.cell-2,M.cell-2,hinted?'rgba(229,181,78,.26)':((r+c)%2?'rgba(255,255,255,.035)':'rgba(0,0,0,.035)'));
+    if(state==='miss'){circle(x+M.cell/2,y+M.cell/2,M.cell*.16,'rgba(0,0,0,0)','rgba(226,246,239,.80)',2);circle(x+M.cell/2-5,y+M.cell/2+4,2,'rgba(226,246,239,.55)')}
+    else if(state==='clear'){circle(x+M.cell/2,y+M.cell/2,1.8,'rgba(226,246,239,.36)')}
+  }
+  // Completed boats are finally revealed; failed rounds briefly reveal the remaining fleet too.
+  for(const ship of C.fleet){
+    if(!(ship.sunk||reveal))continue;const first=ship.cells[0],last=ship.cells[ship.cells.length-1],cx=M.gridX+(first.c+last.c+1)*M.cell/2,cy=M.gridY+(first.r+last.r+1)*M.cell/2,w=ship.horizontal?ship.length*M.cell*.88:M.cell*.58,h=ship.horizontal?M.cell*.58:ship.length*M.cell*.88;
+    roundedRect(cx-w/2,cy-h/2,w,h,Math.min(9,M.cell*.18),ship.sunk?'#a86d45':'rgba(168,109,69,.48)','#17313a',2);if(ship.horizontal){poly([[cx+w/2,cy],[cx+w/2-M.cell*.22,cy-h/2],[cx+w/2-M.cell*.22,cy+h/2]],ship.sunk?'#c49362':'rgba(196,147,98,.45)','#17313a',1)}else{poly([[cx,cy-h/2],[cx-w/2,cy-h/2+M.cell*.22],[cx+w/2,cy-h/2+M.cell*.22]],ship.sunk?'#c49362':'rgba(196,147,98,.45)','#17313a',1)}
+  }
+  // Grid lines and labels stay crisp above the hull art.
+  for(let i=0;i<=C.size;i++){line(M.gridX+i*M.cell,M.gridY,M.gridX+i*M.cell,M.gridY+M.side,'rgba(23,49,58,.72)',1);line(M.gridX,M.gridY+i*M.cell,M.gridX+M.side,M.gridY+i*M.cell,'rgba(23,49,58,.72)',1)}
+  for(let i=0;i<C.size;i++){pxText(String(i+1),M.gridX+(i+.5)*M.cell,M.gridY-8,'#17313a',7,'center');pxText(String.fromCharCode(65+i),M.gridX-10,M.gridY+(i+.5)*M.cell+3,'#17313a',7,'center')}
+  for(const ship of C.fleet)for(const p of ship.cells){
+    const k=arcadeCattleKey(p.r,p.c);if(!p.hit&&!reveal)continue;const x=M.gridX+(p.c+.5)*M.cell,y=M.gridY+(p.r+.5)*M.cell,wet=p.hit;drawArcadeSheep(x,y,Math.min(28,M.cell*.62),wet,p.r*3+p.c,p.hit?1:.48);if(p.hit)circle(x,y,M.cell*.30,'rgba(0,0,0,0)','rgba(255,247,222,.35)',1)
+  }
+  for(const P of C.splashes){const age=(ts-P.at)/720;if(age<0||age>1)continue;const x=M.gridX+(P.c+.5)*M.cell,y=M.gridY+(P.r+.5)*M.cell;circle(x,y,M.cell*(.12+age*.34),'rgba(0,0,0,0)',`rgba(225,246,239,${.55*(1-age)})`,2)}C.splashes=C.splashes.filter(p=>ts-p.at<760);
+  if(hint){const q=.72+.20*Math.sin(ts*.008),label=hint.axis==='row'?`BAA! ROW ${String.fromCharCode(65+hint.index)}`:`BAA! COLUMN ${hint.index+1}`;if(hint.axis==='row')roundedRect(M.gridX+5,M.gridY+hint.index*M.cell+4,M.side-10,M.cell-8,5,`rgba(229,181,78,${.10*q})`,'#e5b54e',2);else roundedRect(M.gridX+hint.index*M.cell+4,M.gridY+5,M.cell-8,M.side-10,5,`rgba(229,181,78,${.10*q})`,'#e5b54e',2);pxText(label,M.gridX+M.side/2,M.gridY+M.side+19,'#7b602b',7,'center')}
+  if(M.wide){
+    const P=M.panel;roundedRect(P.x,P.y,P.w,P.h,9,'rgba(255,247,222,.94)','#17313a',2);pxText('FLOCK MANIFEST',P.x+12,P.y+19,'#17313a',9,'left');pxText(`${C.shotsLeft} CALLS LEFT`,P.x+12,P.y+37,C.shotsLeft<=5?'#c55c57':'#42616a',7,'left');pxText(C.whistles?'1 BLEAT WHISTLE READY':'WHISTLE SPENT',P.x+12,P.y+52,C.whistles?'#4f8b56':'#8a927f',6,'left');let yy=P.y+72,rowGap=Math.min(40,Math.max(25,(P.h-142)/Math.max(1,C.fleet.length)));
+    for(const ship of C.fleet){pxText(ship.name,P.x+12,yy,'#17313a',7,'left');for(let i=0;i<ship.length;i++){const hit=ship.cells[i].hit;circle(P.x+15+i*15,yy+12,5,hit?'#fff7de':'#65bdd1','#17313a',1);if(hit)circle(P.x+17+i*15,yy+11,2,'#4d5550')}pxText(ship.sunk?'CREW REELING IN':`${ship.cells.filter(p=>p.hit).length}/${ship.length}`,P.x+P.w-10,yy+13,ship.sunk?'#4f8b56':'#42616a',6,'right');yy+=rowGap}
+    roundedRect(P.x+10,P.y+P.h-61,P.w-20,48,6,'#d9eef2','#17313a',1);pxText('FRIENDLY EXERCISE',P.x+P.w/2,P.y+P.h-43,'#17313a',7,'center');pxText('SHEEP FLOAT. CREWS REEL THEM BACK IN.',P.x+P.w/2,P.y+P.h-27,'#42616a',5.5,'center')
+  }else{
+    const y=M.gridY+M.side+31;roundedRect(G.x(.08),y,G.w*.84,54,7,'rgba(255,247,222,.94)','#17313a',2);pxText(`FLOCK ${C.hitCount}/${C.totalSheep} · CALLS ${C.shotsLeft}/${C.maxShots}`,G.x(.105),y+17,'#17313a',7,'left');let xx=G.x(.105);for(const ship of C.fleet){pxText(ship.sunk?'✓':'•',xx,y+37,ship.sunk?'#4f8b56':'#42616a',8,'left');for(let i=0;i<ship.length;i++)circle(xx+12+i*9,y+34,3,ship.cells[i].hit?'#fff7de':'#65bdd1','#17313a',1);xx+=22+ship.length*9}
+  }
+  const cue=C.shotsLeft<=5?'MAKE THE LAST CALLS COUNT · FINISH ANY BOAT YOU HAVE ALREADY FOUND':C.missStreak>=3&&C.whistles?'THE SEARCH HAS GONE COLD · YOUR BLEAT WHISTLE CAN NARROW IT TO A ROW OR COLUMN':'CALL AN UNTRIED SQUARE · AFTER A HIT, SEARCH ALONG THAT BOAT';
+  arcadeSetHelperCue(g,cue,`${C.hitCount}/${C.totalSheep} sheep overboard · ${C.shotsLeft} calls left${C.whistles?' · whistle ready':''}`)
+}
 const ARCADE_RESCUE_ASSET_CACHE=new Map();
 function arcadeRescueAsset(kind,variant=0){
   const key=`rescue:${kind}:${variant}`;if(ARCADE_RESCUE_ASSET_CACHE.has(key))return ARCADE_RESCUE_ASSET_CACHE.get(key);let c,g;const ink='#17313a';
@@ -9361,7 +9170,7 @@ window.__MakeFastPinballTest={integrity:pbIntegrityTest,rules:pbRulesTest,geomet
 
 function renderArcadeGame(g,ts){
   const G=arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){drawSeaBackground();drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow','telegraph','sail','pinball'].includes(g.engine))drawArcadeDeck(g,ts,G);if(arcadeFinishIfFailed(g,ts)){arcadeHideHelper();return}
-  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='telegraph')arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='sail')arcadeRenderSail(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='radar')arcadeRenderRadar(g,ts,G,dt,running);else if(g.engine==='sonar')arcadeRenderSonar(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);else if(g.engine==='pinball')arcadeRenderPinball(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&g.engine!=='pinball'&&g.engine!=='poop'&&g.type!=='speedboat_slalom'&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='sail'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
+  if(g.engine==='pilot')arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='balance')arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='telegraph')arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='bagthrow')arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='sail')arcadeRenderSail(g,ts,G,dt,running);else if(g.engine==='meter')arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='cattle')arcadeRenderCattle(g,ts,G,dt,running);else if(g.engine==='cipher')arcadeRenderCipher(g,ts,G,dt,running);else if(g.engine==='aim')arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='rigging')arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')arcadeRenderPoop(g,ts,G,dt,running);else if(g.engine==='pinball')arcadeRenderPinball(g,ts,G,dt,running);const helperManaged=arcadeHelperEnabled(g);if(!helperManaged&&g.engine!=='pinball'&&g.engine!=='poop'&&g.type!=='speedboat_slalom'&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))arcadeFeedbackDraw(g,G,ts);if(g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='sail'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))arcadeDrawStatus(g,G,ts);if(g.combo>1&&g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');syncArcadeHelper(g,ts)
 }
 
 function arcadeCraneInput(g){
@@ -9425,21 +9234,8 @@ function arcadePointer(g,type,x,y,pointerId=null){if(g.engine==='pinball'&&type=
   }
   else if(e==='steer'&&(type==='down'||type==='move'))g.inputX=clamp(nx,.05,.95);
   else if(e==='tug'&&(type==='down'||type==='move'))g.aim={x:nx,y:ny};
-  else if(e==='radar'&&type==='down'){
-    const wide=G.w>520,panelW=wide?G.w*.27:0,scopeLeft=G.left+(wide?8:0),scopeRight=G.right-panelW-(wide?12:0),cx=(scopeLeft+scopeRight)/2,cy=G.y(wide?.50:.44),rr=Math.min((scopeRight-scopeLeft)*.45,G.h*(wide?.39:.34));
-    let best=null,bestD=30;
-    for(const b of g.blips){if(performance.now()-(b.lastPaint||0)>5400)continue;const bx=cx+b.x*rr,by=cy+b.y*rr,dist=Math.hypot(x-bx,y-by);if(dist<bestD){best=b;bestD=dist}}
-    if(best){g.radarSelected=best.id;arcadeSetFeedback(g,arcadeRadarTrackQuality(best)<2&&best.kind!=='clutter'?'TRACK SELECTED · WATCH THE NEXT SWEEP':'TRACK SELECTED','neutral',420)}
-    else{g.radarSelected=null;arcadeSetFeedback(g,'NO PAINT THERE','neutral',300)}
-  }
-  else if(e==='sonar'){
-    const S=sonarSurveyGeometry(G,g);
-    if((type==='down'||type==='move')&&x>=S.left&&x<=S.right&&y>=S.top&&y<=S.bottom){
-      g.sonar.targetX=clamp((x-S.left)/S.w,.05,.95);
-      g.sonar.targetY=clamp((y-S.top)/S.h,.05,.92);
-      if(type==='down')arcadeSetFeedback(g,'TOWFISH COURSE SET','neutral',260)
-    }
-  }
+  else if(e==='cattle')arcadeCattlePointer(g,type,x,y,G)
+  else if(e==='cipher')arcadeCipherPointer(g,type,x,y,G)
   else if(e==='aim'){const nearRing=Math.hypot(nx-g.origin.x,ny-g.origin.y)<.17;if(type==='down'&&!g.projectile&&performance.now()>g.readyAt){if(nearRing){g.dragging=true;g.pull={x:nx,y:ny}}else arcadeSetFeedback(g,'GRAB THE RING ON THE RESCUE BOAT','neutral')}else if(type==='move'&&g.dragging){const dx=nx-g.origin.x,dy=ny-g.origin.y,dist=Math.max(.001,Math.hypot(dx,dy)),m=Math.min(.28,dist);g.pull={x:g.origin.x+dx/dist*m,y:g.origin.y+dy/dist*m}}else if(type==='up'&&g.dragging){g.dragging=false;const dx=g.origin.x-g.pull.x,dy=g.origin.y-g.pull.y,p=Math.hypot(dx,dy);if(p<.060){arcadeSetFeedback(g,'PULL BACK FARTHER','neutral');g.pull={...g.origin};return}g.projectile={phase:'air',x:g.origin.x,y:g.origin.y,vx:dx*3.10,vy:dy*3.10,z:.012,vz:1.58,at:performance.now()};g.pull={...g.origin}}}
   else if(e==='dredge'){
     if(type==='down'||type==='move'){g.dredge.targetTrolley=clamp(nx,.18,.88);g.dredge.targetCable=clamp(ny-.245,.045,.69);g.dredge.dragging=true}
@@ -9455,10 +9251,10 @@ function arcadePointer(g,type,x,y,pointerId=null){if(g.engine==='pinball'&&type=
   else if(e==='poop'&&(type==='down'||type==='move')){const D=g.poopDeck;if(D){D.pointer=true;g.inputX=clamp(nx,.105,.895)}}
 }
 function arcadeKey(g,e){if(!g.started){if(e.key===' '||e.key==='Enter')beginArcadeRound();return}const left=['ArrowLeft','a','A'].includes(e.key),right=['ArrowRight','d','D'].includes(e.key);if(left||right){const dir=left?-1:1;if(g.engine==='steer'){if(g.theme==='tanker'){const V=g.tanker.active?g.tanker.other:g.tanker;V.rudderTarget=dir}else g.inputX=clamp(g.inputX+dir*.07,.05,.95);}if(g.engine==='balance')g.control=clamp(g.control+dir*.06,0,1);if(g.engine==='telegraph'&&g.tele)arcadeTelegraphSetLever(g,g.tele.lever+dir,'key');if(g.engine==='bargebalance'&&g.barge)g.barge.trolleyTarget=clamp(g.barge.trolleyTarget+dir*.085,-1,1);if(g.engine==='crane'&&!g.release){g.crane.trolley=clamp((g.crane.trolley??.47)+dir*.018,.29,.72);g.crane.omega-=dir*.045;g.crane.control=0}if(g.engine==='poop')g.inputX=clamp(g.inputX+dir*.08,.18,.82);if(g.engine==='sail'&&g.sail)g.sail.sheet=clamp(g.sail.sheet+dir*.050,.055,.88);if(g.engine==='depth')g.targetY=clamp(g.targetY+dir*.05,.08,.92);if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+dir*.05,.08,.92)}if((e.key===' '||e.key==='Enter')&&g.engine==='lines')arcadeApplyControl('linesHeave',true);if((e.key===' '||e.key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')arcadeApplyControl('tankerSwitch',true);if((e.key===' '||e.key==='Enter')&&['crane','stack'].includes(g.engine))arcadePointer(g,'down',canvas.width/2,canvas.height/2)}
-function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${best.toLocaleString()}`:g.engine==='pinball'?`BALL 1 · 3 LIVES · BEST ${best.toLocaleString()}`:g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.engine==='poop')$('#gameHudText').textContent=`WATCH ${g.round} · ${g.roundProgress}/${g.roundGoal} DODGED · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.type==='speedboat_slalom')$('#gameHudText').textContent=g.paused?`PAUSED · RACE ${g.round}/3 · ${Math.round(g.score).toLocaleString()} pts`:`RACE ${g.round}/3 · LAP ${g.raceLap}/2 · ${Math.round(g.score).toLocaleString()} PTS · BEST ${best.toLocaleString()}`;else if(g.engine==='pinball')$('#gameHudText').textContent=g.paused?`PAUSED · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`BALL ${Math.min(3,(g.strikes||0)+1)} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
+function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${best.toLocaleString()}`:g.engine==='pinball'?`BALL 1 · 3 LIVES · BEST ${best.toLocaleString()}`:g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.engine==='cipher')$('#gameHudText').textContent=`CORE ${g.round} · PASS ${Math.min(g.cipher.maxAttempts,g.cipher.attempts+1)}/${g.cipher.maxAttempts} · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='cattle')$('#gameHudText').textContent=`FLOCK ${g.round} · ${g.cattle.hitCount}/${g.cattle.totalSheep} SHEEP · ${g.cattle.shotsLeft} CALLS · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='poop')$('#gameHudText').textContent=`WATCH ${g.round} · ${g.roundProgress}/${g.roundGoal} DODGED · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.type==='speedboat_slalom')$('#gameHudText').textContent=g.paused?`PAUSED · RACE ${g.round}/3 · ${Math.round(g.score).toLocaleString()} pts`:`RACE ${g.round}/3 · LAP ${g.raceLap}/2 · ${Math.round(g.score).toLocaleString()} PTS · BEST ${best.toLocaleString()}`;else if(g.engine==='pinball')$('#gameHudText').textContent=g.paused?`PAUSED · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`BALL ${Math.min(3,(g.strikes||0)+1)} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
 
 // Plug-ins retain the content metadata but use the v0.26 progression handlers.
-const ARCADE_ENGINE_IDS=new Set(['lines','galley','bagthrow','balance','crane','stack','meter','sort','sail','steer','tug','radar','sonar','aim','pilot','dredge','bargebalance','rigging','depth','landing','steam','telegraph','poop','pinball']);
+const ARCADE_ENGINE_IDS=new Set(['lines','galley','bagthrow','balance','crane','stack','meter','sort','sail','steer','tug','cattle','cipher','aim','pilot','dredge','bargebalance','rigging','depth','landing','steam','telegraph','poop','pinball']);
 const MINIGAME_PLUGINS=Object.fromEntries(Object.entries(MINIGAME_META).map(([id,meta])=>[id,{...meta,create:c=>createArcadeGame(meta,c),render:renderArcadeGame,pointer:(g,type,x,y,pointerId)=>arcadePointer(g,type,x,y,pointerId),key:(g,e)=>arcadeKey(g,e)}]));
 function validateMinigameRegistry(){
   const errors=[],ids=Object.keys(MINIGAME_META),plugins=Object.keys(MINIGAME_PLUGINS);
@@ -9483,7 +9279,7 @@ if(MINIGAME_REGISTRY_ERRORS.length)console.error('MakeFast minigame registry err
 // Arcade shell: responsive HUD, pausing, safe exit confirmation and optional alternate controls.
 let arcadeControlRepeat=null;
 function arcadeShellRoot(){return document.querySelector('.app')}
-function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool','saveUntil','stormUntil','crewUntil','tiltUntil','nudgeCooldown','pendingServeAt','puffUntil','comboUntil','messageUntil','ballStart','lastSound','lastFlip','stuck','armedAt'])}
+function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool','saveUntil','stormUntil','crewUntil','tiltUntil','nudgeCooldown','pendingServeAt','puffUntil','comboUntil','messageUntil','ballStart','lastSound','lastFlip','stuck','armedAt','pendingResetAt','revealUntil','scanAt','sunkAt'])}
 function arcadeShiftPauseTimes(value,delta,seen=new Set()){
   if(!value||typeof value!=='object'||seen.has(value))return;seen.add(value);const keys=arcadePauseTimeKeys();
   for(const [k,v] of Object.entries(value)){if(typeof v==='number'&&Number.isFinite(v)&&v>0&&keys.has(k))value[k]=v+delta;else if(v&&typeof v==='object')arcadeShiftPauseTimes(v,delta,seen)}
@@ -9520,8 +9316,8 @@ function arcadeControlSpec(g){
   if(e==='tug')return[{a:'left',l:'←',k:'A'},{a:'up',l:'↑',k:'W'},{a:'down',l:'↓',k:'S'},{a:'right',l:'→',k:'D'}];
   if(e==='tack')return[{a:'action',l:'HOLD HELM',k:'HOLD SPACE',primary:true,hold:true}];
   if(e==='crane')return[{a:'left',l:'← LEFT',k:'A / ←',hold:true},{a:'action',l:'RELEASE',k:'SPACE',primary:true},{a:'right',l:'RIGHT →',k:'D / →',hold:true}];
-  if(e==='radar')return[{a:'radarAlert',l:'ALERT BRIDGE',k:'SPACE',primary:true}];
-  if(e==='sonar')return[{a:'sonarPing',l:'PING',k:'SPACE',primary:true},{a:'sonarMark',l:'MARK TARGET',k:'M'}];
+  if(e==='cattle')return[{a:'cattleWhistle',l:g.cattle?.whistles?'BLEAT WHISTLE':'WHISTLE SPENT',k:'B · ONE PER ROUND',primary:!!g.cattle?.whistles}];
+  if(e==='cipher')return[{a:'cipherAnalyse',l:'ANALYSE PASS',k:'ENTER',primary:true}];
   if(e==='dredge')return[{a:'dredgeGrab',l:'GRAB / DUMP',k:'SPACE',primary:true}];
   if(e==='stack'&&g.meta.id==='cargo_tetris')return[{a:'holdRotate',l:'ROTATE',k:'R / SPACE',primary:true},{a:'holdUndo',l:'UNDO',k:'U'}];
 
@@ -9532,7 +9328,7 @@ function arcadeControlSpec(g){
   return[]
 }
 function arcadeApplyControl(action,pressed=true,source='button'){
-  const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(action==='action'&&pressed){beginArcadeRound();return true}return false}
+  const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(pressed&&['action','cipherAnalyse','cattleWhistle'].includes(action)){beginArcadeRound();return true}return false}
   const step=.075;
   if(g.engine==='pinball'&&['left','right','pinballLaunch','pinballNudge','action'].includes(action))return arcadePinballControl(g,action,pressed,source);
   if(g.type==='speedboat_slalom'){if(action==='speedSurge'||action==='action')return pressed?arcadeSpeedSurge(g):true;if(action==='left'||action==='right'){const controls=source==='keyboard'?g.raceSteerKeys:g.raceSteerButtons;if(controls)controls[action]=!!pressed;return true}}
@@ -9570,9 +9366,8 @@ function arcadeApplyControl(action,pressed=true,source='button'){
   if(action==='up'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable-.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY-.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY-.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y-.06,.08,.92);return true}
   if(action==='down'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable+.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
   if(action==='pull'){if(g.engine==='meter'&&g.theme!=='yacht'){g.hold=!!pressed;return true}return false}
-  if(action==='radarAlert'&&pressed&&g.engine==='radar'){arcadeRadarAlert(g);return true}
-  if(action==='sonarPing'&&pressed&&g.engine==='sonar'){arcadeSonarPing(g);return true}
-  if(action==='sonarMark'&&pressed&&g.engine==='sonar'){arcadeSonarMark(g);return true}
+  if(action==='cattleWhistle'&&pressed&&g.engine==='cattle'){arcadeCattleWhistle(g);return true}
+  if(action==='cipherAnalyse'&&pressed&&g.engine==='cipher'){arcadeCipherAnalyse(g);return true}
   if(action==='dredgeGrab'&&pressed&&g.engine==='dredge'){arcadeDredgeAction(g);return true}
   if((action==='sailTack'||action==='action')&&g.engine==='sail')return arcadeSailHelm(g,pressed)
   if(action==='action'&&pressed){if(g.engine==='crane'||(g.engine==='stack'&&g.theme==='container')){arcadePointer(g,'down',canvas.width/2,canvas.height/2);return true}}
@@ -9597,7 +9392,13 @@ function arcadeShellKeydown(e){
   if(g.paused){e.preventDefault();e.stopImmediatePropagation();return}
   if(!g.started){if(key===' '||key==='Enter'){e.preventDefault();e.stopImmediatePropagation();beginArcadeRound()}return}
   let handled=false;
-  if(g.type==='speedboat_slalom'&&['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left',true,'keyboard');
+  if(g.engine==='cipher'&&/^[1-8]$/.test(key)){const i=+key-1;if(i<g.cipher.poolSize)handled=arcadeCipherSelect(g,i)}
+  else if(g.engine==='cipher'&&['ArrowLeft','a','A'].includes(key)){g.cipher.cursor=(g.cipher.cursor-1+g.cipher.len)%g.cipher.len;handled=true}
+  else if(g.engine==='cipher'&&['ArrowRight','d','D'].includes(key)){g.cipher.cursor=(g.cipher.cursor+1)%g.cipher.len;handled=true}
+  else if(g.engine==='cipher'&&(key===' ')){handled=arcadeCipherPlace(g,g.cipher.cursor)}
+  else if(g.engine==='cipher'&&key==='Enter')handled=arcadeApplyControl('cipherAnalyse',true,'keyboard');
+  else if(g.engine==='cattle'&&(key==='b'||key==='B'))handled=arcadeApplyControl('cattleWhistle',true,'keyboard');
+  else if(g.type==='speedboat_slalom'&&['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left',true,'keyboard');
   else if(g.type==='speedboat_slalom'&&['ArrowRight','d','D'].includes(key))handled=arcadeApplyControl('right',true,'keyboard');
   else if(g.type==='speedboat_slalom'&&(key===' '||key==='Enter'))handled=arcadeApplyControl('speedSurge',true,'keyboard');
   else if(g.engine==='pinball'&&['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left',true,'keyboard');
@@ -9617,9 +9418,6 @@ function arcadeShellKeydown(e){
   else if((key===' '||key==='Enter')&&g.engine==='lines')handled=arcadeApplyControl('linesHeave',true);
   else if(['ArrowDown','s','S'].includes(key)&&g.engine==='lines')handled=arcadeApplyControl('linesEase',true);
   else if((key===' '||key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')handled=arcadeApplyControl('tankerSwitch',true);
-  else if((key===' '||key==='Enter')&&g.engine==='radar')handled=arcadeApplyControl('radarAlert',true);
-  else if((key===' '||key==='Enter')&&g.engine==='sonar')handled=arcadeApplyControl('sonarPing',true);
-  else if((key==='m'||key==='M')&&g.engine==='sonar')handled=arcadeApplyControl('sonarMark',true);
   else if((key===' '||key==='Enter')&&g.engine==='pilot')handled=arcadeApplyControl('pilotTransfer',true);
   else if((key===' '||key==='Enter')&&g.engine==='dredge')handled=arcadeApplyControl('dredgeGrab',true);
   else if((key===' '||key==='Enter')&&g.engine==='meter'&&g.theme!=='yacht')handled=arcadeApplyControl('pull',true);
@@ -9648,7 +9446,7 @@ window.__MakeFastRegatta={
   course:()=>minigame?.type==='speedboat_slalom'?{layoutId:minigame.raceCircuit.layoutId,seed:minigame.raceCourseSeed,path:[...minigame.raceCircuit.path],gates:minigame.raceGates.map(q=>({x:q.x,w:q.w,progress:q.progress,scored:q.scored})),hazards:minigame.raceObstacles.map(o=>({type:o.type,x:arcadeSpeedObstacleX(minigame,o),progress:o.progress,hit:o.playerHit})),pickups:minigame.racePickups.map(q=>({...q})),rivals:minigame.racers.map(r=>({x:r.x,progress:r.progress,spin:r.spin,slow:r.slow}))}:null
 };
 window.__MakeFastArcadeCore={
-  version:'0.37.2',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
+  version:'0.41.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
@@ -10164,7 +9962,7 @@ function hsResolve(id,decision){const s=hsState().items.find(x=>x.id===id);if(!s
 function hsSetStatus(id,status){const h=hsState(),s=h.items.find(x=>x.id===id);if(!s||s.status==='completed')return;if(status==='active'&&!hsRoom(s.scale,true)){toast('There is room for only two long tales and one shorter tale at a time.');return}s.status=status;if(status==='active'&&state.phase==='ashore'&&!state.anchorage&&state.activeView!=='chart')hsDeliverParcelsAt(currentIsland());if(status==='paused'&&h.pinnedId===id)h.pinnedId=hsOpenStories()[0]?.id||null;save();renderLogPanel();hsShowStory(id)}
 function hsPin(id){const h=hsState(),s=h.items.find(x=>x.id===id);if(!s||s.status==='completed')return;h.pinnedId=h.pinnedId===id?null:id;save();renderLogPanel();hsShowStory(id)}
 function hsObjective(s){if(s.status==='completed')return s.outcome||'This story has reached its conclusion.';const st=hsCurrentStory(s);if(!st)return s.outcome||'This story has reached its conclusion.';const where=getIsland(hsStepLocation(s,st));return `${st.desc}${where?` · ${where.name}`:''}`}
-function hsRecordOptional(kind,target,eventId){if(worldSimulating)return;const h=hsState();for(const s of h.items){if(s.status!=='active')continue;if(s.storyVersion>=5)hsRelevantWorldAction(s,kind,target,eventId);if(s.optionalEvidence.length>=3)continue;const key=`optional:${kind}:${eventId}`;if(s.processed.includes(key))continue;const relevant=kind==='find'?['wreck','channel','market','bell'].includes(s.theme):kind==='arcade'?['wreck','channel','birds','beacon'].includes(s.theme):kind==='project'?['craft','garden','beacon','festival'].includes(s.theme):kind==='delivery'?['market','craft','garden'].includes(s.theme):false;if(!relevant)continue;if(kind==='arcade'&&target==='research_sonar'&&hsPassageEligible(s))hsObservePassage(s.id,'sonar',false);if(![s.originId,s.targetId].includes(state.currentIslandId)&&kind!=='arcade')continue;s.processed.push(key);const note=kind==='find'?`A recovered ${target||'sea find'} offers an extra trace connected to ${s.noun}.`:kind==='arcade'?`The ${MINIGAME_META[target]?.title||'shipboard activity'} suggested another way to read the signs around ${s.noun}.`:kind==='project'?`Helping complete ${projectTemplate(target)?.name||'a local project'} revealed an unexpected part of the island’s history.`:`Carrying ${target||'a neighbour’s parcel'} provided another name for the harbour records.`;s.optionalEvidence.push(note);s.history.push({at:nowReal(),text:note,islandId:state.currentIslandId});if(s.storyVersion>=2&&hsCurrentStory(s)?.kind==='deduce')s.theoryHint=`A further observation supports this possibility: ${s.insight}`;
+function hsRecordOptional(kind,target,eventId){if(worldSimulating)return;const h=hsState();for(const s of h.items){if(s.status!=='active')continue;if(s.storyVersion>=5)hsRelevantWorldAction(s,kind,target,eventId);if(s.optionalEvidence.length>=3)continue;const key=`optional:${kind}:${eventId}`;if(s.processed.includes(key))continue;const relevant=kind==='find'?['wreck','channel','market','bell'].includes(s.theme):kind==='arcade'?['wreck','channel','birds','beacon'].includes(s.theme):kind==='project'?['craft','garden','beacon','festival'].includes(s.theme):kind==='delivery'?['market','craft','garden'].includes(s.theme):false;if(!relevant)continue;if(kind==='arcade'&&target==='research_cipher'&&hsPassageEligible(s))hsObservePassage(s.id,'survey',false);if(![s.originId,s.targetId].includes(state.currentIslandId)&&kind!=='arcade')continue;s.processed.push(key);const note=kind==='find'?`A recovered ${target||'sea find'} offers an extra trace connected to ${s.noun}.`:kind==='arcade'?`The ${MINIGAME_META[target]?.title||'shipboard activity'} suggested another way to read the signs around ${s.noun}.`:kind==='project'?`Helping complete ${projectTemplate(target)?.name||'a local project'} revealed an unexpected part of the island’s history.`:`Carrying ${target||'a neighbour’s parcel'} provided another name for the harbour records.`;s.optionalEvidence.push(note);s.history.push({at:nowReal(),text:note,islandId:state.currentIslandId});if(s.storyVersion>=2&&hsCurrentStory(s)?.kind==='deduce')s.theoryHint=`A further observation supports this possibility: ${s.insight}`;
  if(s.storyVersion>=3&&hsCurrentStory(s)?.kind==='scene'){
    const step=hsCurrentStory(s);step.scene.required=Math.max(1,step.scene.required-1);
    if(hsSceneReady(s,step))hsAdvance(s,`An observation made during ${kind==='arcade'?'shipboard research':kind==='project'?'the work ashore':'the voyage'} completes the evidence. ${s.insight}`);
@@ -10343,14 +10141,14 @@ function hsPassageEligible(s,v=state.voyage){
 }
 function hsPassageText(s,v,method='watch'){
  const base=HS_WATER_OBSERVATIONS[s.theme]||'The crossing provides a fresh bearing for the old harbour records.',destination=getIsland(v.destinationId);
- return `${method==='sonar'?'The shipboard sonar confirms the reading. ':''}${base} ${destination?.known?`The approach towards ${destination.name} completes the comparison.`:'The open sea gives you the missing bearing.'}`;
+ return `${method==='survey'?'The decoded seabed samples confirm the reading. ':method==='sonar'?'The shipboard sonar confirms the reading. ':''}${base} ${destination?.known?`The approach towards ${destination.name} completes the comparison.`:'The open sea gives you the missing bearing.'}`;
 }
 function hsObservePassage(id,method='watch',show=true){
  const s=hsState().items.find(s=>s.id===id),v=state.voyage;if(!hsPassageEligible(s,v))return false;
- if(hsCurrentStory(s)?.kind==='sea_encounter')return hsSeaFinish(s,method==='sonar'?'bearing':'watch',method,show);
+ if(hsCurrentStory(s)?.kind==='sea_encounter')return hsSeaFinish(s,(method==='sonar'||method==='survey')?'bearing':'watch',method,show);
  const text=hsPassageText(s,v,method);if(!hsAdvance(s,text))return false;
  s.passageEvidence={voyageId:v.id,method,originId:v.originId,destinationId:v.destinationId,text};
- if(method==='sonar'&&!s.optionalEvidence.includes('A successful sonar survey helped verify the passage.'))s.optionalEvidence.push('A successful sonar survey helped verify the passage.');
+ if(['sonar','survey'].includes(method)&&!s.optionalEvidence.includes('A successful shipboard survey helped verify the passage.'))s.optionalEvidence.push('A successful shipboard survey helped verify the passage.');
  v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`Water notes · ${s.title}`,text});state.journal.unshift(`${s.title}: your watch at sea has supplied the next clue.`);save();
  if(show){renderUI();hsShowStory(id)}return true;
 }
@@ -10453,7 +10251,7 @@ function hsSeaInspect(id,spotId){
 }
 function hsSeaFinish(s,choice='watch',method='watch',show=true){
  const v=state.voyage,step=hsCurrentStory(s);if(!hsPassageEligible(s,v)||step?.kind!=='sea_encounter'||!['bearing','trace','watch'].includes(choice))return false;
- const seen=hsSeaSeen(s),active=choice!=='watch';if(active&&seen.length<step.encounter.required&&method!=='sonar')return false;
+ const seen=hsSeaSeen(s),active=choice!=='watch';if(active&&seen.length<step.encounter.required&&!['sonar','survey'].includes(method))return false;
  const observations=step.encounter.objects.filter(o=>seen.includes(o.id)).map(o=>o.text);
  const summary=choice==='bearing'?'You plot the safer water and prepare a new approach for the islanders.':choice==='trace'?'You collect the trace without disturbing the surrounding sea, so the original evidence can be kept.':'The lookout makes a safe entry in the log as the vessel makes harbour. The mystery can still be solved ashore.';
  const text=`${step.encounter.lead} ${observations.join(' ')} ${summary}`;
@@ -10465,7 +10263,7 @@ function hsSeaFinish(s,choice='watch',method='watch',show=true){
  if(next&&active){
   const clue=choice==='bearing'?'The bearing from the ship identifies which shore mark matters.':'The trace brought ashore fits the worn marker exactly.';
   next.scene.spots[0].text+=` ${clue}`;next.scene.spots[0].hint+=choice==='bearing'?' Compare it with the ship’s bearings.':' Compare it with the recovered trace.';
-  next.scene.required=Math.min(next.scene.required,method==='sonar'||method==='arcade'?1:2);
+  next.scene.required=Math.min(next.scene.required,['sonar','survey','arcade'].includes(method)?1:2);
  }
  v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`${s.title} · ${step.encounter.title}`,text:summary});
  state.journal.unshift(`${s.title}: ${summary}`);save();if(show){renderUI();hsShowStory(s.id)}return true;
@@ -10771,7 +10569,7 @@ const HS_LIFE_DILEMMAS={
   {lead:'This old invention never worked at sea. Do we invite help from other makers or perfect it ourselves?',a:'Invite a makers’ exchange',b:'Finish the prototype with care',outreach:'Makers’ Exchange Host',craft:'Prototype Keeper',detail:'Ideas begin arriving from neighbouring harbours.',work:'The finished prototype remains on the bench.'},
   {lead:'A child wants to learn these little mechanisms. Is it time to teach or to put the workshop on firmer ground?',a:'Take a workshop apprentice',b:'Repair the workshop foundations',outreach:'Workshop Mentor',craft:'Workshop Steward',detail:'An apprentice begins learning the little mechanisms.',work:'The workshop is now ready for the next winter.'}]
 };
-const HS_SPECIALIST_GAMES={beacon:'naval_radar',wreck:'research_sonar',birds:'research_sonar',garden:'trawler_net',channel:'tanker_channel',craft:'cargo_tetris',bell:'naval_radar',market:'container_stack',lantern:'naval_radar',festival:'ferry_galley'};
+const HS_SPECIALIST_GAMES={beacon:'naval_cattleships',wreck:'research_cipher',birds:'trawler_net',garden:'trawler_net',channel:'tanker_channel',craft:'cargo_tetris',bell:'naval_cattleships',market:'container_stack',lantern:'naval_cattleships',festival:'ferry_galley'};
 function hsInstallPersonalChapter(s,rr){
  if(s.storyVersion<6||s.scale!=='major')return;
  const person=residentById(s.personId),bank=HS_LIFE_DILEMMAS[person?.archetype]||HS_LIFE_DILEMMAS.maker;
@@ -10904,7 +10702,7 @@ hsChooseApproach=function(id,mode){const s=hsState().items.find(x=>x.id===id),st
 hsSeaInspect=function(id,spotId){const s=hsState().items.find(x=>x.id===id),step=hsCurrentStory(s);if(!hsPassageEligible(s)||step?.kind!=='sea_encounter'||!step.encounter.objects.some(o=>o.id===spotId))return false;const key=String(s.stepIndex);if(!s.seaProgress)s.seaProgress={};if(!Array.isArray(s.seaProgress[key]))s.seaProgress[key]=[];if(s.seaProgress[key].includes(spotId))return false;const object=step.encounter.objects.find(o=>o.id===spotId);s.seaProgress[key].push(spotId);s.history.push({at:nowReal(),islandId:null,text:`At sea · ${object.label}: ${object.text}`});s.clues.push({text:object.text,islandId:null,key:`${key}:${spotId}`});save();hsUXRefreshSea(s,step);return true}
 hsSeaEncounterHTML=function(s,step){const seen=hsSeaSeen(s),ready=seen.length>=step.encounter.required;return `<div class="hs-exploration hs-sea-encounter"><h3>${wikiEsc(step.encounter.title)}</h3><p>${wikiEsc(step.encounter.lead)}</p><canvas id="hsSeaCanvas" width="560" height="174" role="img" aria-label="Water, ship and three inspectable signs"></canvas><p class="hs-scene-legend" id="hsSeaLegend">${seen.length} / ${step.encounter.required} signs studied</p><div class="hs-evidence-grid">${step.encounter.objects.map((o,i)=>`<button class="hs-evidence-spot ${seen.includes(o.id)?'found':''}" data-hs-sea="${wikiEsc(o.id)}" ${seen.includes(o.id)?'disabled':''}><b>${seen.includes(o.id)?'✓ ':''}${i+1}. ${wikiEsc(o.label)}</b><span>${wikiEsc(seen.includes(o.id)?o.text:'Look closely to discover what it tells you.')}</span></button>`).join('')}</div>${s.storyVersion>=6?hsSpecialistTrialHTML(s):''}<div id="hsSeaDecision" ${ready?'':'hidden'}><div class="hs-choice"><button class="big-btn secondary" data-hs-sea-choice="bearing">CHART THE BEARING</button><button class="big-btn ghost" data-hs-sea-choice="trace">KEEP THE PHYSICAL TRACE</button></div><p class="muted">This changes what the next shore investigation emphasises. You will get a chance to read the result before the next chapter.</p></div><p class="muted" id="hsSeaWait" ${ready?'hidden':''}>Inspect two signs before deciding what to bring home.</p><p class="muted">You may stop and eat whenever you need to. Your observations remain in the Tidebook for the next leg.</p></div>`}
 const hsSeaFinishV3715=hsSeaFinish;
-hsSeaFinish=function(s,choice='watch',method='watch',show=true){const v=state.voyage,step=hsCurrentStory(s);if(!hsPassageEligible(s,v)||step?.kind!=='sea_encounter'||!['bearing','trace','watch'].includes(choice))return false;const seen=hsSeaSeen(s),active=choice!=='watch';if(active&&seen.length<step.encounter.required&&method!=='sonar')return false;const observations=step.encounter.objects.filter(o=>seen.includes(o.id)).map(o=>o.text),summary=choice==='bearing'?'You plot the safer water and prepare a new approach for the islanders.':choice==='trace'?'You collect the trace without disturbing the surrounding sea, so the original evidence can be kept.':'The lookout makes a safe entry in the log as the vessel makes harbour. The mystery can still be solved ashore.',text=`${step.encounter.lead} ${observations.join(' ')} ${summary}`,record={voyageId:v.id,originId:v.originId,destinationId:v.destinationId,method,choice,observations:observations.slice(),text};if(!hsAdvance(s,text))return false;s.maritimeEvidence=record;s.choices.push({kind:'maritime',value:choice,at:nowReal()});const next=s.steps.slice(s.stepIndex).find(st=>st.kind==='scene');if(next&&active){const clue=choice==='bearing'?'The bearing from the ship identifies which shore mark matters.':'The trace brought ashore fits the worn marker exactly.';next.scene.spots[0].text+=` ${clue}`;next.scene.spots[0].hint+=choice==='bearing'?' Compare it with the ship’s bearings.':' Compare it with the recovered trace.';next.scene.required=Math.min(next.scene.required,method==='sonar'||method==='arcade'?1:2)}v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`${s.title} · ${step.encounter.title}`,text:summary});state.journal.unshift(`${s.title}: ${summary}`);save();if(show){hsUXSetBeat(s.id,'Your sea watch is recorded',summary);renderUI();hsShowStory(s.id)}return true}
+hsSeaFinish=function(s,choice='watch',method='watch',show=true){const v=state.voyage,step=hsCurrentStory(s);if(!hsPassageEligible(s,v)||step?.kind!=='sea_encounter'||!['bearing','trace','watch'].includes(choice))return false;const seen=hsSeaSeen(s),active=choice!=='watch';if(active&&seen.length<step.encounter.required&&!['sonar','survey'].includes(method))return false;const observations=step.encounter.objects.filter(o=>seen.includes(o.id)).map(o=>o.text),summary=choice==='bearing'?'You plot the safer water and prepare a new approach for the islanders.':choice==='trace'?'You collect the trace without disturbing the surrounding sea, so the original evidence can be kept.':'The lookout makes a safe entry in the log as the vessel makes harbour. The mystery can still be solved ashore.',text=`${step.encounter.lead} ${observations.join(' ')} ${summary}`,record={voyageId:v.id,originId:v.originId,destinationId:v.destinationId,method,choice,observations:observations.slice(),text};if(!hsAdvance(s,text))return false;s.maritimeEvidence=record;s.choices.push({kind:'maritime',value:choice,at:nowReal()});const next=s.steps.slice(s.stepIndex).find(st=>st.kind==='scene');if(next&&active){const clue=choice==='bearing'?'The bearing from the ship identifies which shore mark matters.':'The trace brought ashore fits the worn marker exactly.';next.scene.spots[0].text+=` ${clue}`;next.scene.spots[0].hint+=choice==='bearing'?' Compare it with the ship’s bearings.':' Compare it with the recovered trace.';next.scene.required=Math.min(next.scene.required,['sonar','survey','arcade'].includes(method)?1:2)}v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`${s.title} · ${step.encounter.title}`,text:summary});state.journal.unshift(`${s.title}: ${summary}`);save();if(show){hsUXSetBeat(s.id,'Your sea watch is recorded',summary);renderUI();hsShowStory(s.id)}return true}
 hsSeaChoose=function(id,choice){const s=hsState().items.find(x=>x.id===id);return hsSeaFinish(s,choice,s?.specialistTrial?.step===s.stepIndex?'arcade':'encounter',true)}
 hsBindSeaEncounter=function(s){if(hsCurrentStory(s)?.kind!=='sea_encounter'||!hsPassageEligible(s))return;$$('[data-hs-sea]').forEach(b=>b.onclick=()=>hsSeaInspect(s.id,b.dataset.hsSea));$$('[data-hs-sea-choice]').forEach(b=>b.onclick=()=>hsSeaChoose(s.id,b.dataset.hsSeaChoice));$('#hsStoryTrial')?.addEventListener('click',()=>hsStartSpecialistTrial(s.id));hsAnimateDiorama(s,hsCurrentStory(s),'sea');$('#hsSeaCanvas')?.addEventListener('click',e=>{const step=hsCurrentStory(s),n=hsUXCanvasIndex(e,[{x:101,y:105},{x:276,y:118},{x:451,y:105}]);if(n>=0&&step?.encounter?.objects?.[n])hsSeaInspect(s.id,step.encounter.objects[n].id)})}
 
@@ -10915,7 +10713,7 @@ hsChoosePersonal=function(id,option){const s=hsState().items.find(st=>st.id===id
 hsResolve=function(id,decision){const s=hsState().items.find(x=>x.id===id);if(!s||!hsCanAct(s)||hsCurrentStory(s)?.kind!=='resolve'||![0,1].includes(decision))return false;hsUXClear(id);if(!hsFinish(s,decision))return false;renderUI();hsShowStory(id);return true}
 
 // Prevent optional evidence from silently completing an investigation chapter.
-hsRecordOptional=function(kind,target,eventId){if(worldSimulating)return;const h=hsState();for(const s of h.items){if(s.status!=='active')continue;if(s.storyVersion>=5)hsRelevantWorldAction(s,kind,target,eventId);if(s.optionalEvidence.length>=3)continue;const key=`optional:${kind}:${eventId}`;if(s.processed.includes(key))continue;const relevant=kind==='find'?['wreck','channel','market','bell'].includes(s.theme):kind==='arcade'?['wreck','channel','birds','beacon'].includes(s.theme):kind==='project'?['craft','garden','beacon','festival'].includes(s.theme):kind==='delivery'?['market','craft','garden'].includes(s.theme):false;if(!relevant)continue;if(kind==='arcade'&&target==='research_sonar'&&hsPassageEligible(s))hsObservePassage(s.id,'sonar',false);if(![s.originId,s.targetId].includes(state.currentIslandId)&&kind!=='arcade')continue;s.processed.push(key);const note=kind==='find'?`A recovered ${target||'sea find'} offers an extra trace connected to ${s.noun}.`:kind==='arcade'?`The ${MINIGAME_META[target]?.title||'shipboard activity'} suggested another way to read the signs around ${s.noun}.`:kind==='project'?`Helping complete ${projectTemplate(target)?.name||'a local project'} revealed an unexpected part of the island’s history.`:`Carrying ${target||'a neighbour’s parcel'} provided another name for the harbour records.`;s.optionalEvidence.push(note);s.history.push({at:nowReal(),text:note,islandId:state.currentIslandId});if(s.storyVersion>=2&&hsCurrentStory(s)?.kind==='deduce')s.theoryHint=`A further observation supports this possibility: ${s.insight}`;if(s.storyVersion>=3&&hsCurrentStory(s)?.kind==='scene'){const step=hsCurrentStory(s);step.scene.required=Math.max(1,step.scene.required-1)}}save()}
+hsRecordOptional=function(kind,target,eventId){if(worldSimulating)return;const h=hsState();for(const s of h.items){if(s.status!=='active')continue;if(s.storyVersion>=5)hsRelevantWorldAction(s,kind,target,eventId);if(s.optionalEvidence.length>=3)continue;const key=`optional:${kind}:${eventId}`;if(s.processed.includes(key))continue;const relevant=kind==='find'?['wreck','channel','market','bell'].includes(s.theme):kind==='arcade'?['wreck','channel','birds','beacon'].includes(s.theme):kind==='project'?['craft','garden','beacon','festival'].includes(s.theme):kind==='delivery'?['market','craft','garden'].includes(s.theme):false;if(!relevant)continue;if(kind==='arcade'&&target==='research_cipher'&&hsPassageEligible(s))hsObservePassage(s.id,'survey',false);if(![s.originId,s.targetId].includes(state.currentIslandId)&&kind!=='arcade')continue;s.processed.push(key);const note=kind==='find'?`A recovered ${target||'sea find'} offers an extra trace connected to ${s.noun}.`:kind==='arcade'?`The ${MINIGAME_META[target]?.title||'shipboard activity'} suggested another way to read the signs around ${s.noun}.`:kind==='project'?`Helping complete ${projectTemplate(target)?.name||'a local project'} revealed an unexpected part of the island’s history.`:`Carrying ${target||'a neighbour’s parcel'} provided another name for the harbour records.`;s.optionalEvidence.push(note);s.history.push({at:nowReal(),text:note,islandId:state.currentIslandId});if(s.storyVersion>=2&&hsCurrentStory(s)?.kind==='deduce')s.theoryHint=`A further observation supports this possibility: ${s.insight}`;if(s.storyVersion>=3&&hsCurrentStory(s)?.kind==='scene'){const step=hsCurrentStory(s);step.scene.required=Math.max(1,step.scene.required-1)}}save()}
 
 // Clearer local clue status in the harbour panel.
 hsLocalShoreLeadsHTML=function(isl){const stories=hsOpenStories().filter(s=>hsCurrentStory(s)?.kind==='scene'&&hsStepLocation(s)===isl.id);if(!stories.length)return'';return `<div class="section hs-shore-leads"><div class="section-title">Clues around the island <span>field notes</span></div>${stories.map(s=>{const st=hsCurrentStory(s),seen=hsSceneSeen(s),ready=hsSceneReady(s,st),labels=st.scene.spots.filter(p=>seen.includes(p.id)).map(p=>p.label);return `<div class="card"><h3>✧ ${wikiEsc(s.title)}</h3><p>${labels.length?`Recorded: ${labels.map(wikiEsc).join(' · ')}. `:''}${ready?'You have enough to compare your findings.':'Look for the illustrated clue markers on the island, or use the field notes.'}</p><button class="big-btn ${ready?'secondary':'ghost'}" data-hs-shore="${wikiEsc(s.id)}">${ready?'COMPARE FINDINGS':'OPEN FIELD NOTES'}</button></div>`}).join('')}</div>`}
@@ -10951,7 +10749,7 @@ hsDeliverParcel=function(id){const s=hsState().items.find(x=>x.id===id);if(!s||!
 hsDrawShoreClues=function(isl,queue,off){if(state.phase!=='ashore'||state.anchorage||state.activeView==='chart')return;const stories=hsOpenStories().filter(s=>hsCurrentStory(s)?.kind==='scene'&&hsStepLocation(s)===isl.id).slice(0,2),reserved=[];for(const s of stories){const step=hsCurrentStory(s),seen=hsSceneSeen(s),art=HS_SHORE_ART[s.theme]||HS_SHORE_ART.wreck;hsSceneShorePositions(isl,s,step,reserved).forEach(({spot,q},j)=>{reserved.push(q);const found=seen.includes(spot.id),radius=20,kind=art[j]||'rock',sprite=hsStoryArtSprite(kind,(Math.abs(s.seed)+j)%3),scale=kind==='lighthouse'?.52:kind==='house'?.54:kind==='wreck'?.58:kind==='gull'?.62:kind==='bottle'?.72:.68;if(!found)worldHitAreas.push({kind:'story-spot',id:s.id,spotId:spot.id,x:q.x+off.x,y:q.y+off.y-7,r:radius});queue(q.y+3,()=>{ctx.save();ctx.globalAlpha=found?.62:1;drawPixelSprite(sprite,q.x,q.y,scale,.5,.84);ctx.restore();const pulse=found||state.reducedMotion?0:Math.sin(frame*.005+j)*1.2;roundedRect(q.x-10,q.y-31+pulse,20,18,4,found?'#d6e5ce':'#fff0bf','#18313a',2);pxText(found?'✓':String(j+1),q.x,q.y-18+pulse,found?'#42694f':'#18313a',9,'center');if(!found&&Math.floor(frame/420+j)%3===0){circle(q.x+12,q.y-29+pulse,2,'#fff6cb','#18313a',1)}})})}}
 
 // Legacy passage chapters get the same readable transition beat as new sea encounters.
-hsObservePassage=function(id,method='watch',show=true){const s=hsState().items.find(s=>s.id===id),v=state.voyage;if(!hsPassageEligible(s,v))return false;if(hsCurrentStory(s)?.kind==='sea_encounter')return hsSeaFinish(s,method==='sonar'?'bearing':'watch',method,show);const text=hsPassageText(s,v,method);if(!hsAdvance(s,text))return false;s.passageEvidence={voyageId:v.id,method,originId:v.originId,destinationId:v.destinationId,text};if(method==='sonar'&&!s.optionalEvidence.includes('A successful sonar survey helped verify the passage.'))s.optionalEvidence.push('A successful sonar survey helped verify the passage.');v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`Water notes · ${s.title}`,text});state.journal.unshift(`${s.title}: your watch at sea has supplied the next clue.`);save();if(show){hsUXSetBeat(id,'The water adds a clue',text);renderUI();hsShowStory(id)}return true}
+hsObservePassage=function(id,method='watch',show=true){const s=hsState().items.find(s=>s.id===id),v=state.voyage;if(!hsPassageEligible(s,v))return false;if(hsCurrentStory(s)?.kind==='sea_encounter')return hsSeaFinish(s,(method==='sonar'||method==='survey')?'bearing':'watch',method,show);const text=hsPassageText(s,v,method);if(!hsAdvance(s,text))return false;s.passageEvidence={voyageId:v.id,method,originId:v.originId,destinationId:v.destinationId,text};if(['sonar','survey'].includes(method)&&!s.optionalEvidence.includes('A successful shipboard survey helped verify the passage.'))s.optionalEvidence.push('A successful shipboard survey helped verify the passage.');v.seaLog.unshift({at:gameNow(),icon:'⌁',title:`Water notes · ${s.title}`,text});state.journal.unshift(`${s.title}: your watch at sea has supplied the next clue.`);save();if(show){hsUXSetBeat(id,'The water adds a clue',text);renderUI();hsShowStory(id)}return true}
 
 
 // Island life
@@ -11196,7 +10994,7 @@ window.__MakeFastArt={buildingSprite,residentSprite,animalSprite,propSprite,seaS
 window.__MakeFastWikiGallery={entries:()=>tidebookWikiEntries().map(e=>({id:e.id,category:e.category,visual:wikiVisualType(e.id)})),options:(id)=>{const e=tidebookWikiEntries().find(x=>x.id===id);return e?wikiFolioOptions(e):[]},preview:(id,stage=0,variant=0,clock=0)=>{const c=document.createElement('canvas');c.width=208;c.height=144;c.dataset.wikiPreview=id;c.dataset.wikiStage=String(stage);c.dataset.wikiVariant=String(variant);wikiDrawPreview(c,clock);return c},html:fastingWikiHTML};
 window.__MakeFastWeather={activeWeatherDetails,proceduralWeatherDetails,fetchWeatherForCoords,requestWeatherLocation,refreshLocalWeather,weatherForecastLine,updateAtmosphereUI,drawWeatherGlyph,weatherForecastPoints};
 window.__MakeFastSim={simulateTwelveWeeks,advanceArchipelagoSettlementDay,worldTrialSnapshot};
-window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,blips:minigame.blips,pings:minigame.pings,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket,pinball:minigame.pinball}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
+window.__MakeFastArcade={games:MINIGAME_META,offers:()=>({...ensureArcadeOfferData().offers}),voyageEvents:()=>state.voyage?.events?.map(e=>({title:e.title,minigame:e.minigame,fair:!!e.fairArcade,ambient:!!e.ambient}))||[],start:(id,seconds=6)=>startMinigame(id,seconds),begin:beginArcadeRound,input:(type,x,y)=>minigamePointer(type,x,y),current:()=>minigame?{type:minigame.type,engine:minigame.engine,score:minigame.score,combo:minigame.combo,mistakes:minigame.mistakes,started:minigame.started,items:minigame.items,phasePos:minigame.phasePos,target:minigame.target,targetCol:minigame.targetCol,swing:minigame.swing,cols:minigame.cols,value:minigame.value,control:minigame.control,wave:minigame.wave,gates:minigame.gates,patches:minigame.patches,bucket:minigame.bucket,projectile:minigame.projectile,pull:minigame.pull,wind:minigame.wind,stackCursor:minigame.stackCursor,tug:minigame.tug,ship:minigame.ship,cattle:minigame.cattle,cipher:minigame.cipher,aim:minigame.aim,nodes:minigame.nodes,seq:minigame.seq,inputSeq:minigame.input,phase:minigame.phase,y:minigame.y,plane:minigame.plane,basket:minigame.basket,pinball:minigame.pinball}:null,geom:()=>arcadeGeom(),finish:()=>endMinigame('leave')};
 
 window.__MakeFastUI={chartState:()=>({zoom:chartView.zoom,panX:chartView.panX,panY:chartView.panY,hits:chartView.hitAreas.length,rumours:chartRumours().length,cacheBuilds:chartStaticCache.builds,cacheBuildMs:+chartStaticCache.buildMs.toFixed(2),cacheReady:!!chartStaticCache.canvas}),worldHits:()=>worldHitAreas.map(h=>({...h})),panel:()=>({collapsed:mobilePanelCollapsed,visible:visibleSceneRect()}),routeTest:(a,b)=>{const A=getIsland(a),B=getIsland(b),p=planSafeCourse(A,B);return p?{points:p,detour:p.length>2,length:routePathLength(p)}:null},routePaths:()=>JSON.parse(JSON.stringify(state.routePaths||{})),routeTraffic:()=>JSON.parse(JSON.stringify(state.routeTraffic||{})),demoRouteTraffic:()=>JSON.parse(JSON.stringify(state.demoRouteTraffic||{})),routeStyle:(a,b)=>routeVisualStyle(a,b),recentCrossings:(limit=9)=>recentChartCrossings(limit),recentRouteBundle:(limit=6)=>recentChartRouteBundle(limit),recentRouteStyle:(rank,total)=>recentRouteVisualStyle(rank,total),chartDetailScale:(tile)=>chartIslandDetailScale(tile),chartDetailPoint:(q,x,y,tile)=>chartIslandDetailPoint(q,x,y,tile),projectLayout:(id=currentIsland()?.id)=>{const isl=getIsland(id)||currentIsland();if(!isl)return[];return(isl.projects||[]).map((p,i)=>{const t=projectTemplate(p.templateId),q=projectSitePos(p,i,isl),fp=mfProjectFootprint(t);return{id:p.id,templateId:p.templateId,site:p.site,x:q.x,y:q.y,rx:fp.rx,ry:fp.ry,visible:mfProjectVisibleForLayout(isl,p)}})}};
 
