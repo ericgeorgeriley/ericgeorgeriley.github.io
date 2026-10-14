@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07172a" />
+  <meta name="description" content="Syntax IT Services — proactive IT support, cloud, cyber security and thoughtful software development. Based in Derby, serving businesses across the UK." />
+  <title>Syntax IT Services — Technology, working in your favour.</title>
+  <style>
+  :root{--ink:#0b2037;--ink-2:#183451;--dark:#07172a;--dark2:#0d2641;--muted:#697e94;--mist:#f2f7fd;--paper:#fbfdff;--line:#e0eaf4;--lime:#ee304c;--red:#ee304c;--blue:#2589f5;--soft-blue:#e8f2ff;--lime-light:#ffdbe2;--white:#fff;--accent:#ff4760;--display:'Inter Display',Inter,'Segoe UI',sans-serif;--mono:'SFMono-Regular',Consolas,monospace;--radius:22px}
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:95px}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit}
+  button{cursor:pointer}
+  ::selection{background:var(--lime);color:var(--ink)}
+  :focus-visible{outline:3px solid #2589e8;outline-offset:4px}
+  .wrap{max-width:1360px;padding-inline:clamp(24px,5.2vw,82px);margin-inline:auto}
+  .eyebrow{font:500 10px/1.7 var(--mono);text-transform:uppercase;letter-spacing:.17em}
+  .section-id{font:500 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#7b8980}
+  .arrow{display:inline-block;transition:transform .2s ease}
+  a:hover .arrow,button:hover .arrow{transform:translate(3px,-2px)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* Site navigation */
+  .site-header{height:90px;position:absolute;z-index:20;top:0;right:0;left:0;border-bottom:1px solid rgba(255,255,255,.115)}
+  .header-row{height:100%;display:flex;align-items:center;justify-content:space-between;gap:26px}
+  .brand{display:inline-flex;align-items:center;gap:11px;color:#f5f9ff;flex-shrink:0}
+  .brand-mark{position:relative;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center}
+  .brand-mark svg{display:block;width:34px;height:34px}
+  .brand-text{font-size:26px;letter-spacing:-.092em;line-height:1;font-weight:800}
+  .brand-text strong{color:var(--lime);font-weight:800}
+  .brand-sub{display:block;margin-top:5px;letter-spacing:.20em;font:500 8px var(--mono);color:#9cb7d5}
+  .nav-links{display:flex;align-items:center;gap:clamp(18px,2.5vw,37px);margin-left:auto}
+  .nav-links>a{font-size:12px;font-weight:600;color:#ccdaea;transition:color .2s}
+  .nav-links>a:hover,.nav-links>a.active{color:#fff}
+  .header-actions{display:flex;gap:17px;align-items:center}
+  .nav-portal{color:#a7bfdc;font-size:12px;font-weight:600;white-space:nowrap}
+  .nav-portal:hover{color:white}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:23px;padding:15px 21px;border:1px solid transparent;border-radius:6px;font-size:12px;font-weight:800;transition:transform .22s,background .22s,color .22s,border-color .22s,box-shadow .22s;white-space:nowrap}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-light{background:var(--lime);color:#ffffff}
+  .btn-light:hover{background:#ff576e;box-shadow:0 8px 26px #ee304c30}
+  .btn-outline{border-color:#58708a;background:transparent;color:#f4f8ff}
+  .btn-outline:hover{background:#ffffff10;border-color:#9fb9d6}
+  .btn-dark{background:var(--ink);color:white}
+  .btn-dark:hover{background:#153959}
+  .btn-small{padding:12px 17px;gap:18px;font-size:11px}
+  .menu-toggle{display:none;width:40px;height:40px;border:1px solid #809dbc80;border-radius:6px;align-items:center;justify-content:center;color:white;background:#ffffff08}
+  .menu-toggle svg{width:20px;height:20px}
+  .mobile-panel{display:none}
+
+  /* Hero */
+  .hero{position:relative;min-height:870px;background:var(--dark);color:#f6f9ff;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-200px -130px 0 auto;width:77%;background:radial-gradient(ellipse at 60% 44%,rgba(26,110,221,.31),transparent 58%);pointer-events:none}
+  .hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,transparent 98%,rgba(255,255,255,.025) 100%),linear-gradient(to bottom,transparent 98%,rgba(255,255,255,.025) 100%);background-size:105px 105px;mask-image:linear-gradient(to left,#000,transparent 84%);pointer-events:none}
+  .hero-orb{position:absolute;width:560px;height:560px;border-radius:50%;border:1px solid rgba(55,140,248,.18);right:-220px;top:107px;pointer-events:none}
+  .hero-orb:before,.hero-orb:after{content:"";position:absolute;inset:50px;border-radius:50%;border:1px solid rgba(55,140,248,.18)}
+  .hero-orb:after{inset:115px}
+  .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr);align-items:center;gap:clamp(24px,3.6vw,58px);min-height:805px;padding-top:117px;padding-bottom:105px}
+  .hero-copy{padding-bottom:15px}
+  .hero-kicker{display:flex;gap:11px;align-items:center;color:#b4cbe5;margin-bottom:37px}
+  .kicker-icon{display:flex;align-items:center;gap:5px}
+  .kicker-icon span{display:block;width:6px;height:6px;border:1px solid #ff4563;transform:rotate(45deg)}
+  .kicker-icon span:nth-child(2){background:#ff4563}
+  h1,h2,h3,p{margin-top:0}
+  h1{font-size:clamp(55px,5.4vw,91px);font-weight:600;letter-spacing:-.085em;line-height:1.09;margin:0 0 28px;max-width:665px}
+  h1 .highlight{color:var(--lime)}
+  .hero-description{max-width:470px;color:#b1c9e2;font-size:15px;line-height:1.9;letter-spacing:-.012em;margin-bottom:33px}
+  .hero-buttons{display:flex;gap:12px;flex-wrap:wrap}
+  .hero-baseline{display:flex;align-items:center;gap:13px;margin-top:69px;color:#849db8;font:500 10px/1.7 var(--mono);letter-spacing:.02em}
+  .hero-baseline .tiny-line{height:1px;background:#53708e;width:32px}
+  .hero-baseline strong{font-weight:500;color:#b6cbe2}
+  .stage{position:relative;padding-top:40px;padding-bottom:45px;min-width:0;transform:translateX(4px)}
+  .stage::before{content:"";position:absolute;width:270px;height:270px;border-radius:50%;filter:blur(68px);background:#1468d455;right:-36px;top:10%;z-index:0}
+  .stage-label{font:400 10px var(--mono);color:#a8c9ee;letter-spacing:.09em;text-transform:uppercase;position:absolute;top:2px;right:18px}
+  .stage-label:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:10px;box-shadow:0 0 12px #ee304c88}
+  .product-window{position:relative;z-index:1;min-height:472px;border-radius:13px;overflow:hidden;background:#fafdff;box-shadow:0 33px 85px #0009,0 0 0 1px #ffffff20,0 0 0 12px #ffffff04;color:#142942;transform:rotate(-1deg)}
+  .window-top{height:47px;background:#edf5ff;border-bottom:1px solid #d9e6f5;display:flex;align-items:center;justify-content:space-between;padding:0 17px}
+  .window-dots{display:flex;gap:5px}
+  .window-dots span{height:7px;width:7px;border-radius:50%;background:#c8d8e9}
+  .window-dots span:first-child{background:#9dbfe5}
+  .window-location{font:500 10px var(--mono);color:#7d99b8;letter-spacing:-.02em}
+  .window-right{display:flex;align-items:center;gap:7px;color:#748fae;font:500 9px var(--mono);letter-spacing:.03em}
+  .window-right i{height:6px;width:6px;background:#ed3855;border-radius:50%}
+  .window-layout{display:flex;min-height:425px}
+  .window-side{display:flex;flex-direction:column;align-items:center;gap:24px;width:55px;padding-top:26px;flex-shrink:0;background:#e6f0fc;border-right:1px solid #d9e8f6}
+  .side-item{color:#8caaca;display:grid;place-items:center;width:29px;height:29px;border-radius:8px}
+  .side-item.active{background:#d9eafd;color:#1b68b3}
+  .side-item svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+  .window-main{flex:1;min-width:0;padding:21px 25px 22px}
+  .dash-heading{display:flex;justify-content:space-between;gap:10px;align-items:start;margin-bottom:17px}
+  .dash-heading .mini-overline{font:500 9px var(--mono);letter-spacing:.12em;color:#7390af;text-transform:uppercase;display:block;margin-bottom:6px}
+  .dash-heading h3{font-size:20px;letter-spacing:-.055em;line-height:1.15;margin:0;font-weight:800}
+  .dash-dot{width:29px;height:29px;border:1px solid #d7e6f5;border-radius:50%;display:grid;place-items:center;color:#5d7794;font-size:17px;font-weight:300}
+  .demo-tabs{display:flex;gap:4px;padding:4px;background:#e9f3ff;border-radius:8px;width:max-content;max-width:100%;margin-bottom:17px}
+  .demo-tab{border:0;background:transparent;padding:8px 11px;border-radius:5px;color:#6f88a3;font-size:10px;font-weight:800;transition:background .2s,color .2s,box-shadow .2s}
+  .demo-tab[aria-selected="true"]{background:white;box-shadow:0 1px 5px #0a317512;color:#1556a0}
+  .demo-tab:hover:not([aria-selected="true"]){color:#13497c}
+  .dash-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:9px}
+  .dash-chart{height:186px;border-radius:8px;padding:17px 17px 10px;background:#0d2542;color:#f2f8ff;position:relative;overflow:hidden}
+  .dash-chart:after{position:absolute;content:"";width:130px;height:130px;right:-40px;top:-70px;border:1px solid #268dff29;border-radius:100%}
+  .dash-chart .chart-label{font:500 9px var(--mono);letter-spacing:.1em;color:#a2c1e6;text-transform:uppercase}
+  .dash-chart .chart-big{font-size:21px;line-height:1.3;letter-spacing:-.055em;max-width:170px;margin-top:8px;font-weight:700}
+  .chart-svg{position:absolute;left:10px;right:5px;bottom:0;width:calc(100% - 20px);height:93px}
+  .dash-sidecards{display:flex;flex-direction:column;gap:9px}
+  .dash-mini{padding:13px 12px;border:1px solid #e0e8dc;background:#fff;border-radius:8px;min-height:88px;flex:1}
+  .dash-mini .mini-icon{width:21px;height:21px;display:grid;place-items:center;background:#e9f2ff;color:#155fb1;font-size:12px;border-radius:5px;margin-bottom:6px}
+  .dash-mini strong{display:block;font-size:10px;line-height:1.4;letter-spacing:-.018em}
+  .dash-mini small{display:block;font-size:9px;margin-top:4px;color:#8ba5be}
+  .dash-bottom{margin-top:10px;background:#eef5fd;border:1px solid #dce9f7;border-radius:8px;padding:13px 14px}
+  .dash-bottom-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;font:500 9px var(--mono);color:#5c7060}
+  .dash-bottom-top strong{color:#215d9c;font-weight:500}
+  .dash-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .dash-chip{font-size:9px;background:#fff;padding:6px 9px;border-radius:5px;border:1px solid #e0e8dc;color:#22578b;font-weight:700}
+  .stage-card{position:absolute;z-index:3;bottom:13px;left:-36px;border:1px solid #ffffff2b;background:#14304d;backdrop-filter:blur(15px);padding:15px 17px;border-radius:8px;display:flex;align-items:center;gap:13px;box-shadow:0 20px 45px #0005;transform:rotate(2deg)}
+  .stage-card-icon{width:33px;height:33px;border-radius:6px;background:var(--lime);color:var(--ink);display:grid;place-items:center;font:700 16px var(--mono)}
+  .stage-card b{font-size:11px;display:block;margin-bottom:2px}
+  .stage-card small{font:400 9px var(--mono);color:#b2cbe7}
+  .hero-foot{position:absolute;bottom:0;left:0;width:100%;border-top:1px solid #ffffff21;z-index:3}
+  .hero-foot-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;height:65px}
+  .hero-foot .descriptor{font:400 10px var(--mono);color:#afc5e0;letter-spacing:.06em;white-space:nowrap}
+  .hero-foot .capabilities{display:flex;align-items:center;gap:clamp(18px,2.7vw,45px);color:#acc2dd;font-size:11px;font-weight:600}
+  .hero-foot .capabilities i{display:inline-block;height:5px;width:5px;background:var(--lime);border-radius:50%;vertical-align:middle;margin-right:9px}
+
+  /* Shared section patterns */
+  section.section{padding-top:126px;padding-bottom:129px}
+  .section-top{display:flex;justify-content:space-between;gap:46px;align-items:end;margin-bottom:53px}
+  .section-top h2,.approach-intro h2,.proof h2{font-size:clamp(38px,4.15vw,61px);line-height:1.16;letter-spacing:-.075em;font-weight:700;max-width:690px;margin:22px 0 0}
+  .section-top p{max-width:335px;font-size:13px;line-height:1.95;color:#657b93;margin:0 0 5px}
+  .services{background:var(--paper)}
+  .service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .service-card{min-width:0;min-height:327px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:#f1f6fd;border:1px solid #e0ebf8;border-radius:10px;padding:28px 23px 23px;color:var(--ink);transition:transform .25s,background .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden}
+  .service-card:hover{transform:translateY(-7px);background:#e5f1ff;border-color:#b7d6fb;box-shadow:0 22px 32px #0a3d891a}
+  .service-number{font:500 10px var(--mono);color:#7a93ad}
+  .service-icon{margin-top:25px;margin-bottom:22px;height:44px;width:44px;display:grid;place-items:center;border-radius:9px;background:#e1eefe;color:#1763ae}
+  .service-icon svg{width:24px;height:24px;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-width:1.55}
+  .service-card h3{font-size:17px;letter-spacing:-.05em;font-weight:800;margin:0 0 10px}
+  .service-card p{font-size:11px;line-height:1.85;color:#6e8298;margin:0 0 20px;max-width:240px}
+  .service-bottom{margin-top:auto;display:flex;width:100%;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;color:#195b9f}
+  .service-bottom .round-arrow{width:28px;height:28px;border:1px solid #bfd8f3;display:grid;place-items:center;border-radius:50%;transition:background .2s,transform .2s}
+  .service-card:hover .round-arrow{background:#ee304c;transform:rotate(45deg)}
+  .services-end{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #e1ecf7;margin-top:39px;padding-top:21px;gap:20px}
+  .services-end p{color:#7589a0;font:500 10px var(--mono);margin:0}
+  .inline-link{display:inline-flex;gap:9px;align-items:center;font-size:12px;font-weight:800;border-bottom:1px solid #829bb6;padding-bottom:5px;white-space:nowrap}
+  .inline-link:hover{color:#176fc8}
+
+  /* Philosophy band */
+  .belief{background:#e8f2ff;padding:90px 0 97px;position:relative;overflow:hidden}
+  .belief::before{content:"";height:400px;width:400px;border:1px solid #93b8e459;border-radius:50%;position:absolute;right:-145px;top:-220px;box-shadow:0 0 0 65px #93b8e432,0 0 0 130px #93b8e421}
+  .belief-grid{display:grid;grid-template-columns:.42fr 1.3fr;gap:70px;position:relative}
+  .belief-tag{font:500 10px/1.9 var(--mono);text-transform:uppercase;letter-spacing:.13em;color:#6284ab;padding-top:12px}
+  .belief-tag .asterisk{font-size:38px;display:block;font-weight:400;color:#e63955;line-height:1.4}
+  .belief h2{font-size:clamp(31px,3.65vw,55px);line-height:1.23;letter-spacing:-.075em;margin:0;font-weight:600;max-width:910px}
+  .belief h2 span{color:#2f78c9}
+  .belief-note{display:flex;align-items:center;gap:10px;font-size:12px;color:#3d668e;margin-top:33px;font-weight:700}
+  .belief-note:before{content:"";display:block;width:25px;height:1px;background:#4b8bcc}
+
+  /* Process / showcase */
+  .approach{background:#081b31;color:white}
+  .approach-head{display:flex;justify-content:space-between;gap:50px;align-items:end;margin-bottom:54px}
+  .approach-intro h2{max-width:730px}
+  .approach-intro h2 em{font-style:normal;color:var(--lime)}
+  .approach-head>p{max-width:340px;color:#a9bfd8;font-size:13px;line-height:1.95;margin:0 0 5px}
+  .approach .section-id{color:#a8c9f0}
+  .work-card{display:grid;grid-template-columns:.78fr 1.22fr;min-height:470px;border:1px solid #426ea373;border-radius:12px;overflow:hidden;background:#102e4e}
+  .work-left{padding:49px 44px;display:flex;flex-direction:column;justify-content:space-between}
+  .work-left-top{display:flex;gap:13px;align-items:center;color:#a1c8f6;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.12em}
+  .work-left-top i{width:9px;height:9px;background:var(--lime);border-radius:50%}
+  .work-left h3{font-size:clamp(33px,3.4vw,48px);line-height:1.18;letter-spacing:-.075em;font-weight:700;margin:27px 0 18px;max-width:420px}
+  .work-left .work-description{font-size:13px;line-height:1.95;color:#a9c3e1;max-width:370px;min-height:77px;margin:0}
+  .step-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:40px}
+  .step-btn{height:43px;min-width:45px;padding:0 12px;background:transparent;border:1px solid #5c7060;border-radius:6px;color:#acc8e8;font:500 10px var(--mono);transition:background .2s,color .2s,border-color .2s}
+  .step-btn[aria-pressed="true"],.step-btn:hover{background:var(--lime);color:#ffffff;border-color:var(--lime)}
+  .step-hint{color:#8da9c6;font:400 9px var(--mono);margin-top:14px}
+  .work-right{position:relative;padding:48px 40px 42px;background:#eaf3fe;color:#142b47;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+  .work-right:before{position:absolute;content:"";width:380px;height:380px;border:1px solid #c4dcf6;border-radius:100%;top:-185px;right:-60px;box-shadow:0 0 0 70px #b6d5f644,0 0 0 140px #d6e7fa66}
+  .workspace{position:relative;background:#fff;border:1px solid #d7e8f8;border-radius:10px;box-shadow:0 22px 38px #37649b25;overflow:hidden}
+  .workspace-top{display:flex;align-items:center;justify-content:space-between;padding:13px 19px;border-bottom:1px solid #e2edf9;background:#f9fcff;font:500 10px var(--mono);color:#7793b1}
+  .workspace-top span{display:flex;align-items:center;gap:7px}
+  .workspace-top b{width:7px;height:7px;border-radius:50%;display:inline-block;background:#2d83df}
+  .workspace-content{padding:30px 28px}
+  .workspace-content .workspace-kicker{font:500 10px var(--mono);color:#3d7abf;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:13px}
+  .workspace-content h4{font-size:26px;letter-spacing:-.068em;margin:0 0 10px;line-height:1.2;max-width:340px}
+  .workspace-content p{color:#7f97ae;font-size:11px;line-height:1.8;margin:0 0 22px;max-width:360px}
+  .timeline{display:flex;gap:6px;align-items:center;padding:12px 0 10px}
+  .timeline .tick{height:8px;flex:1;border-radius:3px;background:#e1edf9;transition:background .35s}
+  .timeline .tick.complete{background:#76b2f5}
+  .timeline .tick.current{background:#146bc1}
+  .workspace-footer{border-top:1px solid #e7eef8;padding-top:18px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .workspace-footer span{font:500 10px var(--mono);color:#7d95b2}
+  .workspace-footer strong{font-size:11px;color:#136fc4}
+  .workspace-caption{font:400 9px var(--mono);color:#8ca6c1;text-align:right;margin-top:17px;letter-spacing:.02em}
+
+  /* Proof */
+  .proof{background:#fbfdff}
+  .proof-grid{display:grid;grid-template-columns:.56fr 1.44fr;gap:80px}
+  .proof-side{padding-top:8px}
+  .proof-side p{margin:24px 0 0;font-size:12px;color:#6d8298;line-height:1.9;max-width:280px}
+  .quote-icon{font:700 92px/1 var(--display);color:#b4d5fa;letter-spacing:-.1em;height:85px}
+  .quote{font-size:clamp(24px,2.65vw,37px);line-height:1.47;letter-spacing:-.052em;font-weight:600;margin:0 0 28px;max-width:840px}
+  .quote-credit{font:500 11px var(--mono);color:#55799d}
+  .proof-lower{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:93px;border-top:1px solid #e0e8dc;padding-top:30px}
+  .proof-point{display:flex;gap:14px;align-items:flex-start}
+  .proof-point .point-num{color:#ed304d;font:500 10px var(--mono);padding-top:4px}
+  .proof-point b{display:block;font-size:13px;margin:0 0 6px;letter-spacing:-.02em}
+  .proof-point p{margin:0;color:#778da5;font-size:11px;line-height:1.8}
+
+  /* Contact / footer */
+  .contact{padding:0 0 0;background:#fbfdff}
+  .cta-block{background:var(--lime);border-radius:13px;padding:clamp(34px,6.5vw,86px);display:grid;grid-template-columns:1.25fr .75fr;align-items:end;gap:42px;position:relative;overflow:hidden}
+  .cta-block::after{content:"✳";position:absolute;right:-29px;top:-113px;font-size:350px;font-weight:400;color:#ff6980;opacity:.5;pointer-events:none;transform:rotate(20deg)}
+  .cta-block .section-id{color:#ffffff;position:relative;z-index:1}
+  .cta-block h2{font-size:clamp(38px,4.3vw,64px);letter-spacing:-.078em;line-height:1.15;font-weight:700;margin:18px 0 0;max-width:670px;position:relative;z-index:1}
+  .cta-right{position:relative;z-index:1}
+  .cta-right p{font-size:13px;line-height:1.8;color:#e0eafa;margin:0 0 25px;max-width:330px}
+  .cta-right .btn{font-size:12px}
+  .cta-direct{font:500 11px var(--mono);display:block;margin-top:21px;color:#e3eafb}
+  .cta-direct a{text-decoration:underline;text-underline-offset:4px}
+  .footer{padding:83px 0 34px;background:#fbfdff}
+  .footer-top{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr;gap:35px;padding-bottom:78px}
+  .footer .brand{color:#112943}
+  .footer .brand-sub{color:#7a92ad}
+  .footer-about{margin-top:25px;max-width:330px;font-size:11px;line-height:1.9;color:#7189a3}
+  .footer-column>strong{display:block;font:500 10px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#6685a5;margin:9px 0 24px}
+  .footer-column a,.footer-column span{display:block;font-size:12px;font-weight:600;color:#54728e;margin-top:13px;line-height:1.7}
+  .footer-column a:hover{color:#176fca}
+  .footer-bottom{border-top:1px solid #dce9f7;padding-top:25px;display:flex;justify-content:space-between;gap:20px;font:400 10px var(--mono);color:#8da3b8}
+  .footer-bottom a{text-decoration:underline;text-underline-offset:3px}
+
+  /* Service detail dialog */
+  dialog.service-dialog{border:1px solid #dbe9f7;border-radius:12px;max-width:min(500px,calc(100% - 32px));padding:0;color:var(--ink);box-shadow:0 28px 90px #091b3655}
+  dialog::backdrop{background:#061529cf;backdrop-filter:blur(4px)}
+  .dialog-inside{padding:42px 40px 38px}
+  .dialog-inside .eyebrow{color:#638db9}
+  .dialog-inside h2{font-size:38px;letter-spacing:-.07em;margin:16px 0 17px;line-height:1.14}
+  .dialog-inside p{font-size:13px;line-height:1.9;color:#697f97}
+  .dialog-inside ul{padding:0;list-style:none;margin:25px 0}
+  .dialog-inside li{padding:11px 0;border-top:1px solid #eaf1fa;font-size:12px;font-weight:700;display:flex;align-items:center;gap:12px}
+  .dialog-inside li::before{content:"↗";color:#e62b4a}
+  .dialog-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+  .dialog-back{font-size:11px;font-weight:700;color:#59758e;background:transparent;border:0}
+  .dialog-x{position:absolute;right:15px;top:15px;border:1px solid #deebf9;border-radius:50%;width:30px;height:30px;background:white;color:#5d7895;font-size:18px;display:grid;place-items:center}
+
+  /* Responsive */
+  @media(min-width:1470px){.hero-inner{min-height:820px}.hero{min-height:885px}.stage{max-width:640px}.hero-inner{gap:68px}}
+  @media(max-width:1210px){.nav-links{gap:16px}.nav-portal{display:none}.hero-inner{gap:30px}h1{font-size:clamp(54px,5.8vw,80px)}.window-main{padding:19px 16px}.dash-chart{padding:13px}.service-card{padding:25px 18px}.service-grid{gap:10px}}
+  @media(max-width:1000px){.site-header{height:76px}.nav-links,.header-actions>.btn{display:none}.menu-toggle{display:inline-flex}.hero{min-height:0}.hero-inner{grid-template-columns:1fr;padding-top:140px;padding-bottom:110px;gap:20px}.hero-copy{max-width:760px}.hero-description{max-width:580px}.hero-baseline{margin-top:35px}.stage{max-width:650px;width:100%;margin:0 auto;transform:none}.stage-card{left:-15px}.hero-foot .descriptor{display:none}.hero-foot-inner{justify-content:center}.service-grid{grid-template-columns:repeat(2,1fr)}.service-card{min-height:285px}.belief-grid{grid-template-columns:1fr;gap:20px}.approach-head{display:block}.approach-head>p{margin-top:25px;max-width:600px}.proof-grid{gap:40px}.footer-top{grid-template-columns:1.3fr 1fr 1fr}.footer-top .footer-column:last-child{grid-column:2/-1}.mobile-panel{display:none;position:absolute;top:76px;left:0;right:0;background:#0b2543;border-top:1px solid #315b82;box-shadow:0 22px 40px #0005;padding:18px 24px 25px}.mobile-panel.open{display:block}.mobile-panel a{color:#ecf5ff;padding:13px 5px;display:block;border-bottom:1px solid #ffffff12;font-size:13px;font-weight:700}.mobile-panel .btn{justify-content:space-between;margin-top:16px;color:var(--ink);border-bottom:0}}
+  @media(max-width:700px){.wrap{padding-inline:22px}.hero-inner{padding-top:130px}.hero-kicker{margin-bottom:22px;font-size:9px}h1{font-size:clamp(49px,10vw,70px)}.hero-description{font-size:13px;line-height:1.85}.hero-buttons{gap:9px}.hero-buttons .btn{padding:13px 15px;gap:10px;font-size:11px}.stage{padding-bottom:55px}.product-window{transform:none;min-height:0}.window-layout{min-height:399px}.window-main{padding:16px 13px 12px}.window-side{width:37px;gap:17px}.window-location{font-size:8px}.dash-heading h3{font-size:17px}.dash-heading .mini-overline{font-size:8px}.dash-chart{height:165px;padding:11px}.dash-chart .chart-big{font-size:16px}.dash-sidecards .dash-mini{padding:9px 7px;min-height:78px}.dash-mini .mini-icon{margin-bottom:2px}.dash-mini strong{font-size:9px}.dash-mini small{font-size:8px}.dash-bottom{padding:9px}.dash-chip{font-size:8px}.demo-tab{padding:7px 9px}.stage-card{bottom:32px;left:-7px}.hero-foot{position:relative}.hero-foot .capabilities{flex-wrap:wrap;justify-content:center;gap:10px 17px;padding:12px 0}.hero-foot-inner{min-height:62px;height:auto}.hero-foot .capabilities{font-size:9px}.hero{padding-bottom:0}.hero-inner{padding-bottom:35px}section.section{padding-top:80px;padding-bottom:84px}.section-top{display:block;margin-bottom:32px}.section-top h2,.approach-intro h2,.proof h2{font-size:clamp(35px,9vw,48px)}.section-top p{margin-top:19px;max-width:500px}.service-grid{gap:10px}.service-card{min-height:290px;padding:20px 15px}.service-card h3{font-size:15px}.service-card p{font-size:10px}.service-icon{margin-top:19px;margin-bottom:16px}.service-bottom{font-size:9px}.services-end{align-items:flex-start;flex-direction:column}.belief{padding:68px 0}.belief h2{font-size:clamp(29px,7.2vw,45px)}.approach-head{margin-bottom:35px}.work-card{grid-template-columns:1fr}.work-left{padding:32px 25px}.work-left h3{font-size:34px}.work-left .work-description{min-height:62px}.step-controls{margin-top:18px}.work-right{padding:30px 18px}.workspace-content{padding:22px 19px}.workspace-content h4{font-size:23px}.proof-grid{display:block}.proof-side{margin-bottom:20px}.proof-side p{margin-top:12px}.quote-icon{font-size:73px;height:63px}.quote{font-size:25px}.proof-lower{grid-template-columns:1fr;margin-top:50px;gap:24px}.cta-block{grid-template-columns:1fr;gap:25px;padding:38px 26px}.cta-block h2{font-size:40px}.cta-right p{max-width:500px}.footer{padding-top:55px}.footer-top{grid-template-columns:1fr 1fr;gap:30px;padding-bottom:50px}.footer-top>div:first-child{grid-column:1/-1}.footer-top .footer-column:last-child{grid-column:auto}.footer-bottom{display:block;line-height:1.8}.footer-bottom span{display:block;margin-bottom:8px}}
+  @media(max-width:390px){h1{font-size:45px}.dash-grid{grid-template-columns:1.2fr 1fr}.window-main{padding:13px 8px}.window-side{width:32px}.window-top{padding:0 10px}.window-location{font-size:7px}.dash-mini strong{font-size:8px}.dash-mini small{font-size:7px}.dash-chart .chart-big{font-size:14px}.service-card{padding:16px 12px}.service-card h3{font-size:14px}.service-icon{width:38px;height:38px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+  /* Syntax brand application — original Syntax site logo mark, blue/red palette. */
+  .brand{gap:12px}
+  .brand-mark{width:44px;height:44px;flex-shrink:0;overflow:hidden;}
+  .brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
+  .brand-text{letter-spacing:-.082em}
+  .brand-text strong{color:#fa3554}
+  .brand-sub{color:#91b5db}
+  .btn-light{background:#eb2c4b;color:#fff}
+  .btn-light:hover{background:#fa4764;box-shadow:0 9px 30px #ed305044}
+  :focus-visible{outline:3px solid #3797ff;outline-offset:4px}
+  ::selection{background:#f7a5b3;color:#07172a}
+  .hero{background:radial-gradient(ellipse 70% 72% at 85% 43%, #0a3066 0%, #07192e 59%, #061321 100%)}
+  .hero::before{background:radial-gradient(ellipse at 60% 44%,rgba(23,106,217,.3),transparent 60%)}
+  .hero-orb,.hero-orb:before,.hero-orb:after{border-color:#267ad33d}
+  .hero-orb:after{border-color:#ef3c5740}
+  .hero-kicker{color:#a8c9ec}
+  .kicker-icon span{border-color:#fb4966}
+  .kicker-icon span:nth-child(2){background:#2389ec;border-color:#2389ec}
+  h1 .highlight{color:#ff4661}
+  .btn-outline{border-color:#4072a2;color:#f4f9ff}
+  .btn-outline:hover{border-color:#79b6fb;background:#1b4a7d48}
+  .stage::before{background:#0a61c970}
+  .stage-label:before{background:#fa3c59;box-shadow:0 0 14px #fa3c5988}
+  .product-window{box-shadow:0 38px 95px #0009,0 0 0 1px #4597e83d,0 0 0 13px #267ad312}
+  .side-item.active{background:#dbeaff;color:#1469b5}
+  .demo-tab[aria-selected="true"]{color:#1766b9;box-shadow:0 1px 7px #156bc322}
+  .dash-chart{background:linear-gradient(145deg,#09203b,#07182c)}
+  .dash-mini .mini-icon{background:#ffe8ed;color:#e82d4a}
+  .dash-mini:nth-child(2) .mini-icon{background:#e8f3ff;color:#1675d3}
+  .stage-card{background:#16385b}
+  .stage-card-icon{background:#ee304c;color:#fff}
+  .hero-foot .capabilities span:nth-child(2n) i{background:#288cfa}
+  .hero-foot .capabilities span:nth-child(2n+1) i{background:#ff405c}
+  .service-card:hover{background:#e5f1ff;border-color:#b7d6fb;box-shadow:0 20px 34px #1757a017}
+  .service-card:nth-child(even) .service-icon{background:#ffe8ed;color:#e52e4a}
+  .service-card:nth-child(odd) .service-icon{background:#e1efff;color:#176cbf}
+  .service-bottom{color:#1769be}
+  .service-card:hover .round-arrow{background:#ef3652;color:#fff}
+  .belief{background:linear-gradient(115deg,#e6f2ff 4%,#f2f7ff 66%,#e6effc 100%)}
+  .belief-tag .asterisk{color:#ed2d4c}
+  .belief h2 span{color:#2676c9}
+  .approach{background:#081a2f}
+  .approach-intro h2 em{color:#ff435f}
+  .work-card{background:#0f2c4c}
+  .work-left-top i{background:#f13855}
+  .step-btn[aria-pressed="true"],.step-btn:hover{background:#f03855;border-color:#f03855;color:white}
+  .timeline .tick.complete{background:#7ebaf7}
+  .timeline .tick.current{background:#e93251}
+  .quote-icon,.point-num{color:#e93251!important}
+  .cta-block{background:linear-gradient(123deg,#135cad 0%,#0d3774 65%,#0b2a62 100%);color:white}
+  .cta-block::after{color:#3883d5;opacity:.35}
+  .cta-block .section-id{color:#afd7ff}
+  .cta-right p{color:#d7e9ff}
+  .cta-direct{color:#d2e7ff}
+  .cta-right .btn-dark{background:#f13955;border-color:#f13955;color:white}
+  .cta-right .btn-dark:hover{background:#ff5670}
+  .footer .brand{color:#10253e}
+  .footer .brand-sub{color:#5f7ea2}
+  .footer-column a:hover{color:#136fca}
+  .dialog-inside li::before{color:#f13955}
+  .mobile-panel{background:#0a2440}
+  .mobile-panel .btn-light{color:#fff}
+  @media(max-width:420px){.brand-mark{width:38px;height:38px}.brand-text{font-size:23px}}
+  /* Only shown when a local browser blocks the original image URL. */
+  .brand-mark.logo-fallback{background:linear-gradient(135deg,#ffffff,#e9f2ff);display:grid;place-items:center}
+  .brand-mark.logo-fallback:before{content:"S";font:900 29px/1 var(--display);color:#125ca9;letter-spacing:-.11em;padding-right:5px}
+  .brand-mark.logo-fallback:after{content:"";position:absolute;width:9px;height:9px;right:6px;bottom:6px;border-radius:2px;background:#ee304c}
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="wrap header-row">
+      <a class="brand" href="#top" aria-label="Syntax IT Services home">
+        <span class="brand-mark" aria-hidden="true"><img src="https://www.syntaxits.com/wp-content/uploads/2016/03/logo-flat-mono-300x254.png" alt="" loading="eager" onerror="this.hidden=true;this.parentElement.classList.add('logo-fallback')"></span>
+        <span><span class="brand-text">syntax<strong>.</strong></span><span class="brand-sub">IT SERVICES</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#services">What we do</a>
+        <a href="#approach">How we work</a>
+        <a href="#why-syntax">Why Syntax</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a class="nav-portal" href="https://www.syntaxits.com/" target="_blank" rel="noopener noreferrer">Current website ↗</a>
+        <a class="btn btn-light btn-small" href="mailto:enquiries@syntaxits.com?subject=Let%27s%20talk%20technology">Let's talk <span class="arrow">↗</span></a>
+        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open navigation menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-panel" id="mobileMenu" aria-label="Mobile navigation">
+      <a href="#services">What we do</a>
+      <a href="#approach">How we work</a>
+      <a href="#why-syntax">Why Syntax</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-light" href="mailto:enquiries@syntaxits.com">Let's talk <span class="arrow">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-orb" aria-hidden="true"></div>
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <div class="eyebrow hero-kicker"><span class="kicker-icon" aria-hidden="true"><span></span><span></span></span> A different kind of technology partner</div>
+          <h1 id="heroTitle">Technology,<br>working in<br>your <span class="highlight">favour.</span></h1>
+          <p class="hero-description">From the IT that keeps everything running to the software that takes you further. We bring people, systems and ideas together to make technology genuinely work for your business.</p>
+          <div class="hero-buttons">
+            <a class="btn btn-light" href="#contact">Let's work together <span class="arrow">↗</span></a>
+            <a class="btn btn-outline" href="#services">Explore what we do <span class="arrow">↓</span></a>
+          </div>
+          <div class="hero-baseline"><span class="tiny-line"></span><strong>DERBY, UK</strong><span> / </span> IT SERVICES + SOFTWARE DEVELOPMENT</div>
+        </div>
+        <div class="stage" aria-label="Interactive illustration demonstrating Syntax's services">
+          <div class="stage-label">A little preview of how we think</div>
+          <div class="product-window">
+            <div class="window-top"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><span class="window-location">syntax / solutions explorer</span><span class="window-right"><i></i> CONCEPT UI</span></div>
+            <div class="window-layout">
+              <div class="window-side" aria-hidden="true">
+                <span class="side-item active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+                <span class="side-item"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
+                <span class="side-item"><svg viewBox="0 0 24 24"><path d="M5 8a7 7 0 0 1 13-3M19 16a7 7 0 0 1-13 3M19 2v5h-5M5 22v-5h5"/></svg></span>
+                <span class="side-item"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-4 8-8 9-4-1-8-4-8-9V7l8-4zM9 12l2 2 4-4"/></svg></span>
+              </div>
+              <div class="window-main">
+                <div class="dash-heading"><div><span class="mini-overline">The possibilities / 001</span><h3 id="demoHeading">Better IT, by design.</h3></div><span class="dash-dot" aria-hidden="true">↗</span></div>
+                <div class="demo-tabs" role="tablist" aria-label="Explore our capabilities">
+                  <button class="demo-tab" role="tab" id="tab-support" aria-controls="demoPanel" aria-selected="true" tabindex="0" data-demo="support">IT support</button>
+                  <button class="demo-tab" role="tab" id="tab-cloud" aria-controls="demoPanel" aria-selected="false" tabindex="-1" data-demo="cloud">Cloud + security</button>
+                  <button class="demo-tab" role="tab" id="tab-software" aria-controls="demoPanel" aria-selected="false" tabindex="-1" data-demo="software">Software</button>
+                </div>
+                <div id="demoPanel" role="tabpanel" aria-labelledby="tab-support">
+                  <div class="dash-grid">
+                    <div class="dash-chart"><span class="chart-label" id="demoChartLabel">A smarter way to support</span><div class="chart-big" id="demoChartTitle">Ahead of the everyday.</div><svg class="chart-svg" viewBox="0 0 300 110" preserveAspectRatio="none" role="img" aria-label="Decorative illustrative analytics graph"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#FF4A64" stop-opacity=".30"/><stop offset="1" stop-color="#FF4A64" stop-opacity="0"/></linearGradient></defs><path d="M0 80H300M0 48H300M0 18H300" stroke="#7F9DBF" stroke-opacity=".18" stroke-dasharray="4 6" fill="none"/><path id="chartArea" d="M0 94 C40 83 55 91 81 66 S135 79 174 48 S240 59 300 12 L300 110 L0 110Z" fill="url(#chartFill)"/><path id="chartStroke" d="M0 94 C40 83 55 91 81 66 S135 79 174 48 S240 59 300 12" fill="none" stroke="#EF3551" stroke-width="3" stroke-linecap="round"/></svg></div>
+                    <div class="dash-sidecards"><div class="dash-mini"><span class="mini-icon" id="miniIcon1">✓</span><strong id="miniTitle1">Proactive care</strong><small id="miniDesc1">Support with foresight</small></div><div class="dash-mini"><span class="mini-icon" id="miniIcon2">↗</span><strong id="miniTitle2">Human expertise</strong><small id="miniDesc2">People you can call</small></div></div>
+                  </div>
+                  <div class="dash-bottom"><div class="dash-bottom-top"><span id="demoStripLabel">THE RIGHT SUPPORT, END TO END</span><strong>↗</strong></div><div class="dash-chips" id="demoChips"><span class="dash-chip">Remote + onsite</span><span class="dash-chip">IT strategy</span><span class="dash-chip">Asset management</span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stage-card" aria-hidden="true"><div class="stage-card-icon">↗</div><span><b>Designed around people.</b><small>Built to solve real problems.</small></span></div>
+        </div>
+      </div>
+      <div class="hero-foot"><div class="wrap hero-foot-inner"><span class="descriptor">THE RIGHT EXPERTISE, ALL CONNECTED</span><div class="capabilities"><span><i></i> Managed IT</span><span><i></i> Cloud + security</span><span><i></i> Software development</span><span><i></i> Project delivery</span></div></div></div>
+    </section>
+
+    <section class="section services" id="services" aria-labelledby="servicesHeading">
+      <div class="wrap">
+        <div class="section-top"><div><span class="section-id">01 / What we do</span><h2 id="servicesHeading">One partner. Every layer<br>of your technology.</h2></div><p>No handoffs, no unnecessary complexity. Just joined-up expertise to keep your business secure, productive and ready for what's next.</p></div>
+        <div class="service-grid">
+          <button class="service-card" type="button" data-service="support" aria-label="Learn more about managed IT support"><span class="service-number">01 / KEEP THINGS RUNNING</span><span class="service-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 10l3 3 6-6"/></svg></span><h3>Managed IT support</h3><p>Proactive monitoring and genuinely helpful support that takes the day-to-day off your plate.</p><span class="service-bottom">Explore service <span class="round-arrow">↗</span></span></button>
+          <button class="service-card" type="button" data-service="cloud" aria-label="Learn more about cloud and security"><span class="service-number">02 / MAKE IT RESILIENT</span><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M7 18H6a4 4 0 0 1-.5-8A7 7 0 0 1 19 9a4.5 4.5 0 0 1-.5 9H17"/><path d="m9 15 3-3 3 3M12 12v9"/></svg></span><h3>Cloud &amp; security</h3><p>Flexible infrastructure, smarter protection and the confidence to work from anywhere.</p><span class="service-bottom">Explore service <span class="round-arrow">↗</span></span></button>
+          <button class="service-card" type="button" data-service="software" aria-label="Learn more about custom software development"><span class="service-number">03 / BUILD WHAT'S NEXT</span><span class="service-icon"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4m8-8 4 4-4 4M14 4l-4 16"/></svg></span><h3>Software development</h3><p>Useful, intuitive web, desktop and mobile applications shaped around your business.</p><span class="service-bottom">Explore service <span class="round-arrow">↗</span></span></button>
+          <button class="service-card" type="button" data-service="projects" aria-label="Learn more about technical projects"><span class="service-number">04 / GET THERE TOGETHER</span><span class="service-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M14 6h3a4 4 0 0 1 4 4v1M10 18H7a4 4 0 0 1-4-4v-1"/></svg></span><h3>Technology projects</h3><p>From infrastructure upgrades to ambitious digital change, expertly planned and delivered.</p><span class="service-bottom">Explore service <span class="round-arrow">↗</span></span></button>
+        </div>
+        <div class="services-end"><p>FOCUSED ON THE OUTCOME, NOT JUST THE TECHNOLOGY.</p><a class="inline-link" href="#contact">Not sure where to start? Talk to us <span class="arrow">↗</span></a></div>
+      </div>
+    </section>
+
+    <section class="belief" aria-labelledby="beliefHeading"><div class="wrap belief-grid"><div class="belief-tag"><span class="asterisk">✳</span> A thought worth sharing<br> / Our philosophy</div><div><h2 id="beliefHeading">Great technology doesn't need to make a lot of noise. <span>It just makes everything else work better.</span></h2><div class="belief-note">Less friction. More possibility.</div></div></div></section>
+
+    <section class="section approach" id="approach" aria-labelledby="approachHeading"><div class="wrap">
+      <div class="approach-head"><div class="approach-intro"><span class="section-id">02 / How we work</span><h2 id="approachHeading">Thoughtful by design.<br><em>Technical by nature.</em></h2></div><p>Strong solutions start with the right questions. We pair practical business thinking with the technical detail that makes it all work.</p></div>
+      <div class="work-card"><div class="work-left"><div><div class="work-left-top"><i></i> The Syntax approach / Interactive</div><h3 id="stepHeading">First, we listen.</h3><p id="stepDescription" class="work-description">We get under the skin of your business, understand what's holding you back and define what success looks like.</p></div><div><div class="step-controls" role="group" aria-label="Explore our approach"><button class="step-btn" data-step="0" aria-pressed="true">01</button><button class="step-btn" data-step="1" aria-pressed="false">02</button><button class="step-btn" data-step="2" aria-pressed="false">03</button><button class="step-btn" data-step="3" aria-pressed="false">04</button></div><div class="step-hint">SELECT A STEP TO EXPLORE OUR PROCESS ↑</div></div></div><div class="work-right"><div class="workspace"><div class="workspace-top"><span><b></b> syntax / project space</span><span>WORKFLOW PREVIEW ↗</span></div><div class="workspace-content"><span class="workspace-kicker" id="workspaceKicker">01 — DISCOVER</span><h4 id="workspaceHeading">Understand the challenge.</h4><p id="workspaceText">A clear problem statement. Shared priorities. A plan grounded in your real needs.</p><div class="timeline" aria-label="Four stages of the process"><span class="tick current"></span><span class="tick"></span><span class="tick"></span><span class="tick"></span></div><div class="workspace-footer"><span>DISCOVER → DESIGN → BUILD → EVOLVE</span><strong id="workspaceStatus">01 / 04</strong></div></div></div><div class="workspace-caption">ILLUSTRATIVE EXPERIENCE — NOT A LIVE CLIENT SYSTEM</div></div></div>
+    </div></section>
+
+    <section class="section proof" id="why-syntax" aria-labelledby="proofHeading"><div class="wrap"><div class="proof-grid"><div class="proof-side"><span class="section-id">03 / Why Syntax</span><h2 id="proofHeading">Good people.<br>Better outcomes.</h2><p>Long-term partnerships are built by being useful, approachable and accountable, day after day.</p></div><div class="proof-quote"><div class="quote-icon" aria-hidden="true">“</div><blockquote class="quote">We now have a fit for purpose IT system that will not only support our needs now but also has created a platform to support our future growth plans.</blockquote><div class="quote-credit">— DIRECTOR, MANUFACTURING COMPANY · CLIENT TESTIMONIAL</div></div></div><div class="proof-lower"><div class="proof-point"><span class="point-num">01</span><div><b>People you can reach</b><p>Real technical experts, close to your business and invested in getting things right.</p></div></div><div class="proof-point"><span class="point-num">02</span><div><b>The whole picture</b><p>From infrastructure and security to custom applications and delivery.</p></div></div><div class="proof-point"><span class="point-num">03</span><div><b>Built for the long term</b><p>Solutions that are maintainable, adaptable and considered beyond launch day.</p></div></div></div></div></section>
+
+    <section class="contact" id="contact" aria-labelledby="contactHeading"><div class="wrap"><div class="cta-block"><div><span class="section-id">04 / Let's make progress</span><h2 id="contactHeading">Your next big move starts with a conversation.</h2></div><div class="cta-right"><p>Whether you're solving a problem today or planning something bigger, tell us what you're thinking. We'll start there.</p><a class="btn btn-dark" href="mailto:enquiries@syntaxits.com?subject=Let%27s%20talk%20about%20working%20together">Start a conversation <span class="arrow">↗</span></a><span class="cta-direct">Or call us: <a href="tel:+441332921579">01332 921 579</a></span></div></div></div></section>
+  </main>
+
+  <footer class="footer"><div class="wrap"><div class="footer-top"><div><a class="brand" href="#top" aria-label="Back to top"><span class="brand-mark" aria-hidden="true"><img src="https://www.syntaxits.com/wp-content/uploads/2016/03/logo-flat-mono-300x254.png" alt="" loading="eager" onerror="this.hidden=true;this.parentElement.classList.add('logo-fallback')"></span><span><span class="brand-text">syntax<strong>.</strong></span><span class="brand-sub">IT SERVICES</span></span></a><div class="footer-about">Thoughtful IT. Purposeful software.<br>Based in Derby, supporting businesses across the Midlands and wider UK.</div></div><div class="footer-column"><strong>Explore</strong><a href="#services">Our services</a><a href="#approach">How we work</a><a href="#why-syntax">Why Syntax</a><a href="#contact">Let's talk</a></div><div class="footer-column"><strong>Existing site</strong><a href="https://www.syntaxits.com/index.php/support/" target="_blank" rel="noopener noreferrer">IT support ↗</a><a href="https://www.syntaxits.com/index.php/cloud/" target="_blank" rel="noopener noreferrer">Cloud services ↗</a><a href="https://www.syntaxits.com/index.php/software/" target="_blank" rel="noopener noreferrer">Software ↗</a><a href="https://www.syntaxits.com/index.php/contact/" target="_blank" rel="noopener noreferrer">Contact ↗</a></div><div class="footer-column"><strong>Find us</strong><span>Unit 1 Brunel Parkway<br>Pride Park, Derby<br>DE24 8HR</span><a href="mailto:enquiries@syntaxits.com">enquiries@syntaxits.com</a><a href="tel:+441332921579">01332 921 579</a></div></div><div class="footer-bottom"><span>© <span id="year">2026</span> Syntax IT Services · Independent homepage design concept</span><span>CONCEPT ONLY · <a href="https://www.syntaxits.com/" target="_blank" rel="noopener noreferrer">VIEW CURRENT WEBSITE ↗</a></span></div></div></footer>
+
+  <dialog class="service-dialog" id="serviceDialog" aria-labelledby="dialogTitle"><button class="dialog-x" id="dialogClose" aria-label="Close service details">×</button><div class="dialog-inside"><span class="eyebrow" id="dialogKicker">OUR SERVICES</span><h2 id="dialogTitle">Managed IT support</h2><p id="dialogDescription"></p><ul id="dialogList"></ul><div class="dialog-actions"><a class="btn btn-dark" id="dialogContact" href="mailto:enquiries@syntaxits.com">Talk to us <span class="arrow">↗</span></a><a class="btn" id="dialogSource" target="_blank" rel="noopener noreferrer" href="https://www.syntaxits.com/">More on current site ↗</a></div></div></dialog>
+
+  <script>
+  (() => {
+    'use strict';
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const demoConfig = {
+      support:{heading:'Better IT, by design.',label:'A smarter way to support',title:'Ahead of the everyday.',mini1:['✓','Proactive care','Support with foresight'],mini2:['↗','Human expertise','People you can call'],strip:'THE RIGHT SUPPORT, END TO END',chips:['Remote + onsite','IT strategy','Asset management'],curve:'M0 94 C40 83 55 91 81 66 S135 79 174 48 S240 59 300 12'},
+      cloud:{heading:'Resilience without friction.',label:'Connected, secure, flexible',title:'Room to grow securely.',mini1:['◇','Cloud services','Made for your needs'],mini2:['✓','Business continuity','Plan for the unexpected'],strip:'CONNECTED AND WELL PROTECTED',chips:['Microsoft 365','Secure hosting','Backup + recovery'],curve:'M0 96 C45 87 72 45 116 66 S174 33 204 44 S268 38 300 10'},
+      software:{heading:'Your next idea, realised.',label:'Ideas made usable',title:'Designed to deliver.',mini1:['⌘','Purposeful UX','People-first products'],mini2:['↗','Built to evolve','Clean, considered code'],strip:'FROM CONCEPT TO REAL PRODUCT',chips:['Web applications','Mobile apps','Software support'],curve:'M0 101 C42 98 48 67 92 70 S156 90 187 51 S250 28 300 9'}
+    };
+    const demoTabs = [...document.querySelectorAll('.demo-tab')];
+    function showDemo(key){
+      const o = demoConfig[key]; if(!o)return;
+      document.getElementById('demoHeading').textContent=o.heading;
+      document.getElementById('demoChartLabel').textContent=o.label;
+      document.getElementById('demoChartTitle').textContent=o.title;
+      document.getElementById('miniIcon1').textContent=o.mini1[0];
+      document.getElementById('miniTitle1').textContent=o.mini1[1];
+      document.getElementById('miniDesc1').textContent=o.mini1[2];
+      document.getElementById('miniIcon2').textContent=o.mini2[0];
+      document.getElementById('miniTitle2').textContent=o.mini2[1];
+      document.getElementById('miniDesc2').textContent=o.mini2[2];
+      document.getElementById('demoStripLabel').textContent=o.strip;
+      document.getElementById('demoChips').replaceChildren(...o.chips.map(c=>{const el=document.createElement('span');el.className='dash-chip';el.textContent=c;return el;}));
+      document.getElementById('chartStroke').setAttribute('d',o.curve);
+      document.getElementById('chartArea').setAttribute('d',o.curve+' L300 110 L0 110 Z');
+      demoTabs.forEach(t=>{const selected=t.dataset.demo===key;t.setAttribute('aria-selected',String(selected));t.setAttribute('tabindex',selected?'0':'-1')});
+      document.getElementById('demoPanel').setAttribute('aria-labelledby','tab-'+key);
+    }
+    demoTabs.forEach((tab,index)=>{tab.addEventListener('click',()=>showDemo(tab.dataset.demo));tab.addEventListener('keydown',e=>{let next;if(e.key==='ArrowRight')next=(index+1)%demoTabs.length;else if(e.key==='ArrowLeft')next=(index-1+demoTabs.length)%demoTabs.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=demoTabs.length-1;else return;e.preventDefault();demoTabs[next].focus();showDemo(demoTabs[next].dataset.demo)})});
+
+    const steps=[
+      {title:'First, we listen.',description:"We get under the skin of your business, understand what's holding you back and define what success looks like.",kicker:'01 — DISCOVER',heading:'Understand the challenge.',text:'A clear problem statement. Shared priorities. A plan grounded in your real needs.'},
+      {title:'Then, we make it simple.',description:'We shape a solution with clear priorities, intuitive experiences and technology that fits rather than complicates.',kicker:'02 — DESIGN',heading:'Make every decision count.',text:'Thoughtful journeys, considered architecture and a plan that makes sense to everyone.'},
+      {title:'We build with intent.',description:'Our team turns the plan into dependable systems and products, iterating with you as things take shape.',kicker:'03 — BUILD',heading:'Turn good ideas into reality.',text:'Agile delivery, test-driven thinking and practical improvements you can see.'},
+      {title:'And keep improving.',description:'Launch is a milestone, not the end. We support, refine and adapt the solution as your business changes.',kicker:'04 — EVOLVE',heading:'Ready for what comes next.',text:'Secure, supportable solutions with a partner who stays accountable beyond delivery.'}
+    ];
+    const stepButtons=[...document.querySelectorAll('.step-btn')];
+    function showStep(index){const o=steps[index];if(!o)return;document.getElementById('stepHeading').textContent=o.title;document.getElementById('stepDescription').textContent=o.description;document.getElementById('workspaceKicker').textContent=o.kicker;document.getElementById('workspaceHeading').textContent=o.heading;document.getElementById('workspaceText').textContent=o.text;document.getElementById('workspaceStatus').textContent=String(index+1).padStart(2,'0')+' / 04';stepButtons.forEach((btn,i)=>btn.setAttribute('aria-pressed',String(i===index)));document.querySelectorAll('.timeline .tick').forEach((tick,i)=>tick.className='tick'+(i<index?' complete':i===index?' current':''));}
+    stepButtons.forEach(btn=>btn.addEventListener('click',()=>showStep(Number(btn.dataset.step))));
+
+    const serviceData={
+      support:{kicker:'01 / KEEP THINGS RUNNING',title:'Managed IT support',description:'Your teams work best when technology stays out of the way. Our managed IT services bring together responsive remote and onsite support, monitoring and ongoing guidance.',list:['Remote, onsite and proactive support','Asset and infrastructure management','Practical IT advice for the long term'],url:'https://www.syntaxits.com/index.php/support/'},
+      cloud:{kicker:'02 / MAKE IT RESILIENT',title:'Cloud & security',description:'Give your people access to what they need while keeping systems and information protected. We help plan, migrate, host, back up and safeguard business technology.',list:['Microsoft 365 migration and support','Secure hosting and private cloud','Cyber security and backup services'],url:'https://www.syntaxits.com/index.php/cloud/'},
+      software:{kicker:"03 / BUILD WHAT'S NEXT",title:'Software development',description:'From focused internal tools to feature-rich applications, we design and build software around the way your business actually works — with agile delivery and ongoing support.',list:['Web, desktop and mobile applications','Agile discovery, design and development','Application support and hosting'],url:'https://www.syntaxits.com/index.php/software/'},
+      projects:{kicker:'04 / GET THERE TOGETHER',title:'Technology projects',description:'Big changes need calm, capable delivery. We bring the right people, planning and technical knowledge together to help your project succeed.',list:['IT infrastructure and server projects','Office moves and hardware refreshes','Analysis, technical delivery and expertise'],url:'https://www.syntaxits.com/index.php/project/'}
+    };
+    const dialog=document.getElementById('serviceDialog');const closeBtn=document.getElementById('dialogClose');
+    document.querySelectorAll('[data-service]').forEach(card=>card.addEventListener('click',()=>{const o=serviceData[card.dataset.service];document.getElementById('dialogKicker').textContent=o.kicker;document.getElementById('dialogTitle').textContent=o.title;document.getElementById('dialogDescription').textContent=o.description;document.getElementById('dialogList').replaceChildren(...o.list.map(x=>{const li=document.createElement('li');li.textContent=x;return li;}));document.getElementById('dialogContact').href='mailto:enquiries@syntaxits.com?subject='+encodeURIComponent('Enquiry about '+o.title);document.getElementById('dialogSource').href=o.url;dialog.showModal();closeBtn.focus()}));
+    closeBtn.addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+    const menu=document.getElementById('mobileMenu');const toggle=document.getElementById('menuToggle');
+    toggle.addEventListener('click',()=>{const open=!menu.classList.contains('open');menu.classList.toggle('open',open);toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu')});
+    menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));
+    window.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.focus()}});
+  })();
+  </script>
+</body>
+</html>
