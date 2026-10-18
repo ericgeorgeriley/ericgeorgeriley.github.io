@@ -254,7 +254,7 @@
 .mf39-friends{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--ink-soft);line-height:1.2}.mf39-friends b{font-size:10px;color:var(--ink)}.mf39-friends i{font-style:normal;color:#acb8b4;letter-spacing:1px;font-size:17px}.mf39-friends i.on{color:var(--coral)}
 .mf39-lore{margin-top:5px!important}.mf39-clue-reference{display:grid;gap:6px}.mf39-clue-reference .mf39-clue{background:#fff;border:2px solid rgba(24,49,58,.35);padding:7px;border-radius:7px;font-size:9px;line-height:1.4}.mf39-clue-reference .mf39-clue.found{background:#e8f3de}.mf39-clue b{display:block;margin-bottom:3px}.mf39-clue small{color:var(--ink-soft);font-size:8px}.mf39-field-warning{font-size:10px;line-height:1.4;border-left:4px solid var(--sea-dark);padding:6px 9px;background:#e7f3ef;margin:9px 0}
 @media(max-width:520px){.mf39-person-header{grid-template-columns:68px minmax(0,1fr);gap:9px;top:-16px}.mf39-person-header canvas{width:68px!important;height:74px!important}.mf39-person-heading h2{font-size:13px}.mf39-friends i{font-size:14px}.mf39-person-heading p{font-size:8px}}
-/* v0.41.0 stronger shipboard minigames: Seabed Cipher and Cattleships */
+/* v0.41.2 deep polish pass: Seabed Cipher and Cattleships rebuilt again with richer art, animation and presentation */
 .mf40-vessel-header{display:grid;grid-template-columns:80px minmax(0,1fr);align-items:start;gap:12px;margin-bottom:12px}
 .mf40-vessel-header canvas{position:static!important;width:80px!important;height:86px!important;border:3px solid var(--ink);border-radius:9px;background:#d7ede5;image-rendering:pixelated}
 .mf40-vessel-header div{min-width:0}.mf40-vessel-header small{display:block;color:var(--sea-dark);font-size:8px;font-weight:1000;letter-spacing:.4px;margin-bottom:4px}
@@ -379,7 +379,7 @@
 // Content/configuration → state/simulation → voyage systems → UI/minigames → renderer.
 const SAVE_KEY='makefast_save_v1';
 const VERSION=47;
-const VERSION_LABEL='0.41.0';
+const VERSION_LABEL='0.41.2';
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 const versionTag=$('#versionTag');if(versionTag)versionTag.textContent=`v${VERSION_LABEL}`; document.title=`MakeFast v${VERSION_LABEL}`;
@@ -665,8 +665,8 @@ const CONTENT={
     speedboat_slalom:{title:'ISLAND REGATTA',icon:'≫',group:'Speedboat',engine:'steer',desc:'Three lively island racing regions, but every cup draws brand-new, seeded two-lap courses: unpredictable bends, gates, shoals and bonus routes. Powerful SURGE helps you overtake, light hazards slow or shove everyone, and only high-speed impacts against heavy objects cause spin-outs.',instruction:'STEER: DRAG, HOLD A / LEFT OR D / RIGHT. FOLLOW EACH NEW COURSE; GATES AND OBSTACLES CHANGE EVERY CUP. COLLECT STARS, DRAFT RIVALS AND PRESS SPACE / SURGE AT 60% CHARGE. LIGHT HAZARDS SLOW, SOLID OBJECTS SHOVE; HITTING HEAVY OBJECTS AT BOOST SPEED CAN SPIN YOU. RUB RAILS WITH RIVALS TO FIGHT FOR POSITION. TWO LAPS PER GENERATED COURSE · THREE RACES PER CUP.',duration:0,rewardThreshold:800,benchmark:6500,theme:'speedboat',wiki:{lore:'The three island yacht clubs change their marker buoys, windward bends and floating obstacles for every championship. Each course carries a chart number so captains can recognise a memorable run.',fasting:'A purely optional arcade activity; finishing faster or racing longer never changes your real fasting history or targets.',concept:'Every new cup generates three reproducible circuit layouts from a run seed. Each region keeps its harbour, rocky or lantern identity while bends, widths, alternating gate sides, obstacles, pickups and scenery change. Both laps share the same layout so skill and memory matter. Strong SURGE, drafting and pickups create overtaking opportunities. A lighter obstacle field leaves space to draft, trade rail bumps and overtake. Soft hazards slow boats, solid objects deflect them, and only boosted high-speed impacts on heavy obstacles spin a racer. CPU boats follow the same collision rules; scores, cup standings and personal bests remain persistent.'}},
     tug_dock:{title:'TUG DUTY',icon:'●',group:'Tugboat',engine:'tug',desc:'Work an endless harbour watch with tenders, fishing boats, ferries, coasters, barges and tankers that all carry different mass and rotational inertia.',instruction:'DRIVE THE TUG • PUSH AT THE RIGHT PART OF THE HULL • MATCH POSITION, SPEED AND HEADING • HOLD HER ON THE FENDERS',duration:28,rewardThreshold:550,benchmark:1800,theme:'tug'},
     tanker_channel:{title:'NARROW CHANNEL',icon:'═',group:'Oil Tanker',engine:'steer',desc:'Con a loaded tanker through increasingly confined tidal channels with real yaw inertia, bank effect, buoy gates and crossing traffic.',instruction:'RUDDER EARLY • COUNTER-RUDDER BEFORE THE BEND ENDS • KEEP CLEAR OF SHOALS, MARKS AND TRAFFIC',duration:0,rewardThreshold:700,benchmark:2200,theme:'tanker',heavy:true},
-    naval_cattleships:{title:'CATTLESHIPS',icon:'♈',group:'Naval Vessel',engine:'cattle',desc:'Play the patrol fleet’s famously misnamed woolly chart exercise. Call squares on a hidden flotilla, send startled sheep bobbing safely overboard, finish each boat to clear its wake, and use one shepherd’s whistle if the search goes cold.',instruction:'CALL AN UNTRIED GRID SQUARE • A HIT PUTS ONE SHEEP IN THE DRINK • FINISH A BOAT TO CLEAR THE WATER AROUND IT • ONE BLEAT WHISTLE PER ROUND REVEALS A USEFUL ROW OR COLUMN',duration:0,rewardThreshold:650,benchmark:2350,theme:'naval'},
-    research_cipher:{title:'SEABED CIPHER',icon:'◇',group:'Research Ship',engine:'cipher',desc:'Reconstruct a hidden seabed sample strip from comparative analysis. Every pass reports specimens in the exact layer and correct specimens placed in the wrong layer; crack the core in as few passes as possible.',instruction:'CHOOSE A SPECIMEN • TAP LAYERS TO BUILD YOUR CORE STRIP • ANALYSE THE PASS • GREEN = EXACT LAYER • GOLD = RIGHT SPECIMEN, WRONG LAYER • SOLVE BEFORE THE PASS BUDGET RUNS OUT',duration:0,rewardThreshold:700,benchmark:2600,theme:'research'},
+    naval_cattleships:{title:'CATTLESHIPS',icon:'♈',group:'Naval Vessel',engine:'cattle',desc:'Lay out your own woolly patrol boats, then trade calls with a CPU flotilla in a full friendly battleship duel. Hits toss sheep safely overboard, sunk boats clear their wakes, and one bleat whistle per round can help break a stalemate.',instruction:'PLACE YOUR OWN BOATS FIRST • ROTATE THE CURRENT BOAT, THEN TAP YOUR GRID TO POSITION IT • AFTER THAT, TAKE TURNS CALLING SHOTS AGAINST THE HIDDEN CPU FLOCK • A HIT PUTS A SHEEP OVERBOARD • SINK A BOAT TO CLEAR ITS WAKE • ONE BLEAT WHISTLE PER ROUND REVEALS A HELPFUL ROW OR COLUMN',duration:0,rewardThreshold:650,benchmark:2750,theme:'naval'},
+    research_cipher:{title:'SEABED CIPHER',icon:'◇',group:'Research Ship',engine:'cipher',desc:'Reconstruct a hidden seabed sample strip from comparative analysis. Build each test core on the bench, read the scanner results, then crack the full order in as few passes as possible.',instruction:'CHOOSE A SPECIMEN FROM THE TRAY • TAP THE CORE RAIL TO BUILD A PASS • ANALYSE THE PASS • GREEN = EXACT LAYER • GOLD = RIGHT SPECIMEN, WRONG LAYER • SOLVE BEFORE THE PASS BUDGET RUNS OUT',duration:0,rewardThreshold:700,benchmark:2600,theme:'research'},
     rescue_throw:{title:'LIFEBUOY!',icon:'◯',group:'Rescue Vessel',engine:'aim',desc:'Work changing rescue scenes where the ring flies in the wind, then drifts with the current until the survivor can reach it.',instruction:'PULL BACK FROM THE BOAT • RELEASE TO THROW • LEAD THE SURVIVOR • READ WIND, CURRENT, WAVES AND WRECKAGE',duration:0,rewardThreshold:500,benchmark:1900,theme:'rescue'},
     pilot_transfer:{title:'PILOT TRANSFER',icon:'⇆',group:'Pilot Boat',engine:'pilot',desc:'Work progressively harder pilot ships through changing speed, swell and wake, then choose the instant the two decks rise together for the transfer.',instruction:'MATCH SPEED • COME ALONGSIDE • THE GREEN CIRCLE GROWS AS THE SWELL CLOSES THE GAP • JUMP FOR THE DECK OR LADDER',duration:0,rewardThreshold:550,benchmark:1750,theme:'pilot'},
     dredger_scoop:{title:'DREDGER SCOOP',icon:'⌄',group:'Dredger',engine:'dredge',desc:'Operate a real suspended dredging grab through layered sediment, rock and live seabed services as the crane and vessel move in the swell.',instruction:'POSITION THE GRAB • LET IT SETTLE • CLOSE INTO CLEAN SEDIMENT • LIFT CLEAR • OPEN OVER THE HOPPER',duration:0,rewardThreshold:550,benchmark:1750,theme:'dredger'},
@@ -1040,7 +1040,7 @@ function defaultState(){
   }
 }
 
-// v0.41.0: Radar Watch and Sonar Hunt replaced by Cattleships and Seabed Cipher.
+// v0.41.2: Seabed Cipher and Cattleships received a deeper art, animation and layout pass.
 // v0.40.0: working captains, persistent ship's stores, changing port exchanges and recorded crossings.
 // Freight (v.cargo) remains separate from the captain's small bartering locker (v.tradeStock).
 const MF40_VESSEL_GOODS={
@@ -3875,8 +3875,8 @@ function arcadeDefaultHelperCue(g){
   if(id==='speedboat_slalom')return'WEAVE PORT ↔ STARBOARD · AVOID SPIN-OUTS · SURGE TO PASS';
   if(id==='tug_dock')return'PUSH WHERE YOU NEED MOVEMENT · MATCH POSITION, SPEED AND HEADING';
   if(id==='tanker_channel')return'STEER THE ACTIVE SHIP · SWITCH EARLY · BUILD A CLEAR PASS';
-  if(id==='naval_cattleships')return'CALL UNTRIED WATER · FINISH A BOAT · USE THE BLEAT WHISTLE ONLY WHEN YOU NEED IT';
-  if(id==='research_cipher')return'COMPARE PASSES · GREEN IS EXACT · GOLD IS THE RIGHT SPECIMEN IN THE WRONG LAYER';
+  if(id==='naval_cattleships')return'PLACE YOUR OWN BOATS · TRADE CALLS WITH THE PATROL CREW · SINK THEIR FLOCK FIRST';
+  if(id==='research_cipher')return'BUILD TEST CORES ON THE BENCH · GREEN IS EXACT · GOLD IS THE RIGHT SPECIMEN IN THE WRONG LAYER';
   if(id==='rescue_throw')return'PULL BACK TO AIM · LEAD WIND IN AIR AND CURRENT AFTER SPLASHDOWN';
   if(id==='pilot_transfer')return'MATCH SPEED · COME ABREAST · TRANSFER WHEN THE GAP SETTLES';
   if(id==='dredger_scoop')return'LOWER INTO CLEAN SEDIMENT · LIFT CLEAR OF SERVICES · DUMP IN HOPPER';
@@ -3894,7 +3894,7 @@ function arcadeHelperProgress(g){
   const id=g.meta?.id||g.type;
   if(id==='cargo_tetris'&&g.hold){const H=g.hold,sc=H.scenario,trim=sc.trim?Math.abs(arcadeHoldTrim(g)):0,tw=!sc.trim?'':trim<.11?' · EVEN TRIM':trim<=sc.trimLimit?' · TRIM OK':' · TRIM NEEDS WORK';return`${H.placements.length}/${H.manifest.length} stowed${tw}${H.rehandles?` · ${H.rehandles} rehandle${H.rehandles===1?'':'s'}`:''}`}
   if(id==='research_cipher'&&g.cipher)return`Pass ${Math.min(g.cipher.maxAttempts,g.cipher.attempts+1)}/${g.cipher.maxAttempts} · ${g.cipher.len} layers · ${g.cipher.allowRepeat?'repeats possible':'no repeats'}`;
-  if(id==='naval_cattleships'&&g.cattle)return`${g.cattle.hitCount}/${g.cattle.totalSheep} sheep overboard · ${g.cattle.shotsLeft} calls left${g.cattle.whistles?' · whistle ready':''}`;
+  if(id==='naval_cattleships'&&g.cattle)return g.cattle.phase==='place'?`Place boat ${Math.min((g.cattle.placeIndex||0)+1,(g.cattle.lengths||[]).length)}/${(g.cattle.lengths||[]).length} · ${g.cattle.placeHorizontal?'horizontal':'vertical'}`:`Enemy ${g.cattle.enemyHitCount||0}/${g.cattle.totalSheep} sheep overboard · Own ${g.cattle.playerHitCount||0}/${g.cattle.totalSheep}${g.cattle.whistles?' · whistle ready':''}`;
   if(id==='sub_depth')return`${Math.round(g.depthMeters||0)}m · ${arcadeLives(g)} lives`;if(id==='speedboat_slalom')return`${g.raceCircuit?.name||'Regatta'} · lap ${g.raceLap||1}/2 · race ${g.round||1}/3`;
   if(Number.isFinite(g.roundProgress)&&Number.isFinite(g.roundGoal)&&g.roundGoal>1)return`${g.roundProgress}/${g.roundGoal} · round ${g.round||1}`;
   return`Round ${g.round||1} · ${arcadeLives(g)} lives`
@@ -6402,6 +6402,7 @@ function arcadeSetupTug(g,r,d){
   g.secureMs=0;g.roundProgress=0;g.bumpCool=0;g.escapeCool=0;g.contactFlash=0;g.obstacleCool=0;g.jobStartedAt=performance.now();g.wakes=[];
   g.dockTolerance={posX:Math.max(.035,.052-(r-1)*.0012),posY:Math.max(.050,.072-(r-1)*.0015),angle:Math.max(.17,.34-(r-1)*.012),speed:Math.max(.024,.042-(r-1)*.0010)};
 }
+
 const ARCADE_CIPHER_SPECIMENS=[
   {id:'basalt',label:'BASALT',col:'#526565'},
   {id:'shell',label:'SHELL',col:'#efe3b8'},
@@ -6427,30 +6428,35 @@ function arcadeSetupCipher(g,r,d){
   const maxAttempts=len===4?Math.max(6,8-Math.floor((r-1)/4)):len===5?8:9;
   arcadeResetCommon(g,1);
   const secret=arcadeCipherSecret(g,len,poolSize,allowRepeat),starter=Array.from({length:len},(_,i)=>i%poolSize);
-  g.cipher={len,poolSize,allowRepeat,maxAttempts,secret,current:starter,selected:0,cursor:0,history:[],attempts:0,startedAt:performance.now(),scanAt:0,lastExact:0,lastShifted:0,revealUntil:0,pendingResetAt:0};
+  g.cipher={len,poolSize,allowRepeat,maxAttempts,secret,current:starter,selected:0,cursor:0,history:[],attempts:0,startedAt:performance.now(),scanAt:0,lastExact:0,lastShifted:0,revealUntil:0,pendingResetAt:0,successAt:0,pendingAdvanceAt:0,hoverSlot:-1,hoverSpecimen:-1,celebration:[]};
 }
 function arcadeCipherSelect(g,index){const C=g.cipher;if(!C)return false;C.selected=clamp(index|0,0,C.poolSize-1);arcadeSetFeedback(g,ARCADE_CIPHER_SPECIMENS[C.selected].label,'neutral',260);return true}
 function arcadeCipherPlace(g,slot){const C=g.cipher;if(!C||slot<0||slot>=C.len)return false;C.current[slot]=C.selected;C.cursor=(slot+1)%C.len;return true}
 function arcadeCipherAnalyse(g){
-  const C=g.cipher;if(!C||C.pendingResetAt)return false;const now=performance.now();
+  const C=g.cipher;if(!C||C.pendingResetAt||C.pendingAdvanceAt)return false;const now=performance.now();
   if(C.current.some(v=>!Number.isInteger(v))){arcadeSetFeedback(g,'FILL EVERY LAYER FIRST','warn',520);return false}
   const guess=C.current.slice(),result=arcadeCipherEvaluate(C.secret,guess,C.poolSize);C.history.push({guess,exact:result.exact,shifted:result.shifted,at:now});C.attempts++;C.lastExact=result.exact;C.lastShifted=result.shifted;C.scanAt=now;
   if(result.exact===C.len){
-    const elapsed=Math.max(0,(now-C.startedAt)/1000),spare=C.maxAttempts-C.attempts,fast=Math.max(0,260-elapsed*7),clean=C.attempts<=2?260:C.attempts===3?150:C.attempts===4?70:0;
-    arcadeProgress(g,1,Math.round(560+spare*105+fast+clean),C.attempts===1?'IMPOSSIBLE FIRST PASS!':`CORE CRACKED IN ${C.attempts} PASSES`);return true
+    const elapsed=Math.max(0,(now-C.startedAt)/1000),spare=C.maxAttempts-C.attempts,fast=Math.max(0,280-elapsed*8),clean=C.attempts<=2?300:C.attempts===3?180:C.attempts===4?90:0;
+    C.successAt=now;C.revealUntil=now+1650;C.pendingAdvanceAt=now+1550;C.successPoints=Math.round(620+spare*110+fast+clean);C.successText=C.attempts===1?'IMPOSSIBLE FIRST PASS!':`CORE CRACKED IN ${C.attempts} PASSES`;
+    C.celebration=Array.from({length:24},(_,i)=>({a:(Math.PI*2*i)/24,v:arcadeRand(g,.08,.20),s:arcadeRand(g,2,5),c:['#fff7de','#e5b54e','#83bf6a','#65bdd1','#df7c68'][i%5]}));
+    g.roundPauseUntil=now+1550;arcadeSetFeedback(g,C.successText,'good',1300);beep('soft');return true
   }
   if(C.attempts>=C.maxAttempts){
-    C.revealUntil=now+1250;arcadeStrike(g,'CORE PASS BUDGET USED',95);if(g.failed)g.failAt=now+1250;else{C.pendingResetAt=now+1250;g.roundPauseUntil=now+1250}return false
+    C.revealUntil=now+1350;arcadeStrike(g,'CORE PASS BUDGET USED',95);if(g.failed)g.failAt=now+1250;else{C.pendingResetAt=now+1250;g.roundPauseUntil=now+1250}return false
   }
   C.current=guess.slice();
   arcadeSetFeedback(g,`${result.exact} EXACT · ${result.shifted} DISPLACED`,result.exact?'good':'neutral',760);beep('soft');return true
 }
 function arcadeCipherGeometry(G,g){
-  const C=g.cipher,left=G.x(.055),right=G.x(.945),top=G.y(.115),bottom=G.y(.945),w=right-left,h=bottom-top;
-  const histTop=top+h*.145,histBottom=top+h*.555,currentY=top+h*.660,paletteY=top+h*.860;
-  const currentSize=Math.min(44,Math.max(26,Math.min((w*.66)/C.len,h*.14))),currentGap=Math.min(8,Math.max(3,currentSize*.14)),currentW=C.len*currentSize+(C.len-1)*currentGap,currentX=left+(w-currentW)/2;
-  const palGap=4,palCell=Math.min(46,Math.max(25,Math.min((w-palGap*(C.poolSize-1))/C.poolSize,h*.15))),palW=C.poolSize*palCell+(C.poolSize-1)*palGap,palX=left+(w-palW)/2;
-  return{left,right,top,bottom,w,h,histTop,histBottom,currentY,currentSize,currentGap,currentX,paletteY,palCell,palGap,palX}
+  const C=g.cipher,wide=G.w>=620&&G.w/Math.max(1,G.h)>1.18,left=G.x(.035),right=G.x(.965),top=G.y(.07),bottom=G.y(.948),w=right-left,h=bottom-top;
+  const headerH=Math.max(62,Math.min(84,h*.14)),footerH=wide?0:Math.max(74,Math.min(108,h*.16));
+  const histW=wide?Math.max(180,Math.min(250,w*.34)):w-12,pad=10;
+  const history={x:left+pad,y:top+headerH+6,w:histW-pad*1.2,h:(wide?h-headerH-24:w>0?h-headerH-footerH-140:0)};
+  const work={x:wide?history.x+history.w+14:left+pad,y:top+headerH+6,w:wide?(right-(history.x+history.w+14)-pad):(w-2*pad),h:wide?(h-headerH-16):(Math.max(150,h-history.h-headerH-footerH-24))};
+  const slotSize=Math.max(36,Math.min(wide?64:56,Math.floor(Math.min(work.w*.76/C.len,work.h*.22)))),slotGap=Math.max(6,Math.min(12,Math.floor(slotSize*.15))),slotW=C.len*slotSize+(C.len-1)*slotGap;
+  const trayCols=wide?Math.min(4,C.poolSize):Math.min(4,C.poolSize),trayRows=Math.ceil(C.poolSize/trayCols),trayCell=Math.max(38,Math.min(58,Math.floor(Math.min(work.w/(trayCols+.18),wide?work.h*.18:60))));
+  return{wide,left,right,top,bottom,w,h,headerH,history,work,currentX:work.x+(work.w-slotW)/2,currentY:work.y+Math.min(work.h*.46,wide?106:92),slotSize,slotGap,trayCols,trayRows,trayCell,trayX:work.x+(work.w-(trayCols*trayCell+(trayCols-1)*8))/2,trayY:wide?(work.y+work.h-trayRows*trayCell-(trayRows-1)*8-16):(bottom-footerH-trayRows*trayCell-(trayRows-1)*8-10),footerH};
 }
 function drawArcadeCipherSpecimen(index,x,y,size,alpha=1){
   const S=ARCADE_CIPHER_SPECIMENS[index]||ARCADE_CIPHER_SPECIMENS[0],q=size/26;ctx.save();ctx.globalAlpha*=alpha;ctx.translate(x,y);
@@ -6465,78 +6471,133 @@ function drawArcadeCipherSpecimen(index,x,y,size,alpha=1){
   ctx.restore()
 }
 function arcadeCipherPointer(g,type,x,y,G){
-  if(type!=='down')return;const C=g.cipher,M=arcadeCipherGeometry(G,g);
-  for(let i=0;i<C.poolSize;i++){const bx=M.palX+i*(M.palCell+M.palGap),by=M.paletteY-M.palCell*.50;if(x>=bx&&x<=bx+M.palCell&&y>=by&&y<=by+M.palCell){arcadeCipherSelect(g,i);return}}
-  for(let i=0;i<C.len;i++){const bx=M.currentX+i*(M.currentSize+M.currentGap),by=M.currentY-M.currentSize*.50;if(x>=bx&&x<=bx+M.currentSize&&y>=by&&y<=by+M.currentSize){C.cursor=i;arcadeCipherPlace(g,i);arcadeSetFeedback(g,`${ARCADE_CIPHER_SPECIMENS[C.selected].label} · LAYER ${i+1}`,'neutral',260);return}}
+  const C=g.cipher,M=arcadeCipherGeometry(G,g);
+  const updateHover=()=>{
+    C.hoverSpecimen=-1;C.hoverSlot=-1;
+    for(let i=0;i<C.poolSize;i++){
+      const col=i%M.trayCols,row=Math.floor(i/M.trayCols),bx=M.trayX+col*(M.trayCell+8),by=M.trayY+row*(M.trayCell+8);
+      if(x>=bx&&x<=bx+M.trayCell&&y>=by&&y<=by+M.trayCell){C.hoverSpecimen=i;break}
+    }
+    for(let i=0;i<C.len;i++){
+      const bx=M.currentX+i*(M.slotSize+M.slotGap),by=M.currentY-M.slotSize/2;
+      if(x>=bx&&x<=bx+M.slotSize&&y>=by&&y<=by+M.slotSize){C.hoverSlot=i;break}
+    }
+  };
+  if(type==='move'){updateHover();return}
+  if(type!=='down')return;updateHover();
+  if(C.hoverSpecimen>=0){arcadeCipherSelect(g,C.hoverSpecimen);return}
+  if(C.hoverSlot>=0){C.cursor=C.hoverSlot;arcadeCipherPlace(g,C.hoverSlot);arcadeSetFeedback(g,`${ARCADE_CIPHER_SPECIMENS[C.selected].label} · LAYER ${C.hoverSlot+1}`,'neutral',260);return}
 }
 
 const ARCADE_CATTLE_NAMES=['EWE TWO','WOOL PACKET','BELLWETHER','RAMBLER','FLEECE LIGHT','BAA-LINE','LAMB CHOPPER','SHEARWATER'];
 function arcadeCattleKey(r,c){return`${r},${c}`}
-function arcadeCattleShipAt(g,r,c){const C=g.cattle;for(const ship of C.fleet)for(const cell of ship.cells)if(cell.r===r&&cell.c===c)return{ship,cell};return null}
+function arcadeCattleShipAtFleet(fleet,r,c){for(const ship of fleet)for(const cell of ship.cells)if(cell.r===r&&cell.c===c)return{ship,cell};return null}
+function arcadeCattleCanPlace(size,fleet,length,horizontal,r,c){
+  const cells=Array.from({length},(_,i)=>({r:r+(horizontal?0:i),c:c+(horizontal?i:0)}));
+  if(cells.some(p=>p.r<0||p.c<0||p.r>=size||p.c>=size))return null;
+  for(const p of cells)for(const ship of fleet)for(const q of ship.cells)if(Math.abs(q.r-p.r)<=1&&Math.abs(q.c-p.c)<=1)return null;
+  return cells
+}
+function arcadeCattleBuildShip(id,length,horizontal,cells,name){return{id,length,horizontal,cells:cells.map(p=>({...p,hit:false})),name,sunk:false,sunkAt:0}}
 function arcadeCattlePlaceFleet(g,size,lengths){
-  const fleet=[],occupied=new Set();
-  const clear=(cells)=>{for(const p of cells)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(occupied.has(arcadeCattleKey(p.r+dr,p.c+dc)))return false;return true};
+  const fleet=[];
   for(let si=0;si<lengths.length;si++){
     const length=lengths[si];let placed=null;
-    for(let tries=0;tries<500&&!placed;tries++){
+    for(let tries=0;tries<700&&!placed;tries++){
       const horizontal=arcadeRand(g,0,1)<.5,r=Math.floor(arcadeRand(g,0,horizontal?size:size-length+1)),c=Math.floor(arcadeRand(g,0,horizontal?size-length+1:size));
-      const cells=Array.from({length},(_,i)=>({r:r+(horizontal?0:i),c:c+(horizontal?i:0),hit:false}));if(clear(cells))placed={id:si,length,horizontal,cells,name:ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length],sunk:false,sunkAt:0}
+      const cells=arcadeCattleCanPlace(size,fleet,length,horizontal,r,c);if(cells)placed=arcadeCattleBuildShip(si,length,horizontal,cells,ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length])
     }
     if(!placed){
-      outer:for(let horizontal of [true,false])for(let r=0;r<size;r++)for(let c=0;c<size;c++){const cells=Array.from({length},(_,i)=>({r:r+(horizontal?0:i),c:c+(horizontal?i:0),hit:false}));if(cells.every(p=>p.r<size&&p.c<size)&&clear(cells)){placed={id:si,length,horizontal,cells,name:ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length],sunk:false,sunkAt:0};break outer}}
+      outer:for(const horizontal of [true,false])for(let r=0;r<size;r++)for(let c=0;c<size;c++){const cells=arcadeCattleCanPlace(size,fleet,length,horizontal,r,c);if(cells){placed=arcadeCattleBuildShip(si,length,horizontal,cells,ARCADE_CATTLE_NAMES[(si+g.round*2)%ARCADE_CATTLE_NAMES.length]);break outer}}
     }
-    if(placed){fleet.push(placed);for(const p of placed.cells)occupied.add(arcadeCattleKey(p.r,p.c))}
+    if(placed)fleet.push(placed)
   }
   return fleet
 }
 function arcadeSetupCattle(g,r,d){
-  const size=r<3?6:r<6?7:8,lengths=r<3?[3,2,2]:r<6?[4,3,2]:[4,3,3,2],totalSheep=lengths.reduce((a,b)=>a+b,0),density=Math.max(.60,.74-Math.floor((r-1)/2)*.018),maxShots=Math.max(totalSheep+7,Math.ceil(size*size*density));
-  arcadeResetCommon(g,totalSheep);const fleet=arcadeCattlePlaceFleet(g,size,lengths);
-  g.cattle={size,fleet,totalSheep,hitCount:0,shots:{},shotsTaken:0,maxShots,shotsLeft:maxShots,missStreak:0,whistles:1,whistleHint:null,splashes:[],revealUntil:0,pendingResetAt:0,lastCall:null};
+  const size=r<3?6:r<6?7:8,lengths=r<3?[3,2,2]:r<6?[4,3,2,2]:[4,3,3,2],totalSheep=lengths.reduce((a,b)=>a+b,0);
+  arcadeResetCommon(g,1);
+  g.cattle={size,lengths,totalSheep,enemyFleet:arcadeCattlePlaceFleet(g,size,lengths),playerFleet:[],playerShots:{},enemyShots:{},playerHitCount:0,enemyHitCount:0,phase:'place',placeIndex:0,placeHorizontal:true,hoverOwn:null,hoverEnemy:null,currentTurn:'player',pendingCpuAt:0,pendingResetAt:0,pendingAdvanceAt:0,revealUntil:0,whistles:1,whistleHint:null,splashes:[],cpuQueue:[],cpuParity:Math.floor(arcadeRand(g,0,2)),missStreak:0,turnBannerUntil:performance.now()+1000,lastShot:null};
 }
-function arcadeCattleMarkWake(g,ship){
-  const C=g.cattle,occupied=new Set(C.fleet.flatMap(s=>s.cells.map(p=>arcadeCattleKey(p.r,p.c))));
-  for(const p of ship.cells)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const r=p.r+dr,c=p.c+dc;if(r<0||c<0||r>=C.size||c>=C.size)continue;const k=arcadeCattleKey(r,c);if(!occupied.has(k)&&!C.shots[k])C.shots[k]='clear'}
+function arcadeCattleMarkWake(fleet,shots,size,ship){
+  const occupied=new Set(fleet.flatMap(s=>s.cells.map(p=>arcadeCattleKey(p.r,p.c))));
+  for(const p of ship.cells)for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+    const r=p.r+dr,c=p.c+dc;if(r<0||c<0||r>=size||c>=size)continue;const k=arcadeCattleKey(r,c);if(!occupied.has(k)&&!shots[k])shots[k]='clear'
+  }
 }
-function arcadeCattleFailRound(g){
-  const C=g.cattle,now=performance.now();C.revealUntil=now+1250;arcadeStrike(g,'CALL SHEET EXHAUSTED',90);if(g.failed)g.failAt=now+1250;else{C.pendingResetAt=now+1250;g.roundPauseUntil=now+1250}
+function arcadeCattleBoardResult(size,fleet,shots,r,c){
+  const k=arcadeCattleKey(r,c);if(shots[k])return{repeat:true,state:shots[k]};
+  const found=arcadeCattleShipAtFleet(fleet,r,c);shots[k]=found?'hit':'miss';
+  if(!found)return{hit:false};
+  found.cell.hit=true;const sunk=found.ship.cells.every(p=>p.hit);if(sunk&&!found.ship.sunk){found.ship.sunk=true;found.ship.sunkAt=performance.now();arcadeCattleMarkWake(fleet,shots,size,found.ship)}
+  return{hit:true,sunk,ship:found.ship,cell:found.cell}
+}
+function arcadeCattleAvailableShots(size,shots){const out=[];for(let r=0;r<size;r++)for(let c=0;c<size;c++)if(!shots[arcadeCattleKey(r,c)])out.push({r,c});return out}
+function arcadeCattleQueueCpuTargets(C,shiplessHit){
+  for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){const r=shiplessHit.r+dr,c=shiplessHit.c+dc,k=arcadeCattleKey(r,c);if(r<0||c<0||r>=C.size||c>=C.size||C.enemyShots[k])continue;if(!C.cpuQueue.some(q=>q.r===r&&q.c===c))C.cpuQueue.push({r,c,prio:1})}
+}
+function arcadeCattleCpuPick(g){
+  const C=g.cattle;
+  while(C.cpuQueue.length){const shot=C.cpuQueue.shift(),k=arcadeCattleKey(shot.r,shot.c);if(!C.enemyShots[k])return shot}
+  const avail=arcadeCattleAvailableShots(C.size,C.enemyShots),parity=avail.filter(p=>((p.r+p.c)&1)===C.cpuParity),pool=parity.length?parity:avail;if(!pool.length)return null;return arcadeChoice(g,pool)
+}
+function arcadeCattleAllSunk(fleet){return fleet.every(ship=>ship.sunk)}
+function arcadeCattleFinishLoss(g,text='YOUR FLOCK IS STRANDED'){
+  const C=g.cattle,now=performance.now();C.revealUntil=now+1450;arcadeStrike(g,text,105);if(g.failed)g.failAt=now+1450;else{C.pendingResetAt=now+1450;g.roundPauseUntil=now+1450}
+}
+function arcadeCattlePlayerPlace(g,r,c){
+  const C=g.cattle;if(C.phase!=='place')return false;const idx=C.placeIndex,length=C.lengths[idx],cells=arcadeCattleCanPlace(C.size,C.playerFleet,length,C.placeHorizontal,r,c);if(!cells){arcadeSetFeedback(g,'TOO CLOSE OR OUT OF BOUNDS','warn',520);return false}
+  const ship=arcadeCattleBuildShip(idx,length,C.placeHorizontal,cells,ARCADE_CATTLE_NAMES[(idx+1)%ARCADE_CATTLE_NAMES.length]);C.playerFleet.push(ship);C.placeIndex++;beep('soft');
+  if(C.placeIndex>=C.lengths.length){C.phase='battle';C.currentTurn='player';C.turnBannerUntil=performance.now()+1200;arcadeSetFeedback(g,'FLEETS LAID · YOUR CALL','good',900);renderArcadeControls()}else arcadeSetFeedback(g,`BOAT ${C.placeIndex}/${C.lengths.length} SET · NEXT LENGTH ${C.lengths[C.placeIndex]}`,'good',680);
+  return true
+}
+function arcadeCattleAfterPlayerShot(g,res,r,c){
+  const C=g.cattle;C.lastShot={side:'enemy',r,c,at:performance.now(),hit:!!res.hit};C.splashes.push({board:'enemy',r,c,at:performance.now(),hit:!!res.hit});C.splashes=C.splashes.slice(-32);
+  if(res.hit){C.enemyHitCount++;C.missStreak=0;arcadeRoundReward(g,130+Math.min(140,(g.combo||0)*24),'SHEEP OVERBOARD');g.roundProgress=0;if(res.sunk){g.score+=220+res.ship.length*55;arcadeSetFeedback(g,`${res.ship.name} SUNK · CREW REELING THEM IN`,'good',1000)}else arcadeSetFeedback(g,'DIRECT HIT · SHEEP OVERBOARD','good',760)}
+  else{C.missStreak++;g.combo=0;g.score=Math.max(0,g.score-4);arcadeSetFeedback(g,'SPLASH · NO SHEEP THERE','neutral',520)}
+  if(arcadeCattleAllSunk(C.enemyFleet)){const now=performance.now();C.revealUntil=now+1650;C.pendingAdvanceAt=now+1500;g.roundPauseUntil=now+1500;C.turnBannerUntil=now+1400;arcadeSetFeedback(g,`PATROL FLOCK FOUNDED IN ${Object.keys(C.playerShots).length} CALLS`,'good',1300);C.successPoints=320+Math.max(0,240-Object.keys(C.enemyShots).length*12)+(C.whistles?120:0);return true}
+  C.currentTurn='cpu';C.pendingCpuAt=performance.now()+850;C.turnBannerUntil=performance.now()+850;return true
+}
+function arcadeCattleCpuFire(g){
+  const C=g.cattle;if(C.phase!=='battle'||C.currentTurn!=='cpu')return false;const shot=arcadeCattleCpuPick(g);if(!shot)return false;const res=arcadeCattleBoardResult(C.size,C.playerFleet,C.enemyShots,shot.r,shot.c);C.lastShot={side:'player',r:shot.r,c:shot.c,at:performance.now(),hit:!!res.hit};C.splashes.push({board:'player',r:shot.r,c:shot.c,at:performance.now(),hit:!!res.hit});C.splashes=C.splashes.slice(-32);
+  if(res.hit){C.playerHitCount++;arcadeCattleQueueCpuTargets(C,shot);arcadeSetFeedback(g,res.sunk?`${res.ship.name} STRANDED · REEL THEM BACK IN`:'THE PATROL CREW SCORES A HIT','warn',900)}else arcadeSetFeedback(g,'PATROL CREW MISSED','neutral',480);
+  if(arcadeCattleAllSunk(C.playerFleet))return arcadeCattleFinishLoss(g);
+  C.currentTurn='player';C.pendingCpuAt=0;C.turnBannerUntil=performance.now()+900;return true
 }
 function arcadeCattleCall(g,r,c){
-  const C=g.cattle;if(!C||C.pendingResetAt)return false;const k=arcadeCattleKey(r,c);if(C.shots[k]){arcadeSetFeedback(g,C.shots[k]==='clear'?'CREW ALREADY CLEARED THAT WAKE':'SQUARE ALREADY CALLED','neutral',340);return false}
-  C.shotsTaken++;C.shotsLeft--;C.lastCall={r,c,at:performance.now()};const found=arcadeCattleShipAt(g,r,c);C.splashes.push({r,c,at:performance.now(),hit:!!found});C.splashes=C.splashes.slice(-16);
-  if(found&&!found.cell.hit){
-    found.cell.hit=true;C.shots[k]='hit';C.hitCount++;C.missStreak=0;const pts=125+Math.min(125,(g.combo||0)*28);arcadeRoundReward(g,pts,'SHEEP OVERBOARD');g.roundProgress=C.hitCount;
-    if(found.ship.cells.every(p=>p.hit)&&!found.ship.sunk){found.ship.sunk=true;found.ship.sunkAt=performance.now();arcadeCattleMarkWake(g,found.ship);g.score+=210+found.ship.length*55;arcadeSetFeedback(g,`${found.ship.name} · ALL SHEEP OFF! CREW REELING THEM IN`,'good',1050)}
-    if(C.hitCount>=C.totalSheep){const efficiency=C.shotsLeft*22+(C.whistles?180:0)+Math.max(0,140-C.shotsTaken*2);g.score+=efficiency;arcadeAdvance(g,`FLOCK FOUND · ${C.shotsTaken} CALLS`);return true}
-  }else{
-    C.shots[k]='miss';C.missStreak++;g.combo=0;g.score=Math.max(0,g.score-6);arcadeSetFeedback(g,C.missStreak>=4&&C.whistles?'SPLASH · NO SHEEP · THE WHISTLE MAY HELP':'SPLASH · CLEAR WATER',C.missStreak>=4?'warn':'neutral',520)
-  }
-  if(C.shotsLeft<=0&&C.hitCount<C.totalSheep)arcadeCattleFailRound(g);return true
+  const C=g.cattle;if(!C||C.pendingResetAt||C.pendingAdvanceAt)return false;
+  if(C.phase==='place')return arcadeCattlePlayerPlace(g,r,c);
+  if(C.phase!=='battle'||C.currentTurn!=='player'){arcadeSetFeedback(g,'WAIT FOR THE PATROL CREW','neutral',320);return false}
+  const res=arcadeCattleBoardResult(C.size,C.enemyFleet,C.playerShots,r,c);if(res.repeat){arcadeSetFeedback(g,res.state==='clear'?'THAT WAKE IS ALREADY CLEAR':'SQUARE ALREADY CALLED','neutral',340);return false}
+  return arcadeCattleAfterPlayerShot(g,res,r,c)
 }
 function arcadeCattleWhistle(g){
-  const C=g.cattle;if(!C||!C.whistles||C.pendingResetAt){arcadeSetFeedback(g,'THE WHISTLE IS SPENT','neutral',420);return false}
-  const unhit=C.fleet.flatMap(s=>s.cells.filter(p=>!p.hit));if(!unhit.length)return false;const axis=arcadeRand(g,0,1)<.5?'row':'col',indexes=[...new Set(unhit.map(p=>axis==='row'?p.r:p.c))],index=indexes[Math.floor(arcadeRand(g,0,indexes.length))%indexes.length];
-  C.whistles=0;C.whistleHint={axis,index,until:performance.now()+3800};g.score=Math.max(0,g.score-65);const label=axis==='row'?`ROW ${String.fromCharCode(65+index)}`:`COLUMN ${index+1}`;arcadeSetFeedback(g,`BAA! · SOMETHING ANSWERS FROM ${label}`,'good',1100);beep('soft');renderArcadeControls();return true
+  const C=g.cattle;if(!C||C.phase!=='battle'||!C.whistles||C.pendingResetAt||C.pendingAdvanceAt){arcadeSetFeedback(g,'THE WHISTLE IS SPENT','neutral',420);return false}
+  const unhit=C.enemyFleet.flatMap(s=>s.cells.filter(p=>!p.hit));if(!unhit.length)return false;const rows=Array(C.size).fill(0),cols=Array(C.size).fill(0);for(const p of unhit){rows[p.r]++;cols[p.c]++}
+  const bestRow=Math.max(...rows),bestCol=Math.max(...cols),axis=bestRow===bestCol?(arcadeRand(g,0,1)<.5?'row':'col'):(bestRow>bestCol?'row':'col');const arr=axis==='row'?rows:cols,max=Math.max(...arr),picks=arr.map((v,i)=>v===max?i:null).filter(v=>v!==null),index=picks[Math.floor(arcadeRand(g,0,picks.length))%picks.length];
+  C.whistles=0;C.whistleHint={axis,index,count:arr[index],until:performance.now()+4200};g.score=Math.max(0,g.score-70);const label=axis==='row'?`ROW ${String.fromCharCode(65+index)}`:`COLUMN ${index+1}`;arcadeSetFeedback(g,`BAA! · SOMETHING ANSWERS FROM ${label}`,'good',1100);beep('soft');renderArcadeControls();return true
 }
+function arcadeCattleRotate(g){const C=g.cattle;if(!C||C.phase!=='place')return false;C.placeHorizontal=!C.placeHorizontal;arcadeSetFeedback(g,C.placeHorizontal?'ROTATING HORIZONTAL':'ROTATING VERTICAL','neutral',340);return true}
 function arcadeCattleGeometry(G,g){
-  const C=g.cattle,wide=G.w>=560&&G.w/Math.max(1,G.h)>1.35;
+  const C=g.cattle,wide=G.w>=620&&G.w/Math.max(1,G.h)>1.22,top=G.top+68,pad=18;
   if(wide){
-    const maxW=G.w*.54,maxH=G.h*.76,cell=Math.max(21,Math.min(40,Math.floor(Math.min(maxW/C.size,maxH/C.size)))),side=cell*C.size,gridX=G.x(.04)+20,gridY=G.top+28;
-    const panel={x:gridX+side+20,y:G.top+4,w:Math.max(150,G.right-(gridX+side+30)),h:G.h-8};return{wide,cell,side,gridX,gridY,panel}
+    const cell=Math.max(26,Math.min(42,Math.floor(Math.min((G.w*.38)/C.size,(G.h*.56)/C.size)))),side=cell*C.size,own={x:G.left+24,y:top,cell,side},enemy={x:G.right-side-24,y:top,cell,side};
+    return{wide,own,enemy,panel:{x:own.x+side+18,y:G.top+48,w:enemy.x-(own.x+side+36),h:G.h-66},footer:{x:G.left+18,y:G.bottom-74,w:G.w-36,h:60}}
   }
-  const gridY=G.top+30,manifestH=54,gap=12,maxW=G.w*.84,available=Math.max(C.size*20,G.bottom-gridY-manifestH-gap),cell=Math.max(20,Math.min(72,Math.floor(Math.min(maxW/C.size,available/C.size)))),side=cell*C.size,gridX=G.cx-side/2;
-  return{wide,cell,side,gridX,gridY,panel:null}
+  const availH=G.h-170,cell=Math.max(22,Math.min(36,Math.floor(Math.min((G.w*.82)/C.size,(availH/2)/C.size)))),side=cell*C.size,own={x:G.cx-side/2,y:top,cell,side},enemy={x:G.cx-side/2,y:top+side+74,cell,side};
+  return{wide,own,enemy,panel:null,footer:{x:G.left+12,y:G.bottom-60,w:G.w-24,h:48}}
 }
 function drawArcadeSheep(x,y,size,wet=false,phase=0,alpha=1){
-  ctx.save();ctx.globalAlpha*=alpha;const bob=wet?Math.sin(performance.now()*.004+phase)*size*.08:0;ctx.translate(x,y+bob);const q=size/24;
-  for(const [ox,oy,rr] of [[-6,-1,6],[0,-4,7],[6,-1,6],[-3,4,6],[4,4,6]])circle(ox*q,oy*q,rr*q,'#fff7de','#17313a',Math.max(1,q));
-  circle(8*q,0,5*q,'#4d5550','#17313a',Math.max(1,q));poly([[8*q,-4*q],[12*q,-8*q],[13*q,-2*q]],'#4d5550','#17313a',1);circle(10*q,-1*q,1*q,'#fff7de');
-  if(wet){for(let i=0;i<3;i++)circle((-8+i*8)*q,8*q,1.4*q,'rgba(220,247,248,.70)')}
-  ctx.restore()
+  ctx.save();ctx.globalAlpha*=alpha;const bob=wet?Math.sin(performance.now()*.004+phase)*size*.08:0,spr=animalSprite('sheep',Math.floor(performance.now()/220+phase)%4,false),scale=Math.max(.70,size/18),w=spr.width*scale,h=spr.height*scale;ctx.imageSmoothingEnabled=false;ctx.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*.74+bob),Math.round(w),Math.round(h));if(wet){for(let i=0;i<4;i++)circle(x+(-9+i*6)*(size/24),y+7+bob+Math.sin(phase+i)*1.1,1.6*(size/24),'rgba(220,247,248,.72)')}ctx.restore()
 }
 function arcadeCattlePointer(g,type,x,y,G){
-  if(type!=='down')return;const C=g.cattle,M=arcadeCattleGeometry(G,g);if(x<M.gridX||y<M.gridY||x>=M.gridX+M.side||y>=M.gridY+M.side)return;const c=Math.floor((x-M.gridX)/M.cell),r=Math.floor((y-M.gridY)/M.cell);arcadeCattleCall(g,r,c)
+  const C=g.cattle,M=arcadeCattleGeometry(G,g),cellFrom=board=>x>=board.x&&x<board.x+board.side&&y>=board.y&&y<board.y+board.side?{c:Math.floor((x-board.x)/board.cell),r:Math.floor((y-board.y)/board.cell)}:null;
+  const own=cellFrom(M.own),enemy=cellFrom(M.enemy);if(type==='move'){C.hoverOwn=own;C.hoverEnemy=enemy;return}
+  if(type!=='down')return;C.hoverOwn=own;C.hoverEnemy=enemy;
+  if(C.phase==='place'&&own){arcadeCattleCall(g,own.r,own.c);return}
+  if(C.phase==='battle'&&enemy){arcadeCattleCall(g,enemy.r,enemy.c)}
 }
+
 function arcadeNewAimTarget(g){
   const r=g.round||1,R=g.rescue||{},cycle=(r-1)%7,tier=Math.floor((r-1)/7),scale=1+Math.min(.65,tier*.14);
   const defs=[
@@ -7707,73 +7768,57 @@ function arcadeRenderTug(g,ts,G,dt,running){
   const statusY=G.y(.895),labels=[['POSITION',D.posOK],['SPEED',D.speedOK],['HEADING',D.angleOK]];for(let i=0;i<3;i++){const x=G.x(.18+i*.22);roundedRect(x,statusY,94,22,6,labels[i][1]?'#dff1cf':'rgba(255,247,222,.88)',labels[i][1]?'#4f8b56':'#17313a',2);pxText(labels[i][0],x+47,statusY+14,labels[i][1]?'#315b42':'#17313a',7,'center')}
   arcadeSetHelperCue(g,D.posOK&&D.angleOK&&D.speedOK?'HOLD HER ON THE FENDERS':D.posOK&&!D.angleOK?'WORK THE BOW OR STERN TO LINE HER UP':!D.speedOK&&D.posOK?'EASE OFF — TOO MUCH WAY ON':'PUSH AT THE HULL WHERE YOU NEED THE MOVEMENT',`${P.tonnes}t · berth ${H.parked.length+1}/${arcadeTugCapacity(g)}`);
 }
-function arcadeRenderCipher(g,ts,G,dt,running){
-  const C=g.cipher;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}const M=arcadeCipherGeometry(G,g);
-  // Research desk and core archive.
-  roundedRect(M.left,M.top,M.w,M.h,12,'#213f46','#102a31',3);rect(M.left+7,M.top+7,M.w-14,M.h-14,'#315961');
-  for(let i=0;i<13;i++){const y=M.top+18+i*(M.h-36)/12;line(M.left+10,y,M.right-10,y,'rgba(220,240,230,.045)',1)}
-  roundedRect(M.left+12,M.top+10,M.w-24,M.h*.105,7,'rgba(255,247,222,.94)','#17313a',2);
-  pxText('SEABED CORE ARCHIVE',M.left+22,M.top+30,'#17313a',9,'left');
-  pxText(`${C.len} LAYERS · ${C.poolSize} SPECIMENS · ${C.allowRepeat?'REPEATS POSSIBLE':'NO REPEATS'}`,M.right-22,M.top+30,'#42616a',7,'right');
-  const reveal=C.revealUntil>ts;
-  const secretSize=Math.min(26,(M.w*.36)/C.len),secretGap=3,secretW=C.len*secretSize+(C.len-1)*secretGap,secretX=M.left+M.w*.50-secretW/2;
-  for(let i=0;i<C.len;i++){const x=secretX+i*(secretSize+secretGap),y=M.top+M.h*.105-secretSize*.15;roundedRect(x,y-secretSize*.5,secretSize,secretSize,5,reveal?'#fff7de':'#17313a',reveal?'#df7c68':'#829795',1.5);if(reveal)drawArcadeCipherSpecimen(C.secret[i],x+secretSize/2,y,secretSize*.68,.90);else pxText('?',x+secretSize/2,y+4,'#fff7de',9,'center')}
-  // Previous passes: the same visual grammar every time, so deductions become readable at a glance.
-  const history=C.history.slice(-6),rows=Math.max(1,history.length),rowH=Math.min(44,(M.histBottom-M.histTop)/Math.max(1,rows));
-  for(let ri=0;ri<history.length;ri++){
-    const H=history[history.length-1-ri],y=M.histBottom-(ri+.5)*rowH,slot=Math.min(27,rowH*.62),gap=3,total=H.guess.length*slot+(H.guess.length-1)*gap,x0=M.left+20;
-    pxText(`P${C.history.length-ri}`,x0,y+3,'#d7e6dc',7,'left');const sx=x0+28;
-    for(let i=0;i<H.guess.length;i++){roundedRect(sx+i*(slot+gap),y-slot/2,slot,slot,4,'rgba(255,247,222,.90)','#17313a',1);drawArcadeCipherSpecimen(H.guess[i],sx+i*(slot+gap)+slot/2,y,slot*.68,.93)}
-    const fx=sx+total+13,pip=7,pips=[];for(let i=0;i<H.exact;i++)pips.push('#83bf6a');for(let i=0;i<H.shifted;i++)pips.push('#e5b54e');while(pips.length<C.len)pips.push('#455b60');
-    for(let i=0;i<pips.length;i++){const col=i%Math.ceil(C.len/2),row=Math.floor(i/Math.ceil(C.len/2));circle(fx+col*(pip+3),y-5+row*(pip+3),pip/2,pips[i],'#17313a',1)}
-    pxText(`${H.exact} EXACT · ${H.shifted} SHIFTED`,M.right-18,y+3,H.exact===C.len?'#9fd28c':'#d7e6dc',7,'right')
-  }
-  if(!history.length)pxText('FIRST PASS IS YOUR BASELINE — CHANGE ONLY WHAT THE ANALYSIS TEACHES YOU',G.cx,(M.histTop+M.histBottom)/2,'rgba(255,247,222,.68)',7,'center');
-  line(M.left+14,M.currentY-M.currentSize*.72,M.right-14,M.currentY-M.currentSize*.72,'rgba(255,247,222,.16)',1);
-  pxText(`BUILD PASS ${Math.min(C.maxAttempts,C.attempts+1)} / ${C.maxAttempts}`,G.cx,M.currentY-M.currentSize*.72-8,'#fff7de',8,'center');
-  for(let i=0;i<C.len;i++){
-    const x=M.currentX+i*(M.currentSize+M.currentGap),sel=i===C.cursor;roundedRect(x,M.currentY-M.currentSize/2,M.currentSize,M.currentSize,6,sel?'#fff0c8':'#fff7de',sel?'#e5b54e':'#17313a',sel?3:2);drawArcadeCipherSpecimen(C.current[i],x+M.currentSize/2,M.currentY,M.currentSize*.72,1);pxText(String(i+1),x+M.currentSize/2,M.currentY+M.currentSize*.39,'#42616a',5,'center')
-  }
-  const scanAge=ts-C.scanAt;if(scanAge>=0&&scanAge<520){const q=scanAge/520,x=M.currentX+q*(C.len*M.currentSize+(C.len-1)*M.currentGap);line(x,M.currentY-M.currentSize*.62,x,M.currentY+M.currentSize*.62,`rgba(101,189,209,${1-q})`,3)}
-  pxText(`SPECIMEN TRAY · SELECTED: ${ARCADE_CIPHER_SPECIMENS[C.selected].label}`,G.cx,M.paletteY-M.palCell*.68,'#d7e6dc',7,'center');
-  for(let i=0;i<C.poolSize;i++){const x=M.palX+i*(M.palCell+M.palGap),y=M.paletteY-M.palCell*.50,sel=i===C.selected;roundedRect(x,y,M.palCell,M.palCell,5,sel?'#dff1cf':'rgba(255,247,222,.92)',sel?'#83bf6a':'#17313a',sel?3:2);drawArcadeCipherSpecimen(i,x+M.palCell/2,y+M.palCell/2,M.palCell*.64,1);pxText(String(i+1),x+M.palCell/2,y+M.palCell-4,'#42616a',5,'center')}
-  const cue=C.attempts===0?'START WITH THE BASELINE · ANALYSE IT · USE THE COUNTS TO REBUILD THE CORE':C.lastExact?`KEEP ${C.lastExact} EXACT LAYER${C.lastExact===1?'':'S'} · REPOSITION THE ${C.lastShifted} DISPLACED SAMPLE${C.lastShifted===1?'':'S'}`:'NO EXACT LAYERS YET · CHANGE THE ARRANGEMENT, NOT JUST ONE SLOT';
-  arcadeSetHelperCue(g,cue,`Pass ${Math.min(C.maxAttempts,C.attempts+1)}/${C.maxAttempts} · green exact · gold correct specimen / wrong layer`)
-}
 
+function drawArcadeCipherLamp(x,y,on=false,col='#83bf6a'){circle(x,y,5,on?col:'#425860','#17313a',1);if(on)circle(x,y,9,`rgba(${col==='#83bf6a'?'131,191,106':col==='#e5b54e'?'229,181,78':'101,189,209'},.18)`)}
+function drawArcadeCipherTag(x,y,w,textA,textB,tint='#fff7de'){roundedRect(x,y,w,26,6,tint,'#17313a',1);pxText(textA,x+8,y+10,'#17313a',6,'left');pxText(textB,x+8,y+20,'#42616a',5.5,'left')}
+function arcadeRenderCipher(g,ts,G,dt,running){
+  const C=g.cipher;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}if(C.pendingAdvanceAt&&ts>=C.pendingAdvanceAt&&!g.failed){const pts=C.successPoints||0,txt=C.successText||'CORE CRACKED';C.pendingAdvanceAt=0;arcadeProgress(g,1,pts,txt);return}
+  const M=arcadeCipherGeometry(G,g),reveal=C.revealUntil>ts,success=!!(C.successAt&&ts-C.successAt<1500),scanT=Math.max(0,Math.sin(ts*.008));
+  roundedRect(M.left,M.top,M.w,M.h,14,'#1c3840','#102a31',3);roundedRect(M.left+7,M.top+7,M.w-14,M.h-14,12,'#294e57','#17313a',2);
+  for(let i=0;i<14;i++){const y=M.top+18+i*(M.h-36)/13;line(M.left+12,y,M.right-12,y,'rgba(255,255,255,.035)',1)}
+  roundedRect(M.left+12,M.top+10,M.w-24,M.headerH-12,10,'rgba(255,247,222,.96)','#17313a',2);
+  pxText('SEABED CIPHER LAB',M.left+24,M.top+28,'#17313a',10,'left');pxText(`${C.len} LAYERS · ${C.poolSize} SPECIMENS · ${C.allowRepeat?'REPEATS POSSIBLE':'NO REPEATS'}`,M.right-24,M.top+28,'#42616a',7,'right');pxText(`PASS ${Math.min(C.maxAttempts,C.attempts+1)}/${C.maxAttempts}`,M.left+24,M.top+44,'#42616a',7,'left');pxText('RESEARCH DECK · CORE ANALYSIS BENCH',M.right-24,M.top+44,'#42616a',7,'right');
+  const portX=M.left+54,portY=M.top+M.headerH+24;circle(portX,portY,18,'#476771','#17313a',2);circle(portX,portY,14,'#65bdd1');for(let i=0;i<3;i++)line(portX-11+i*7,portY+3+i,portX+9-i*2,portY+3+i,'rgba(255,255,255,.18)',1);drawPixelSprite(seaSprite('gull',Math.floor(ts/220)%3),portX+2,portY-1,.85,.5,.5);
+  drawPixelSprite(residentSprite('cipher-tech','#527da0','#e5b54e','maker',0,Math.floor(ts/220)%2,false),M.left+96,M.top+M.headerH+40,1.24,.5,.88);drawPixelSprite(residentSprite('cipher-observer','#83bf6a','#e5b54e','maker',1,Math.floor(ts/250)%2,true),M.right-92,M.top+M.headerH+40,1.18,.5,.88);drawPixelSprite(createBoatSprite('cabin',defaultBoatAppearance('cabin'),false),M.left+142,M.top+M.headerH+22,.40,.5,.74);
+  drawArcadeCipherTag(M.right-148,M.top+M.headerH+8,126,'ARCHIVE DRAWER',success?'SOLVED CORE':'LOCKED CORE',success?'#dff1cf':'#fff7de');
+  roundedRect(M.history.x,M.history.y,M.history.w,M.history.h,10,'rgba(15,33,38,.35)','#17313a',2);pxText('PASS LOG',M.history.x+12,M.history.y+18,'#fff7de',8,'left');pxText('LATEST COMPARATIVE SCANS',M.history.x+M.history.w-12,M.history.y+18,'#d7e6dc',6,'right');
+  const history=C.history.slice(-5),innerY=M.history.y+30,rowH=Math.max(46,Math.min(62,(M.history.h-40)/Math.max(1,history.length||3)));
+  if(!history.length){pxText('BUILD A TEST CORE ON THE RIGHT,',M.history.x+M.history.w/2,innerY+26,'rgba(255,247,222,.74)',7,'center');pxText('THEN ANALYSE THE RESULT HERE.',M.history.x+M.history.w/2,innerY+40,'rgba(255,247,222,.74)',7,'center');for(let i=0;i<3;i++)drawArcadeCipherLamp(M.history.x+48+i*16,innerY+22,false,'#65bdd1')}
+  for(let i=0;i<history.length;i++){
+    const H=history[history.length-1-i],y=innerY+i*rowH;roundedRect(M.history.x+10,y,M.history.w-20,rowH-8,8,'rgba(255,247,222,.94)','#17313a',1);pxText(`P${C.history.length-i}`,M.history.x+18,y+15,'#17313a',7,'left');
+    const chip=Math.max(20,Math.min(28,rowH*.44)),gap=3,start=M.history.x+46;
+    for(let s=0;s<H.guess.length;s++){roundedRect(start+s*(chip+gap),y+6,chip,chip,4,'#fff7de','#17313a',1);drawArcadeCipherSpecimen(H.guess[s],start+s*(chip+gap)+chip/2,y+6+chip/2,chip*.68,.96)}
+    const feedX=M.history.x+M.history.w-70;for(let p=0;p<C.len;p++){const col=p%Math.ceil(C.len/2),row=Math.floor(p/Math.ceil(C.len/2));const fill=p<H.exact?'#83bf6a':p<H.exact+H.shifted?'#e5b54e':'#455b60';circle(feedX+col*11,y+13+row*11,4,fill,'#17313a',1)}
+    pxText(`${H.exact} exact`,feedX+30,y+15,H.exact===C.len?'#4f8b56':'#42616a',6,'left');pxText(`${H.shifted} displaced`,feedX+30,y+28,'#42616a',6,'left')
+  }
+  const railX=M.currentX,railY=M.currentY,benchW=M.work.w-24;roundedRect(M.work.x+12,M.work.y+16,benchW,Math.max(102,M.slotSize+56),10,'rgba(255,247,222,.10)','#17313a',2);pxText('ACTIVE CORE RAIL',M.work.x+24,M.work.y+31,'#fff7de',8,'left');pxText(success?'RECONSTRUCTION COMPLETE':reveal?'REFERENCE CORE REVEALED':'BUILD THE NEXT TEST CORE',M.work.x+benchW-10,M.work.y+31,success?'#9fd28c':'#d7e6dc',7,'right');
+  roundedRect(railX-18,railY-M.slotSize*.74,(C.len*M.slotSize)+(C.len-1)*M.slotGap+36,M.slotSize+24,12,'rgba(22,36,40,.45)','#17313a',2);
+  for(let i=0;i<C.len;i++){
+    const x=railX+i*(M.slotSize+M.slotGap),sel=i===C.cursor,hover=i===C.hoverSlot;roundedRect(x,railY-M.slotSize/2,M.slotSize,M.slotSize,8,success?'#fff7de':sel?'#fff0c8':'#fff7de',success?'#83bf6a':hover?'#65bdd1':sel?'#e5b54e':'#17313a',success?3:(hover?3:2));drawArcadeCipherSpecimen(reveal?C.secret[i]:C.current[i],x+M.slotSize/2,railY,M.slotSize*.72,1);pxText(String(i+1),x+M.slotSize/2,railY+M.slotSize*.40,'#42616a',5,'center');drawArcadeCipherLamp(x+M.slotSize/2,railY-M.slotSize*.68,success||i<C.lastExact,'#83bf6a')
+  }
+  if(!success){const q=(Math.sin(ts*.006)+1)*.5,scanX=railX+q*((C.len*M.slotSize)+(C.len-1)*M.slotGap);roundedRect(scanX-10,railY-M.slotSize*.80,20,M.slotSize+18,6,`rgba(101,189,209,${.10+.10*scanT})`,'rgba(101,189,209,.35)',1);line(scanX,railY-M.slotSize*.76,scanX,railY+M.slotSize*.72,`rgba(101,189,209,${.55+.35*scanT})`,2)}
+  const benchBaseY=railY+M.slotSize*.62;roundedRect(M.work.x+20,benchBaseY,benchW-16,16,5,'#9f744f','#17313a',1);for(let i=0;i<6;i++)rect(M.work.x+28+i*((benchW-44)/6),benchBaseY+2,12,12,'#7b5639');
+  const trayTop=railY+M.slotSize*.95;roundedRect(M.work.x+12,trayTop,benchW,Math.max(98,(M.trayRows*M.trayCell)+(M.trayRows-1)*8+32),10,'rgba(15,33,38,.35)','#17313a',2);pxText(`SPECIMEN TRAY · SELECTED ${ARCADE_CIPHER_SPECIMENS[C.selected].label}`,M.work.x+24,trayTop+18,'#fff7de',7,'left');pxText('TAP A SPECIMEN, THEN TAP A LAYER',M.work.x+benchW-10,trayTop+18,'#d7e6dc',6,'right');
+  for(let i=0;i<C.poolSize;i++){
+    const col=i%M.trayCols,row=Math.floor(i/M.trayCols),x=M.trayX+col*(M.trayCell+8),y=M.trayY+row*(M.trayCell+8),sel=i===C.selected,hover=i===C.hoverSpecimen;roundedRect(x,y,M.trayCell,M.trayCell,7,sel?'#dff1cf':'rgba(255,247,222,.94)',sel?'#83bf6a':hover?'#65bdd1':'#17313a',hover||sel?3:2);drawArcadeCipherSpecimen(i,x+M.trayCell/2,y+M.trayCell/2-3,M.trayCell*.60,1);pxText(String(i+1),x+M.trayCell/2,y+M.trayCell-6,'#42616a',5,'center')
+  }
+  drawArcadeCipherTag(M.work.x+18,M.work.y+M.work.h-66,Math.min(146,benchW*.42),'RESEARCH NOTE',success?'Sequence confirmed':C.lastExact?`Hold ${C.lastExact} exact layer${C.lastExact===1?'':'s'}`:'Use a baseline pass',success?'#dff1cf':'#fff7de');
+  drawArcadeCipherTag(M.work.x+benchW-158,M.work.y+M.work.h-66,140,'SCANNER OUTPUT',success?'+ SOLVE BONUS':C.lastShifted?`${C.lastShifted} displaced sample${C.lastShifted===1?'':'s'}`:'No displaced matches',success?'#e7f6cf':'#fff7de');
+  const note=success?`Perfect reconstruction. Fresh tray preparing...`:C.attempts===0?'Start with one baseline pass, then let the exact/displaced counts guide every change.':C.lastExact?`Keep the exact layers locked and rearrange the displaced specimens around them.`:'No exact layers yet — change the arrangement more boldly.';pxText(note,M.work.x+22,M.work.y+M.work.h-26,success?'#315b42':'#d7e6dc',6.2,'left');
+  if(success){const cx=M.work.x+M.work.w/2,cy=M.work.y+M.work.h/2,p=clamp((ts-C.successAt)/1200,0,1);for(const part of C.celebration||[]){const dist=part.v*95*p;circle(cx+Math.cos(part.a)*dist,cy+Math.sin(part.a)*dist,part.s,part.c,'rgba(0,0,0,0)',1)}roundedRect(cx-126,M.top+M.headerH+12,252,28,8,'rgba(223,241,207,.98)','#4f8b56',2);pxText(C.successText||'CORE CRACKED',cx,M.top+M.headerH+31,'#315b42',8,'center')}
+  const cue=success?'CORE CRACKED · THE NEXT SAMPLE TRAY IS COMING UP':C.attempts===0?'Start with a baseline pass, then chase the exact and displaced counts.':'Green means exact · gold means right specimen, wrong layer.';
+  arcadeSetHelperCue(g,cue,`Pass ${Math.min(C.maxAttempts,C.attempts+1)}/${C.maxAttempts} · exact matches lock layers · displaced samples should move`)
+}
+function drawArcadeCattleShipCard(ship,x,y,w,player,ts){roundedRect(x,y,w,24,6,'rgba(255,247,222,.9)','#17313a',1);pxText(ship.name,x+8,y+9,'#17313a',6.5,'left');pxText(ship.sunk?(player?'REELING IN':'SUNK'):`${ship.cells.filter(p=>p.hit).length}/${ship.length}`,x+w-8,y+9,ship.sunk?'#4f8b56':'#42616a',6,'right');const segW=Math.min(18,(w-28)/Math.max(1,ship.length));for(let i=0;i<ship.length;i++){const p=ship.cells[i],cx=x+16+i*segW,cy=y+17;roundedRect(cx-6,cy-3,12,5,2,player?'#8d613f':'#a86d45','#17313a',1);drawArcadeSheep(cx,cy-3,p.hit?11:10,p.hit,i,p.hit?1:(player?1:.75));}}
 function arcadeRenderCattle(g,ts,G,dt,running){
-  const C=g.cattle;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}const M=arcadeCattleGeometry(G,g),reveal=C.revealUntil>ts;
-  // Chart table / water board.
-  roundedRect(M.gridX-24,M.gridY-24,M.side+46,M.side+46,11,'#d7c797','#17313a',3);rect(M.gridX,M.gridY,M.side,M.side,'#2f8198');
-  const hint=C.whistleHint&&C.whistleHint.until>ts?C.whistleHint:null;
-  for(let r=0;r<C.size;r++)for(let c=0;c<C.size;c++){
-    const x=M.gridX+c*M.cell,y=M.gridY+r*M.cell,k=arcadeCattleKey(r,c),state=C.shots[k];
-    const hinted=hint&&((hint.axis==='row'&&hint.index===r)||(hint.axis==='col'&&hint.index===c));rect(x+1,y+1,M.cell-2,M.cell-2,hinted?'rgba(229,181,78,.26)':((r+c)%2?'rgba(255,255,255,.035)':'rgba(0,0,0,.035)'));
-    if(state==='miss'){circle(x+M.cell/2,y+M.cell/2,M.cell*.16,'rgba(0,0,0,0)','rgba(226,246,239,.80)',2);circle(x+M.cell/2-5,y+M.cell/2+4,2,'rgba(226,246,239,.55)')}
-    else if(state==='clear'){circle(x+M.cell/2,y+M.cell/2,1.8,'rgba(226,246,239,.36)')}
-  }
-  // Completed boats are finally revealed; failed rounds briefly reveal the remaining fleet too.
-  for(const ship of C.fleet){
-    if(!(ship.sunk||reveal))continue;const first=ship.cells[0],last=ship.cells[ship.cells.length-1],cx=M.gridX+(first.c+last.c+1)*M.cell/2,cy=M.gridY+(first.r+last.r+1)*M.cell/2,w=ship.horizontal?ship.length*M.cell*.88:M.cell*.58,h=ship.horizontal?M.cell*.58:ship.length*M.cell*.88;
-    roundedRect(cx-w/2,cy-h/2,w,h,Math.min(9,M.cell*.18),ship.sunk?'#a86d45':'rgba(168,109,69,.48)','#17313a',2);if(ship.horizontal){poly([[cx+w/2,cy],[cx+w/2-M.cell*.22,cy-h/2],[cx+w/2-M.cell*.22,cy+h/2]],ship.sunk?'#c49362':'rgba(196,147,98,.45)','#17313a',1)}else{poly([[cx,cy-h/2],[cx-w/2,cy-h/2+M.cell*.22],[cx+w/2,cy-h/2+M.cell*.22]],ship.sunk?'#c49362':'rgba(196,147,98,.45)','#17313a',1)}
-  }
-  // Grid lines and labels stay crisp above the hull art.
-  for(let i=0;i<=C.size;i++){line(M.gridX+i*M.cell,M.gridY,M.gridX+i*M.cell,M.gridY+M.side,'rgba(23,49,58,.72)',1);line(M.gridX,M.gridY+i*M.cell,M.gridX+M.side,M.gridY+i*M.cell,'rgba(23,49,58,.72)',1)}
-  for(let i=0;i<C.size;i++){pxText(String(i+1),M.gridX+(i+.5)*M.cell,M.gridY-8,'#17313a',7,'center');pxText(String.fromCharCode(65+i),M.gridX-10,M.gridY+(i+.5)*M.cell+3,'#17313a',7,'center')}
-  for(const ship of C.fleet)for(const p of ship.cells){
-    const k=arcadeCattleKey(p.r,p.c);if(!p.hit&&!reveal)continue;const x=M.gridX+(p.c+.5)*M.cell,y=M.gridY+(p.r+.5)*M.cell,wet=p.hit;drawArcadeSheep(x,y,Math.min(28,M.cell*.62),wet,p.r*3+p.c,p.hit?1:.48);if(p.hit)circle(x,y,M.cell*.30,'rgba(0,0,0,0)','rgba(255,247,222,.35)',1)
-  }
-  for(const P of C.splashes){const age=(ts-P.at)/720;if(age<0||age>1)continue;const x=M.gridX+(P.c+.5)*M.cell,y=M.gridY+(P.r+.5)*M.cell;circle(x,y,M.cell*(.12+age*.34),'rgba(0,0,0,0)',`rgba(225,246,239,${.55*(1-age)})`,2)}C.splashes=C.splashes.filter(p=>ts-p.at<760);
-  if(hint){const q=.72+.20*Math.sin(ts*.008),label=hint.axis==='row'?`BAA! ROW ${String.fromCharCode(65+hint.index)}`:`BAA! COLUMN ${hint.index+1}`;if(hint.axis==='row')roundedRect(M.gridX+5,M.gridY+hint.index*M.cell+4,M.side-10,M.cell-8,5,`rgba(229,181,78,${.10*q})`,'#e5b54e',2);else roundedRect(M.gridX+hint.index*M.cell+4,M.gridY+5,M.cell-8,M.side-10,5,`rgba(229,181,78,${.10*q})`,'#e5b54e',2);pxText(label,M.gridX+M.side/2,M.gridY+M.side+19,'#7b602b',7,'center')}
-  if(M.wide){
-    const P=M.panel;roundedRect(P.x,P.y,P.w,P.h,9,'rgba(255,247,222,.94)','#17313a',2);pxText('FLOCK MANIFEST',P.x+12,P.y+19,'#17313a',9,'left');pxText(`${C.shotsLeft} CALLS LEFT`,P.x+12,P.y+37,C.shotsLeft<=5?'#c55c57':'#42616a',7,'left');pxText(C.whistles?'1 BLEAT WHISTLE READY':'WHISTLE SPENT',P.x+12,P.y+52,C.whistles?'#4f8b56':'#8a927f',6,'left');let yy=P.y+72,rowGap=Math.min(40,Math.max(25,(P.h-142)/Math.max(1,C.fleet.length)));
-    for(const ship of C.fleet){pxText(ship.name,P.x+12,yy,'#17313a',7,'left');for(let i=0;i<ship.length;i++){const hit=ship.cells[i].hit;circle(P.x+15+i*15,yy+12,5,hit?'#fff7de':'#65bdd1','#17313a',1);if(hit)circle(P.x+17+i*15,yy+11,2,'#4d5550')}pxText(ship.sunk?'CREW REELING IN':`${ship.cells.filter(p=>p.hit).length}/${ship.length}`,P.x+P.w-10,yy+13,ship.sunk?'#4f8b56':'#42616a',6,'right');yy+=rowGap}
-    roundedRect(P.x+10,P.y+P.h-61,P.w-20,48,6,'#d9eef2','#17313a',1);pxText('FRIENDLY EXERCISE',P.x+P.w/2,P.y+P.h-43,'#17313a',7,'center');pxText('SHEEP FLOAT. CREWS REEL THEM BACK IN.',P.x+P.w/2,P.y+P.h-27,'#42616a',5.5,'center')
-  }else{
-    const y=M.gridY+M.side+31;roundedRect(G.x(.08),y,G.w*.84,54,7,'rgba(255,247,222,.94)','#17313a',2);pxText(`FLOCK ${C.hitCount}/${C.totalSheep} · CALLS ${C.shotsLeft}/${C.maxShots}`,G.x(.105),y+17,'#17313a',7,'left');let xx=G.x(.105);for(const ship of C.fleet){pxText(ship.sunk?'✓':'•',xx,y+37,ship.sunk?'#4f8b56':'#42616a',8,'left');for(let i=0;i<ship.length;i++)circle(xx+12+i*9,y+34,3,ship.cells[i].hit?'#fff7de':'#65bdd1','#17313a',1);xx+=22+ship.length*9}
-  }
-  const cue=C.shotsLeft<=5?'MAKE THE LAST CALLS COUNT · FINISH ANY BOAT YOU HAVE ALREADY FOUND':C.missStreak>=3&&C.whistles?'THE SEARCH HAS GONE COLD · YOUR BLEAT WHISTLE CAN NARROW IT TO A ROW OR COLUMN':'CALL AN UNTRIED SQUARE · AFTER A HIT, SEARCH ALONG THAT BOAT';
-  arcadeSetHelperCue(g,cue,`${C.hitCount}/${C.totalSheep} sheep overboard · ${C.shotsLeft} calls left${C.whistles?' · whistle ready':''}`)
+  const C=g.cattle;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){setupArcadeRound(g,false);return}if(C.pendingAdvanceAt&&ts>=C.pendingAdvanceAt&&!g.failed){const pts=C.successPoints||0;C.pendingAdvanceAt=0;arcadeProgress(g,1,pts,`FLOCK FOUND · ${Object.keys(C.playerShots).length} CALLS`);return}if(C.pendingCpuAt&&ts>=C.pendingCpuAt&&!g.failed){arcadeCattleCpuFire(g)}
+  const M=arcadeCattleGeometry(G,g),reveal=C.revealUntil>ts,turnPulse=.72+.28*Math.sin(ts*.008);
+  const drawBoard=(board,label,fleet,shots,showShips,hover,playerSide)=>{roundedRect(board.x-18,board.y-24,board.side+36,board.side+46,12,'#d7c797','#17313a',3);rect(board.x,board.y,board.side,board.side,'#2f8198');for(let y=board.y+8;y<board.y+board.side;y+=12)line(board.x+5,y,board.x+board.side-5,y,'rgba(255,255,255,.06)',1);pxText(label,board.x+board.side/2,board.y-10,'#17313a',9,'center');const hint=C.whistleHint&&C.whistleHint.until>ts&&board===M.enemy?C.whistleHint:null,boardKey=board===M.enemy?'enemy':'player';for(let r=0;r<C.size;r++)for(let c=0;c<C.size;c++){const x=board.x+c*board.cell,y=board.y+r*board.cell,k=arcadeCattleKey(r,c),st=shots[k],lit=hint&&((hint.axis==='row'&&hint.index===r)||(hint.axis==='col'&&hint.index===c));rect(x+1,y+1,board.cell-2,board.cell-2,lit?'rgba(229,181,78,.22)':((r+c)%2?'rgba(255,255,255,.03)':'rgba(0,0,0,.03)'));if(!playerSide&&!st&&!reveal)rect(x+3,y+3,board.cell-6,board.cell-6,'rgba(24,49,58,.08)');if(hover&&hover.r===r&&hover.c===c)roundedRect(x+2,y+2,board.cell-4,board.cell-4,5,'rgba(255,247,222,.08)',playerSide?'#83bf6a':'#fff7de',2);if(C.lastShot&&C.lastShot.side===boardKey&&C.lastShot.r===r&&C.lastShot.c===c&&ts-C.lastShot.at<900){circle(x+board.cell/2,y+board.cell/2,board.cell*(.22+.12*Math.sin(ts*.02)),'rgba(255,247,222,.08)',C.lastShot.hit?'#df7c68':'#fff7de',2)}if(st==='miss'){circle(x+board.cell/2,y+board.cell/2,board.cell*.15,'rgba(0,0,0,0)','rgba(226,246,239,.82)',2)}else if(st==='clear'){circle(x+board.cell/2,y+board.cell/2,1.8,'rgba(226,246,239,.36)')}}for(const ship of fleet){const visible=showShips||ship.sunk||reveal;if(visible){const first=ship.cells[0],last=ship.cells[ship.cells.length-1],cx=board.x+(first.c+last.c+1)*board.cell/2,cy=board.y+(first.r+last.r+1)*board.cell/2,w=ship.horizontal?ship.length*board.cell*.84:board.cell*.60,h=ship.horizontal?board.cell*.60:ship.length*board.cell*.84;const hullCol=playerSide?'#8d613f':ship.sunk||reveal?'#a86d45':'rgba(168,109,69,.34)';roundedRect(cx-w/2,cy-h/2,w,h,Math.min(9,board.cell*.18),hullCol,'#17313a',2);if(ship.horizontal){poly([[cx+w/2,cy],[cx+w/2-board.cell*.18,cy-h/2],[cx+w/2-board.cell*.18,cy+h/2]],playerSide?'#c08b56':'#c49362','#17313a',1);rect(cx-w*.20,cy-h/2-3,w*.20,4,ship.sunk?'#c75f52':'#fff7de')}else{poly([[cx,cy-h/2],[cx-w/2,cy-h/2+board.cell*.18],[cx+w/2,cy-h/2+board.cell*.18]],playerSide?'#c08b56':'#c49362','#17313a',1);rect(cx-w/2-3,cy-h*.16,4,h*.18,ship.sunk?'#c75f52':'#fff7de')}}for(let i=0;i<ship.cells.length;i++){const p=ship.cells[i];if(!visible&&!p.hit)continue;const sx=board.x+(p.c+.5)*board.cell,sy=board.y+(p.r+.5)*board.cell+(p.hit?2:-4);drawArcadeSheep(sx,sy,Math.min(24,board.cell*.58),p.hit,p.r*3+p.c,p.hit?1:(showShips?1:.78));if(p.hit)circle(sx,sy+2,board.cell*.28,'rgba(0,0,0,0)','rgba(255,247,222,.34)',1)}}for(let i=0;i<=C.size;i++){line(board.x+i*board.cell,board.y,board.x+i*board.cell,board.y+board.side,'rgba(23,49,58,.72)',1);line(board.x,board.y+i*board.cell,board.x+board.side,board.y+i*board.cell,'rgba(23,49,58,.72)',1)}for(let i=0;i<C.size;i++){pxText(String(i+1),board.x+(i+.5)*board.cell,board.y-8,'#17313a',7,'center');pxText(String.fromCharCode(65+i),board.x-10,board.y+(i+.5)*board.cell+3,'#17313a',7,'center')}};
+  roundedRect(G.left+8,G.top+6,G.w-16,G.h-12,14,'#264850','#17313a',3);for(let y=G.top+22;y<G.bottom-18;y+=18)line(G.left+14,y,G.right-14,y,'rgba(255,255,255,.03)',1);roundedRect(G.left+16,G.top+12,G.w-32,44,10,'rgba(255,247,222,.95)','#17313a',2);pxText('CATTLESHIPS · FRIENDLY PATROL EXERCISE',G.left+28,G.top+30,'#17313a',10,'left');pxText(C.phase==='place'?'LAY YOUR FLOCK FIRST':C.currentTurn==='player'?'YOUR TURN TO CALL':'PATROL CREW CALLING',G.right-28,G.top+30,C.currentTurn==='player'?'#315b42':'#7b602b',8,'right');drawPixelSprite(createBoatSprite('shallow',defaultBoatAppearance('shallow'),false),G.left+68,G.top+49,.48,.5,.74);drawPixelSprite(createBoatSprite('cabin',defaultBoatAppearance('cabin'),true),G.right-64,G.top+49,.48,.5,.74);drawPixelSprite(residentSprite('cattle-skipper','#527da0','#e5b54e','maker',0,Math.floor(ts/220)%2,false),G.left+115,G.top+53,1.15,.5,.88);drawPixelSprite(residentSprite('cattle-rival','#df7c68','#e5b54e','maker',1,Math.floor(ts/260)%2,true),G.right-112,G.top+53,1.12,.5,.88);drawBoard(M.own,'YOUR FLOCK',C.playerFleet,C.enemyShots,true,C.hoverOwn,true);drawBoard(M.enemy,'PATROL FLOCK',C.enemyFleet,C.playerShots,reveal,C.hoverEnemy,false);
+  if(C.phase==='place'&&C.hoverOwn){const len=C.lengths[C.placeIndex],cells=arcadeCattleCanPlace(C.size,C.playerFleet,len,C.placeHorizontal,C.hoverOwn.r,C.hoverOwn.c);if(cells){for(let idx=0;idx<cells.length;idx++){const p=cells[idx],x=M.own.x+p.c*M.own.cell,y=M.own.y+p.r*M.own.cell;roundedRect(x+3,y+3,M.own.cell-6,M.own.cell-6,5,'rgba(131,191,106,.22)','#83bf6a',2);drawArcadeSheep(x+M.own.cell*.5,y+M.own.cell*.42,Math.min(22,M.own.cell*.52),false,idx,1)}}else{for(let i=0;i<len;i++){const r=C.hoverOwn.r+(C.placeHorizontal?0:i),c=C.hoverOwn.c+(C.placeHorizontal?i:0);if(r>=0&&c>=0&&r<C.size&&c<C.size){const x=M.own.x+c*M.own.cell,y=M.own.y+r*M.own.cell;roundedRect(x+3,y+3,M.own.cell-6,M.own.cell-6,5,'rgba(223,124,104,.22)','#df7c68',2)}}}}
+  for(const splash of C.splashes){const board=splash.board==='player'?M.own:M.enemy,age=(ts-splash.at)/760;if(age<0||age>1)continue;const x=board.x+(splash.c+.5)*board.cell,y=board.y+(splash.r+.5)*board.cell;circle(x,y,board.cell*(.12+age*.34),'rgba(0,0,0,0)',`rgba(225,246,239,${.55*(1-age)})`,2)}C.splashes=C.splashes.filter(p=>ts-p.at<820);
+  if(M.panel){const P=M.panel;roundedRect(P.x,P.y,P.w,P.h,10,'rgba(255,247,222,.93)','#17313a',2);pxText('FLEET BOOK',P.x+14,P.y+20,'#17313a',9,'left');pxText(C.phase==='place'?`Boat ${Math.min(C.placeIndex+1,C.lengths.length)}/${C.lengths.length}`:`Enemy ${C.enemyHitCount}/${C.totalSheep} · Own ${C.playerHitCount}/${C.totalSheep}`,P.x+14,P.y+36,'#42616a',7,'left');pxText(C.phase==='place'?(C.placeHorizontal?'HORIZONTAL':'VERTICAL'):(C.whistles?'BLEAT WHISTLE READY':'WHISTLE SPENT'),P.x+14,P.y+51,C.phase==='place'?'#42616a':(C.whistles?'#4f8b56':'#8a927f'),7,'left');let y=P.y+72;pxText('YOUR BOATS',P.x+14,y,'#17313a',8,'left');y+=10;for(const ship of C.playerFleet){drawArcadeCattleShipCard(ship,P.x+12,y,P.w-24,true,ts);y+=28}if(!C.playerFleet.length){pxText('Place boats on your grid to fill out the manifest.',P.x+14,y+14,'#42616a',6,'left');y+=28}y+=12;pxText('PATROL FLEET',P.x+14,y,'#17313a',8,'left');y+=10;for(const ship of C.enemyFleet){drawArcadeCattleShipCard(ship,P.x+12,y,P.w-24,false,ts);y+=28}roundedRect(P.x+12,P.y+P.h-62,P.w-24,48,7,'#d9eef2','#17313a',1);pxText('FRIENDLY EXERCISE',P.x+P.w/2,P.y+P.h-44,'#17313a',7,'center');pxText('SHEEP FLOAT. CREWS REEL THEM BACK IN.',P.x+P.w/2,P.y+P.h-28,'#42616a',5.5,'center')}
+  roundedRect(M.footer.x,M.footer.y,M.footer.w,M.footer.h,8,'rgba(255,247,222,.93)','#17313a',2);let footerMain='',footerSub='';if(C.phase==='place'){footerMain=`PLACE BOAT ${Math.min(C.placeIndex+1,C.lengths.length)} OF ${C.lengths.length} · LENGTH ${C.lengths[C.placeIndex]||C.lengths[C.lengths.length-1]}`;footerSub='Tap your own grid to place it. Use ROTATE to change orientation.'}else if(C.currentTurn==='player'){footerMain='YOUR TURN · TAP THE PATROL GRID TO CALL A SHOT';footerSub=C.whistles?'Use the Bleat Whistle if the search goes cold.':'Keep hunting along rows and columns after a hit.'}else{footerMain='PATROL CREW TURN · WATCH YOUR OWN GRID';footerSub='They are firing back — protect your flock and read their pattern.'}pxText(footerMain,M.footer.x+12,M.footer.y+18,'#17313a',7,'left');pxText(footerSub,M.footer.x+12,M.footer.y+35,'#42616a',6,'left');if(C.currentTurn&&C.phase==='battle'&&ts<(C.turnBannerUntil||0)){const label=C.currentTurn==='player'?'YOUR CALL':'PATROL CREW CALLING';roundedRect(G.cx-90,G.top+60,180,24,8,C.currentTurn==='player'?`rgba(223,241,207,${turnPulse})`:`rgba(255,240,200,${turnPulse})`,C.currentTurn==='player'?'#4f8b56':'#e5b54e',2);pxText(label,G.cx,G.top+76,C.currentTurn==='player'?'#315b42':'#7b602b',8,'center')}const cue=C.phase==='place'?'Lay your own boats on the left grid. They cannot touch, even diagonally.':C.currentTurn==='player'?'Call on the patrol grid. After a hit, work along that boat.':'The patrol crew is choosing their shot.';arcadeSetHelperCue(g,cue,C.phase==='place'?(C.placeHorizontal?'horizontal placement · rotate available':'vertical placement · rotate available'):`Enemy ${C.enemyHitCount}/${C.totalSheep} · Own ${C.playerHitCount}/${C.totalSheep}${C.whistles?' · whistle ready':''}`)
 }
 const ARCADE_RESCUE_ASSET_CACHE=new Map();
 function arcadeRescueAsset(kind,variant=0){
@@ -9251,7 +9296,7 @@ function arcadePointer(g,type,x,y,pointerId=null){if(g.engine==='pinball'&&type=
   else if(e==='poop'&&(type==='down'||type==='move')){const D=g.poopDeck;if(D){D.pointer=true;g.inputX=clamp(nx,.105,.895)}}
 }
 function arcadeKey(g,e){if(!g.started){if(e.key===' '||e.key==='Enter')beginArcadeRound();return}const left=['ArrowLeft','a','A'].includes(e.key),right=['ArrowRight','d','D'].includes(e.key);if(left||right){const dir=left?-1:1;if(g.engine==='steer'){if(g.theme==='tanker'){const V=g.tanker.active?g.tanker.other:g.tanker;V.rudderTarget=dir}else g.inputX=clamp(g.inputX+dir*.07,.05,.95);}if(g.engine==='balance')g.control=clamp(g.control+dir*.06,0,1);if(g.engine==='telegraph'&&g.tele)arcadeTelegraphSetLever(g,g.tele.lever+dir,'key');if(g.engine==='bargebalance'&&g.barge)g.barge.trolleyTarget=clamp(g.barge.trolleyTarget+dir*.085,-1,1);if(g.engine==='crane'&&!g.release){g.crane.trolley=clamp((g.crane.trolley??.47)+dir*.018,.29,.72);g.crane.omega-=dir*.045;g.crane.control=0}if(g.engine==='poop')g.inputX=clamp(g.inputX+dir*.08,.18,.82);if(g.engine==='sail'&&g.sail)g.sail.sheet=clamp(g.sail.sheet+dir*.050,.055,.88);if(g.engine==='depth')g.targetY=clamp(g.targetY+dir*.05,.08,.92);if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+dir*.05,.08,.92)}if((e.key===' '||e.key==='Enter')&&g.engine==='lines')arcadeApplyControl('linesHeave',true);if((e.key===' '||e.key==='Enter')&&g.engine==='steer'&&g.theme==='tanker')arcadeApplyControl('tankerSwitch',true);if((e.key===' '||e.key==='Enter')&&['crane','stack'].includes(g.engine))arcadePointer(g,'down',canvas.width/2,canvas.height/2)}
-function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${best.toLocaleString()}`:g.engine==='pinball'?`BALL 1 · 3 LIVES · BEST ${best.toLocaleString()}`:g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.engine==='cipher')$('#gameHudText').textContent=`CORE ${g.round} · PASS ${Math.min(g.cipher.maxAttempts,g.cipher.attempts+1)}/${g.cipher.maxAttempts} · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='cattle')$('#gameHudText').textContent=`FLOCK ${g.round} · ${g.cattle.hitCount}/${g.cattle.totalSheep} SHEEP · ${g.cattle.shotsLeft} CALLS · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='poop')$('#gameHudText').textContent=`WATCH ${g.round} · ${g.roundProgress}/${g.roundGoal} DODGED · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.type==='speedboat_slalom')$('#gameHudText').textContent=g.paused?`PAUSED · RACE ${g.round}/3 · ${Math.round(g.score).toLocaleString()} pts`:`RACE ${g.round}/3 · LAP ${g.raceLap}/2 · ${Math.round(g.score).toLocaleString()} PTS · BEST ${best.toLocaleString()}`;else if(g.engine==='pinball')$('#gameHudText').textContent=g.paused?`PAUSED · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`BALL ${Math.min(3,(g.strikes||0)+1)} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
+function renderMinigame(ts){const g=minigame;if(!g)return;MINIGAME_PLUGINS[g.type]?.render?.(g,ts);if(!minigame)return;const best=arcadeBest(g.type);if(!g.started){$('#gameHudText').textContent=g.type==='speedboat_slalom'?`CUP 1/3 · 2 LAPS · BEST ${best.toLocaleString()}`:g.engine==='pinball'?`BALL 1 · 3 LIVES · BEST ${best.toLocaleString()}`:g.type==='sub_depth'?`DEPTH 0m · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:g.type==='tug_dock'?`JOB 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`:`ROUND 1 · ${g.maxStrikes} LIVES · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width='0%';return}if(g.engine==='cipher')$('#gameHudText').textContent=`CORE ${g.round} · PASS ${Math.min(g.cipher.maxAttempts,g.cipher.attempts+1)}/${g.cipher.maxAttempts} · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='cattle')$('#gameHudText').textContent=g.cattle.phase==='place'?`FLOCK ${g.round} · PLACE ${Math.min(g.cattle.placeIndex+1,g.cattle.lengths.length)}/${g.cattle.lengths.length} · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`:`FLOCK ${g.round} · ENEMY ${g.cattle.enemyHitCount}/${g.cattle.totalSheep} · OWN ${g.cattle.playerHitCount}/${g.cattle.totalSheep} · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.engine==='poop')$('#gameHudText').textContent=`WATCH ${g.round} · ${g.roundProgress}/${g.roundGoal} DODGED · ${arcadeLives(g)} LIVES · ${Math.round(g.score).toLocaleString()} PTS`;else if(g.type==='speedboat_slalom')$('#gameHudText').textContent=g.paused?`PAUSED · RACE ${g.round}/3 · ${Math.round(g.score).toLocaleString()} pts`:`RACE ${g.round}/3 · LAP ${g.raceLap}/2 · ${Math.round(g.score).toLocaleString()} PTS · BEST ${best.toLocaleString()}`;else if(g.engine==='pinball')$('#gameHudText').textContent=g.paused?`PAUSED · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`BALL ${Math.min(3,(g.strikes||0)+1)} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else if(g.type==='sub_depth'){const depth=Math.round(g.depthMeters||0);$('#gameHudText').textContent=g.paused?`PAUSED · ${depth}m · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`DEPTH ${depth}m · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`}else if(g.type==='tug_dock')$('#gameHudText').textContent=g.paused?`PAUSED · JOB ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`JOB ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;else $('#gameHudText').textContent=g.paused?`PAUSED · ROUND ${g.round} · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts`:`ROUND ${g.round} · ${arcadeLives(g)} LIVES · ${Math.max(0,Math.round(g.score)).toLocaleString()} pts · BEST ${best.toLocaleString()}`;$('#gameHudBar').style.width=(arcadeGoalRatio(g)*100)+'%'}
 
 // Plug-ins retain the content metadata but use the v0.26 progression handlers.
 const ARCADE_ENGINE_IDS=new Set(['lines','galley','bagthrow','balance','crane','stack','meter','sort','sail','steer','tug','cattle','cipher','aim','pilot','dredge','bargebalance','rigging','depth','landing','steam','telegraph','poop','pinball']);
@@ -9316,7 +9361,7 @@ function arcadeControlSpec(g){
   if(e==='tug')return[{a:'left',l:'←',k:'A'},{a:'up',l:'↑',k:'W'},{a:'down',l:'↓',k:'S'},{a:'right',l:'→',k:'D'}];
   if(e==='tack')return[{a:'action',l:'HOLD HELM',k:'HOLD SPACE',primary:true,hold:true}];
   if(e==='crane')return[{a:'left',l:'← LEFT',k:'A / ←',hold:true},{a:'action',l:'RELEASE',k:'SPACE',primary:true},{a:'right',l:'RIGHT →',k:'D / →',hold:true}];
-  if(e==='cattle')return[{a:'cattleWhistle',l:g.cattle?.whistles?'BLEAT WHISTLE':'WHISTLE SPENT',k:'B · ONE PER ROUND',primary:!!g.cattle?.whistles}];
+  if(e==='cattle')return g.cattle?.phase==='place'?[{a:'cattleRotate',l:'ROTATE BOAT',k:'R',primary:true}]:[{a:'cattleWhistle',l:g.cattle?.whistles?'BLEAT WHISTLE':'WHISTLE SPENT',k:'B · ONE PER ROUND',primary:!!g.cattle?.whistles}];
   if(e==='cipher')return[{a:'cipherAnalyse',l:'ANALYSE PASS',k:'ENTER',primary:true}];
   if(e==='dredge')return[{a:'dredgeGrab',l:'GRAB / DUMP',k:'SPACE',primary:true}];
   if(e==='stack'&&g.meta.id==='cargo_tetris')return[{a:'holdRotate',l:'ROTATE',k:'R / SPACE',primary:true},{a:'holdUndo',l:'UNDO',k:'U'}];
@@ -9328,7 +9373,7 @@ function arcadeControlSpec(g){
   return[]
 }
 function arcadeApplyControl(action,pressed=true,source='button'){
-  const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(pressed&&['action','cipherAnalyse','cattleWhistle'].includes(action)){beginArcadeRound();return true}return false}
+  const g=minigame;if(!g||g.paused||g.failed)return false;if(!g.started){if(pressed&&['action','cipherAnalyse','cattleWhistle','cattleRotate'].includes(action)){beginArcadeRound();return true}return false}
   const step=.075;
   if(g.engine==='pinball'&&['left','right','pinballLaunch','pinballNudge','action'].includes(action))return arcadePinballControl(g,action,pressed,source);
   if(g.type==='speedboat_slalom'){if(action==='speedSurge'||action==='action')return pressed?arcadeSpeedSurge(g):true;if(action==='left'||action==='right'){const controls=source==='keyboard'?g.raceSteerKeys:g.raceSteerButtons;if(controls)controls[action]=!!pressed;return true}}
@@ -9366,6 +9411,7 @@ function arcadeApplyControl(action,pressed=true,source='button'){
   if(action==='up'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable-.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY-.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY-.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y-.06,.08,.92);return true}
   if(action==='down'){if(g.engine==='dredge')g.dredge.targetCable=clamp(g.dredge.targetCable+.055,.045,.69);else if(g.engine==='depth')g.targetY=clamp(g.targetY+.06,.07,.93);else if(g.engine==='landing')g.plane.targetY=clamp(g.plane.targetY+.06,.08,.92);else if(g.engine==='tug')g.aim.y=clamp(g.aim.y+.06,.08,.92);return true}
   if(action==='pull'){if(g.engine==='meter'&&g.theme!=='yacht'){g.hold=!!pressed;return true}return false}
+  if(action==='cattleRotate'&&pressed&&g.engine==='cattle'){arcadeCattleRotate(g);return true}
   if(action==='cattleWhistle'&&pressed&&g.engine==='cattle'){arcadeCattleWhistle(g);return true}
   if(action==='cipherAnalyse'&&pressed&&g.engine==='cipher'){arcadeCipherAnalyse(g);return true}
   if(action==='dredgeGrab'&&pressed&&g.engine==='dredge'){arcadeDredgeAction(g);return true}
@@ -9397,6 +9443,7 @@ function arcadeShellKeydown(e){
   else if(g.engine==='cipher'&&['ArrowRight','d','D'].includes(key)){g.cipher.cursor=(g.cipher.cursor+1)%g.cipher.len;handled=true}
   else if(g.engine==='cipher'&&(key===' ')){handled=arcadeCipherPlace(g,g.cipher.cursor)}
   else if(g.engine==='cipher'&&key==='Enter')handled=arcadeApplyControl('cipherAnalyse',true,'keyboard');
+  else if(g.engine==='cattle'&&(key==='r'||key==='R'))handled=arcadeApplyControl('cattleRotate',true,'keyboard');
   else if(g.engine==='cattle'&&(key==='b'||key==='B'))handled=arcadeApplyControl('cattleWhistle',true,'keyboard');
   else if(g.type==='speedboat_slalom'&&['ArrowLeft','a','A'].includes(key))handled=arcadeApplyControl('left',true,'keyboard');
   else if(g.type==='speedboat_slalom'&&['ArrowRight','d','D'].includes(key))handled=arcadeApplyControl('right',true,'keyboard');
@@ -9446,7 +9493,7 @@ window.__MakeFastRegatta={
   course:()=>minigame?.type==='speedboat_slalom'?{layoutId:minigame.raceCircuit.layoutId,seed:minigame.raceCourseSeed,path:[...minigame.raceCircuit.path],gates:minigame.raceGates.map(q=>({x:q.x,w:q.w,progress:q.progress,scored:q.scored})),hazards:minigame.raceObstacles.map(o=>({type:o.type,x:arcadeSpeedObstacleX(minigame,o),progress:o.progress,hit:o.playerHit})),pickups:minigame.racePickups.map(q=>({...q})),rivals:minigame.racers.map(r=>({x:r.x,progress:r.progress,spin:r.spin,slow:r.slow}))}:null
 };
 window.__MakeFastArcadeCore={
-  version:'0.41.0',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
+  version:'0.41.2',ids:()=>Object.keys(MINIGAME_META),record:id=>({...arcadeScoreRecord(id)}),validate:()=>[...MINIGAME_REGISTRY_ERRORS],
   smoke(){const oldVoyage=state.voyage,oldMini=minigame,failures=[];try{if(!state.voyage)state.voyage={id:'arcade-smoke',discoveries:[],minigamesPlayed:0};for(const id of Object.keys(MINIGAME_META)){try{const meta=MINIGAME_META[id],g=createArcadeGame(meta,{type:id,duration:Infinity,started:performance.now(),lastTick:performance.now()-16,score:0,done:false,title:meta.title,eventId:null,rewardKind:null});renderArcadeGame(g,performance.now());if(!Number.isFinite(g.score)||g.round!==1)throw new Error('invalid initial run state')}catch(err){failures.push(`${id}: ${err?.message||err}`)}}}finally{state.voyage=oldVoyage;minigame=oldMini}return{count:Object.keys(MINIGAME_META).length,failures}}
 };
 
