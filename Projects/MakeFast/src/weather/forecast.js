@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • weather/forecast.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.drawWeatherGlyph = function drawWeatherGlyph(canvasEl,kind='clear',ts=MF.gameNow()){
   if(!canvasEl)return;const g=canvasEl.getContext('2d');if(!g)return;canvasEl.width=32;canvasEl.height=32;g.clearRect(0,0,32,32);g.imageSmoothingEnabled=false;
   const ink='#18313a',sun='#f4c95f',sunHi='#fff1a1',cloud='#f7f3dd',cloudShade='#bfd1cf',storm='#78909a',rain='#4ea7c2',snow='#fffdf1',wind='#76b7c7',moon='#ffe58a';
@@ -117,16 +119,5 @@ MF.updateAtmosphereUI = function updateAtmosphereUI(force=false){
   const w=MF.activeWeatherDetails();MF.$('#weatherNow').textContent=`${MF.weatherSourceLabel()} · ${Math.round(w.temp)}°C`;MF.$('#weatherMeta').textContent=`${w.label} · ${Math.round(w.wind||0)} km/h · ${MF.formatClockInZone(MF.gameNow(),MF.state.settings.timezone)}`;MF.$('#weatherNext').textContent=MF.weatherForecastLine();MF.drawWeatherGlyph(MF.$('#weatherArt'),w.kind,MF.gameNow());MF.renderWeatherMiniForecast();
   box.classList.toggle('hidden',!!MF.minigame||MF.state.activeView==='chart');
 };
-}
 
-export function init_19() {
-MF.WEATHER_KINDS = {
-  clear:{label:'Clear',icon:'☀',gameKind:'clear'},cloudy:{label:'Cloudy',icon:'☁',gameKind:'clear'},mist:{label:'Mist',icon:'≋',gameKind:'mist'},
-  drizzle:{label:'Drizzle',icon:'☂',gameKind:'rain'},rain:{label:'Rain',icon:'☂',gameKind:'rain'},storm:{label:'Storm',icon:'ϟ',gameKind:'rain'},
-  snow:{label:'Snow',icon:'✦',gameKind:'rain'},breezy:{label:'Breezy',icon:'≈',gameKind:'breezy'}
-};
-}
 
-export function init_20() {
-MF.lastAtmosphereSecond = -1;
-}

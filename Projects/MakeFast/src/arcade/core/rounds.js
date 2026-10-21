@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/core/rounds.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeDifficulty = function arcadeDifficulty(g){return Math.min(3.1,1+Math.max(0,(g.round||1)-1)*.115)};
 
 MF.arcadeRoundText = function arcadeRoundText(g){return g.engine==='depth'&&g.continuous?'SILENT RUN':g.engine==='tug'?`JOB ${g.round||1}`:g.engine==='cipher'?`CORE ${g.round||1}`:g.engine==='cattle'?`FLOCK ${g.round||1}`:`ROUND ${g.round||1}`};
@@ -89,18 +91,6 @@ MF.arcadeProgress = function arcadeProgress(g,n=1,points=0,text='NICE!'){
 };
 
 MF.arcadeResetCommon = function arcadeResetCommon(g,goal){g.roundProgress=0;g.roundGoal=Math.max(1,goal);g.spawn=performance.now();g.hazardSpawn=performance.now();g.cool=0};
-}
 
-export function init_139() {
-MF.ARCADE_MAX_STRIKES = 3;
-}
 
-export function init_140() {
-MF.ARCADE_PIECES = [
-  [[0,0]],[[0,0],[1,0]],[[0,0],[0,1]],[[0,0],[1,0],[0,1]],[[0,0],[1,0],[2,0]],[[0,0],[0,1],[1,1]],[[0,0],[1,0],[1,1]]
-];
-}
 
-export function init_141() {
-MF.ARCADE_HELPER_GAMES = new Set(['yacht_trim','ferry_lines','ferry_galley','ferry_bags','container_crane','container_stack','trawler_net','trawler_sort','tug_dock','tanker_channel','naval_cattleships','research_cipher','rescue_throw','pilot_transfer','dredger_scoop','barge_balance','cargo_tetris','engine_telegraph','tallship_rigging','sub_depth','carrier_landing','steam_route']);
-}

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/voyage-scene.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.mfVoyageTrafficBegin = function mfVoyageTrafficBegin(vr,playerY){MF.mfVoyageTrafficContext={vr,playerY,exclusions:[]}};
 
 MF.mfVoyageTrafficRegisterIsland = function mfVoyageTrafficRegisterIsland(isl,cx,cy,scale,role='arrival'){
@@ -142,32 +144,9 @@ MF.drawChartCompassRose = function drawChartCompassRose(vr,mobile=false){
   MF.pxText('W',roseX-R-7*scale,roseY+3*scale,ink,6.5*scale,'center');
   MF.ctx.restore();
 };
-}
 
-export function init_128() {
-MF.VOYAGE_DECK_SLOTS = {
-  cutter:[[27,45],[38,48],[54,45]],fishing:[[25,47],[37,49],[68,49]],shallow:[[28,47],[42,49],[57,47]],cabin:[[20,48],[29,50],[69,50]],sailer:[[26,47],[46,48],[59,46]]
-};
-}
 
-export function init_129() {
-MF.VOYAGE_ANIMAL_DECK_SLOTS = {
-  cutter:[[63,47],[48,46]],fishing:[[57,49],[69,48]],shallow:[[63,49],[50,47]],cabin:[[57,50],[42,49]],sailer:[[68,47],[55,46]]
-};
-}
 
-export function init_130() {
-MF.mfVoyageTrafficContext = {vr:null,playerY:0,exclusions:[]};
-}
 
-export function init_131() {
-MF.chartLabelSignature = '';
-}
 
-export function init_132() {
-MF.chartStaticCache = {key:'',dataKey:'',lastDataCheckAt:0,canvas:null,labelNodes:[],hitAreas:[],recentHops:[],buildMs:0,builds:0};
-}
 
-export function init_133() {
-MF.chartCourseCache = {key:'',path:null};
-}

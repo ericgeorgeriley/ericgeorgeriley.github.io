@@ -1,6 +1,6 @@
-# MakeFast v0.41.7 — modular edition
+# MakeFast v0.41.8 — normalized modules and UI patch
 
-MakeFast is a browser-based nautical world and fasting-voyage game. This repository is the **source-preserving modular extraction** of `MakeFast_Browser_Game_v0.41.7_full_code(2).txt`. The original single-file application is **not needed** and is not included in this repository.
+MakeFast is a browser-based nautical world and fasting-voyage game. This repository started from **v0.41.7** and now includes the **v0.41.8** menu-state, Cattleships visual and startup-normalization update. The original single-file application is **not needed** and is not included in this repository.
 
 The game remains vanilla JavaScript, CSS and Canvas. It has **no runtime dependencies, no build step, and no server component**. It can be hosted directly on GitHub Pages or any static HTTPS host.
 
@@ -35,7 +35,8 @@ There is no service worker in this extraction, and the browser's existing `makef
 ```text
 index.html                HTML shell and module entry point
 src/main.js               Tiny browser bootstrap + diagnostics
-src/bootstrap.js          Ordered module installation and initialization
+src/bootstrap.js          Native module composition root and single startMakeFast() call
+src/core/startup.js        Seven named application initialization stages
 src/core/                  Utilities and shared source-compatibility runtime
 src/content/               Boats, minigames, ratios, materials, biomes, stories, events
 src/state/                 State defaults, persistence and migrations
@@ -65,7 +66,15 @@ This is a **real multi-file ES-module project**: the browser loads each JavaScri
 
 A deliberate compatibility bridge remains in `src/core/runtime-state.js`: modules currently access historical cross-system functions/state through the single `MF` namespace. This prevents subtle changes in function overrides and the original startup sequence, which are pervasive in v0.41.7. The bridge is **internal, not a new public API**, and allows moving toward explicit imports and clean domain dependencies later without risking the first migration.
 
-The ordered bootstrap matters: it registers all historical function declarations, then executes original top-level initializers and later-version patches in precisely their original source order. New feature code should use direct ES module imports and ideally avoid adding additional `MF` dependencies. See `ARCHITECTURE.md`.
+The previous auto-generated `install()` dispatcher and **439 numbered `init_###()` functions have been removed**. Feature functions register as standard JavaScript module side effects; canonical content data now lives in and is exported from its named `src/content/` modules. The remaining startup in `src/core/startup.js` uses seven human-readable stages for unavoidable dependencies (content first, then state, systems and UI). This is a meaningful improvement in maintainability but **not yet a complete removal of the shared `MF` namespace**. Modules containing vintage function wrappers will be migrated to direct imports/exports as a separate incremental exercise.
+
+**Changes since v0.41.7**
+- Resident trades, favours and parcel requests retain their open details sections across an in-place refresh; the boat/cargo panel also preserves open disclosures and scroll.
+- Cattleships uses the shared MakeFast boat and animal sprite generators; misses/hits now use water markers and expanding splash rings instead of reused poop splats.
+- Startup no longer runs hundreds of generated numbered functions, and content arrays are exported from their owning modules.
+- The save key and migration path are retained. You **do not** need to force a fresh save to simplify the generated bootstrap. No intentional saved-progress reset is part of this patch.
+
+To apply as a **ZIP overlay** over the existing GitHub repository, copy the patch's paths into the repository root and replace existing files. Any pre-existing `src/core/bootstrap-final.js` is now unused; it can be deleted from Git tracking, but leaving it there does not affect runtime. If you're replacing the whole repo, use the accompanying full-project ZIP instead.
 
 There are currently no external PNG sprite assets to migrate. MakeFast's existing sprite drawings are procedural. The shared sprite facade is where future asset loading, atlases, animation definitions and minigame-specific assets should converge.
 
@@ -83,7 +92,7 @@ These are meaningful regression checks, not proof that every long-form story bra
 
 1. Export a save from the current MakeFast site **before** replacing it.
 2. Deploy the modular site to the **same origin** where possible.
-3. Confirm the version shows `v0.41.7`, open Tidebook and check your captain, world and progress.
+3. Confirm the version shows `v0.41.8`, open Tidebook and check your captain, world and progress.
 4. If using a new URL, import the exported JSON into the new site.
 
 No game-content changes or save-schema changes are intended in this extraction.

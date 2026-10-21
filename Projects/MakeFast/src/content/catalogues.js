@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • content/catalogues.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.getPath = function getPath(obj,path){return String(path).split('.').reduce((v,k)=>v&&v[k],obj)};
 
 MF.fillTemplate = function fillTemplate(str,vars={}){return String(str).replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'')};
@@ -73,93 +75,55 @@ MF.unlockRuleMet = function unlockRuleMet(rule){
   if(rule.type==='all')return (rule.rules||[]).every(MF.unlockRuleMet);
   return false;
 };
-}
 
-export function init_39() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Derived indexes, compatibility lookups, and at-sea game scenario data.
+export function linkCatalogues() {
 MF.RATIO_OPTIONS = MF.CONTENT.ratios;
-}
-
-export function init_40() {
 MF.ISLAND_NAMES_A = MF.CONTENT.names.islandPrefixes;
-}
-
-export function init_41() {
 MF.ISLAND_NAMES_B = MF.CONTENT.names.islandSuffixes;
-}
-
-export function init_42() {
 MF.BIOMES = Object.keys(MF.CONTENT.biomes);
-}
-
-export function init_43() {
 MF.DISCOVERIES = MF.CONTENT.discoveries;
-}
-
-export function init_44() {
 MF.MATERIALS = MF.CONTENT.materials;
-}
-
-export function init_45() {
 MF.DISCOVERY_STOCK = Object.fromEntries(MF.CONTENT.discoveries.map(d=>[d.kind,d.stock||{}]));
-}
-
-export function init_46() {
 MF.RESIDENT_FIRST = MF.CONTENT.names.residentFirst;
-}
-
-export function init_47() {
 MF.RESIDENT_LAST = MF.CONTENT.names.residentLast;
-}
-
-export function init_48() {
 MF.OUTFITS = MF.CONTENT.outfits;
-}
-
-export function init_49() {
 MF.BUILD_SITES = MF.CONTENT.buildSites;
-}
-
-export function init_50() {
 MF.PROJECT_TEMPLATES = MF.CONTENT.projects;
-}
-
-export function init_51() {
 MF.CONTENT.biomes.meadow.geography='Rolling peninsulas, narrow stream-cut valleys and village greens.';;
-}
-
-export function init_52() {
 MF.CONTENT.biomes.pine.geography='Long wooded headlands and deep rocky forest inlets.';;
-}
-
-export function init_53() {
 MF.CONTENT.biomes.marsh.geography='Finger-like tidal banks cut by navigable reed channels.';;
-}
-
-export function init_54() {
 MF.CONTENT.biomes.cliff.geography='Angular sea cliffs, caves, sheer ridges and offshore stacks.';;
-}
-
-export function init_55() {
 MF.CONTENT.biomes.orchard.geography='Sheltered bays, terraces and densely planted hillside fruit groves.';;
-}
-
-export function init_56() {
 MF.CONTENT.biomes.dune.geography='Long sand spits, windblown ridges and a water-filled lagoon.';;
-}
-
-export function init_57() {
 MF.CONTENT.minigames.puffer_pinball={title:'PUFFERFISH PINBALL',icon:'🐡',group:'Boat Deck Arcade',engine:'pinball',desc:'A real little deck-built pinball machine: four hinged, inward-flipping paddles worked by animated deckhands; a protected shooter; working brass bells, cargo banks, a three-puffer multiball, jackpots and puff-powered bumpers.',instruction:'TAP OR HOLD ANYWHERE ON THE LEFT / RIGHT HALF OF THE PLAYFIELD TO OPERATE BOTH FLAPPERS ON THAT SIDE (TWO FINGERS WORK TOGETHER), OR USE A / ← AND D / → OR THE BUTTONS. HOLD / RELEASE SPACE OR LAUNCH TO FIRE. S / ↓ NUDGES. HIT BOTH SHIP BELLS TO START ALL-HANDS SCORING. THREE BEACONS RAISE MULTIPLIERS; CLEAR ALL FOUR CARGO TARGETS TWICE TO RELEASE THREE-PUFFER MULTIBALL. SHOOT BOTH CURRENTS FOR SUPER JACKPOTS. THE AIR BUOY CHANGES PUFFER SIZE. THREE BALLS PLUS EARNED SAVES.',duration:0,rewardThreshold:900,benchmark:9000,theme:'deck',wiki:{lore:'The bosun converted a little working boat into a four-flipper arcade machine. Deckhands man the stern and waist boarding flaps; the skipper mounted two brass bells at midships, a chained anchor, life rings and a foredeck beacon array. Three puffers can tumble onto the planks at once when the cargo hold is unlocked.',fasting:'A voluntary focus break: the voyage timer continues as normal. Scores, saves, losses and jackpots are game-only and never adjust fasting hours or health records.',concept:'A 120 Hz fixed-step physics machine with two separate, non-overlapping stern paddles and two additional upper-deck paddles that flip inward toward the centre. Touch and hold either half of the playfield for that side’s pair, using two fingers simultaneously if desired; keyboard and button controls still work independently. The protected starboard shooter takes a charged shot up to a one-way bow transfer. Bounce from physical bumpers, posts, slings, targets, two working brass bells and four angularly animated flippers. Ring both bells to activate 10 seconds of 1.5× All Hands scoring. Complete three foredeck beacons for higher multipliers, complete all four cargo targets twice to release two extra fish into three-puffer multiball, then hit both current/orbit mouths for jackpots and super jackpots. An AIR buoy inflates the puffer for seven seconds, making it larger but slower; quick pop-bumper hits trigger Squall double scoring. Nudge sparingly: too many nudges trigger tilt. The bow scoreboard shows live score, event calls, balls and multiball status; the stern holds only the compact ball/life readout.'}};;
-}
-
-export function init_58() {
 MF.MINIGAME_META = MF.CONTENT.minigames;
-}
-
-export function init_59() {
 MF.VOYAGE_EVENT_TYPES = MF.CONTENT.voyageEvents;
-}
-
-export function init_60() {
 MF.AT_SEA_MINIGAME_SCENARIOS = {
   puffer_pinball:{scene:'arcadevessel',icon:'◉',title:['A puffer bounces onto the after-deck','The deck flaps become a pinball table'],log:['A round little pufferfish tumbles aboard with the wash. The crew lower the boarding flaps and chalk out a ridiculous but surprisingly serious pinball table.','Someone discovers that the hinged stern and side flaps make excellent paddles, provided the puffer can be kept safely on deck.'],rewardKind:'bottle'},
   ferry_lines:{scene:'trader',icon:'⌁',title:['A line across the water','A launch matching your speed'],log:['A harbour launch comes alongside just long enough to pass a heaving line cleanly.','A little service boat matches your speed and sends a line arcing across the gap.'],rewardKind:'bottle'},
@@ -188,12 +152,6 @@ MF.AT_SEA_MINIGAME_SCENARIOS = {
   steam_route:{scene:'rigging',icon:'♨',title:['Steam off the engine','The pipe chest needs sorting'],log:['A harbour packet loses steam to the engine and the engineer opens the copper manifold.','A hiss below decks leaves the engine stopped while the crew traces the boiler line.'],rewardKind:'hardware'},
   poop_deck:{scene:'seabirds',icon:'⌃',title:['Gulls over the mast','A very confident flock'],log:['A flock of gulls takes an unusual interest in the boat.','Several gulls wheel overhead with suspicious concentration.'],rewardKind:'bottle'},
 };
-}
-
-export function init_61() {
 MF.BOAT_TYPES = MF.CONTENT.boats.map(b=>({...b,need:()=>MF.unlockRuleMet(b.unlock)}));
-}
-
-export function init_62() {
 MF.NPC_VESSEL_TYPES = MF.CONTENT.npcVessels;
 }

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/poop-deck.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.pdDropSprite = function pdDropSprite(frame=0){
   const key=frame%2;if(MF.PD_DROP_SPRITES.has(key))return MF.PD_DROP_SPRITES.get(key);
   const [c,p]=MF.pixelCanvas(13,15);p.imageSmoothingEnabled=false;
@@ -139,8 +141,4 @@ MF.arcadeRenderPoop = function arcadeRenderPoop(g,ts,G,dt,running){
     MF.pxText(message,G.cx,y+18,D.flash>0?'#b95043':'#2d7e9a',9,'center');
   }
 };
-}
 
-export function init_179() {
-MF.PD_DROP_SPRITES = new Map();
-}

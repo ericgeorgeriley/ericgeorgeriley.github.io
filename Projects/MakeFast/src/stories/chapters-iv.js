@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/chapters-iv.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsMakeSeaStep = function hsMakeSeaStep(s,islandId){
  const def=MF.HS_SEA_SIGNALS[s.theme]||MF.HS_SEA_SIGNALS.channel,rotate=Math.abs(s.seed>>>2)%3,objects=[0,1,2].map((_,n)=>{
   const data=def.objects[(rotate+n)%3];return{id:`sea-${n}`,label:data[0],text:data[1],sprite:data[2]};
@@ -214,31 +216,7 @@ MF.hsVisitResidentWork = function hsVisitResidentWork(personId){
   MF.state.journal.unshift(`${p.name} gave you a page from their working journal.`);MF.save();MF.hsVisitResidentWork(personId)
  });return true;
 };
-}
 
-export function init_233() {
-MF.HS_SEA_SIGNALS = {
- beacon:{name:'A lantern beyond the shoal',lead:'A light and an old bearing cross the ship’s wake.',objects:[['Distant flame','The flame blinks between two headlands. It is aligned with the old signal, not the harbour lamps.','lighthouse'],['Drifting lens','An old lens ring rocks in the gentle wake. Its stamped bearing matches the shore notes.','bottle'],['Reef line','A narrow line of pale surf crosses the supposed safe approach. The beacon was warning of this shoal.','rock']]},
- wreck:{name:'Timber in the tide',lead:'Pieces of an old vessel are travelling against the obvious current.',objects:[['Floating nameboard','The lettering identifies the lost vessel. A repair mark links it to another harbour.','wreck'],['Cargo crate','Its binding has split; a small manifest is still secured beneath the lid.','crate'],['Sheltered drift','The floating fragments are gathering on a calm line beyond the reef.','rock']]},
- birds:{name:'An unexpected flock',lead:'A small flight of birds crosses the water in a purposeful line.',objects:[['Leading bird','The same marked bird leads the flock twice. It is tracing a reliable feeding route.','gull'],['Seaweed raft','Fine nesting fibres cling to floating kelp from a second shoreline.','kelp'],['Quiet water','The flock lands where the current bends towards an undisturbed bank.','rock']]},
- garden:{name:'Seeds on the current',lead:'Something green rides the tide away from the old garden.',objects:[['Seed pod','The pod matches the gardener’s drawing; it is still viable.','kelp'],['Floating bottle','Inside the bottle is a tiny handwritten note about the original planting.','bottle'],['Sheltered wake','The drifting seeds turn towards a warm, protected bank.','rock']]},
- channel:{name:'Soundings in the fog',lead:'A strange line of water disagrees with the bearings on the chart.',objects:[['Old buoy','The buoy’s worn mark identifies a different channel from the modern one.','bottle'],['Breaking shoal','A broad pale wave shows the water is unexpectedly shallow.','rock'],['Current seam','Two colours of water divide at the entrance to the forgotten passage.','kelp']]},
- craft:{name:'A shipwright’s trial',lead:'The crossing reveals what the unusual old fitting was designed to do.',objects:[['Timber fitting','The fitting swings freely against the roll and protects the boat’s small cargo.','wreck'],['Crated parts','The label bears the initials of the forgotten maker.','crate'],['Wake pattern','The waves strike at the angle shown on the surviving sketch.','rock']]},
- bell:{name:'A bell across the bay',lead:'A faint sound carries over the water from the wrong direction.',objects:[['Signal buoy','A bronze mark on the buoy matches the missing bell’s inscription.','bottle'],['Old rope','A rope end is caught among the stones, tied in the watchkeeper’s knot.','kelp'],['Distant echo','The sound returns from a cliff opening rather than the town.','rock']]},
- market:{name:'An old trade crossing',lead:'The sea carries the remains of a long-forgotten harbour delivery.',objects:[['Sealed parcel','An unfamiliar stamp identifies the intended recipient.','crate'],['Message bottle','The note names a harbour that changed its name years ago.','bottle'],['Mooring mark','A worn marker identifies the old traders’ route.','rock']]},
- lantern:{name:'The watchkeeper’s bearing',lead:'A lamp flickers beyond the harbour while the coast slips past.',objects:[['Lantern glow','The light turns towards vessels leaving the channel, not approaching it.','bottle'],['Signal flag','A weathered flag on a buoy matches the old watchbook.','gull'],['Hidden reef','The weak surf explains why the watchkeeper took that bearing.','rock']]},
- festival:{name:'Two harbours in sight',lead:'The coast opens and reveals how the islanders once met.',objects:[['Old pennant','A scrap of celebration cloth has caught on a buoy.','gull'],['Harbour parcel','An old invitation survives inside a sealed container.','crate'],['Meeting point','Two harbours briefly line up exactly as shown on the old sketch.','rock']]}
-};
-}
 
-export function init_234() {
-MF.HS_WORK_ROLES = {fisher:'nets',gardener:'seeds',carpenter:'joinery',trader:'ledger',navigator:'charts',naturalist:'fieldbook',maker:'workbench'};
-}
 
-export function init_235() {
-MF.hsStationLocationCache = new Map();
-}
 
-export function init_236() {
-MF.hsWorkSpriteCache = new Map();
-}

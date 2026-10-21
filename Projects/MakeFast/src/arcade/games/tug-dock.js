@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/tug-dock.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeTugSprite = function arcadeTugSprite(kind,profile=null){
   const key=`tug:${kind}:${profile?.id||''}`;if(MF.arcadeTugCache.has(key))return MF.arcadeTugCache.get(key);let c,g;const ink='#17313a';
   if(kind==='tug'){
@@ -155,28 +157,6 @@ MF.arcadeRenderTug = function arcadeRenderTug(g,ts,G,dt,running){
   const statusY=G.y(.895),labels=[['POSITION',D.posOK],['SPEED',D.speedOK],['HEADING',D.angleOK]];for(let i=0;i<3;i++){const x=G.x(.18+i*.22);MF.roundedRect(x,statusY,94,22,6,labels[i][1]?'#dff1cf':'rgba(255,247,222,.88)',labels[i][1]?'#4f8b56':'#17313a',2);MF.pxText(labels[i][0],x+47,statusY+14,labels[i][1]?'#315b42':'#17313a',7,'center')}
   MF.arcadeSetHelperCue(g,D.posOK&&D.angleOK&&D.speedOK?'HOLD HER ON THE FENDERS':D.posOK&&!D.angleOK?'WORK THE BOW OR STERN TO LINE HER UP':!D.speedOK&&D.posOK?'EASE OFF — TOO MUCH WAY ON':'PUSH AT THE HULL WHERE YOU NEED THE MOVEMENT',`${P.tonnes}t · berth ${H.parked.length+1}/${MF.arcadeTugCapacity(g)}`);
 };
-}
 
-export function init_136() {
-MF.TUG_PROFILES = [
-  {id:'tender',label:'HARBOUR TENDER',tonnes:18,mass:.82,length:.115,beam:.070,col:'#d9a84f',trim:'#fff3cf',unlock:1},
-  {id:'fishing',label:'FISHING BOAT',tonnes:42,mass:1.10,length:.138,beam:.074,col:'#527da0',trim:'#fff3cf',unlock:1},
-  {id:'ferry',label:'ISLAND FERRY',tonnes:96,mass:1.52,length:.160,beam:.088,col:'#f1e4bf',trim:'#527da0',unlock:2},
-  {id:'coaster',label:'COASTAL FREIGHTER',tonnes:165,mass:2.05,length:.184,beam:.080,col:'#c96b58',trim:'#d9a84f',unlock:3},
-  {id:'barge',label:'LOADED BARGE',tonnes:235,mass:2.55,length:.190,beam:.102,col:'#9d7045',trim:'#704630',unlock:4},
-  {id:'tanker',label:'SMALL TANKER',tonnes:360,mass:3.25,length:.210,beam:.086,col:'#71858a',trim:'#df7c68',unlock:5}
-];
-}
 
-export function init_137() {
-MF.arcadeTugCache = new Map();
-}
 
-export function init_145() {
-MF.ARCADE_LINE_TYPES = [
-  {id:'head',label:'HEAD LINE',short:'H',station:.39,lead:.68},
-  {id:'stern',label:'STERN LINE',short:'S',station:-.39,lead:-.68},
-  {id:'foreSpring',label:'FORWARD SPRING',short:'FS',station:.27,lead:-.52},
-  {id:'aftSpring',label:'AFT SPRING',short:'AS',station:-.27,lead:.52}
-];
-}

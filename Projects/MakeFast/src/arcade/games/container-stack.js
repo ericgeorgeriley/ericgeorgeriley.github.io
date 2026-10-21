@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/container-stack.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeStackList = function arcadeStackList(g){
   let total=0,moment=0;
   for(const b of (g.stackBodies||[])){total+=b.weight;moment+=b.weight*(b.x-2.5)}
@@ -220,14 +222,4 @@ MF.arcadeRenderContainerStack = function arcadeRenderContainerStack(g,ts,G,dt,ru
 MF.arcadeRenderStack = function arcadeRenderStack(g,ts,G,dt,running){if(g.meta.id==='cargo_tetris')MF.arcadeRenderHoldPacker(g,ts,G,dt,running);else if(g.theme==='container')MF.arcadeRenderContainerStack(g,ts,G,dt,running);else MF.arcadeRenderTetris(g,ts,G,dt,running)};
 
 MF.arcadeContainerDrop = function arcadeContainerDrop(g){MF.arcadeStackBeginDrop(g)};
-}
 
-export function init_156() {
-MF.ARCADE_STACK_LOADS = [
-  {id:'empty',label:'EMPTY 20',width:1,weight:7,kind:0,col:'#d6b269'},
-  {id:'standard',label:'20FT BOX',width:1,weight:14,kind:1,col:'#527da0'},
-  {id:'reefer',label:'REEFER',width:1,weight:18,kind:2,col:'#e6eee9'},
-  {id:'heavy',label:'HEAVY 20',width:1,weight:27,kind:3,col:'#b95d50'},
-  {id:'forty',label:'40FT BOX',width:2,weight:24,kind:4,col:'#6f8f6a'}
-];
-}

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/chapters-vi.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsInstallPersonalChapter = function hsInstallPersonalChapter(s,rr){
  if(s.storyVersion<6||s.scale!=='major')return;
  const person=MF.residentById(s.personId),bank=MF.HS_LIFE_DILEMMAS[person?.archetype]||MF.HS_LIFE_DILEMMAS.maker;
@@ -108,45 +110,6 @@ MF.hsCompleteSpecialistTrial = function hsCompleteSpecialistTrial(g,reason,score
  s.history.push({at:MF.nowReal(),islandId:null,text:note});
  MF.state.journal.unshift(`${s.title}: a specialist sea survey found useful evidence.`);MF.save();return true;
 };
-}
 
-export function init_238() {
-MF.HS_LIFE_DILEMMAS = {
- fisher:[
-  {lead:'I have kept the outer nets alone for too long. Should the harbour learn the old marks or should I work on a better landing?',a:'Teach the younger crews the tide marks',b:'Build a more reliable landing routine',outreach:'Fishing mentor',craft:'Keeper of the Landing',detail:'An apprentice joins the morning net rounds.',work:'The landing is now kept ready for returning boats.'},
-  {lead:'The fishing grounds are changing. I could share my log or mend the little boats that cannot follow the fish.',a:'Share the catch log with the fleet',b:'Keep the little boats seaworthy',outreach:'Fleet Guide',craft:'Fishing-Boat Keeper',detail:'The whole fleet can consult a shared log.',work:'A small repair bench serves the fishing boats.'},
-  {lead:'I have found a quiet cove. Should its wildlife be protected or should the old mooring be made safe?',a:'Teach visitors to watch the wildlife quietly',b:'Restore a safe mooring for the crews',outreach:'Cove Wildlife Guide',craft:'Cove Mooring Keeper',detail:'A quiet-watching route becomes part of the daily rounds.',work:'The mooring receives regular inspections.'}],
- gardener:[
-  {lead:'These seedlings could go to every neighbour, or I could save the old orchard beds first.',a:'Start a shared seed circle',b:'Restore the heritage planting beds',outreach:'Seed Circle Steward',craft:'Orchard Restorer',detail:'Neighbours begin exchanging seeds across the quay.',work:'The old planting beds return to the gardener’s routine.'},
-  {lead:'Our fruit is plentiful but the oldest trees need care. Which promise should I keep first?',a:'Teach families to tend their own trees',b:'Repair the old orchard terrace',outreach:'Orchard Teacher',craft:'Terrace Keeper',detail:'Small gardens begin appearing by the cottages.',work:'The terrace is cared for after each harvest.'},
-  {lead:'I could share these unfamiliar flowers or keep a careful record of where they flourish.',a:'Plant a public harbour garden',b:'Establish a patient trial plot',outreach:'Harbour Flower Keeper',craft:'Field Plot Steward',detail:'A public planting brightens the approach to the village.',work:'The trial plot records each new season.'}],
- carpenter:[
-  {lead:'There is no one left who knows this joint. Shall I teach the yard or finish the old pattern myself?',a:'Take on a shipwright apprentice',b:'Finish the forgotten workshop pattern',outreach:'Shipwright Mentor',craft:'Pattern Master',detail:'An apprentice begins learning by the workbench.',work:'The old pattern becomes a carefully maintained workshop tool.'},
-  {lead:'The boats need repairs and the cottages need roofs. I cannot be in both places at once.',a:'Organise a neighbourly repair crew',b:'Build a permanent repair bench',outreach:'Harbour Repair Organiser',craft:'Yard Repair Keeper',detail:'Neighbours take turns keeping up the harbour.',work:'A dedicated repair bench is kept ready for storms.'},
-  {lead:'This figurehead belongs to a missing vessel. Should it teach a story or return to working wood?',a:'Teach children the vessel’s story',b:'Restore the carving for a working boat',outreach:'Harbour Story Carver',craft:'Figurehead Restorer',detail:'The old vessel’s story is passed on at the quay.',work:'A restored carving has a place in the yard.'}],
- trader:[
-  {lead:'A family cannot afford to send its parcel. I could organise a shared delivery or reopen the ledger.',a:'Arrange a shared harbour delivery',b:'Restore the old trading ledger',outreach:'Community Courier',craft:'Ledger Keeper',detail:'Small parcels can travel together on ordinary crossings.',work:'The repaired ledger is consulted at the quay.'},
-  {lead:'Our market serves visitors, but some neighbours have stopped coming. What should change?',a:'Make a day for island makers',b:'Build a dependable market routine',outreach:'Market Gathering Steward',craft:'Quayside Market Keeper',detail:'Local makers now gather on market days.',work:'The quay keeps a regular place for practical trade.'},
-  {lead:'An old account links these two shores. Should I put their people in touch or sort out the books first?',a:'Reconnect the two harbour families',b:'Reconcile the missing accounts',outreach:'Harbour Liaison',craft:'Account Restorer',detail:'The neighbours begin corresponding again.',work:'The harbour accounts are finally set straight.'}],
- navigator:[
-  {lead:'The old bearings are known only to me. Shall I teach them to other sailors or restore the chartroom?',a:'Teach young helms the bearings',b:'Restore a working chartroom',outreach:'Navigation Instructor',craft:'Chartroom Keeper',detail:'New helms begin practicing the safer approach.',work:'Fresh bearings are kept in a working chartroom.'},
-  {lead:'I have seen three crews disagree over the shoal. I could bring them together or test the markers myself.',a:'Gather the captains for a shared survey',b:'Repair and verify the markers',outreach:'Fleet Survey Organiser',craft:'Channel Marker Keeper',detail:'The captains now exchange survey notes.',work:'The offshore markers receive regular care.'},
-  {lead:'There is a light in the wrong place at night. Do I teach the signal or keep its lantern working?',a:'Teach the night-watch signals',b:'Maintain the harbour lantern',outreach:'Night-Watch Teacher',craft:'Signal Lantern Keeper',detail:'The watch crews understand each other’s lamps.',work:'The lantern receives careful tending at dusk.'}],
- naturalist:[
-  {lead:'The rare birds are being disturbed. I could guide curious visitors or improve the nesting refuge.',a:'Lead quiet wildlife walks',b:'Protect and tend the nesting refuge',outreach:'Wildlife Walk Leader',craft:'Nesting Refuge Keeper',detail:'Visitors learn where to watch without approaching nests.',work:'The refuge is watched without disturbing its birds.'},
-  {lead:'The tidepool creatures need careful recording. Should the children help or should I make a permanent field station?',a:'Teach tidepool observations',b:'Establish a field-notes station',outreach:'Tidepool Teacher',craft:'Field Station Keeper',detail:'Children bring careful sketches to the harbour.',work:'A field-notes station keeps each observation safe.'},
-  {lead:'These migrating birds cross several islands. Do we share sightings or establish a protected lookout?',a:'Connect the island birdwatchers',b:'Keep a protected lookout',outreach:'Island Bird Surveyor',craft:'Quiet Lookout Keeper',detail:'Bird sightings now pass between harbour friends.',work:'The lookout is watched and kept quiet.'}],
- maker:[
-  {lead:'My tools could help many people, but the old workshop needs rebuilding. Which would help us more?',a:'Run an open repair morning',b:'Rebuild the workshop tools',outreach:'Open Workshop Host',craft:'Tool Restorer',detail:'Neighbours bring small repairs to the open workbench.',work:'The workshop’s tools are once again in order.'},
-  {lead:'This old invention never worked at sea. Do we invite help from other makers or perfect it ourselves?',a:'Invite a makers’ exchange',b:'Finish the prototype with care',outreach:'Makers’ Exchange Host',craft:'Prototype Keeper',detail:'Ideas begin arriving from neighbouring harbours.',work:'The finished prototype remains on the bench.'},
-  {lead:'A child wants to learn these little mechanisms. Is it time to teach or to put the workshop on firmer ground?',a:'Take a workshop apprentice',b:'Repair the workshop foundations',outreach:'Workshop Mentor',craft:'Workshop Steward',detail:'An apprentice begins learning the little mechanisms.',work:'The workshop is now ready for the next winter.'}]
-};
-}
 
-export function init_239() {
-MF.HS_SPECIALIST_GAMES = {beacon:'naval_cattleships',wreck:'research_cipher',birds:'trawler_net',garden:'trawler_net',channel:'tanker_channel',craft:'cargo_tetris',bell:'naval_cattleships',market:'container_stack',lantern:'naval_cattleships',festival:'ferry_galley'};
-}
 
-export function init_240() {
-MF.hsDioramaToken = 0;
-}

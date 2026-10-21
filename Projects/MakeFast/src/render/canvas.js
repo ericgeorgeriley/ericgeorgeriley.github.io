@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/canvas.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeThemePalette = function arcadeThemePalette(theme){const p={ferry:['#e9e2c5','#d7cda9','#497b94'],container:['#b98359','#704630','#4f8b56'],cruise:['#fff7de','#d9eef2','#527da0'],trawler:['#a86d45','#704630','#4f8b56'],yacht:['#f2e7c5','#a86d45','#4f8b56'],speedboat:['#d9eef2','#527da0','#df7c68'],tug:['#d6c287','#704630','#e5b54e'],tanker:['#6a7c7f','#384f55','#df7c68'],naval:['#7a8c88','#435d5b','#d8caa1'],research:['#e5e8df','#527da0','#e5b54e'],rescue:['#fff7de','#df7c68','#527da0'],pilot:['#fff7de','#527da0','#e5b54e'],dredger:['#c89d63','#704630','#e5b54e'],barge:['#a86d45','#704630','#527da0'],tallship:['#a86d45','#704630','#fff7de'],submarine:['#49646b','#263c45','#65bdd1'],carrier:['#7f8a86','#46534f','#e5b54e'],damage:['#596d73','#263c45','#df7c68']};return p[theme]||p.ferry};
 
 MF.arcadeGeom = function arcadeGeom(){const W=MF.canvas.width,H=MF.canvas.height,top=Math.max(82,Math.round(H*.095)),bottom=H-18,h=Math.max(250,bottom-top),left=22,right=W-22,w=right-left;return{W,H,top,bottom,h,left,right,w,cx:W/2,x:p=>left+w*p,y:p=>top+h*p,nx:x=>MF.clamp((x-left)/w,0,1),ny:y=>MF.clamp((y-top)/h,0,1)}};
@@ -109,12 +111,5 @@ MF.drawArcadeDeck = function drawArcadeDeck(g,ts,G){const [deck,dark,accent]=MF.
   if(g.theme==='dredger'){MF.drawArcadeDredger(G.cx,G.y(.20),Math.min(1.65,G.w/390));MF.drawArcadeCrew(G.x(.76),G.y(.25),'#e5b54e','#527da0',.78)}
   if(g.theme==='carrier'){MF.rect(G.x(.08),G.y(.33),G.w*.84,G.h*.25,'#6a7c7f','#18313a',4);MF.line(G.x(.10),G.y(.455),G.x(.90),G.y(.455),'#fff7de',3);for(let i=0;i<5;i++)MF.rect(G.x(.16+i*.14),G.y(.40),2,G.h*.11,'rgba(255,247,222,.65)')}
 };
-}
 
-export function init_134() {
-MF.arcadeSpriteCache = new Map();
-}
 
-export function init_135() {
-MF.arcadeSceneCache = new Map();
-}

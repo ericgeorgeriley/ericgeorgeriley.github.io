@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/container-crane.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeCraneNewLoad = function arcadeCraneNewLoad(g){
   const max=Math.min(MF.ARCADE_CRANE_LOADS.length,2+Math.floor((g.round-1)/2));
   const base=MF.ARCADE_CRANE_LOADS[Math.floor(MF.arcadeRand(g,0,max))%max];
@@ -198,13 +200,4 @@ MF.arcadeCraneInput = function arcadeCraneInput(g){
   g.release={x,y,vx:Math.cos(C.angle)*tangential,vy:-Math.sin(C.angle)*tangential,gravity:load.fall,rot:C.angle*.12,spin:C.omega*.55,landed:false,lockedRoll,lockedWind:C.wind,lockedDeckY:shipY-shipH*.16,lockedBayW:bayW,lockedTargetX:bayX0+g.targetCol*(bayW+gap)+bayW/2};
   g.cool=now+380;MF.arcadeSetFeedback(g,'LOAD AWAY · TARGET LOCKED','good',520)
 };
-}
 
-export function init_155() {
-MF.ARCADE_CRANE_LOADS = [
-  {id:'pallet',label:'PALLET',mass:.75,windage:1.30,w:.055,h:.035,fall:.31},
-  {id:'container',label:'20FT CONTAINER',mass:1.45,windage:.72,w:.074,h:.042,fall:.38},
-  {id:'machinery',label:'MACHINERY SKID',mass:2.25,windage:.38,w:.062,h:.044,fall:.43},
-  {id:'reel',label:'CABLE REEL',mass:1.80,windage:.54,w:.050,h:.050,fall:.40}
-];
-}

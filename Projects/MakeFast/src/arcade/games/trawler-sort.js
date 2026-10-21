@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/trawler-sort.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeCatchSpeciesForRound = function arcadeCatchSpeciesForRound(g){
   const r=g.round||1;
   let pool=['cod','mackerel'];
@@ -171,23 +173,5 @@ MF.arcadeSortDrop = function arcadeSortDrop(g,nx,ny){
   }
   MF.arcadeStrike(g,o.dest==='return'?'RETURN THAT CATCH':'WRONG BOX',35);o.x=MF.clamp(nx,.27,.71);o.y=.66;o.vx=MF.arcadeRand(g,-.015,.015);o.vy=.008;g.drag=null
 };
-}
 
-export function init_158() {
-MF.ARCADE_CATCH_SPECIES = {
-  cod:{name:'COD',cat:'white',col:'#c8c7ab',dark:'#5b716e',accent:'#efe5bd',shape:'fish',size:1.12},
-  haddock:{name:'HADDOCK',cat:'white',col:'#aebbb2',dark:'#465b60',accent:'#d8d5ba',shape:'fish',size:1.02},
-  mackerel:{name:'MACKEREL',cat:'oily',col:'#6fa8a4',dark:'#31545a',accent:'#a5d1b0',shape:'striped',size:.96},
-  herring:{name:'HERRING',cat:'oily',col:'#8eb8c2',dark:'#496b73',accent:'#e0e5d6',shape:'fish',size:.84},
-  crab:{name:'BROWN CRAB',cat:'shell',col:'#bd774f',dark:'#6d4937',accent:'#e7a565',shape:'crab',size:.95,crawler:true},
-  lobster:{name:'LOBSTER',cat:'shell',col:'#b85e4e',dark:'#683e38',accent:'#e28d64',shape:'lobster',size:1.03,crawler:true},
-  smallcod:{name:'SMALL COD',cat:'return',col:'#c8c7ab',dark:'#5b716e',accent:'#efe5bd',shape:'fish',size:.66,undersize:true},
-  ray:{name:'THORNBACK RAY',cat:'return',col:'#8a806d',dark:'#4f5049',accent:'#b6aa8c',shape:'ray',size:1.06,protected:true},
-  dogfish:{name:'DOGFISH',cat:'return',col:'#7d9291',dark:'#3f5558',accent:'#a9b9b1',shape:'dogfish',size:1.00,protected:true},
-  starfish:{name:'STARFISH',cat:'return',col:'#d78959',dark:'#87523c',accent:'#efb66e',shape:'star',size:.76,protected:true}
-};
-}
 
-export function init_159() {
-MF.ARCADE_CATCH_SPRITES = new Map();
-}

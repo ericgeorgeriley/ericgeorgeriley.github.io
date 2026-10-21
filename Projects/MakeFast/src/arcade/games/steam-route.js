@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/steam-route.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeSteamRotateMask = function arcadeSteamRotateMask(mask,steps=1){let m=mask;for(let s=0;s<(steps%4+4)%4;s++)m=((m<<1)&15)|((m&8)?1:0);return m};
 
 MF.arcadeSteamBits = function arcadeSteamBits(mask){let n=0;for(const d of MF.ARCADE_STEAM_DIRS)if(mask&d.bit)n++;return n};
@@ -230,29 +232,6 @@ MF.arcadeSteamPointer = function arcadeSteamPointer(g,type,x,y,G=MF.arcadeGeom()
   if(t.fixed){MF.arcadeSetFeedback(g,'THIS FLANGED PIPE IS FIXED','neutral',360);return}
   t.mask=MF.arcadeSteamRotateMask(t.mask,1);D.moves++;D.turnFlash=i;D.turnAt=performance.now();const E=MF.arcadeSteamEvaluate(D,false);if(E.complete)MF.arcadeSetFeedback(g,'STEAM ROUTE MADE','good',420)
 };
-}
 
-export function init_152() {
-MF.ARCADE_STEAM_DIRS = [
-  {dr:-1,dc:0,bit:1,opp:4,name:'N'},
-  {dr:0,dc:1,bit:2,opp:8,name:'E'},
-  {dr:1,dc:0,bit:4,opp:1,name:'S'},
-  {dr:0,dc:-1,bit:8,opp:2,name:'W'}
-];
-}
 
-export function init_153() {
-MF.ARCADE_STEAM_SCENARIOS = [
-  {id:'cold',label:'COLD START',note:'Turn the copper pipes until steam reaches the engine.',rows:3,cols:4,aux:false,valves:0,decoy:.28,fixed:0},
-  {id:'bends',label:'PIPE CHEST',note:'A larger pipe chest with several tempting dead ends.',rows:4,cols:4,aux:false,valves:0,decoy:.58,fixed:0},
-  {id:'hiss',label:'HISSING JOINT',note:'A red isolation valve is venting steam. Shut it once the live line reaches it.',rows:4,cols:5,aux:false,valves:1,decoy:.62,fixed:.05},
-  {id:'feed',label:'FEED PUMP',note:'Split the steam so the engine and boiler feed pump are both supplied.',rows:4,cols:5,aux:true,valves:1,decoy:.68,fixed:.08},
-  {id:'manifold',label:'ENGINE ROOM',note:'Two isolation branches can waste pressure if they are left hissing.',rows:5,cols:5,aux:true,valves:2,decoy:.72,fixed:.10},
-  {id:'oldpipes',label:'OLD PIPEWORK',note:'Some flanged pipes are fixed in place. Build the route around them.',rows:5,cols:6,aux:true,valves:2,decoy:.78,fixed:.18},
-  {id:'full',label:'FULL STEAM',note:'A dense manifold, two services and several vent branches.',rows:5,cols:6,aux:true,valves:3,decoy:.84,fixed:.20}
-];
-}
 
-export function init_154() {
-MF.arcadeSteamArtCache = new Map();
-}

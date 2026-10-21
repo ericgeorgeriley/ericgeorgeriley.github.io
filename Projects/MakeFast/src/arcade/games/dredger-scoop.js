@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/dredger-scoop.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeDredgeBoatSprite = function arcadeDredgeBoatSprite(frame=0){
   const key=((frame%4)+4)%4;if(MF.ARCADE_DREDGE_BOAT_CACHE.has(key))return MF.ARCADE_DREDGE_BOAT_CACHE.get(key);
   const [c,g]=MF.pixelCanvas(188,112),ink='#17313a',hull='#3b6064',hullHi='#52777a',hullDark='#29494f',cream='#efe4bf',wood='#805334',gold='#d6a84d',red='#c95f50',glass='#65bdd1',metal='#8c9b96';
@@ -181,8 +183,4 @@ MF.arcadeRenderDredge = function arcadeRenderDredge(g,ts,G,dt,running){
   const cue=D.load>0?(overHopper?'PRESS GRAB / DUMP':'LIFT CLEAR • MOVE OVER HOPPER'):(B.y>.76?(settled?'PRESS GRAB / DUMP':'LET THE GRAB SETTLE'):'LOWER TO GOLD SEDIMENT');
   MF.arcadeSetHelperCue(g,cue,`${g.roundProgress}/${g.roundGoal} hopper loads · grab ${Math.round(D.fill*100)}%`)
 };
-}
 
-export function init_186() {
-MF.ARCADE_DREDGE_BOAT_CACHE = new Map();
-}

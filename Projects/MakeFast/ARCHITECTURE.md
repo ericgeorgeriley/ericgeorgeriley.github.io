@@ -4,15 +4,13 @@
 
 The aim of this extraction is **behavioral parity before architecture changes**. The previous v0.41.7 script was one strict-mode immediately-invoked function containing over 1,300 function declarations, mutable shared state, constructor/data aliases, and versioned code that intentionally overwrote earlier functions. Moving raw declarations directly into separately imported ES modules would change lexical bindings, strict-module timing, import cycles, and the meaning of assignments. This project instead extracts systems first, then provides a stepping stone to explicit dependency injection/imports.
 
-## Initialization contract
+## Initialization contract (normalized)
 
 1. `src/main.js` imports `src/bootstrap.js`.
-2. `bootstrap.js` imports every system and minigame module.
-3. Each module's `install()` registers its original function declarations on the shared `MF` runtime. This mirrors original function declaration hoisting, including function declarations after their first callers.
-4. `bootstrap.js` calls each generated `init_*()` operation **in the exact original source order**. This preserves the order of CONTENT construction, localStorage migration, event handlers, narrative patch layers and final startup.
-5. The original render loop, world simulation, save and input systems continue with their existing semantics.
-
-Do not reorder the calls in `bootstrap.js` until the corresponding dependencies are explicitly extracted and tested. Do not directly mutate `MF` outside the compatibility modules unless modifying the legacy API intentionally.
+2. `bootstrap.js` imports feature modules as regular ES modules; their function declarations register at module evaluation. There is **no** generated `install()` registry.
+3. `src/core/startup.js` contains named phases for connecting content, state, world, rules, and application launch; the authored content itself lives in exported values from `src/content/*`. There are **no** `init_###()` wrappers or per-line bootstrap dispatch calls.
+4. `MF` remains a **temporary shared state/function namespace** for cross-domain calls; this normalization does **not** claim the 1,300 original functions already have fully independent import/export interfaces. The next architectural step is replacing those cross-domain property lookups with explicit native exports and imports while avoiding cyclic dependencies.
+5. The original save format is currently retained. Fresh saves are not required by this normalization. Retire migrations only with explicitly tested schema replacement and an intentional player-facing save-reset policy.
 
 ## Longer-term target
 
@@ -57,3 +55,7 @@ Then launch `npm run dev` and manually verify: onboarding, Shore, Chart, Voyage,
 ## Design note: original vs new sprites
 
 Most MakeFast artwork is drawn by JavaScript sprite/shape functions and Canvas rather than loaded image files. The renderer and sprite modules contain the **same drawing algorithms** as the monolith. This first refactor does not create atlases or duplicate sprites. The next step can add `public/assets/` and manifests without impacting game rules or the save schema.
+
+## Update v0.41.8 — menu and Cattleships
+
+Resident menu disclosures are preserved by `src/ui/disclosure-state.js`; use stable `data-disclosure-id` names for all new `<details>` and restore state only when the same entity/panel redraws. The visual assets in `src/render/sprites/cattleships.js` use the same `getBoatSprite` and `getAnimalSprite` facade as the main game. Future new sprites should share `src/render/sprites/`, not be copied into minigame renderers.

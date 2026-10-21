@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/seabed-cipher.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeTankerWidth = function arcadeTankerWidth(g,p){
   const r=g.round||1,T=g.tanker||{},finish=T.finish||2.8;
   const base=Math.max(.215,.325-.0105*Math.min(8,r));
@@ -223,17 +225,4 @@ MF.drawArcadeCipherLamp = function drawArcadeCipherLamp(x,y,on=false,col='#83bf6
 MF.drawArcadeCipherTag = function drawArcadeCipherTag(x,y,w,textA,textB,tint='#fff7de'){MF.roundedRect(x,y,w,24,6,tint,'#17313a',1);MF.pxText(textA,x+8,y+9,'#17313a',6,'left');MF.pxText(textB,x+8,y+18,'#42616a',5.5,'left')};
 
 MF.drawArcadeCipherHistoryRow = function drawArcadeCipherHistoryRow(H,x,y,w,h,len,latest=false){MF.roundedRect(x,y,w,h,10,latest?'rgba(101,189,209,.18)':'rgba(19,49,58,.34)',latest?'#65bdd1':'rgba(255,247,222,.18)',1);const cy=y+h/2;MF.drawArcadeWaveBand(x+12,x+w-58,cy,performance.now()*.004+H.at*.001,2,'rgba(225,246,239,.12)');MF.line(x+12,cy,x+w-60,cy,'rgba(225,246,239,.12)',1);const chip=Math.max(24,Math.min(38,h*.68)),gap=(w-92-chip*H.guess.length)/Math.max(1,H.guess.length-1),start=x+18;for(let s=0;s<H.guess.length;s++){const px=start+s*(chip+gap);MF.circle(px+chip/2,cy,chip*.44,'rgba(255,247,222,.95)','#17313a',1);MF.drawArcadeCipherSpecimen(H.guess[s],px+chip/2,cy,chip*.62,.96)}for(let p=0;p<len;p++){const fill=p<H.exact?'#83bf6a':p<H.exact+H.shifted?'#e5b54e':'#455b60';MF.circle(x+w-42+(p%2)*13,y+12+Math.floor(p/2)*12,4.5,fill,'#17313a',1)}};
-}
 
-export function init_175() {
-MF.ARCADE_CIPHER_SPECIMENS = [
-  {id:'basalt',label:'BASALT',col:'#526565'},
-  {id:'shell',label:'SHELL',col:'#efe3b8'},
-  {id:'coral',label:'CORAL',col:'#df7c68'},
-  {id:'glass',label:'SEA GLASS',col:'#65bdd1'},
-  {id:'timber',label:'TIMBER',col:'#a86d45'},
-  {id:'iron',label:'IRON',col:'#81908d'},
-  {id:'kelp',label:'KELP',col:'#6ea66b'},
-  {id:'amber',label:'AMBER',col:'#e5b54e'}
-];
-}

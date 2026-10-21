@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/tallship-rigging.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeRiggingPersonSprite = function arcadeRiggingPersonSprite(frame=0){
   const key=frame%4;if(MF.ARCADE_RIGGING_PERSON_CACHE.has(key))return MF.ARCADE_RIGGING_PERSON_CACHE.get(key);
   const[c,g]=MF.pixelCanvas(20,31),ink='#17313a',skin='#d6a47a',shirt='#e5b54e',trouser='#31545a';
@@ -258,8 +260,4 @@ MF.arcadeCaveBounds = function arcadeCaveBounds(g,x){
   const i=Math.floor(pos),t=pos-i,a=g.tunnel[i],b=g.tunnel[Math.min(g.tunnel.length-1,i+1)]||a;
   return{top:MF.lerp(a.top,b.top,t),bottom:MF.lerp(a.bottom,b.bottom,t)}
 };
-}
 
-export function init_177() {
-MF.ARCADE_RIGGING_PERSON_CACHE = new Map();
-}

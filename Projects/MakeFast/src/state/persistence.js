@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • state/persistence.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.loadState = function loadState(){
   try{const raw=localStorage.getItem(MF.SAVE_KEY); if(raw){const s=JSON.parse(raw); return MF.migrate(s)}}catch(e){console.warn('Save load failed',e)}
   return MF.defaultState();
@@ -31,12 +33,5 @@ MF.migrate = function migrate(s){
 MF.save = function save(){MF.repairIdentityIntegrity(MF.state);MF.state.lastSavedAt=MF.nowReal();try{localStorage.setItem(MF.SAVE_KEY,JSON.stringify(MF.state))}catch(e){if(!MF.storageWarned){MF.storageWarned=true;console.warn('MakeFast could not access browser storage in this context.',e)}}};
 
 MF.gameNow = function gameNow(){return MF.nowReal()+(MF.state.sim?.active?MF.state.sim.offsetMs:0)};
-}
 
-export function init_73() {
-MF.state = MF.loadState();
-}
 
-export function init_74() {
-MF.storageWarned = false;
-}

@@ -1,11 +1,12 @@
 /** MakeFast v0.41.7 • content/database.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_21() {
+
+
+
+// The canonical game-content object exists before feature data modules evaluate.
 MF.CONTENT = {};
-}

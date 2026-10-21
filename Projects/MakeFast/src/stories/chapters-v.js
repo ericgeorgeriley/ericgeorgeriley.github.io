@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/chapters-v.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsStoryParcels = function hsStoryParcels(){return (MF.state.stories?.items||[]).filter(s=>s.storyVersion>=5&&s.storyParcel?.status==='aboard'&&s.status!=='completed')};
 
 MF.hsStoryManifestHTML = function hsStoryManifestHTML(){const parcels=MF.hsStoryParcels();return parcels.length?`<div class="section"><div class="section-title">Story parcels aboard <span>${parcels.length}</span></div>${parcels.map(s=>`<div class="mf-manifest-card"><h3>${MF.mfSpecialCargoIconSVG('parcel')} ${MF.wikiEsc(s.storyParcel.label)}</h3><p>Entrusted by ${MF.wikiEsc(MF.residentById(s.personId)?.name||'a neighbour')} · For ${MF.wikiEsc(MF.getIsland(s.storyParcel.targetId)?.name||'the receiving harbour')}</p><span class="mf-manifest-route">${s.status==='paused'?'SAFE WHILE ON HOLD':'ABOARD · TIDEBOOK'}</span></div>`).join('')}</div>`:''};
@@ -106,19 +108,4 @@ MF.hsWorkAdvice = function hsWorkAdvice(personId,storyId){
  if(!Array.isArray(social.storyAdviceHistory))social.storyAdviceHistory=[];social.storyAdviceHistory.push(s.id);
  MF.state.journal.unshift(`${p.name} offered a helpful insight into ${s.title}.`);MF.save();MF.renderUI();MF.hsShowStory(s.id);return true;
 };
-}
 
-export function init_237() {
-MF.HS_COMMISSION_PLANS = {
- beacon:['a keeper’s sealed signal rubbing','glass','test the old signal fittings'],
- wreck:['the recovered ship’s name and manifest','timber','repair the weathered nameboard'],
- birds:['a nesting-ground survey packet','seeds','prepare a sheltered wildlife marker'],
- garden:['the gardeners’ shared seed record','seeds','prepare the old planting beds'],
- channel:['the corrected sounding sheet','charts','mark the harbour approach'],
- craft:['the shipwright’s folded pattern','hardware','prepare the workshop tools'],
- bell:['a rubbing of the bell’s inscription','brass','secure the old bell mounting'],
- market:['a copy of the old trading ledger','cloth','sort the unclaimed harbour parcels'],
- lantern:['the night-watch rota','glass','prepare the lantern housing'],
- festival:['an invitation signed by both harbours','cloth','prepare the gathering ground']
-};
-}

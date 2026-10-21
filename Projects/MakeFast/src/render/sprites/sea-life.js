@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/sea-life.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.seaSpriteCore = function seaSpriteCore(kind='dolphin',variant=0){const key=`sea:${kind}:${variant}`;if(MF.worldSpriteCache.has(key))return MF.worldSpriteCache.get(key);let w=32,h=24;if(kind==='wreck')w=58,h=38;if(kind==='gull')w=18,h=12;const [c,g]=MF.pixelCanvas(w,h),ink='#17313a';
   if(kind==='dolphin'){MF.psPoly(g,[[3,14],[9,9],[21,8],[28,11],[23,14],[16,14],[10,17]],'#3a7186');MF.psLine(g,4,14,22,13,ink,1);MF.psPoly(g,[[13,9],[17,3],[20,9]],'#2e6075');MF.psPoly(g,[[22,11],[30,7],[27,13]],'#2e6075');MF.psRect(g,21,10,1,1,'#dff5f4')}
   else if(kind==='gull'){MF.psLine(g,1,7,8,3,'#f8f0d5',2);MF.psLine(g,9,3,17,7,'#f8f0d5',2);MF.psRect(g,8,4,2,2,'#284650')}
@@ -14,6 +16,5 @@ MF.seaSpriteCore = function seaSpriteCore(kind='dolphin',variant=0){const key=`s
   MF.worldSpriteCache.set(key,c);return c};
 
 MF.drawSeaSprite = function drawSeaSprite(kind,x,y,s=1,mirror=false,variant=0){const spr=MF.seaSprite(kind,variant),w=spr.width*s,h=spr.height*s;MF.ctx.save();MF.ctx.imageSmoothingEnabled=false;if(mirror){MF.ctx.translate(Math.round(x),0);MF.ctx.scale(-1,1);MF.ctx.drawImage(spr,Math.round(-w/2),Math.round(y-h/2),Math.round(w),Math.round(h))}else MF.ctx.drawImage(spr,Math.round(x-w/2),Math.round(y-h/2),Math.round(w),Math.round(h));MF.ctx.restore()};
-}
 
 

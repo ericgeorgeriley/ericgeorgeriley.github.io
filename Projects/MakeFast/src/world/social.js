@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • world/social.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.mfEnsureSocialData = function mfEnsureSocialData(p){
   if(!p)return null;
   if(!p.social||typeof p.social!=='object'||Array.isArray(p.social))p.social={};
@@ -154,153 +156,14 @@ MF.showOfflineWorldSummary = function showOfflineWorldSummary(){if(MF.state.phas
 MF.mfResidentWaterTalkHTML = function mfResidentWaterTalkHTML(p){const o=MF.hsOfferFor(p.id);if(!MF.hsLocalPerson(p)||!o)return'';return `<div class="section mf-social-section"><div class="section-title">Something on their mind</div><div class="card"><p>${MF.wikiEsc(p.name.split(' ')[0])} ${o.kind==='news'?'has a little news from the crossing.':'has been thinking about a curious thing from the water.'}</p><button class="big-btn secondary" data-person-rumour="${p.id}">ASK ABOUT THE WATER</button></div></div>`};
 
 MF.mfVesselWaterTalkHTML = function mfVesselWaterTalkHTML(v){if(!MF.hsVesselNewsReady(v))return'';return `<div class="section"><div class="section-title">Crew talk</div><div class="card"><p>Captain ${v.captainName} has a story from the crossing.</p><button class="big-btn secondary" data-vessel-rumour="${v.id}">ASK ABOUT THE WATER</button></div></div>`};
-}
 
-export function init_205() {
-MF.MF_SOCIAL_VERSION = 2;
-}
 
-export function init_206() {
-MF.MF_RELATIONSHIP_TIERS = [
-  {name:'New face',min:0,next:2,discount:0,copy:'You have only just begun to know one another.'},
-  {name:'Familiar',min:2,next:6,discount:0,copy:'They know your name and are happy to see you at the quay.'},
-  {name:'Friend',min:6,next:12,discount:.25,copy:'You have shared enough small things that conversation comes easily — and they give you their friend price.'},
-  {name:'Trusted',min:12,next:null,discount:.25,copy:'They trust you with their best offers, private notes and unfinished ideas.'}
-];
-}
 
-export function init_207() {
-MF.MF_PERSONAL_TRADE_POOL = [
-  {id:'personal_stoneglass',label:'Sea-glass swap',cost:{stone:2},reward:{glass:2}},
-  {id:'personal_timbercloth',label:'A bundle they saved',cost:{timber:4},reward:{cloth:2}},
-  {id:'personal_seedglass',label:'A curious exchange',cost:{seeds:5},reward:{glass:2}},
-  {id:'personal_glasshardware',label:'Workshop odds and ends',cost:{glass:3},reward:{hardware:2}},
-  {id:'personal_clothletters',label:'News from another quay',cost:{cloth:3},reward:{stories:3}},
-  {id:'personal_letterscharts',label:'Notes for the chart',cost:{stories:4},reward:{charts:2}},
-  {id:'personal_hardwarebrass',label:'A small brass piece',cost:{hardware:2},reward:{brass:1}},
-  {id:'personal_stonetimber',label:'A stack by the shed',cost:{stone:3},reward:{timber:3}},
-  {id:'personal_timberstone',label:'Quayside stone',cost:{timber:3},reward:{stone:2}},
-  {id:'personal_seedstone',label:'Garden wall stone',cost:{seeds:4},reward:{stone:2}},
-  {id:'personal_letterstone',label:'A mason’s delivery',cost:{stories:3},reward:{stone:2}}
-];
-}
 
-export function init_208() {
-MF.MF_NPC_TRADE_PROFILES = {
-  fisher:[
-    {id:'fisher_shorefinds',label:'Shore basket',cost:{cloth:3},reward:{stone:2,glass:1}},
-    {id:'fisher_tacklebox',label:'Old tackle box',cost:{hardware:3},reward:{glass:2,stories:1}},
-    {id:'fisher_tidenotes',label:'Tide notes',cost:{timber:4,cloth:1},reward:{charts:2}}
-  ],
-  gardener:[
-    {id:'gardener_seedpacket',label:'Seed packets',cost:{timber:3},reward:{seeds:4}},
-    {id:'gardener_wovenroll',label:'Garden cloth',cost:{seeds:5},reward:{cloth:2,seeds:1}},
-    {id:'gardener_orchardnotes',label:'Orchard notes',cost:{glass:2,timber:2},reward:{stories:2,seeds:2}}
-  ],
-  carpenter:[
-    {id:'carpenter_offcuts',label:'Foundation exchange',cost:{timber:3},reward:{stone:2}},
-    {id:'carpenter_fittings',label:'Workshop fittings',cost:{cloth:4,timber:1},reward:{hardware:3}},
-    {id:'carpenter_finework',label:'Fine joinery',cost:{glass:2,timber:2},reward:{hardware:2,stone:1}}
-  ],
-  trader:[
-    {id:'trader_mixedcrate',label:'Masonry crate',cost:{timber:3,stories:1},reward:{stone:3}},
-    {id:'trader_imports',label:'Useful imports',cost:{seeds:4,glass:1},reward:{hardware:2,stories:1}},
-    {id:'trader_lockbox',label:'The little lockbox',cost:{cloth:3,hardware:1},reward:{brass:2}}
-  ],
-  navigator:[
-    {id:'navigator_sketches',label:'Coastal sketches',cost:{cloth:3},reward:{charts:1,stories:1}},
-    {id:'navigator_instruments',label:'Instrument parts',cost:{hardware:2,glass:1},reward:{charts:2}},
-    {id:'navigator_privatechart',label:'Private chart folio',cost:{brass:1,cloth:3},reward:{charts:3,stories:1}}
-  ],
-  naturalist:[
-    {id:'naturalist_specimens',label:'Shore specimens',cost:{seeds:5},reward:{stone:2,glass:1}},
-    {id:'naturalist_fieldkit',label:'Field kit exchange',cost:{hardware:2,timber:1},reward:{seeds:3,stories:1}},
-    {id:'naturalist_notebook',label:'Weathered notebook',cost:{glass:2,cloth:1},reward:{stories:2,charts:1}}
-  ],
-  maker:[
-    {id:'maker_hardware',label:'Bench-made fittings',cost:{timber:3,stone:1},reward:{hardware:2}},
-    {id:'maker_canvaswork',label:'Stitched canvas work',cost:{glass:2,hardware:1},reward:{cloth:3}},
-    {id:'maker_brasswork',label:'Careful brasswork',cost:{timber:3,glass:2},reward:{brass:2}}
-  ]
-};
-}
 
-export function init_209() {
-MF.MF_NPC_FAVOURS = {
-  fisher:[
-    {id:'fisher_patchnets',minTier:0,title:'Patch the old nets',text:'A little canvas would let them mend a stack of weathered gear.',need:{cloth:2},reward:{glass:1},bond:2},
-    {id:'fisher_newhooks',minTier:1,title:'Sort the tackle tin',text:'A few proper fittings would put several small pieces back into use.',need:{hardware:2},reward:{stories:1},bond:2},
-    {id:'fisher_marker',minTier:2,title:'Make a marker buoy',text:'Timber and canvas would make a bright marker for a useful patch of water.',need:{timber:3,cloth:1},reward:{charts:1},bond:3}
-  ],
-  gardener:[
-    {id:'gardener_beds',minTier:0,title:'Edge the garden beds',text:'A little timber would tidy the beds beside the path.',need:{timber:2},reward:{seeds:2},bond:2},
-    {id:'gardener_wall',minTier:1,title:'Mend the warm wall',text:'A couple of stones would shelter the young plants from the harbour wind.',need:{stone:2},reward:{seeds:2},bond:2},
-    {id:'gardener_glass',minTier:2,title:'Glaze a seed frame',text:'A small pane would make a sheltered place for delicate seedlings.',need:{glass:2,timber:1},reward:{cloth:1,seeds:1},bond:3}
-  ],
-  carpenter:[
-    {id:'carpenter_shelf',minTier:0,title:'Finish a quay shelf',text:'A sound stone and a little timber would make solid feet for a storage shelf.',need:{stone:1,timber:1},reward:{timber:2},bond:2},
-    {id:'carpenter_apron',minTier:1,title:'Replace the work apron',text:'A dry length of canvas would be welcome in the workshop.',need:{cloth:2},reward:{hardware:1},bond:2},
-    {id:'carpenter_window',minTier:2,title:'Fit the workshop window',text:'They have the frame ready; the last thing missing is the glass.',need:{glass:2},reward:{timber:2,hardware:1},bond:3}
-  ],
-  trader:[
-    {id:'trader_crates',minTier:0,title:'Repack the small crates',text:'A bit of spare timber would make the next shipment easier to sort.',need:{timber:2},reward:{cloth:1},bond:2},
-    {id:'trader_labels',minTier:1,title:'Copy the harbour labels',text:'A few letters and notes would help untangle where several parcels belong.',need:{stories:2},reward:{glass:1},bond:2},
-    {id:'trader_display',minTier:2,title:'Brighten the market display',text:'Canvas and a little glass would make the stall much easier to spot.',need:{cloth:2,glass:1},reward:{brass:1},bond:3}
-  ],
-  navigator:[
-    {id:'navigator_case',minTier:0,title:'Repair a chart case',text:'A strip of canvas would keep the damp away from a battered chart case.',need:{cloth:2},reward:{charts:1},bond:2},
-    {id:'navigator_notes',minTier:1,title:'Compare harbour notes',text:'They are piecing together several travellers’ letters into a cleaner route.',need:{stories:2},reward:{charts:1},bond:2},
-    {id:'navigator_dividers',minTier:2,title:'Mend the chart dividers',text:'A little brass would put a favourite old pair of dividers back in service.',need:{brass:1},reward:{charts:2},bond:3}
-  ],
-  naturalist:[
-    {id:'naturalist_press',minTier:0,title:'Repair a field press',text:'A little timber would make a simple press for leaves and shore plants.',need:{timber:2},reward:{seeds:1},bond:2},
-    {id:'naturalist_satchel',minTier:1,title:'Patch the field satchel',text:'Canvas would keep notebooks and specimens dry on the next walk.',need:{cloth:2},reward:{glass:1},bond:2},
-    {id:'naturalist_lens',minTier:2,title:'Mount a small lens',text:'Glass and a fitting would finish a handy little viewing tool.',need:{glass:2,hardware:1},reward:{stories:1,seeds:1},bond:3}
-  ],
-  maker:[
-    {id:'maker_bench',minTier:0,title:'Brace the workbench',text:'A little timber would stop the old bench rocking on its feet.',need:{timber:2},reward:{hardware:1},bond:2},
-    {id:'maker_template',minTier:1,title:'Cut a new template',text:'One flat stone would make a reliable pattern for repeated work.',need:{stone:1},reward:{cloth:1},bond:2},
-    {id:'maker_lamp',minTier:2,title:'Finish a bench lamp',text:'A small piece of glass is the last part of a cheerful workshop lamp.',need:{glass:2},reward:{hardware:1,brass:1},bond:3}
-  ]
-};
-}
 
-export function init_210() {
-MF.MF_ERRAND_COPY = {
-  fisher:['A small packet of tide notes','a net-maker at the next quay'],
-  gardener:['A paper twist of saved seeds','a gardener on another shore'],
-  carpenter:['A wrapped set of measurements','a workshop on another island'],
-  trader:['A labelled little parcel','the market keeper at another harbour'],
-  navigator:['A folded chart correction','the signal keeper at another quay'],
-  naturalist:['A pressed-leaf notebook','a shore watcher on another island'],
-  maker:['A tiny wrapped fitting','a mender at another harbour']
-};
-}
 
-export function init_211() {
-MF.MF_TRUSTED_KEEPSAKES = {
-  fisher:'A hand-knotted blue line loop hangs by the cabin door — a small fisher’s good-luck token.',
-  gardener:'A little packet of island seeds has your boat name written across it in careful pencil.',
-  carpenter:'A smooth wooden tally with your boat name scratched into it sits among the cabin keepsakes.',
-  trader:'A tiny stamped harbour token marks you as a welcome face at their stall.',
-  navigator:'A pencilled harbour mark in the margin of an old chart has quietly become yours.',
-  naturalist:'A pressed shore flower with a date and island name has found its way into your Tidebook.',
-  maker:'A small brass offcut, polished smooth, has been turned into a simple cabin charm.'
-};
-}
 
-export function init_212() {
-MF.mfPendingArrival = null;
-}
 
-export function init_213() {
-if(!Array.isArray(MF.state.socialErrands))MF.state.socialErrands=[];;
-}
 
-export function init_214() {
-try{MF.rootPersonRefs(MF.state).forEach(p=>MF.mfEnsureSocialData(p))}catch(e){console.warn('MakeFast social migration note',e)};
-}
 
-export function init_215() {
-MF.mfRecentPassengerCompletions = [];
-}

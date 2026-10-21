@@ -1,8 +1,11 @@
 /** MakeFast v0.41.7 • ui/panels/harbour.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
+import { captureDisclosureState, restoreDisclosureState } from '../disclosure-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.renderHarbourPanel = function renderHarbourPanel(){
   const body=MF.$('#panelBody'),isl=MF.currentIsland();if(MF.state.phase==='ashore'&&MF.state.anchorage){MF.$('#panelTitle').textContent=`Mooring · ${isl.name}`;MF.$('#panelSubtitle').textContent='A temporary stop, not a new island.';body.innerHTML=MF.mfAnchoragePanelHTML();MF.$('#anchorageContinue')?.addEventListener('click',MF.startVoyage);MF.$('#anchorageChart')?.addEventListener('click',()=>MF.setView('chart'));return}MF.ensureIslandData(isl);MF.$('#panelTitle').textContent=MF.state.phase==='ashore'?`Shore · ${isl.name}`:'Shore Ahead';MF.$('#panelSubtitle').textContent=MF.state.phase==='ashore'?'Island life, projects, people and local harbour activity.':'Arrival notes for the coast ahead.';
   if(MF.state.phase!=='ashore'){
@@ -19,6 +22,19 @@ MF.renderHarbourPanel = function renderHarbourPanel(){
     <div class="section"><div class="section-title">Harbour traffic <span>${visitors.length} alongside</span></div>${visitors.length?`<div class="traffic-list">${visitors.slice(0,6).map(MF.vesselCardHTML).join('')}</div>`:`<div class="card"><p>${isl.home?'The visitor berth is quiet just now.':'The jetty is quiet just now. Working boats will call as the island grows.'}</p></div>`}</div></div>`;
   MF.$('#islandBoardBtn').onclick=()=>MF.openDocksideBoard(isl,false);MF.hsBindPinned();MF.hsBindLocalShoreLeads();MF.$$('[data-give-hull]').forEach(b=>b.onclick=()=>{const [bid,m]=b.dataset.giveHull.split('|');MF.contributeVesselMaterial(isl,bid,m,false);MF.renderHarbourPanel()});MF.$$('[data-fill-hull]').forEach(b=>b.onclick=()=>{MF.contributeAllVessel(isl,b.dataset.fillHull);MF.renderHarbourPanel()});if(MF.$('#commissionFromShore'))MF.$('#commissionFromShore').onclick=()=>MF.openVesselCommissionPicker(isl);
 };
-}
+// Remember open disclosures and scroll position through updates to this same view.
+const renderWithoutPreservation = MF.renderHarbourPanel;
+MF.renderHarbourPanel = function renderHarbourPanelKeepingDisclosures(...args) {
+  const root = MF.$('#panelBody');
+  const key = `harbour:${MF.state.activeView}:${MF.state.currentIslandId}`;
+  const snapshot = root?.dataset.makefastDisclosureView === key ? captureDisclosureState(root) : null;
+  const result = renderWithoutPreservation(...args);
+  if (root) {
+    root.dataset.makefastDisclosureView = key;
+    restoreDisclosureState(root, snapshot);
+  }
+  return result;
+};
+
 
 

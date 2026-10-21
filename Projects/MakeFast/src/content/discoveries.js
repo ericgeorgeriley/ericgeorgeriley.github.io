@@ -1,13 +1,15 @@
 /** MakeFast v0.41.7 • content/discoveries.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_31() {
-MF.CONTENT.discoveries = [
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const discoveries = [
     {kind:'bottle',icon:'✉',name:'Sealed bottle',desc:'A salt-clouded bottle with a careful wax seal.',stock:{stories:1}},
     {kind:'timber',icon:'▰',name:'Driftwood beam',desc:'A sound old beam, worn smooth by the sea.',stock:{timber:2}},
     {kind:'seeds',icon:'✿',name:'Strange seeds',desc:'Tiny blue-green seeds wrapped in sailcloth.',stock:{seeds:2}},
@@ -19,4 +21,4 @@ MF.CONTENT.discoveries = [
     {kind:'stone',icon:'⬟',name:'Cut stone',desc:'A pair of old dressed stones recovered from a ruined quay.',stock:{stone:2}},
     {kind:'cloth',icon:'▤',name:'Canvas roll',desc:'A dry roll of sturdy sailcloth tied with blue cord.',stock:{cloth:2}}
   ];
-}
+MF.CONTENT.discoveries = discoveries;

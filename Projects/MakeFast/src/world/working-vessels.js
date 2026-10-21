@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • world/working-vessels.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.mf40Vessel = function mf40Vessel(id){return MF.worldState().vessels.find(v=>v.id===id)||null};
 
 MF.mf40Pick = function mf40Pick(list,seed){return list[Math.abs(MF.hashString(String(seed)))%list.length]};
@@ -102,55 +104,8 @@ MF.mf40TradeHTML = function mf40TradeHTML(v,isl){const d=MF.mf40EnsureVessel(v),
  <p class="mf40-help">${check.ok?`${MF.mfV381TradeSourceText(check.plan)} · ${MF.mfV381TradeRewardText(check.plan)}.`:check.reason}</p>
  <button class="big-btn secondary" data-mf40-trade="${MF.wikiEsc(o.id)}" ${check.ok?'':'disabled'}>${o.sold?'ALREADY TRADED':check.ok?'EXCHANGE':!check.plan?.affordable?'NEED GOODS':'NO ROOM'}</button></div>`}).join(''):'<p class="muted">No more offers at this call. The crew will gather new stock as they travel.</p>'}</section>`;
 };
-}
 
-export function init_68() {
-MF.MF40_VESSEL_GOODS = {
- neighbour:['timber','stories','seeds'],fishing:['glass','timber','stone'],trade:['hardware','cloth','stone'],
- mail:['stories','charts','cloth'],ferry:['stories','timber','cloth'],work:['timber','hardware','stone'],
- survey:['charts','glass','stone'],naturalist:['seeds','glass','stone'],cargo:['stone','timber','hardware'],
- visitor:['cloth','stories','seeds'],tender:['hardware','timber','cloth']
-};
-}
 
-export function init_69() {
-MF.MF40_VESSEL_WANTS = {
- neighbour:['cloth','seeds','hardware','stories'],fishing:['cloth','hardware','seeds'],
- trade:['seeds','timber','glass','stories'],mail:['cloth','seeds','hardware'],ferry:['timber','hardware','stories'],
- work:['glass','cloth','seeds'],survey:['hardware','cloth','brass'],naturalist:['cloth','hardware','stories'],
- cargo:['seeds','glass','cloth'],visitor:['glass','seeds','stories'],tender:['cloth','glass','stories']
-};
-}
 
-export function init_70() {
-MF.MF40_GOODS_VALUE = {timber:2,hardware:3,stone:2,glass:3,brass:5,seeds:1,cloth:2,charts:5,stories:1};
-}
 
-export function init_71() {
-MF.MF40_CAPTAIN_VOICES = {
- neighbour:['knows which jetty is safest after rain','likes bringing neighbours a little something from another shore','keeps notes of who still owes the harbour a cup of tea'],
- fishing:['reads the water by the birds above it','can tell a useful piece of driftwood from a lost plank','takes pride in returning with something for the next harbour'],
- trade:['keeps an untidy but remarkably accurate ledger','notices surpluses before anyone calls them surplus','prefers a fair barter to a long argument about coin'],
- mail:['remembers which envelope belongs to which family','keeps the most delicate parcels tucked beneath the chart table','says a letter ought to travel as reliably as a tide'],
- ferry:['knows passengers by their favourite seat','always waits a moment for someone running along the pier','regards a smooth landing as a small personal victory'],
- work:['has opinions about every jetty in the archipelago','keeps spare fixings wrapped in an oilcloth','measures a successful voyage in repairs made'],
- survey:['compares old bearings against every new coastline','has filled the margins of the ship log with soundings','is seldom completely satisfied with a chart'],
- naturalist:['catalogues little things washed into sheltered coves','follows the seasons rather than the busiest harbour','stops to watch birds whenever the tide allows it'],
- cargo:['knows which settlements are short of building stock','will rearrange a load three times to keep it dry','takes the quiet satisfaction of a well-balanced hold seriously'],
- visitor:['knows the tea rooms at almost every harbour','takes the scenic route when the weather permits','collects odd little stories from the passengers'],
- tender:['can tie a mooring knot one-handed','is happiest working close to a lively quay','notices the small harbour jobs other crews pass by']
-};
-}
 
-export function init_72() {
-MF.MF40_VOYAGE_REFLECTIONS = [
- 'The crossing was quieter than the departure suggested.',
- 'The weather changed its mind once, but the cargo stayed dry.',
- 'A distant light kept the final approach company.',
- 'The crew compared bearings over the last stretch of water.',
- 'There was time to watch the gulls before the harbour came into view.',
- 'The last mile took more careful steering than the rest of the passage.',
- 'A good deal of rope was coiled and recoiled on the way in.',
- 'The captain made a point of checking the cargo before landfall.'
-];
-}

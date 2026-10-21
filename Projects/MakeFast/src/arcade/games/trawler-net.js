@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/trawler-net.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeTrawlProfile = function arcadeTrawlProfile(g){
   const max=Math.min(MF.ARCADE_TRAWL_CATCHES.length,2+Math.floor((g.round-1)/2));
   return MF.ARCADE_TRAWL_CATCHES[Math.floor(MF.arcadeRand(g,0,max))%max]
@@ -226,25 +228,6 @@ MF.arcadeRenderMeter = function arcadeRenderMeter(g,ts,G,dt,running){
   MF.rect(G.cx-5,G.y(.08),10,G.h*.33,'#704630','#18313a',1);MF.poly([[G.cx+5,G.y(.10)],[G.x(.82),G.y(.25)],[G.cx+5,G.y(.38)]],'#fff7de','#18313a',2);
   const sy=G.y(.56),sx=G.x(.10),sw=G.w*.80,tx=sx+g.target*sw,x=sx+g.value*sw;MF.roundedRect(sx,sy,sw,42,9,'#fff','#18313a',3);MF.rect(tx-sw*.075,sy-5,sw*.15,52,'rgba(131,191,106,.72)');MF.rect(x-7,sy-18,14,78,'#df7c68','#18313a',1);MF.roundedRect(G.x(.18),G.y(.76),G.w*.64,18,6,'rgba(255,255,255,.30)','#18313a',2);MF.rect(G.x(.18)+3,G.y(.76)+3,(G.w*.64-6)*MF.clamp(g.leg,0,1),12,'#83bf6a');MF.pxText('FOLLOW THE SHIFTING WIND',G.cx,G.y(.88),'#fff7de',9,'center')
 };
-}
 
-export function init_162() {
-MF.ARCADE_TRAWL_CATCHES = [
-  {name:'HERRING',mass:.78,drag:.15,fish:9,col:'#65bdd1',accent:'#9bd8e2'},
-  {name:'MACKEREL',mass:.98,drag:.19,fish:8,col:'#83bf6a',accent:'#b9d99d'},
-  {name:'MIXED CATCH',mass:1.22,drag:.24,fish:10,col:'#e5b54e',accent:'#f0d48a'},
-  {name:'HEAVY COD-END',mass:1.52,drag:.30,fish:11,col:'#d8caa1',accent:'#fff0c8'}
-];
-}
 
-export function init_163() {
-MF.ARCADE_TRAWL_OBSTACLES = [
-  {kind:'boulder',label:'BOULDER',side:-1},
-  {kind:'anchor',label:'OLD ANCHOR',side:1},
-  {kind:'reef',label:'ROCK LEDGE',side:-1}
-];
-}
 
-export function init_164() {
-MF.ARCADE_TRAWL_BOAT_CACHE = new Map();
-}

@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync, readdirSync} from 'node:fs';
 const bootstrap=readFileSync(new URL('../src/bootstrap.js',import.meta.url),'utf8');
-test('bootstrap registers declarations before source-order initializers',()=>{
-  assert(bootstrap.indexOf('M0.install()')<bootstrap.indexOf('M0.init_'));
+test('bootstrap imports features and uses named phases without numbered init wrappers',()=>{
+  assert(!bootstrap.includes('.install()'));
+  assert(!bootstrap.includes('.init_'));
+  assert(bootstrap.includes('startMakeFast()'));
 });
 test('HTML uses native ES modules and extracted stylesheet links',()=>{
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');

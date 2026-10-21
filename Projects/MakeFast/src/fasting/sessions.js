@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • fasting/sessions.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.worldTrialSnapshot = function worldTrialSnapshot(){
   const w=MF.worldState();
   const stock=MF.state.islands.reduce((sum,i)=>sum+Object.values(i.stock||{}).reduce((a,n)=>a+(+n||0),0),0);
@@ -143,6 +145,5 @@ MF.syncPlayerTrafficEncounters = function syncPlayerTrafficEncounters(){
 
 MF.showOfflineWorldSummaryCore = function showOfflineWorldSummaryCore(){
   const w=MF.worldState(),items=w.pendingSummary||[];if(!items.length)return;const top=items.slice(-8).reverse();w.pendingSummary=[];MF.save();MF.showModal(`<h2>${MF.contentLine('copy.world.summaryTitle')}</h2><p>${MF.contentLine('copy.world.quiet')}</p><div class="section">${top.map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${MF.fmtDate(e.at)} · ${MF.formatClockInZone(e.at,MF.state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn" data-close>BACK TO THE ARCHIPELAGO</button></div>`)};
-}
 
 

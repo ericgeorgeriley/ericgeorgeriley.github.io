@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/chapters-iii.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsReasonClue = function hsReasonClue(s){const t=MF.HS_TOPICS[s.theme],index=t?Math.max(0,t.insight.indexOf(s.insight)):0;return MF.HS_REASON_CLUES[s.theme]?.[index]||'A surviving mark fits only one explanation.'};
 
 MF.hsPassageEligible = function hsPassageEligible(s,v=MF.state.voyage){
@@ -92,60 +94,10 @@ MF.hsApplyLastingChoices = function hsApplyLastingChoices(s,decision,isl,giver,p
  s.outcome+=` ${choiceText}`;
  if(!Array.isArray(isl.notes))isl.notes=[];isl.notes.unshift(choiceText);isl.notes.length=Math.min(32,isl.notes.length);
 };
-}
 
-export function init_226() {
-MF.HS_REASON_CLUES = {
- beacon:['A line of worn guide marks faces the shallow harbour approach.','A second bearing runs toward a coast missing from the modern chart.','A rescue tally has been carefully renewed long after the light went out.'],
- wreck:['Passenger names appear beside the vessel in the oldest ferry ledger.','A scratched return address names an object the crew meant to bring home.','The last bearing points toward a sheltered coast not entered on today’s chart.'],
- birds:['The tracks match food remains on two different banks.','The old ring matches records of an undisturbed nesting place.','An old field map follows the birds beside a sheltered channel.'],
- garden:['Two family initials appear on matching seed labels.','The stonework encloses a warm slope sheltered from the wind.','A dried flower is wrapped in a letter from the other harbour.'],
- channel:['The depth marks were taken at two very different tidal heights.','The oldest corrected bearing curves away from the obvious channel.','Both charts carry a season mark that later copies left out.'],
- craft:['A dedication is hidden beneath the unfinished maker’s stamp.','The drawing’s dimensions fit a vacant place on the quay.','The last page names the person trusted to finish the work.'],
- bell:['Two crews signed the old brass dedication together.','The rope has storm-weather knots tied along its length.','An arrow points from the bell’s mount away from the dangerous reef.'],
- market:['The sealed parcel carries both families’ trade marks.','The record of payments continues after the official route ended.','An older ledger bears a coastal name crossed off the current chart.'],
- lantern:['The watch rota continues in a single hand beyond the final date.','The old lookout has two harbours marked on the same viewing line.','The timing of the light matches the missing boat’s last homeward crossing.'],
- festival:['The oldest invitation gives thanks for a single act of help.','Two harbours are named on the faded ribbon, not one.','A dedication has been rubbed away beneath the celebration date.']
-};
-}
 
-export function init_227() {
-MF.HS_ENDINGS = {
- beacon:['RESTORE THE HARBOUR BEACON','PRESERVE ITS SIGNAL RECORD'],wreck:['REBUILD THE VESSEL MARKER','PRESERVE THE SHIP’S STORY'],birds:['PROTECT THE NESTING SHORE','PRESERVE THE FIELD NOTES'],garden:['RESTORE THE SHARED GARDEN','PRESERVE THE GARDEN HISTORY'],channel:['REMARK THE SAFE CHANNEL','PRESERVE THE OLD SOUNDINGS'],craft:['FINISH THE OLD DESIGN','PRESERVE THE SHIPWRIGHT’S PATTERN'],bell:['RETURN THE BELL TO USE','PRESERVE THE BELL’S HISTORY'],market:['RESTORE THE TRADING MARK','PRESERVE THE OLD LEDGER'],lantern:['RESTORE THE NIGHT WATCH','PRESERVE THE WATCHKEEPER’S ACCOUNT'],festival:['REVIVE THE HARBOUR DAY','PRESERVE THE FESTIVAL’S STORY']
-};
-}
 
-export function init_228() {
-MF.HS_ENDING_OUTCOMES = {
- beacon:['The islanders restore the signal and agree to keep its lamp tended.','The keeper’s journal and old lens are preserved with a plaque.'],wreck:['The lost vessel receives a renewed nameboard on the quay.','The original nameplate and final log are preserved for visitors.'],birds:['A quiet nesting refuge is marked and the residents agree to protect it.','The old migration survey is placed in the field collection.'],garden:['A shared planting bed is restored and the next season’s seeds are set aside.','The original garden plan is mounted beside the old stone wall.'],channel:['The harbour adopts the corrected soundings and renews its channel marks.','Both original surveys are kept together so future crews can compare the tides.'],craft:['The workshop finishes the promised piece from the shipwright’s drawing.','The maker’s patterns and dedication are preserved in the boatyard.'],bell:['The bell is made safe to ring again and joins the harbour watch.','The bell’s original inscription is preserved in the harbour records.'],market:['The two harbours renew the old trading mark on their parcels.','The disputed ledger is restored as an account of the families’ shared history.'],lantern:['The evening watch is re-established with a lamp for returning crews.','The watchkeeper’s name and final entries are kept in the harbour book.'],festival:['The neighbours hold the gathering once more with the old ribbons.','A permanent illustrated account remembers why the celebration began.']
-};
-}
 
-export function init_229() {
-MF.HS_WATER_OBSERVATIONS = {
- beacon:'From the water the old lamp aligns with a narrow approach, while the shoals beyond it fall into a different line.',
- wreck:'A floating trace and a sheltered tide line reveal where the missing vessel might have sheltered.',
- birds:'You follow the flock from the boat without disturbing its nesting ground and plot a second feeding shore.',
- garden:'The current carries seed husks from a sheltered bank; the gardeners were right about the old route.',
- channel:'The depth marks seen from the helm reveal a channel that turns away from the obvious headland.',
- craft:'The old crossing exposes the exact motion that the shipwright designed the unusual fitting to withstand.',
- bell:'A distant ring carries across the bay at a different bearing from the harbour bell.',
- market:'A familiar maker’s mark appears on a buoy used by the old trading crews.',
- lantern:'The watchkeeper’s line of sight becomes clear from the boat, revealing why the light faced out to sea.',
- festival:'Two harbours appear in the same sightline, just as the original invitation described.'
-};
-}
 
-export function init_230() {
-MF.HS_SHORE_POSITIONS = [[211,173],[431,175],[285,230],[374,229],[292,127],[382,135],[230,215],[419,220]];
-}
 
-export function init_231() {
-MF.HS_PERSONAL_ROLES = {
- fisher:['Keeper of the Fishing Marks','Harbour Sea Guide'],gardener:['Keeper of the Island Garden','Shore Garden Steward'],carpenter:['Keeper of the Yard','Master Harbour Builder'],trader:['Keeper of the Quay','Harbour Exchange Steward'],navigator:['Keeper of the Bearings','Master Chartkeeper'],naturalist:['Keeper of the Field Notes','Island Nature Steward'],maker:['Keeper of the Workshop','Master Harbour Maker']
-};
-}
 
-export function init_232() {
-MF.HS_RESTORED_GOODS = {beacon:'charts',channel:'charts',lantern:'glass',wreck:'timber',birds:'stories',garden:'seeds',craft:'hardware',bell:'brass',market:'cloth',festival:'stories'};
-}

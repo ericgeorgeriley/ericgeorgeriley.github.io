@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/tanker-channel.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeSetupSteer = function arcadeSetupSteer(g,r,d){
   if(g.theme==='speedboat'){MF.arcadeSpeedSetup(g,r,d);return}
   if(g.theme==='tanker'){
@@ -188,6 +190,5 @@ MF.arcadeRenderSteer = function arcadeRenderSteer(g,ts,G,dt,running){
 
   MF.arcadeSpeedHud(g,G,ts)
 };
-}
 
 

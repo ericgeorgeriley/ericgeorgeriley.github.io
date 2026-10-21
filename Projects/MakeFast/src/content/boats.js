@@ -1,23 +1,28 @@
 /** MakeFast v0.41.7 • content/boats.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_23() {
-MF.CONTENT.boats = [
+
+
+
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const boats = [
     {id:'cutter',name:'Little Cutter',unlock:{type:'always'},desc:'Responsive and cheerful. A good all-rounder.',bias:'speedboat_slalom',stats:{handling:4,lookout:3,comfort:2}},
     {id:'fishing',name:'Fishing Boat',unlock:{type:'known_islands',count:3},desc:'A working boat that tends to find wildlife.',bias:'trawler_sort',stats:{handling:2,lookout:5,comfort:2}},
     {id:'shallow',name:'Shallow-Draft Skiff',unlock:{type:'known_islands',count:5},desc:'Made for reefs, coves and narrow channels.',bias:'dredger_scoop',stats:{handling:5,lookout:4,comfort:1}},
     {id:'cabin',name:'Cabin Cruiser',unlock:{type:'any',rules:[{type:'home_population',count:3},{type:'feature',island:'home',feature:'market_stall'},{type:'feature',island:'home',feature:'market'},{type:'feature',island:'home',feature:'guesthouse'}]},desc:'Cosy, sociable and good for story-led crossings.',bias:'cruise_buffet',stats:{handling:3,lookout:3,comfort:5}},
     {id:'sailer',name:'Traditional Sailer',unlock:{type:'known_islands',count:8},desc:'A beautiful rig for players who enjoy trimming the wind.',bias:'yacht_trim',stats:{handling:4,lookout:4,comfort:3}}
   ];
-}
+MF.CONTENT.boats = boats;
 
-export function init_24() {
-MF.CONTENT.npcVessels = [
+// Authored content (previously embedded in the monolithic startup).
+export const npcVessels = [
     {id:'island_sloop',name:'Island Sloop',icon:'◁',role:'neighbour',sprite:'cutter',capacity:2,passengers:1,speed:1.0,unlock:{minPop:1},desc:'A little local boat carrying parcels and neighbours between nearby jetties.'},
     {id:'fishing_smack',name:'Fishing Smack',icon:'⌁',role:'fishing',sprite:'fishing',capacity:2,passengers:0,speed:.9,unlock:{archetype:'fisher'},desc:'Works the nearby water and brings useful salvage ashore.'},
     {id:'trader_cutter',name:'Trading Cutter',icon:'◇',role:'trade',sprite:'cutter',capacity:5,passengers:1,speed:1.05,unlock:{featureAny:['market_stall','market_square','market_hall']},desc:'Carries island surpluses toward places that need them.'},
@@ -30,14 +35,14 @@ MF.CONTENT.npcVessels = [
     {id:'sailing_yacht',name:'Island Yacht',icon:'△',role:'visitor',sprite:'sailer',capacity:1,passengers:4,speed:1.1,unlock:{any:[{feature:'tea_house',minPop:5},{feature:'market_hall',minPop:6}]},commission:{timber:8,hardware:3,cloth:4,glass:2},desc:'Carries visitors and residents on leisurely calls around the archipelago.'},
     {id:'harbour_tender',name:'Harbour Tender',icon:'≈',role:'tender',sprite:'shallow',capacity:3,passengers:2,speed:1.25,unlock:{minPop:8},commission:{timber:5,hardware:3,brass:1},desc:'A busy little harbour boat for short cargo and passenger jobs.'}
   ];
-}
+MF.CONTENT.npcVessels = npcVessels;
 
-export function init_25() {
-MF.CONTENT.vesselNames = {prefixes:['Sea','Little','Merry','Good','Blue','Golden','Quiet','Brisk','Old','Bright','North','Tide','Harbour','Silver','Red'],nouns:['Thistle','Puffin','Rose','Pip','Mackerel','Wren','Lantern','Kestrel','Sprat','Juniper','Skylark','Petrel','Nettle','Molly','Starling','Daisy','Tern','Otter','Minnow','Clover']};
-}
+// Authored content (previously embedded in the monolithic startup).
+export const vesselNames = {prefixes:['Sea','Little','Merry','Good','Blue','Golden','Quiet','Brisk','Old','Bright','North','Tide','Harbour','Silver','Red'],nouns:['Thistle','Puffin','Rose','Pip','Mackerel','Wren','Lantern','Kestrel','Sprat','Juniper','Skylark','Petrel','Nettle','Molly','Starling','Daisy','Tern','Otter','Minnow','Clover']};
+MF.CONTENT.vesselNames = vesselNames;
 
-export function init_26() {
-MF.CONTENT.boatVisuals = {
+// Authored content (previously embedded in the monolithic startup).
+export const boatVisuals = {
     paints:[
       {id:'harbour_blue',name:'Harbour Blue',hull:'#416f83',trim:'#d8e7df'},
       {id:'cutter_red',name:'Cutter Red',hull:'#9b564b',trim:'#f0d9b4'},
@@ -69,4 +74,4 @@ MF.CONTENT.boatVisuals = {
       {id:'awning',name:'Weather Awning',desc:'A striped canvas awning keeps the cockpit workable in spray and unsettled weather.',cost:{cloth:2,timber:1},handling:1,delta:'Handling +1'}
     ]
   };
-}
+MF.CONTENT.boatVisuals = boatVisuals;

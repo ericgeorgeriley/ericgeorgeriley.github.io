@@ -1,13 +1,15 @@
 /** MakeFast v0.41.7 • content/dialogue.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_38() {
-MF.CONTENT.copy = {
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const copy = {
     journal:{
       inherited:['You inherited a little harbour, an old sailing boat, and a chart with more blank water than ink.'],
       departure:['{origin} slipped astern as the bow turned toward {destination}.','The harbour ropes came free at {time}; {destination} lay ahead.','{boat} nosed away from {origin}, bound for {destination}.'],
@@ -68,4 +70,4 @@ MF.CONTENT.copy = {
       trial:['Three-minute sea trial under way.','The little cutter slips out for a short sea trial.']
     }
   };
-}
+MF.CONTENT.copy = copy;

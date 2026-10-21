@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/buildings.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.buildingPalette = function buildingPalette(kind,variant=0){const roofs=['#a65443','#486d72','#92704b','#526f58'],walls=['#ead9b5','#f0e3c1','#d9cfaa','#e8d6b0'];return{ink:'#17313a',ink2:'#294950',wall:walls[variant%walls.length],wallShade:MF.shadeHex(walls[variant%walls.length],-28),roof:roofs[(variant+(kind==='map_room'?1:0))%roofs.length],roofShade:MF.shadeHex(roofs[(variant+(kind==='map_room'?1:0))%roofs.length],-36),wood:'#805334',woodHi:'#b97d49',cream:'#fff0c8',glass:MF.spriteLit()?'#ffd978':'#79b7c8',grass:'#619a5e',grassHi:'#86bd69',stone:'#89958d',cloth:'#f1dfb2',red:'#c85f52',blue:'#527da0',gold:'#e0b04e'}};
 
 MF.buildingSprite = function buildingSprite(kind='house',variant=0){const lit=MF.spriteLit(),key=`building:${kind}:${variant}:${lit?1:0}`;if(MF.worldSpriteCache.has(key))return MF.worldSpriteCache.get(key);const [c,g]=MF.pixelCanvas(64,60),p=MF.buildingPalette(kind,variant);MF.spriteShadow(g,10,48,44,5,.22);
@@ -30,6 +32,5 @@ MF.buildingSprite = function buildingSprite(kind='house',variant=0){const lit=MF
     MF.psOutlinePoly(g,[[13,48],[14,31],[49,31],[50,48],[38,53],[22,52]],p.wall,p.ink,1);MF.psPoly(g,[[37,32],[49,32],[49,47],[38,50]],p.wallShade);MF.psOutlinePoly(g,[[9,31],[31,17],[54,29],[35,38],[17,36]],p.roof,p.ink,1);MF.psPoly(g,[[31,18],[53,29],[35,36]],p.roofShade);MF.psRect(g,28,41,7,11,p.wood);MF.psRect(g,29,43,1,1,p.gold);win(18,36);win(40,35);MF.psRect(g,18,21,5,9,p.ink);MF.psRect(g,19,20,4,8,p.wood);if(variant%2===0){MF.psRect(g,15,45,8,2,p.red);MF.psRect(g,16,47,2,2,p.grass)}
   }
   MF.worldSpriteCache.set(key,c);return c};
-}
 
 

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/ferry-bags.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeBagThrowScenario = function arcadeBagThrowScenario(g,r){
   const base=MF.ARCADE_BAGTHROW_SCENARIOS[Math.min(MF.ARCADE_BAGTHROW_SCENARIOS.length-1,r-1)],sc={...base,tier:Math.max(0,r-8)};
   if(r>8){sc.id='watch';sc.label=`SAILING WATCH ${r}`;sc.note='A fresh trolley is at the door. Read every bag and every movement of the ferry.';sc.goal=Math.min(9,7+Math.floor((r-8)/3));sc.cageX=Math.min(.745,.72+(r-8)*.0025);sc.cageW=Math.max(.145,.17-(r-8)*.002);sc.roll=Math.min(.145,.108+(r-8)*.004);sc.rollRate=Math.min(.00168,.00142+(r-8)*.000018);sc.wind=Math.min(.15,.105+(r-8)*.004);sc.wake=Math.max(2450,3200-(r-8)*70);sc.fill=Math.min(5,3+Math.floor((r-8)/4));sc.bags=['duffel','cabin','case','trunk']}
@@ -100,26 +102,5 @@ MF.arcadeRenderBagThrow = function arcadeRenderBagThrow(g,ts,G,dt,running){
   else if(B.holding)MF.arcadeSetHelperCue(g,`WINDING UP · ${nextSpec?.label||'BAG'}`,`release when the bag and deck look right${windText}`);
   else MF.arcadeSetHelperCue(g,`${nextSpec?.label||'NEXT BAG'} · HOLD TO WIND UP`,`${sc.label} · ${g.roundProgress}/${g.roundGoal} stowed${windText}`)
 };
-}
 
-export function init_150() {
-MF.ARCADE_BAGTHROW_BAGS = {
-  duffel:{label:'SOFT DUFFEL',mass:.78,windage:1.28,bounce:.34,kind:0,colour:'#527da0',accent:'#d9eef2'},
-  cabin:{label:'CABIN CASE',mass:.96,windage:1.00,bounce:.20,kind:1,colour:'#d6a84d',accent:'#fff7de'},
-  case:{label:'HARD CASE',mass:1.18,windage:.76,bounce:.12,kind:2,colour:'#a86d45',accent:'#e5b54e'},
-  trunk:{label:'HEAVY TRUNK',mass:1.50,windage:.52,bounce:.08,kind:3,colour:'#5f7778',accent:'#d8caa1'}
-};
-}
 
-export function init_151() {
-MF.ARCADE_BAGTHROW_SCENARIOS = [
-  {id:'first',label:'FIRST BAGS',note:'A wide cage and calm water. Learn how far a soft bag flies.',goal:4,cageX:.66,cageW:.25,roll:.022,rollRate:.00095,wind:0,wake:0,fill:0,bags:['duffel','duffel','cabin']},
-  {id:'rush',label:'BOARDING RUSH',note:'Cabin cases need a firmer throw than soft luggage.',goal:5,cageX:.68,cageW:.23,roll:.035,rollRate:.00105,wind:0,wake:0,fill:0,bags:['duffel','cabin','cabin','case']},
-  {id:'mixed',label:'MIXED LUGGAGE',note:'Read the shape before you wind up. The hard cases carry more weight.',goal:5,cageX:.69,cageW:.22,roll:.050,rollRate:.00112,wind:0,wake:0,fill:0,bags:['duffel','cabin','case','case']},
-  {id:'chop',label:'HARBOUR CHOP',note:'The ferry is rolling now. Release when the deck helps the throw, not when it fights it.',goal:5,cageX:.70,cageW:.21,roll:.070,rollRate:.00122,wind:0,wake:0,fill:0,bags:['duffel','cabin','case','trunk']},
-  {id:'wake',label:'TENDER WAKE',note:'A visible wake rolls through the loading door. Wait it out or use the lift.',goal:6,cageX:.70,cageW:.20,roll:.075,rollRate:.00126,wind:0,wake:4200,fill:1,bags:['duffel','cabin','case','trunk']},
-  {id:'door',label:'OPEN VEHICLE DOOR',note:'Cross-deck wind catches the soft bags more than the heavy cases.',goal:6,cageX:.71,cageW:.19,roll:.082,rollRate:.00130,wind:.095,wake:4300,fill:1,bags:['duffel','duffel','cabin','case','trunk']},
-  {id:'packed',label:'CAGE FILLING',note:'The pile is higher and the front lip matters. Clear it without sailing over the back.',goal:6,cageX:.72,cageW:.18,roll:.095,rollRate:.00136,wind:.070,wake:3600,fill:3,bags:['duffel','cabin','case','trunk']},
-  {id:'last',label:'LAST CALL',note:'Mixed bags, a packed cage and a lively ferry. Finish the load before sailing.',goal:7,cageX:.72,cageW:.17,roll:.108,rollRate:.00142,wind:.105,wake:3200,fill:3,bags:['duffel','cabin','case','trunk','trunk']}
-];
-}

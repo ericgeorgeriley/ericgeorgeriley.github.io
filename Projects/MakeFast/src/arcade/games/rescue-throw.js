@@ -1,19 +1,57 @@
 /** MakeFast v0.41.7 • arcade/games/rescue-throw.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.drawArcadeImpactBurst = function drawArcadeImpactBurst(x,y,col='#fff7de',age=0){const p=MF.clamp(age,0,1),r=6+16*p,a=.9*(1-p);for(let i=0;i<8;i++){const ang=(Math.PI*2*i)/8;MF.line(x+Math.cos(ang)*3,y+Math.sin(ang)*3,x+Math.cos(ang)*r,y+Math.sin(ang)*r,`rgba(${col==='#df7c68'?'223,124,104':col==='#83bf6a'?'131,191,106':col==='#65bdd1'?'101,189,209':'255,247,222'},${a})`,2)}MF.circle(x,y,2+4*p,`rgba(255,247,222,${.16*(1-p)})`,col,1)};
 
 MF.drawArcadeWaveBand = function drawArcadeWaveBand(x1,x2,y,phase,amp=4,col='rgba(255,255,255,.12)'){MF.ctx.strokeStyle=col;MF.ctx.lineWidth=2;MF.ctx.beginPath();for(let x=x1;x<=x2;x+=6){const q=(x-x1)/Math.max(1,x2-x1),yy=y+Math.sin(phase+q*6.2)*amp;if(x===x1)MF.ctx.moveTo(x,yy);else MF.ctx.lineTo(x,yy)}MF.ctx.stroke()};
 
-MF.drawArcadeRockyDivider = function drawArcadeRockyDivider(box,ts=0){if(box.vertical){for(let i=0;i<8;i++){const y=box.y+12+i*(box.h-24)/7,cx=box.x+box.w/2+Math.sin(i*1.7)*7,r=9+(i%3)*3;MF.circle(cx,y,r,'#6e756b','#17313a',2);MF.circle(cx-5,y-4,Math.max(4,r-5),'#8b9188');if(i%2===0)MF.poly([[cx-r*.7,y-r*.4],[cx,y-r-5],[cx+r*.7,y-r*.35]],'#6ea66b','#315b42',1)}}else{for(let i=0;i<9;i++){const x=box.x+10+i*(box.w-20)/8,cy=box.y+box.h/2+Math.sin(i*1.2)*4,r=9+(i%3)*2;MF.circle(x,cy,r,'#6e756b','#17313a',2);MF.circle(x+4,cy-4,Math.max(4,r-5),'#8b9188')}}};
+// Cattleships scenery: mooring buoys, distant shore and painted chart water.
+// Former oversized rock/poop silhouettes obscured the actual fleet sprites.
+MF.drawArcadeRockyDivider = function drawArcadeRockyDivider(box,ts=0){
+  if(!box.vertical)return;
+  const cx=box.x+box.w*.5;
+  MF.line(cx,box.y+8,cx,box.y+box.h-8,'rgba(232,249,245,.24)',2);
+  for(let i=0;i<3;i++){
+    const y=box.y+26+(i+.5)*Math.max(0,(box.h-70))/3;
+    const bob=Math.sin(ts*.003+i)*2;
+    MF.circle(cx,y+bob,7,'#fff7de','#17313a',2);
+    MF.poly([[cx-5,y+bob],[cx+5,y+bob],[cx+4,y+5+bob],[cx-4,y+5+bob]],i===1?'#df7c68':'#e5b54e','#17313a',1);
+    MF.line(cx,y-7+bob,cx,y-12+bob,'#17313a',2);
+    MF.line(cx-7,y+9+bob,cx-12,y+10+bob,'rgba(232,249,245,.45)',1);
+    MF.line(cx+7,y+9+bob,cx+12,y+10+bob,'rgba(232,249,245,.45)',1);
+  }
+};
 
-MF.drawArcadeCoveHeadlands = function drawArcadeCoveHeadlands(board,ts=0){const x=board.x,y=board.y,s=board.side,r=Math.max(14,Math.min(25,board.cell*.34));MF.poly([[x-24,y-20],[x+72,y-20],[x+42,y+24],[x+10,y+42],[x-24,y+54]],'#d8c67f','#17313a',2);MF.poly([[x-24,y-24],[x+64,y-24],[x+37,y+12],[x+8,y+28],[x-24,y+38]],'#6ea66b','#315b42',1);MF.poly([[x+s-72,y-20],[x+s+24,y-20],[x+s+24,y+54],[x+s-10,y+42],[x+s-42,y+24]],'#d8c67f','#17313a',2);MF.poly([[x+s-64,y-24],[x+s+24,y-24],[x+s+24,y+38],[x+s-8,y+28],[x+s-37,y+12]],'#6ea66b','#315b42',1);for(const [rx,ry,k] of [[x+18,y+22,0],[x+48,y+2,1],[x+s-18,y+22,2],[x+s-48,y+2,3]]){MF.circle(rx,ry,r-(k%2)*4,'#73786f','#17313a',2);MF.circle(rx-4,ry-4,Math.max(6,r-9),'#94988f')}MF.drawArcadeWaveBand(x+56,x+s-56,y+12,ts*.005,2,'rgba(255,255,255,.18)')};
+MF.drawArcadeCoveHeadlands = function drawArcadeCoveHeadlands(board,ts=0){
+  const {x,y,side,cell}=board,coast=Math.min(17,cell*.27);
+  // Decorative rocky shore sits OUTSIDE the squares and never masks boats.
+  MF.poly([[x-13,y-16],[x+coast,y-16],[x+coast*.5,y-8],[x-4,y+coast],[x-13,y+coast]],'#e3ce8c','#17313a',1);
+  MF.poly([[x-13,y-16],[x+coast*.7,y-16],[x+coast*.25,y-10],[x-8,y+coast*.5],[x-13,y+coast*.5]],'#75a56c','#406b56',1);
+  MF.poly([[x+side-coast,y-16],[x+side+13,y-16],[x+side+13,y+coast],[x+side+5,y+coast],[x+side-coast*.4,y-7]],'#e3ce8c','#17313a',1);
+  MF.poly([[x+side-coast*.65,y-16],[x+side+13,y-16],[x+side+13,y+coast*.4],[x+side+7,y+coast*.4],[x+side-coast*.15,y-10]],'#75a56c','#406b56',1);
+  for(const [px,py] of [[x-5,y+3],[x+side+5,y+3]]){
+    MF.circle(px,py,3,'#7d8c83','#17313a',1);
+  }
+  MF.drawArcadeWaveBand(x+28,x+side-28,y-12,ts*.003,2,'rgba(255,255,255,.19)');
+};
 
-MF.drawArcadePoopSplat = function drawArcadePoopSplat(x,y,s=1,age=0){const p=MF.clamp(age,0,1),r=8*s*(.7+.3*p);MF.circle(x,y,r,'rgba(255,247,222,.95)','#17313a',1);MF.circle(x-4*s,y+1*s,5*s,'#fff7de','#17313a',1);MF.circle(x+4*s,y+2*s,4*s,'#fff7de','#17313a',1);MF.circle(x,y+5*s,2.2*s,'#8d613f');MF.circle(x-2*s,y+4*s,1.8*s,'#8d613f');MF.circle(x+3*s,y+3*s,1.6*s,'#8d613f')};
-
-MF.drawArcadeGullStrike = function drawArcadeGullStrike(board,shot,ts,offsetX=0){if(!shot)return;const age=ts-shot.at;if(age<0||age>1100)return;const p=MF.clamp(age/1100,0,1),tx=board.x+offsetX+(shot.c+.5)*board.cell,ty=board.y+(shot.r+.28)*board.cell,dir=shot.side==='enemy'?-1:1,startX=tx-dir*board.cell*3.1,startY=board.y-board.cell*.85,gx=MF.lerp(startX,tx,p),gy=MF.lerp(startY,ty-board.cell*.95,p)+Math.sin(p*Math.PI)*-10;MF.drawPixelSprite(MF.seaSprite('gull',Math.floor(ts/150)%3),gx,gy,.92,.5,.5);if(p>.42)MF.drawArcadePoopSplat(tx,ty,board.cell*.036,(p-.42)/.58)};
+MF.drawArcadeCattleCallArc = function drawArcadeCattleCallArc(board,shot,ts,offsetX=0){
+  if(!shot)return;const age=ts-shot.at;if(age<0||age>950)return;
+  const p=MF.clamp(age/950,0,1),x=board.x+offsetX+(shot.c+.5)*board.cell,
+    y=board.y+(shot.r+.5)*board.cell,r=board.cell*(.08+.43*p),a=Math.max(0,1-p);
+  MF.circle(x,y,r,'rgba(0,0,0,0)',`rgba(238,251,248,${.85*a})`,2);
+  MF.circle(x,y,r*.55,'rgba(0,0,0,0)',`rgba(101,189,209,${.65*a})`,1);
+  if(shot.hit){
+    for(let k=0;k<5;k++){
+      const th=(k/5)*Math.PI*2+age*.003;
+      MF.circle(x+Math.cos(th)*r*.8,y+Math.sin(th)*r*.5,Math.max(1,board.cell*.035),`rgba(255,247,222,${a})`);
+    }
+  }
+};
 
 MF.arcadeRenderCipher = function arcadeRenderCipher(g,ts,G,dt,running){
   const C=g.cipher;if(C.pendingResetAt&&ts>=C.pendingResetAt&&!g.failed){MF.setupArcadeRound(g,false);return}if(C.pendingAdvanceAt&&ts>=C.pendingAdvanceAt&&!g.failed){const pts=C.successPoints||0,txt=C.successText||'CORE CRACKED';C.pendingAdvanceAt=0;MF.arcadeProgress(g,1,pts,txt);return}
@@ -41,9 +79,9 @@ MF.arcadeRenderCattle = function arcadeRenderCattle(g,ts,G,dt,running){
   let targetView=C.phase==='place'?0:(C.currentTurn==='cpu'?0:1);if(C.lastShot&&ts-C.lastShot.at<520)targetView=C.lastShot.side==='enemy'?1:0;
   const M=MF.arcadeCattleGeometry(G,g),reveal=C.revealUntil>ts;if(!Number.isFinite(C.viewMix))C.viewMix=targetView;const speed=dt?Math.min(1,dt/420):.05;C.viewMix+=(targetView-C.viewMix)*speed;if(Math.abs(C.viewMix-targetView)<.002)C.viewMix=targetView;
   MF.rect(M.left,M.top,M.w,M.h,'#2f8198');for(let i=0;i<11;i++)MF.drawArcadeWaveBand(M.left+8,M.right-8,M.top+20+i*(M.h-40)/10,ts*.004+i,2+i%2,'rgba(255,255,255,.08)');
-  const drawCove=(board,fleet,shots,showShips,hover,playerSide,alpha=1)=>{MF.ctx.save();MF.ctx.globalAlpha*=alpha;MF.roundedRect(board.x-10,board.y-14,board.side+20,board.side+28,18,'rgba(24,49,58,.08)','rgba(23,49,58,.45)',2);for(let r=0;r<C.size;r++)for(let c=0;c<C.size;c++){const x=board.x+c*board.cell,y=board.y+r*board.cell,k=MF.arcadeCattleKey(r,c),st=shots[k];if((r+c)%2===0)MF.rect(x,y,board.cell,board.cell,'rgba(255,255,255,.018)');if(hover&&hover.r===r&&hover.c===c)MF.roundedRect(x+2,y+2,board.cell-4,board.cell-4,6,'rgba(255,247,222,.07)',playerSide?'#83bf6a':'#fff7de',2);if(st==='miss'){MF.drawArcadeCattleMarker(x+board.cell/2,y+board.cell/2,false);MF.drawArcadePoopSplat(x+board.cell/2,y+board.cell/2,board.cell*.022,.2)}if(st==='clear')MF.circle(x+board.cell/2,y+board.cell/2,1.4,'rgba(217,238,242,.34)')}for(let i=0;i<=C.size;i++){MF.line(board.x+i*board.cell,board.y,board.x+i*board.cell,board.y+board.side,'rgba(255,255,255,.10)',1);MF.line(board.x,board.y+i*board.cell,board.x+board.side,board.y+i*board.cell,'rgba(255,255,255,.10)',1)}for(const ship of fleet){const visible=showShips||ship.sunk||reveal;if(visible)MF.drawArcadeCattleBoat(board,ship,playerSide,visible?1:.35,ts);for(let i=0;i<ship.cells.length;i++){const p=ship.cells[i];if(!visible&&!p.hit)continue;const cellX=board.x+(p.c+.5)*board.cell,cellY=board.y+(p.r+.5)*board.cell,wet=p.hit,ofs=wet?(ship.horizontal?{x:0,y:board.cell*.18}:{x:playerSide?board.cell*.18:-board.cell*.18,y:0}):{x:0,y:-board.cell*.10},sx=cellX+ofs.x,sy=cellY+ofs.y;if(wet&&visible)MF.line(cellX,cellY,sx,sy,'rgba(255,247,222,.50)',1);MF.drawArcadeSheep(sx,sy,Math.min(30,board.cell*.62),wet,p.r*3+p.c,p.hit?1:(showShips?1:.9));if(p.hit){MF.drawArcadeImpactBurst(sx,sy,'#df7c68',Math.min(1,(ts-(p.hitAt||ts))/900));MF.drawArcadePoopSplat(cellX,cellY-board.cell*.03,board.cell*.020,Math.min(1,(ts-(p.hitAt||ts))/900))}}}MF.ctx.restore()};
-  if(M.wide){MF.drawArcadeCoveHeadlands(M.own,ts);MF.drawArcadeCoveHeadlands(M.enemy,ts);drawCove(M.own,C.playerFleet,C.enemyShots,true,C.hoverOwn,true);MF.drawArcadeRockyDivider(M.divider,ts);drawCove(M.enemy,C.enemyFleet,C.playerShots,reveal,C.hoverEnemy,false)}else{const span=M.span,own={...M.stage,x:M.stage.x-C.viewMix*span},enemy={...M.stage,x:M.stage.x+(1-C.viewMix)*span},wall={x:M.stage.x+M.stage.side+42-C.viewMix*span,y:M.stage.y-20,w:46,h:M.stage.side+40,vertical:true};MF.drawArcadeCoveHeadlands(own,ts);MF.drawArcadeCoveHeadlands(enemy,ts);drawCove(own,C.playerFleet,C.enemyShots,true,C.hoverOwn,true,MF.clamp(1-C.viewMix*.10,0,1));MF.drawArcadeRockyDivider(wall,ts);drawCove(enemy,C.enemyFleet,C.playerShots,reveal,C.hoverEnemy,false,MF.clamp(.88+C.viewMix*.12,0,1));if(C.lastShot){const onPlayer=C.lastShot.side==='player',base=onPlayer?own:enemy,offset=0;MF.drawArcadeGullStrike(base,C.lastShot,ts,offset)}}
-  if(M.wide&&C.lastShot){const board=C.lastShot.side==='player'?M.own:M.enemy;MF.drawArcadeGullStrike(board,C.lastShot,ts,0)}
+  const drawCove=(board,fleet,shots,showShips,hover,playerSide,alpha=1)=>{MF.ctx.save();MF.ctx.globalAlpha*=alpha;MF.roundedRect(board.x-10,board.y-14,board.side+20,board.side+28,18,'rgba(24,49,58,.08)','rgba(23,49,58,.45)',2);for(let r=0;r<C.size;r++)for(let c=0;c<C.size;c++){const x=board.x+c*board.cell,y=board.y+r*board.cell,k=MF.arcadeCattleKey(r,c),st=shots[k];if((r+c)%2===0)MF.rect(x,y,board.cell,board.cell,'rgba(255,255,255,.018)');if(hover&&hover.r===r&&hover.c===c)MF.roundedRect(x+2,y+2,board.cell-4,board.cell-4,6,'rgba(255,247,222,.07)',playerSide?'#83bf6a':'#fff7de',2);if(st==='miss'){MF.drawArcadeCattleMarker(x+board.cell/2,y+board.cell/2,false);MF.drawArcadeCattleMarker(x+board.cell/2,y+board.cell/2,false)}if(st==='clear')MF.circle(x+board.cell/2,y+board.cell/2,1.4,'rgba(217,238,242,.34)')}for(let i=0;i<=C.size;i++){MF.line(board.x+i*board.cell,board.y,board.x+i*board.cell,board.y+board.side,'rgba(255,255,255,.10)',1);MF.line(board.x,board.y+i*board.cell,board.x+board.side,board.y+i*board.cell,'rgba(255,255,255,.10)',1)}for(const ship of fleet){const visible=showShips||ship.sunk||reveal;if(visible)MF.drawArcadeCattleBoat(board,ship,playerSide,visible?1:.35,ts);for(let i=0;i<ship.cells.length;i++){const p=ship.cells[i];if(!visible&&!p.hit)continue;const cellX=board.x+(p.c+.5)*board.cell,cellY=board.y+(p.r+.5)*board.cell,wet=p.hit,ofs=wet?(ship.horizontal?{x:0,y:board.cell*.18}:{x:playerSide?board.cell*.18:-board.cell*.18,y:0}):{x:0,y:-board.cell*.10},sx=cellX+ofs.x,sy=cellY+ofs.y;if(wet&&visible)MF.line(cellX,cellY,sx,sy,'rgba(255,247,222,.50)',1);MF.drawArcadeSheep(sx,sy,Math.min(30,board.cell*.62),wet,p.r*3+p.c,p.hit?1:(showShips?1:.9));if(p.hit){MF.drawArcadeImpactBurst(sx,sy,'#df7c68',Math.min(1,(ts-(p.hitAt||ts))/900));MF.drawArcadeCattleMarker(cellX,cellY,true)}}}MF.ctx.restore()};
+  if(M.wide){MF.drawArcadeCoveHeadlands(M.own,ts);MF.drawArcadeCoveHeadlands(M.enemy,ts);drawCove(M.own,C.playerFleet,C.enemyShots,true,C.hoverOwn,true);MF.drawArcadeRockyDivider(M.divider,ts);drawCove(M.enemy,C.enemyFleet,C.playerShots,reveal,C.hoverEnemy,false)}else{const span=M.span,own={...M.stage,x:M.stage.x-C.viewMix*span},enemy={...M.stage,x:M.stage.x+(1-C.viewMix)*span},wall={x:M.stage.x+M.stage.side+42-C.viewMix*span,y:M.stage.y-20,w:46,h:M.stage.side+40,vertical:true};MF.drawArcadeCoveHeadlands(own,ts);MF.drawArcadeCoveHeadlands(enemy,ts);drawCove(own,C.playerFleet,C.enemyShots,true,C.hoverOwn,true,MF.clamp(1-C.viewMix*.10,0,1));MF.drawArcadeRockyDivider(wall,ts);drawCove(enemy,C.enemyFleet,C.playerShots,reveal,C.hoverEnemy,false,MF.clamp(.88+C.viewMix*.12,0,1));if(C.lastShot){const onPlayer=C.lastShot.side==='player',base=onPlayer?own:enemy,offset=0;MF.drawArcadeCattleCallArc(base,C.lastShot,ts,offset)}}
+  if(M.wide&&C.lastShot){const board=C.lastShot.side==='player'?M.own:M.enemy;MF.drawArcadeCattleCallArc(board,C.lastShot,ts,0)}
   if(C.phase==='place'&&C.hoverOwn){const board=M.wide?M.own:M.stage,len=C.lengths[C.placeIndex],cells=MF.arcadeCattleCanPlace(C.size,C.playerFleet,len,C.placeHorizontal,C.hoverOwn.r,C.hoverOwn.c);if(cells){const ghost={id:'ghost',length:len,horizontal:C.placeHorizontal,cells};MF.drawArcadeCattleBoat(board,ghost,true,.28,ts);for(let idx=0;idx<cells.length;idx++){const p=cells[idx],x=board.x+p.c*board.cell,y=board.y+p.r*board.cell;MF.roundedRect(x+3,y+3,board.cell-6,board.cell-6,6,'rgba(131,191,106,.18)','#83bf6a',2);MF.drawArcadeSheep(x+board.cell*.5,y+board.cell*.39,Math.min(28,board.cell*.56),false,idx,.92)}}}
   for(const splash of C.splashes){const base=M.wide?(splash.board==='player'?M.own:M.enemy):M.stage,offset=M.wide?0:(splash.board==='player'?-C.viewMix*M.span:(1-C.viewMix)*M.span),x=base.x+offset+(splash.c+.5)*base.cell,y=base.y+(splash.r+.5)*base.cell,age=(ts-splash.at)/760;if(age<0||age>1)continue;MF.circle(x,y,base.cell*(.12+age*.34),'rgba(0,0,0,0)',`rgba(225,246,239,${.55*(1-age)})`,2);if(splash.hit)MF.drawArcadeImpactBurst(x,y,'#df7c68',age)}C.splashes=C.splashes.filter(p=>ts-p.at<820);
   const boatY=M.bottom-30;MF.drawPixelSprite(MF.createBoatSprite('shallow',MF.defaultBoatAppearance('shallow'),false),M.left+42,boatY,.44,.5,.74);MF.drawPixelSprite(MF.createBoatSprite('cabin',MF.defaultBoatAppearance('cabin'),true),M.right-42,boatY,.44,.5,.74);MF.drawPixelSprite(MF.seaSprite('gull',Math.floor(ts/220)%3),M.left+88,boatY-18,.75,.5,.5);
@@ -151,8 +189,4 @@ MF.arcadeRenderAim = function arcadeRenderAim(g,ts,G,dt,running){
   const cur=Math.hypot(R.current.x,R.current.y),windAbs=Math.hypot(wind.x,wind.y),cue=p?.phase==='recover'?'RECOVERING SURVIVOR':p?.phase==='water'?'RING AFLOAT · LET THE CURRENT WORK':g.dragging?'SET BEARING & POWER':'GRAB THE RING · PULL BACK · RELEASE';
   MF.pxText(R.scenario.label,G.left+10,G.y(.095),'#fff7de',9,'left');MF.pxText(`${windAbs>.075?'STRONG WIND':windAbs>.025?'WIND':'LIGHT AIR'} · ${cur>.023?'STRONG SET':cur>.010?'CURRENT':'SLACK WATER'}`,G.right-10,G.y(.095),'rgba(255,247,222,.70)',7,'right');MF.arcadeSetHelperCue(g,cue,`${R.scenario.label} · ${windAbs>.075?'strong wind':windAbs>.025?'wind':'light air'} · ${cur>.023?'strong set':cur>.010?'current':'slack water'}`)
 };
-}
 
-export function init_185() {
-MF.ARCADE_RESCUE_ASSET_CACHE = new Map();
-}

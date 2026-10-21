@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/puffer-pinball.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.pbNewBall = function pbNewBall(P,shooter=false,x=280,y=220,vx=0,vy=0){
   const b={id:P.nextId++,x:shooter?487:x,y:shooter?813:y,vx,vy,r:11,puffed:false,puffUntil:0,shooter,ready:shooter,alive:true,last:{},trail:[],lastFlip:0,stuck:0,oldX:x,oldY:y};
   P.balls.push(b);return b
@@ -709,16 +711,6 @@ MF.pbRulesTest = function pbRulesTest(){
   MF.arcadePinballControl(fake,'left',false,'button');if(P.left)throw Error('button hold stuck');
   return {multiballBalls:3,superJackpot:P.superJackpot,multiplier:P.multiplier,tilt:true,allHands:true,dualTouch:true,score:fake.score};
 };
-}
 
-export function init_187() {
-MF.PB = {W:560,H:960,GRAVITY:530,STEP:1/120,INK:'#17313a',WOOD:'#ae7648',GOLD:'#e5b54e',PAPER:'#fff7de'};
-}
 
-export function init_188() {
-MF.PB_SPRITES = new Map();
-}
 
-export function init_189() {
-MF.PB_DECK_SPRITE = null;
-}

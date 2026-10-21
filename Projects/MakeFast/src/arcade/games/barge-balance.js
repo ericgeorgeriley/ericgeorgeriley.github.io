@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/barge-balance.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeBargeScenario = function arcadeBargeScenario(g,r,d){
   const base={...(MF.ARCADE_BARGE_SCENARIOS[(r-1)%MF.ARCADE_BARGE_SCENARIOS.length])},tier=Math.max(0,Math.floor((r-1)/7));
   if(r>7){
@@ -193,20 +195,5 @@ MF.arcadeRenderBalance = function arcadeRenderBalance(g,ts,G,dt,running){
   const deckY=G.y(.48),half=G.w*.31;for(const o of g.objects){if(!running)continue;o.v+=effective*(.55*o.roll)*sec;o.v*=Math.pow(.986,dt/16.7);o.x+=o.v*sec;if(Math.abs(o.x)>.48&&!o.lost){o.lost=true;MF.arcadeStrike(g,g.theme==='ferry'?'CUP OVERBOARD':'OFF THE TROLLEY',35);o.x=MF.arcadeRand(g,-.18,.18);o.v=0;o.lost=false}}
   MF.ctx.save();MF.ctx.translate(G.cx,deckY);MF.ctx.rotate(effective*.22);MF.ctx.translate(-G.cx,-deckY);MF.roundedRect(G.x(.14),deckY-G.h*.07,G.w*.72,G.h*.14,11,g.theme==='ferry'?'#a86d45':'#fff7de','#18313a',3);for(const o of g.objects){const x=G.cx+o.x*half*2,y=deckY+(o.type-1)*13;if(g.theme==='ferry')MF.drawArcadeCup(x,y,o.type%2,.78);else{o.type===0?MF.drawArcadeCup(x,y,0,.72):o.type===1?MF.drawArcadeBag(x,y,1,.66):MF.circle(x,y,11,'#e5b54e','#18313a',2)}}MF.ctx.restore();const sx=G.x(.13),sw=G.w*.74,sy=G.y(.74);MF.roundedRect(sx,sy,sw,34,8,'#fff','#18313a',3);MF.rect(G.cx-42,sy-4,84,42,'rgba(131,191,106,.55)');MF.circle(sx+g.control*sw,sy+17,16,'#527da0','#18313a',3);if(running)g.roundProgress+=dt;MF.pxText(`${Math.ceil(Math.max(0,g.roundGoal-g.roundProgress)/1000)}s TO NEXT WAKE SET`,G.cx,G.y(.88),'#fff7de',9,'center');if(g.roundProgress>=g.roundGoal)MF.arcadeAdvance(g,'TRAY SAVED')
 };
-}
 
-export function init_148() {
-MF.ARCADE_BARGE_SCENARIOS = [
-  {id:'lift',label:'FIRST CARGO',note:'A 9-ton pipe bundle lands to port. Follow it with the ballast skid before the crane lets go.',wave:.035,crane:.205,vehicle:0,wake:0,slosh:0,bias:0,cargo:.145,duration:10500},
-  {id:'coils',label:'STEEL COILS',note:'Three coils are landed one after another. Each one stays where it is put and changes the barge trim.',wave:.075,crane:.105,vehicle:0,wake:0,slosh:0,bias:0,cargo:.205,duration:12000},
-  {id:'crane',label:'GENERATOR LIFT',note:'A heavy generator crosses the centreline while the already-stowed cargo keeps its permanent list.',wave:.105,crane:.245,vehicle:0,wake:0,slosh:0,bias:.025,cargo:.180,duration:12500},
-  {id:'plant',label:'PLANT & PIPES',note:'A loader crosses the deck around pipe bundles and coils. The movable ballast has to anticipate both.',wave:.115,crane:0,vehicle:.235,wake:0,slosh:0,bias:-.025,cargo:.205,duration:13000},
-  {id:'wake',label:'PASSING WASH',note:'Loaded deck, working crane and a passing wake. Read the crest before it reaches the low quarter.',wave:.105,crane:.105,vehicle:0,wake:.255,slosh:0,bias:.020,cargo:.205,duration:13600},
-  {id:'slosh',label:'FREE SURFACE',note:'A half-full service tank is now part of the deck load. Its water keeps moving after the barge recovers.',wave:.125,crane:0,vehicle:.080,wake:0,slosh:.205,bias:-.020,cargo:.220,duration:14200},
-  {id:'work',label:'FULL WORKING DECK',note:'Steel, pipes, plant, crane, wash and free surface all work the barge at once. Nothing stays neutral for long.',wave:.135,crane:.180,vehicle:.145,wake:.205,slosh:.105,bias:.025,cargo:.235,duration:14800}
-];
-}
 
-export function init_149() {
-MF.ARCADE_BARGE_SKID_CACHE = new Map();
-}

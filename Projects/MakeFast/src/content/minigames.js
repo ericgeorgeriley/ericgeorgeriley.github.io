@@ -1,13 +1,15 @@
 /** MakeFast v0.41.7 • content/minigames.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_35() {
-MF.CONTENT.minigames = {
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const minigames = {
     ferry_lines:{title:'LINES ASHORE',icon:'⌁',group:'Passenger Ferry',engine:'lines',desc:'Work changing berthing jobs with real line tension, tide, wind, occupied bollards and passing wakes.',instruction:'TAP A DECK STATION • TAP A FREE BOLLARD • HEAVE TO TAKE IN • EASE A TAUT LINE • READ THE TIDE, WIND AND BERTH',duration:0,rewardThreshold:650,benchmark:2050,theme:'ferry'},
     ferry_galley:{title:'GALLEY SWAY',icon:'☕',group:'Passenger Ferry',engine:'galley',desc:'Pour ferry tea on a live rolling counter. Each tap sends one short measure from the kettle; the mug slides with the ship, the stream bends with the roll, and a good cup needs timing rather than menus.',instruction:'TAP TO POUR A SHORT MEASURE • WATCH THE MUG SLIDE • FILL TO THE GREEN MARK • DON’T OVERFILL',duration:0,rewardThreshold:600,benchmark:2050,theme:'ferry'},
     ferry_bags:{title:'BAGGAGE SCRAMBLE',icon:'▣',group:'Passenger Ferry',engine:'bagthrow',desc:'Work the ferry baggage door with a single physical skill: hold to build a throw, then release when bag weight and ship motion line up with the cage.',instruction:'HOLD TO WIND UP • RELEASE TO THROW • LIGHT BAGS FLY • HEAVY CASES NEED MORE • THREE MISSES END THE RUN',duration:24,rewardThreshold:540,benchmark:1750,theme:'ferry'},
@@ -34,4 +36,4 @@ MF.CONTENT.minigames = {
     steam_route:{title:'STEAM UP!',icon:'♨',group:'Steam Packet',engine:'steam',desc:'Bring a steam packet back to life by rotating a visible copper manifold until boiler steam reaches the engine without escaping. Later puzzles branch to a feed pump and add isolation valves and fixed pipework.',instruction:'TAP A COPPER PIPE TO TURN IT • JOIN BOILER → ENGINE • SHUT HISSING RED VALVES • LATER: SUPPLY THE FEED PUMP TOO',duration:0,rewardThreshold:700,benchmark:2350,theme:'steam'},
     poop_deck:{title:'POOP DECK',icon:'⌃',group:'Seabirds',engine:'poop',desc:'Helm your own boat beneath mischievous gulls. Begin with one slow bird, then weave through crossing flocks and increasingly rapid showers. No reefs, mop, or other hazards — just clean dodges and daring near misses.',instruction:'STEER THE BOAT LEFT / RIGHT WITH A-D, ARROWS, OR HOLD THE BUTTONS. ON TOUCH, DRAG ANYWHERE ON THE SEA TO STEER. WATCH WHERE THE SHADOWS WILL LAND; DODGE THE FALLING DROPPINGS. THE FIRST WATCH HAS ONLY ONE GULL. LATER WATCHES ADD FASTER, CROSSING FLOCKS. THREE SPLATS END THE RUN.',duration:0,rewardThreshold:500,benchmark:2400,theme:'gulls',wiki:{lore:'A single gull takes an immoderate interest in your little boat. Before long its friends join the game, and a peaceful crossing becomes a white-feathered gauntlet.',fasting:'An optional, lighthearted boat-dodging arcade. Scores and mistakes have no effect on your fasting timer or recorded sessions.',concept:'Steer your own illustrated vessel to avoid the falling droppings and their shadows. Watch 1 introduces one gull, then progressively quicker gulls, crossing flight paths, staggered volleys and carefully spaced flock formations. Near misses and clean streaks increase your score. Hold A/D or arrows, hold the on-screen steering buttons, or drag on the playfield. Three hits end the run; there are no other obstacles or extra action buttons.'}}
   };
-}
+MF.CONTENT.minigames = minigames;

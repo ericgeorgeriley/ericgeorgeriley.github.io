@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/harbour-stories.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsFieldScene = function hsFieldScene(theme,rr,place,other=false){
  const beats=MF.HS_FIELD_BEATS[theme]||MF.HS_FIELD_BEATS.wreck,index=Math.floor(rr()*beats.length)+(other?1:0),pair=beats[index%beats.length];
  return{desc:pair[0].replaceAll('{place}',place),text:pair[1]};
@@ -218,104 +220,9 @@ MF.hsBindPinned = function hsBindPinned(){MF.$('#hsOpenPinned')?.addEventListene
 MF.hsIslandChartHTML = function hsIslandChartHTML(i){const stories=MF.hsState().items.filter(s=>s.status==='active'&&MF.hsStepLocation(s)===i.id);return stories.length?`<div class="card"><h3>Stories to attend to here</h3>${stories.map(s=>`<p>✧ ${MF.wikiEsc(s.title)} — ${MF.wikiEsc(MF.hsCurrentStory(s)?.desc||'')}</p>`).join('')}<p>Make landfall to investigate or speak with islanders.</p></div>`:''};
 
 MF.hsWikiEntries = function hsWikiEntries(){const done=MF.hsState().items.filter(s=>s.status==='completed');return [{id:'harbour-stories',category:'World',icon:'✧',title:'Harbour stories',lore:'A conversation by the quay can reveal old promises, puzzles and a chance to help a neighbour. A tale may unfold across several voyages and lead to a lasting shore change.',use:'New leads appear occasionally when you make landfall. Find the numbered clues on the actual island scene; field notes offer hints but cannot complete the investigation; a major tale may lead to an encounter at sea: inspect floating signs and choose which evidence to follow. The ship’s log records a safe sighting at docking if you prefer not to investigate. Some neighbours may ask you to carry a sealed story parcel, help with a small harbour task or search for another clue; their request always offers another way forward. Their working lives change with the choices you make. Some friends ask which calling they should follow, and a specialist shipboard game may help find clues, though direct observation works just as well. Pause tales at any time. The fasting clock and history remain unchanged.',tags:['neighbours','stories','voyages']},...MF.state.islands.flatMap(isl=>[...(isl.storyCharts||[]),...(isl.storyRelics||[])].map(item=>({id:`sea-record-${item.id}`,category:'Chronicle',icon:'⌁',title:item.name,lore:item.text,use:`Kept at ${isl.name} after a voyage, where the original evidence can still be consulted.`,tags:['stories','sea','evidence']}))),...done.map(s=>({id:`chronicle-${s.id}`,category:'Chronicle',icon:s.icon,title:s.title,lore:s.lastNarrative,use:`${s.outcome} Shared with ${MF.residentById(s.personId)?.name||'an island friend'} at ${MF.getIsland(s.originId)?.name||'the harbour'}.`,tags:['stories','keepsake',s.theme]}))]};
-}
 
-export function init_216() {
-MF.HS_TOPICS = {
- beacon:{name:'The Forgotten Light',nouns:['the old channel lamp','an abandoned signal fire','the lamp above the reef','the broken harbour beacon'],opening:['A light has been seen where there should be none.','Someone has been repairing a forgotten signal out beyond the shore.','An old beacon has started showing signs of life.'],clue:['a lantern fitting stamped with an old harbour mark','a half-burned page from the signal book','a brass lens ring with a scratched bearing'],insight:['The light was once used to guide boats through a dangerous approach.','The signal belongs to a passage that vanished from newer charts.','The lamp has been kept by someone who remembers a long-ago rescue.'],ending:['The old signal has a purpose again.','The coast has recovered one of its forgotten lights.','The islanders now know whose hands kept the lamp burning.'],biomes:['cliff','dune','pine','marsh'],features:['cliff_beacon','dune_station','pine_watch','dune_shelter'],icon:'✧'},
- wreck:{name:'A Name in the Wake',nouns:['a weathered nameplate','an unclaimed ship’s log','a splintered figurehead','a battered wreck marker'],opening:['A little piece of a lost vessel has come ashore.','A name on an old boat has stirred up questions in the harbour.','A fragment of an old ship has arrived without its story.'],clue:['a salt-stained logbook leaf','a maker’s mark beneath the varnish','a date hidden behind a brass plate'],insight:['The vessel carried people between two shores long before the present ferry.','The owner was returning something that never reached home.','The missing pages point to a sheltered coast overlooked by recent charts.'],ending:['The boat’s name can be spoken properly again.','A forgotten crossing has found its place in the island’s history.','The crew’s last journey has become a story worth keeping.'],biomes:['meadow','pine','marsh','cliff','orchard','dune'],features:['sea_cave','stream_bridge','dune_station'],icon:'▣'},
- birds:{name:'The Birds’ Hidden Route',nouns:['an unfamiliar feather','a flock appearing at strange hours','a nest on an empty headland','a seabird carrying coloured thread'],opening:['The shore birds have begun following a route no one understands.','An unusual seabird has returned to the same place for days.','A feather has given the naturalists something to puzzle over.'],clue:['a marked feather caught in the reeds','a tiny ring from a long-ago wildlife survey','a page of observations with one entry missing'],insight:['The birds are travelling between two sheltered feeding grounds.','The missing record identifies a nesting refuge worth protecting.','The flock has been pointing the way to a little-used safe passage.'],ending:['The islanders have a better way to care for the birds.','The flock’s journey is recorded in the Tidebook.','The nesting shore will be watched with new care.'],biomes:['marsh','meadow','orchard','pine','dune','cliff'],features:['marsh_hide','meadow_green','terrace'],icon:'✿'},
- garden:{name:'The Seeds that Crossed the Sea',nouns:['a little packet of ancient seeds','a flower growing where it should not','a lost orchard cutting','a garden drawn on an old chart'],opening:['Someone has found seeds whose home nobody remembers.','An old gardener’s notes describe a flower missing from the island.','A stubborn little plant has revived a forgotten promise.'],clue:['a faded drawing of the first garden','a labelled seed packet with a torn corner','a note about the soil on a distant shore'],insight:['The plant belonged to a garden shared by two island families.','A long-neglected terrace could shelter the seeds again.','The flower came from a neighbour who hoped the two harbours would stay friends.'],ending:['A living reminder now grows where the islanders can see it.','The old garden has begun another season.','Two shores have exchanged a little piece of home.'],biomes:['meadow','orchard','pine','marsh','dune'],features:['terrace','meadow_green','orchard_press'],icon:'✿'},
- channel:{name:'The Crooked Sounding',nouns:['a tide mark on a stone','a contradictory pair of charts','an unusually deep channel','a missing navigation buoy'],opening:['Two familiar charts disagree about the water outside the bay.','The harbour soundings have begun telling an odd story.','A marker has drifted from the passage everyone thought was safe.'],clue:['a sounding line with an unfamiliar mark','a tide-table correction in a margin','an old surveyor’s sketch'],insight:['The approach changes with the tide and has been misunderstood for years.','A forgotten survey marked the safest water further along the coast.','Two surveyors recorded different seasons and were both partly right.'],ending:['The channel has a reliable place on the chart.','The harbour can pass on a more careful account of its water.','An uncertain sounding has become a useful discovery.'],biomes:['marsh','dune','cliff','pine','meadow'],features:['reed_boardwalk','cliff_beacon','stream_bridge'],icon:'⌁'},
- craft:{name:'The Unfinished Promise',nouns:['an unfinished figurehead','a broken winch with a name scratched beneath it','a peculiar timber joint','an old shipwright’s pattern'],opening:['A small piece of work has outlived the person who began it.','A shipwright’s unfinished design has turned up in the stores.','A strange fitting has brought back a promise nobody quite recalls.'],clue:['a folded measurement tucked under a workbench','a maker’s mark copied into a ledger','a pencilled plan with one dimension missing'],insight:['The design was intended as a gift to another harbour.','The old pattern was for something the island still needs.','The maker left instructions for whoever chose to finish the work.'],ending:['The promise has finally been honoured.','An old design has become useful again.','A piece of local craftsmanship has found its proper home.'],biomes:['pine','meadow','orchard','cliff','dune','marsh'],features:['timber_shed','pine_watch','orchard_press'],icon:'⚒'},
- bell:{name:'The Bell Beneath the Tide',nouns:['a missing harbour bell','a curious ringing after dusk','a cracked bronze inscription','a bell rope found in a sea cave'],opening:['The harbour has heard a bell that no one has rung.','An old bell has left a mystery among the quay stones.','A familiar sound is coming from the wrong end of the bay.'],clue:['a bell-maker’s rubbing','a rope end tied in an unfamiliar knot','a bronze fragment bearing a date'],insight:['The bell commemorated an act of kindness between two crews.','A bell was hidden to keep it safe during a great storm.','The sound belongs to a signal that warned boats away from the reef.'],ending:['The bell’s true story can be heard around the harbour.','The old signal has become a memorial to its keepers.','The island has reclaimed a piece of its voice.'],biomes:['cliff','marsh','dune','meadow','pine','orchard'],features:['cliff_beacon','sea_cave','meadow_green'],icon:'♬'},
- market:{name:'The Harbour Ledger',nouns:['a parcel without a recipient','a missing page of a trading ledger','a sealed package marked for an old quay','a strange mark on a trader’s map'],opening:['A trader has a parcel nobody knows how to deliver.','A missing ledger page has left two neighbours with different stories.','An old harbour mark has turned up on a very ordinary package.'],clue:['an old manifest with one line crossed out','a receipt tucked inside a chart case','a stamp belonging to a long-closed market'],insight:['The parcel was meant to unite two families after a disagreement.','The records identify a neighbour who quietly kept the old trade route alive.','The last entry describes a shore removed from the official chart.'],ending:['The parcel has reached the end of its long journey.','The traders have put an old misunderstanding right.','The harbour has a new reason to remember its neighbours.'],biomes:['meadow','orchard','pine','marsh','cliff','dune'],features:['orchard_press','timber_shed','dune_station'],icon:'▤'},
- lantern:{name:'The Evening Watch',nouns:['a watchkeeper’s empty chair','a lantern left burning by the pier','a missing record from the night watch','an old lookout’s flag'],opening:['The night watch has noticed someone tending an empty lookout.','The harbour lantern has been lit at odd hours.','An old watchkeeper’s record has turned up with its final page missing.'],clue:['a watch rota with one name repeated','a tiny flag folded into a logbook','a note about a particularly dark crossing'],insight:['A neighbour kept watch after everyone else had given up.','The lookout was once shared by crews from different islands.','The strange light marks an old rescue route.'],ending:['The evening watch has a place in the harbour’s memory.','A forgotten keeper has been thanked at last.','The lantern now shines for a reason everyone understands.'],biomes:['cliff','pine','dune','meadow','marsh','orchard'],features:['pine_watch','dune_station','cliff_beacon'],icon:'✧'},
- festival:{name:'The Lost Harbour Day',nouns:['a forgotten festival pennant','a photograph of a crowded jetty','a box of old celebration ribbons','a tune nobody remembers finishing'],opening:['A little festival keeps turning up in the oldest harbour tales.','Someone has found decorations from a day nobody now celebrates.','An old song has brought back talk of an island gathering.'],clue:['a list of names beneath a faded banner','a sketch of the gathering place','an invitation addressed to a long-absent neighbour'],insight:['The celebration began after an ordinary but remarkable act of help.','The festival was shared across two islands rather than held in one harbour.','The day honoured a person whose name has nearly disappeared.'],ending:['The island has found a reason to gather again.','The forgotten day now has a small place in the harbour.','An old celebration has been passed to a new generation.'],biomes:['meadow','orchard','pine','marsh','cliff','dune'],features:['meadow_green','dune_shelter','reed_boardwalk'],icon:'⚑'}
-};
-}
 
-export function init_217() {
-MF.HS_STORY_BLUEPRINTS = [
- {id:'story_meadow_archive',name:'Willow Story House',desc:'A small house for letters, charts and old meadow memories.',biomes:['meadow'],feature:'story_meadow_archive',draw:'map_room',req:{timber:3,glass:2,cloth:1}},
- {id:'story_pine_gantry',name:'Cedar Signal House',desc:'A sheltered lookout rebuilt from an old woodland signal plan.',biomes:['pine'],feature:'story_pine_gantry',draw:'observatory',req:{timber:4,glass:1,hardware:1}},
- {id:'story_marsh_hide',name:'Tidal Field Station',desc:'A dry refuge where the heron-watchers keep their notebooks.',biomes:['marsh'],feature:'story_marsh_hide',draw:'tea',req:{timber:3,cloth:2,glass:1}},
- {id:'story_cliff_archive',name:'Clifftop Records Room',desc:'A stone room for the charts and logbooks recovered along the cliffs.',biomes:['cliff'],feature:'story_cliff_archive',draw:'observatory',req:{stone:4,glass:2}},
- {id:'story_orchard_room',name:'Orchard Memory Room',desc:'A friendly gathering house for the stories kept beneath the fruit trees.',biomes:['orchard'],feature:'story_orchard_room',draw:'tea',req:{timber:3,seeds:2,cloth:1}},
- {id:'story_dune_marker',name:'Sandbar Watch Hut',desc:'A weather-tight signal cabin looking over the shallow lagoon.',biomes:['dune'],feature:'story_dune_marker',draw:'map_room',req:{timber:3,cloth:2,brass:1}}
-].map(t=>({...t,pop:1,sites:['harbour','village','hill','meadow'],storyOnly:true,effects:[{type:'feature',feature:t.feature}]}));
-}
 
-export function init_218() {
-MF.HS_STORY_BLUEPRINTS.forEach(t=>{if(!MF.PROJECT_TEMPLATES.some(p=>p.id===t.id))MF.PROJECT_TEMPLATES.push(t)});;
-}
 
-export function init_219() {
-MF.HS_FIELD_BEATS = {
- beacon:[
-  ['Follow the old lamp brackets along the quay at {place}.','Behind a rusted bracket, the salt has spared an older maker’s mark.'],
-  ['Examine the soot on the stonework near {place}.','Two different layers of soot show that the light was tended years apart.'],
-  ['Look for the original line of sight above {place}.','A clear gap between the headlands points towards the lamp’s intended approach.']
- ],
- wreck:[
-  ['Search the tide line at {place} for a matching piece of the vessel.','A splinter fits the broken edge and confirms which side of the ship faced the sea.'],
-  ['Check the old mooring rings around {place}.','A ring bears the same worn initials as the recovered timber.'],
-  ['Compare the nameplate with the older harbour records at {place}.','A name scratched beneath the paint links the fragment to another crossing.']
- ],
- birds:[
-  ['Watch the flight line over {place} without disturbing the nesting birds.','The flock turns at the same shallow water on every pass.'],
-  ['Look for discarded nesting material around {place}.','Several strands have been carried from a shore farther along the route.'],
-  ['Match the feather markings to the old field notes at {place}.','The feather belongs to a bird previously recorded on a very different coast.']
- ],
- garden:[
-  ['Compare the soil and planting beds at {place}.','A sheltered patch matches the gardener’s faded instructions.'],
-  ['Examine the old stone edging at {place}.','The stones conceal a planting mark left by the first gardeners.'],
-  ['Search for a matching seed label in the stores at {place}.','A small label carries the name of someone from another harbour.']
- ],
- channel:[
-  ['Compare the tide marks on both sides of the quay at {place}.','The marks belong to two different tides; neither original sounding was entirely wrong.'],
-  ['Check the oldest depth marks near {place}.','The worn marks trace a safe route that later charts simplified.'],
-  ['Look for the missing buoy chain along the stones at {place}.','Its anchor was set farther from the reef than the current charts suggest.']
- ],
- craft:[
-  ['Compare timber joints in the working sheds at {place}.','One unusual joint matches the unfinished drawing exactly.'],
-  ['Search the boatbuilder’s old pattern books at {place}.','A pencilled note explains who was intended to receive the finished work.'],
-  ['Examine the worn fittings in the stores at {place}.','The fitting’s marks line up with the dimensions of the missing piece.']
- ],
- bell:[
-  ['Follow the sound along the sheltered walls at {place}.','The echoes meet beside a stone with an old bronze fixing.'],
-  ['Inspect the rope marks along the harbour steps at {place}.','A faded knot mark matches an illustration in the old bell-maker’s book.'],
-  ['Compare the worn bronze marks at {place}.','The marks were made by a bell moved for safekeeping, not by ordinary harbour work.']
- ],
- market:[
-  ['Compare the old quay stamps on the surviving records at {place}.','The same tiny mark joins two apparently unrelated shipments.'],
-  ['Look for the old receiving desk around {place}.','An overlooked drawer contains a receipt with a second destination.'],
-  ['Check the oldest market weights in the stores at {place}.','One weight carries a trading mark that belongs to a neighbouring harbour.']
- ],
- lantern:[
-  ['Check the watchkeeper’s sightline from {place}.','The empty lookout still faces the route used by returning crews.'],
-  ['Compare the old watch times recorded at {place}.','Several entries were made on nights when a vessel was late home.'],
-  ['Look beneath the lantern housing at {place}.','A quiet repair was made by someone who never signed the official watch book.']
- ],
- festival:[
-  ['Compare the old decorations in the hall at {place}.','The colours belong to two communities, not one.'],
-  ['Search the gathering ground at {place} for a memorial mark.','A worn stone bears the date of an unexpected harbour rescue.'],
-  ['Look through the oldest invitations kept at {place}.','One invitation was addressed to a neighbour from across the channel.']
- ]
-};
-}
 
-export function init_220() {
-MF.HS_NEWS = [
- 'The tide has been running strangely along the far side of the bay. Nothing dangerous, just something to keep an eye on.',
- 'An old fishing boat passed at dawn with a deck full of sleepy gulls. No one knows why they all chose the same boat.',
- 'The last squall left fresh shells along the shore. The children have been comparing the colours.',
- 'Two working boats exchanged a wave at the outer buoy; neither crew seemed in a hurry to get home.',
- 'Someone has been polishing the little harbour lantern. It has looked cheerful every evening since.',
- 'A school of fish gathered beneath the jetty just before sunrise. The fishers are still debating what brought them in.'
-];
-}
 
-export function init_221() {
-MF.hsMonumentCache = new Map();
-}

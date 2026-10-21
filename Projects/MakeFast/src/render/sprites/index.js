@@ -3,6 +3,7 @@
 import { MF } from '../../core/runtime-state.js';
 
 export const getBoatSprite = (...args) => MF.createBoatSprite(...args);
+export const getDefaultBoatAppearance = type => MF.defaultBoatAppearance(type);
 export const getResidentSprite = (...args) => MF.residentSprite(...args);
 export const getAnimalSprite = (...args) => MF.animalSprite(...args);
 export const getSeaSprite = (...args) => MF.seaSpriteCore(...args);

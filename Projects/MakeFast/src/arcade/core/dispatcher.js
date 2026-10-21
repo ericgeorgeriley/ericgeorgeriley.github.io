@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/core/dispatcher.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.renderArcadeGame = function renderArcadeGame(g,ts){
   const G=MF.arcadeGeom(),running=!!g.started&&!g.failed&&!g.paused&&ts>=(g.roundPauseUntil||0),dt=running?Math.min(42,Math.max(1,ts-(g.lastTick||ts))):0;g.lastTick=ts;if(MF.arcadeHelperEnabled(g)){g.helperCue='';g.helperSub=''}if(g.engine==='poop'){MF.drawSeaBackground();MF.drawArcadeWaterDetail(G,ts)}else if(!['pilot','lines','damage','bargebalance','bagthrow','telegraph','sail','pinball'].includes(g.engine))MF.drawArcadeDeck(g,ts,G);if(MF.arcadeFinishIfFailed(g,ts)){MF.arcadeHideHelper();return}
   if(g.engine==='pilot')MF.arcadeRenderPilot(g,ts,G,dt,running);else if(g.engine==='lines')MF.arcadeRenderLines(g,ts,G,dt,running);else if(g.engine==='balance')MF.arcadeRenderBalance(g,ts,G,dt,running);else if(g.engine==='galley')MF.arcadeRenderGalley(g,ts,G,dt,running);else if(g.engine==='telegraph')MF.arcadeRenderTelegraph(g,ts,G,dt,running);else if(g.engine==='bargebalance')MF.arcadeRenderBargeBalance(g,ts,G,dt,running);else if(g.engine==='bagthrow')MF.arcadeRenderBagThrow(g,ts,G,dt,running);else if(g.engine==='steam')MF.arcadeRenderSteam(g,ts,G,dt,running);else if(g.engine==='crane')MF.arcadeRenderCrane(g,ts,G,dt,running);else if(g.engine==='stack')MF.arcadeRenderStack(g,ts,G,dt,running);else if(g.engine==='sort')MF.arcadeRenderSort(g,ts,G,dt,running);else if(g.engine==='sail')MF.arcadeRenderSail(g,ts,G,dt,running);else if(g.engine==='meter')MF.arcadeRenderMeter(g,ts,G,dt,running);else if(g.engine==='steer')MF.arcadeRenderSteer(g,ts,G,dt,running);else if(g.engine==='tug')MF.arcadeRenderTug(g,ts,G,dt,running);else if(g.engine==='cattle')MF.arcadeRenderCattle(g,ts,G,dt,running);else if(g.engine==='cipher')MF.arcadeRenderCipher(g,ts,G,dt,running);else if(g.engine==='aim')MF.arcadeRenderAim(g,ts,G,dt,running);else if(g.engine==='dredge')MF.arcadeRenderDredge(g,ts,G,dt,running);else if(g.engine==='rigging')MF.arcadeRenderRigging(g,ts,G,dt,running);else if(g.engine==='depth')MF.arcadeRenderDepth(g,ts,G,dt,running);else if(g.engine==='landing')MF.arcadeRenderLanding(g,ts,G,dt,running);else if(g.engine==='poop')MF.arcadeRenderPoop(g,ts,G,dt,running);else if(g.engine==='pinball')MF.arcadeRenderPinball(g,ts,G,dt,running);const helperManaged=MF.arcadeHelperEnabled(g);if(!helperManaged&&g.engine!=='pinball'&&g.engine!=='poop'&&g.type!=='speedboat_slalom'&&!((g.engine==='meter'&&g.theme==='trawler')||g.engine==='dredge'||g.engine==='pilot'||g.engine==='rigging'||g.engine==='lines'||g.engine==='steam'||(g.engine==='stack'&&g.meta.id==='cargo_tetris')))MF.arcadeFeedbackDraw(g,G,ts);if(g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&g.engine!=='lines'&&g.engine!=='steam'&&g.engine!=='sail'&&g.engine!=='bargebalance'&&g.engine!=='telegraph'&&!(g.engine==='sort'&&g.theme==='trawler')&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))MF.arcadeDrawStatus(g,G,ts);if(g.combo>1&&g.type!=='speedboat_slalom'&&g.engine!=='pinball'&&g.engine!=='poop'&&!(g.engine==='stack'&&g.meta.id==='cargo_tetris'))MF.pxText(`STREAK ×${g.combo}`,G.right-4,G.y(.045),'#e5b54e',9,'right');MF.syncArcadeHelper(g,ts)
@@ -76,24 +78,8 @@ MF.validateMinigameRegistry = function validateMinigameRegistry(){
   }
   return errors;
 };
-}
 
-export function init_190() {
-window.__MakeFastPinballTest={integrity:MF.pbIntegrityTest,rules:MF.pbRulesTest,geometry:()=>({world:[MF.PB.W,MF.PB.H],sternFlippers:[166,394],upperFlippers:[125,390],shooterX:487})};;
-}
 
-export function init_191() {
-MF.ARCADE_ENGINE_IDS = new Set(['lines','galley','bagthrow','balance','crane','stack','meter','sort','sail','steer','tug','cattle','cipher','aim','pilot','dredge','bargebalance','rigging','depth','landing','steam','telegraph','poop','pinball']);
-}
 
-export function init_192() {
-MF.MINIGAME_PLUGINS = Object.fromEntries(Object.entries(MF.MINIGAME_META).map(([id,meta])=>[id,{...meta,create:c=>MF.createArcadeGame(meta,c),render:MF.renderArcadeGame,pointer:(g,type,x,y,pointerId)=>MF.arcadePointer(g,type,x,y,pointerId),key:(g,e)=>MF.arcadeKey(g,e)}]));
-}
 
-export function init_193() {
-MF.MINIGAME_REGISTRY_ERRORS = MF.validateMinigameRegistry();
-}
 
-export function init_194() {
-if(MF.MINIGAME_REGISTRY_ERRORS.length)console.error('MakeFast minigame registry errors',MF.MINIGAME_REGISTRY_ERRORS);;
-}

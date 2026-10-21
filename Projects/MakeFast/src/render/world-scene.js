@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/world-scene.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.islandLayoutPoint = function islandLayoutPoint(x,y){return{x:320+(x-320)*MF.ISLAND_ART.layoutX,y:180+(y-180)*MF.ISLAND_ART.layoutY}};
 
 MF.islandSceneLandMetric = function islandSceneLandMetric(isl,p){const unit=MF.ISLAND_ART.tile*MF.ISLAND_ART.shape;return MF.islandShapeMetric(isl,(p.x-320)/unit,(p.y-180)/unit,1)};
@@ -376,45 +378,12 @@ MF.drawVoyageMood = function drawVoyageMood(vr,ph){
 };
 
 MF.drawPassingLanternGlow = function drawPassingLanternGlow(x,y,scale=1){if(!['night','dusk','dawn'].includes(MF.dayPhase()))return;MF.ctx.save();MF.ctx.globalAlpha=.10;MF.circle(x,y-7*scale,18*scale,MF.timePalette().light);MF.ctx.globalAlpha=.55;MF.circle(x-8*scale,y-7*scale,1.8*scale,'#ffd978');MF.circle(x+8*scale,y-7*scale,1.8*scale,'#ffd978');MF.ctx.restore()};
-}
 
-export function init_119() {
-MF.ISLAND_ART = {tile:19,shape:1.08,layoutX:1.22,layoutY:1.17,tree:1.78,house:1.34,landmark:1.48,playerBoat:1.30,npcBoat:.82};
-}
 
-export function init_120() {
-MF.islandDockWaterCache = new Map();
-}
 
-export function init_121() {
-MF.mfFleetWaterCache = new Map();
-}
 
-export function init_122() {
-MF.worldSpriteCache = new Map();
-}
 
-export function init_123() {
-MF.mfProjectPositionCache = new Map();
-}
 
-export function init_124() {
-MF.mfExtraHomePositionCache = new Map();
-}
 
-export function init_125() {
-MF.MF_PROJECT_SITE_SLOTS = {
-  harbour:[[-28,-9],[27,2],[-8,-31],[38,-27],[-43,18],[10,29],[58,8],[-62,-5],[55,-38],[-48,-39],[34,38],[-27,42],[75,-16],[-78,20],[4,-55],[69,31],[-69,-28],[45,58],[-38,60],[82,12]],
-  village:[[0,0],[-38,-15],[39,12],[-19,31],[23,-32],[53,-12],[-54,19],[8,46],[65,20],[-65,-17],[44,43],[-43,48],[73,-34],[-76,35],[9,-53],[75,3],[-72,3],[60,55],[-57,61],[86,29]],
-  hill:[[-12,14],[24,14],[-4,-27],[39,-18],[16,31],[-31,-7],[58,5],[-55,22],[50,-40],[-44,-39],[42,43],[-40,45],[72,-18],[-68,5],[8,57],[70,29],[-64,-27],[53,61],[-52,63],[84,13]],
-  meadow:[[0,0],[39,-9],[-37,11],[21,29],[-18,-31],[-50,-6],[55,13],[-4,44],[67,-20],[-64,25],[43,43],[-42,48],[76,9],[-75,-15],[13,-52],[72,35],[-70,45],[55,60],[-56,63],[86,26]]
-};
-}
 
-export function init_126() {
-MF.mfLandmarkSpriteCache = new Map();
-}
 
-export function init_127() {
-MF.mfAnchorSpriteCache = new Map();
-}

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • world/island-life.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.mfLifeIslandSignature = function mfLifeIslandSignature(isl){return `${isl.id}:${isl.biome}:${MF.population(isl)}:${(isl.features||[]).slice().sort().join(',')}:${(isl.projects||[]).map(p=>`${p.id}:${p.templateId}:${p.complete?1:0}:${p.site||''}`).sort().join('|')}:${(isl.animalGuests||[]).map(a=>`${a.id}:${a.species}:${a.name}`).sort().join(',')}`};
 
 MF.mfLifeCachePut = function mfLifeCachePut(map,key,value,limit=900){if(map.size>=limit){const first=map.keys().next().value;if(first!==undefined)map.delete(first)}map.set(key,value);return value};
@@ -185,44 +187,12 @@ MF.updateWorldInteractionAvatar = function updateWorldInteractionAvatar(ts=perfo
 };
 
 MF.mfIslandLifeStats = function mfIslandLifeStats(isl=MF.currentIsland()){const residents=(isl.residents||[]).filter(p=>!MF.residentAwayAssignment(p.id)),animals=MF.islandAnimals(isl),structures=MF.mfIslandLifeStructures(isl);return{population:MF.population(isl),residentTotal:residents.length,residentVisibleCap:MF.visibleResidentLimit(isl),animalCount:animals.length,animalSpecies:animals.map(a=>a.species),structureAnchors:structures.length,spriteCache:MF.worldSpriteCache.size}};
-}
 
-export function init_274() {
-MF.MF_LIFE_ANIMAL_TYPES = ['cat','dog','duck','goose','chicken','sheep','goat','rabbit','crab'];
-}
 
-export function init_275() {
-MF.MF_LIFE_ANIMAL_LABELS = {cat:'Harbour cat',dog:'Island dog',duck:'Duck',goose:'Goose',chicken:'Chicken',sheep:'Sheep',goat:'Goat',rabbit:'Rabbit',crab:'Shore crab'};
-}
 
-export function init_276() {
-MF.MF_LIFE_ANIMAL_NAMES = {
-  cat:['Marmalade','Pebble','Mackerel','Button','Pip'],dog:['Skipper','Moss','Bramble','Patch','Nori'],duck:['Puddle','Dab','Reed','Pip','Waddle'],
-  goose:['Gus','Mallow','Cloud','Tern','Bracken'],chicken:['Dot','Marigold','Pepper','Bean','Daisy'],sheep:['Floss','Cloudlet','Tuft','Mallow','Biscuit'],
-  goat:['Sprig','Nettle','Pebble','Juniper','Moss'],rabbit:['Thimble','Clover','Dune','Button','Fern'],crab:['Clack','Rusty','Pebble','Nip','Coral']
-};
-}
 
-export function init_277() {
-MF.mfAnimalReactions = new Map();
-}
 
-export function init_278() {
-MF.mfAnimalDialogue = null;
-}
 
-export function init_279() {
-MF.mfLifeStructureCache = new Map();
-}
 
-export function init_280() {
-MF.mfLifeRouteCache = new Map();
-}
 
-export function init_281() {
-MF.mfLifeAnimalCache = new Map();
-}
 
-export function init_282() {
-MF.mfSuppressLighthouseBuildingLight = false;
-}

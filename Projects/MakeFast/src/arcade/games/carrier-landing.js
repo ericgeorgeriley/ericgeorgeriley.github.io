@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/carrier-landing.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeLandingNewApproach = function arcadeLandingNewApproach(g,ts=0){
   const d=MF.arcadeDifficulty(g);
   g.plane={range:1,lat:MF.arcadeRand(g,-.14,.14),alt:.69+MF.arcadeRand(g,-.025,.025),vLat:0,vAlt:0,pitch:0,bank:0,throttle:.54,airspeed:1,steer:0,power:0,hook:true,landed:false,wire:0};
@@ -227,8 +229,4 @@ MF.arcadeRenderLanding = function arcadeRenderLanding(g,ts,G,dt,running){
     MF.arcadeSetHelperCue(g,`${lineState} · ${ballState}`,`${air} kt · sink ${sink} · range ${rng}m`)
   }
 };
-}
 
-export function init_178() {
-MF.ARCADE_LANDING_PLANE_CACHE = new Map();
-}

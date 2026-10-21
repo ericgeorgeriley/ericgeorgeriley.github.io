@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • voyage/navigation.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.legacySceneOffset = function legacySceneOffset(){const r=MF.visibleSceneRect();return{x:(MF.canvas.width-640)/2,y:r.y+(r.h-360)/2}};
 
 MF.fitResponsiveStage = function fitResponsiveStage(){
@@ -190,12 +192,5 @@ MF.buildVoyageEvents = function buildVoyageEvents(voyageId,ctx={}){
   sequence.forEach((e,i)=>events.push({...e,id:MF.uid('evt'),p:slots[Math.min(i,slots.length-1)],triggered:false,resolved:false}));
   return events;
 };
-}
 
-export function init_107() {
-MF.ROUTE_ISLAND_CLEARANCE = .74;
-}
 
-export function init_108() {
-MF.ROUTE_PLACEMENT_CLEARANCE = .66;
-}

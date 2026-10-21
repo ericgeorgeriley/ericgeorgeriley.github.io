@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/ferry-galley.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeCruiseScenario = function arcadeCruiseScenario(g,r){
   const base={...MF.ARCADE_CRUISE_SCENARIOS[(r-1)%MF.ARCADE_CRUISE_SCENARIOS.length],tier:Math.floor((r-1)/MF.ARCADE_CRUISE_SCENARIOS.length)};
   if(base.tier){const t=Math.min(6,base.tier);base.wind=Math.min(.060,base.wind*(1+t*.12));base.roll=Math.min(.060,base.roll*(1+t*.10));base.wake=Math.min(.19,(base.wake||.07)*(1+t*.09));if(t>=1)base.pool=true;if(t>=2)base.wet=true;if(t>=3)base.service=true;base.label=t>=4?'HEAVY WEATHER RESET':t>=2?'BUSY POOL DECK':base.label;base.note='Generated deck watch — read the wind, wake and traffic before moving each item.'}
@@ -166,46 +168,7 @@ MF.arcadeRenderGalley = function arcadeRenderGalley(g,ts,G,dt,running){
   MF.pxText(sc.label,G.left+12,G.y(.075),'#17313a',9,'left');MF.pxText(`${B.served+1}/${g.roundGoal} · ${C.label}`,G.left+12,G.y(.108),'#42616a',7,'left');
   const highNow=.5+(C.target[1]-.5)*sc.band,aligned=Math.abs(B.cupX-(.5+B.roll*.22+B.cupV*.025))<C.width*.55;let cue;if(B.afterServe>0)cue='CUP AWAY';else if(B.fill>highNow*.92)cue='STOP · LET THE LAST DROP FALL';else if(aligned)cue='TAP · MUG UNDER THE TAP';else if(B.wakeWarn>.45)cue='WHITE WATER COMING · WAIT';else cue='WATCH THE MUG · TAP TO POUR';MF.arcadeSetHelperCue(g,cue,`${Math.round(B.fill*100)}% full · ${B.pours} pour${B.pours===1?'':'s'} · ${sc.note}`)
 };
-}
 
-export function init_160() {
-MF.ARCADE_CRUISE_GEAR = [
-  {id:'chair',label:'DECK CHAIR',zone:'chairs',mass:1.35,wind:.38,friction:.90,shape:'chair',col:'#df7c68',accent:'#fff0ce'},
-  {id:'lounger',label:'SUN LOUNGER',zone:'chairs',mass:1.70,wind:.30,friction:.92,shape:'lounger',col:'#527da0',accent:'#fff7de'},
-  {id:'ring',label:'POOL RING',zone:'toys',mass:.42,wind:1.24,friction:.82,shape:'ring',col:'#e5b54e',accent:'#df7c68'},
-  {id:'ball',label:'BEACH BALL',zone:'toys',mass:.24,wind:1.55,friction:.76,shape:'ball',col:'#65bdd1',accent:'#fff7de'},
-  {id:'towel',label:'POOL TOWEL',zone:'linen',mass:.34,wind:1.16,friction:.80,shape:'towel',col:'#fff7de',accent:'#65bdd1'},
-  {id:'cushion',label:'SEAT CUSHION',zone:'linen',mass:.55,wind:.94,friction:.84,shape:'cushion',col:'#83bf6a',accent:'#fff0ce'}
-];
-}
 
-export function init_161() {
-MF.ARCADE_CRUISE_SCENARIOS = [
-  {id:'reset',label:'SUN DECK RESET',note:'A quiet deck reset before the next group comes up.',wind:.006,roll:.012,pool:false,wake:0,wet:false,service:false},
-  {id:'breeze',label:'AFTERNOON BREEZE',note:'Light gear is starting to creep downwind.',wind:.017,roll:.017,pool:true,wake:0,wet:false,service:false},
-  {id:'wake',label:'PASSING WAKE',note:'A broad ferry wake is crossing the ship — stow the loose gear before it hits.',wind:.012,roll:.025,pool:true,wake:.105,wet:false,service:false},
-  {id:'wet',label:'WET TEAK',note:'Spray has made the deck slippery. Heavy gear keeps moving once it starts.',wind:.016,roll:.030,pool:true,wake:.090,wet:true,service:false},
-  {id:'service',label:'TEA SERVICE',note:'Reset the deck without clipping the steward’s trolley.',wind:.018,roll:.025,pool:true,wake:.075,wet:false,service:true},
-  {id:'gust',label:'GUST FRONT',note:'A fresh gust is working across the pool deck and the light gear is taking off.',wind:.031,roll:.036,pool:true,wake:.115,wet:true,service:false},
-  {id:'squall',label:'POOL DECK SQUALL',note:'Wind, wet teak, wakes and service traffic are all moving at once.',wind:.043,roll:.043,pool:true,wake:.145,wet:true,service:true}
-];
-}
 
-export function init_180() {
-MF.ARCADE_GALLEY_CUPS = {
-  tea:{label:'TEA',cup:'#fff7de',drink:'#b97842',target:[.70,.94],pulse:.190,width:.080,stream:.52},
-  coffee:{label:'COFFEE',cup:'#d9e3df',drink:'#6b412d',target:[.72,.94],pulse:.184,width:.073,stream:.50},
-  cocoa:{label:'COCOA',cup:'#e9d4b3',drink:'#80533c',target:[.68,.92],pulse:.198,width:.077,stream:.53}
-};
-}
 
-export function init_181() {
-MF.ARCADE_GALLEY_SCENARIOS = [
-  {label:'FIRST TEA RUN',goal:3,cups:['tea'],roll:.30,freq:.72,slide:.58,wakes:0,band:1.00,note:'Tap to pour a short measure. Let the mug slide under the spout.'},
-  {label:'BREAKFAST RUN',goal:4,cups:['tea','coffee'],roll:.38,freq:.78,slide:.68,wakes:0,band:.96,note:'Coffee mugs are narrower. Start the pour before the mug is perfectly centred.'},
-  {label:'CROSSING SWELL',goal:4,cups:['tea','coffee','tea'],roll:.46,freq:.84,slide:.78,wakes:1,band:.93,note:'The tray has inertia. Watch the mug, not the horizon.'},
-  {label:'BUSY COUNTER',goal:5,cups:['coffee','tea','cocoa'],roll:.53,freq:.91,slide:.88,wakes:1,band:.90,note:'The stream keeps falling for a moment after each tap.'},
-  {label:'ROUGH WATER',goal:5,cups:['tea','coffee','cocoa'],roll:.60,freq:.98,slide:.98,wakes:2,band:.87,note:'Wake sets shove the tray. Leave headroom in a nearly full mug.'},
-  {label:'LAST ORDERS',goal:6,cups:['coffee','tea','cocoa','coffee'],roll:.66,freq:1.05,slide:1.05,wakes:2,band:.84,note:'Fast service, narrow windows, no extra controls.'}
-];
-}

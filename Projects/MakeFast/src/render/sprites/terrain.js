@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/terrain.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.terrainPalette = function terrainPalette(b){
   const palettes={
     meadow:{base:'#78b861',light:'#94cb73',dark:'#4f8850',accent:'#b6d982',sand:'#e6cd82',sandHi:'#f2dda0',wet:'#bf9d5f'},
@@ -51,6 +53,5 @@ MF.islandTerrainSprite = function islandTerrainSprite(isl){
 MF.approachSprite = function approachSprite(isl){
   MF.ensureIslandData(isl);const key=`approach-v16:${isl.id}:${isl.biome}:${JSON.stringify(isl.shape)}`;if(MF.approachSpriteCache.has(key))return MF.approachSpriteCache.get(key);const off=document.createElement('canvas');off.width=280;off.height=220;const g=off.getContext('2d');g.imageSmoothingEnabled=false;const spr=MF.islandTerrainSprite(isl);g.drawImage(spr,12,10,256,200);MF.approachSpriteCache.set(key,off);return off
 };
-}
 
 

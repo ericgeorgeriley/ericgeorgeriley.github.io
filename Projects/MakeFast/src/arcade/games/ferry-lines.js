@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/ferry-lines.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeLinesScenario = function arcadeLinesScenario(g,r){
   const base={...MF.ARCADE_LINES_SCENARIOS[(r-1)%MF.ARCADE_LINES_SCENARIOS.length],tier:Math.floor((r-1)/MF.ARCADE_LINES_SCENARIOS.length)};
   const sign=MF.arcadeRand(g,0,1)>.5?1:-1;
@@ -203,20 +205,5 @@ MF.arcadeRenderLines = function arcadeRenderLines(g,ts,G,dt,running){
   const R=MF.arcadeLinesReady(g),tension=A?.tension||0;MF.pxText(sc.label,G.left+12,G.y(.052),'#fff7de',10,'left');MF.pxText(sc.note,G.left+12,G.y(.080),'rgba(255,247,222,.72)',7,'left');MF.pxText(`LINES ${Math.min(R.attached,sc.required)}/${sc.required}`,G.x(.70),G.y(.052),'#fff7de',8,'right');const condition=sc.weather>=3?'STORM':sc.weather>=2?'RAIN':sc.weather>=1?'BREEZY':'CLEAR';MF.pxText(condition,G.x(.70),G.y(.080),'rgba(255,247,222,.72)',7,'right');
   let cue;if(tension>.90)cue='EASE — LINE BAR-TAUT';else if(D.heave)cue='HEAVING';else if(D.ease)cue='EASING';else if(sc.wakeRequired&&!D.wake.done&&R.attached>=sc.required)cue='HOLD HER FOR THE PASSING WAKE';else if(R.attached>=sc.required&&!R.position)cue=Math.abs(S.y-D.berthY)>D.berthToleranceY?'WORK THE LINES TO THE PAINTED BERTH':'DRAW HER GENTLY ONTO THE FENDERS';else if(!R.must&&sc.must?.length)cue=`${(MF.ARCADE_LINE_TYPES.find(x=>x.id===sc.must[0])?.label||'SPRING')} REQUIRED`;else cue=A?.state==='ready'?'SELECT A BOLLARD · THROW':'WORK THE ACTIVE LINE';MF.arcadeSetHelperCue(g,cue,`${R.attached}/${D.lines.length} lines on · ${sc.label}`)
 };
-}
 
-export function init_146() {
-MF.ARCADE_LINES_SCENARIOS = [
-  {id:'calm',label:'CALM BERTH',note:'HEAD + STERN LINES',lines:2,required:2,must:['head','stern'],weather:0,current:.004,wind:0},
-  {id:'tide',label:'TIDAL SET',note:'A SPRING STOPS THE SURGE',lines:3,required:3,must:['foreSpring'],weather:0,current:.013,wind:.001},
-  {id:'offshore',label:'OFFSHORE WIND',note:'GET LINES ON BEFORE THE GAP OPENS',lines:4,required:3,must:['head'],weather:1,current:.006,wind:-.012},
-  {id:'occupied',label:'OCCUPIED BERTH',note:'WORK AROUND THE MOORED BOAT',lines:4,required:3,must:[],weather:1,current:.010,wind:.004,moored:1},
-  {id:'onshore',label:'ONSHORE BREEZE',note:'DO NOT LET HER HIT THE FENDERS HARD',lines:4,required:3,must:['stern'],weather:2,current:.010,wind:.014},
-  {id:'wake',label:'PASSING WAKE',note:'WATCH THE CREST · EASE A TAUT LINE',lines:4,required:3,must:[],weather:1,current:.011,wind:.006,moored:1,wake:true,wakeRequired:true},
-  {id:'squall',label:'SQUALL BERTH',note:'RAIN · GUSTS · STRONG TIDAL SET',lines:4,required:4,must:['foreSpring'],weather:3,current:.017,wind:.017,moored:1,wake:true,wakeRequired:true}
-];
-}
 
-export function init_147() {
-MF.arcadeLinesSpriteCache = new Map();
-}

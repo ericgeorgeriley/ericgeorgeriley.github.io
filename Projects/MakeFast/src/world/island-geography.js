@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • world/island-geography.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.makeIslandShape = function makeIslandShape(seedKey,biome=null){const rr=MF.rng(MF.hashString(String(seedKey)+'shape'));const s={rx:7.6+rr()*3.5,ry:5.4+rr()*2.5,k1:2+Math.floor(rr()*3),k2:3+Math.floor(rr()*4),a1:.10+rr()*.14,a2:.06+rr()*.12,p1:rr()*Math.PI*2,p2:rr()*Math.PI*2,coveAngle:rr()*Math.PI*2,coveDepth:.04+rr()*.13,coveWidth:.35+rr()*.35,rotation:(rr()-.5)*.7};
   if(!biome||!MF.MF_LANDFORMS[biome])return s;
   const d=MF.MF_LANDFORMS[biome];s.v=2;s.style=d.style;s.rx=d.rx[0]+rr()*(d.rx[1]-d.rx[0]);s.ry=d.ry[0]+rr()*(d.ry[1]-d.ry[0]);s.rotation=(rr()-.5)*(biome==='pine'?1.5:.95);s.coveAngle=rr()*Math.PI*2;s.coveDepth=.13+rr()*.19;s.coveWidth=.23+rr()*.20;s.headAngle=rr()*Math.PI*2;s.secondAngle=s.headAngle+1.35+rr()*1.3;s.distortion=.75+rr()*.45;s.lagoonX=2.1+rr()*1.2;s.lagoonY=-.8+rr()*.8;s.variant=Math.floor(rr()*4);s.size=[.80,.91,1.02,1.10,1.17][Math.floor(rr()*5)];s.rx*=s.size;s.ry*=s.size;return s};
@@ -182,40 +184,8 @@ MF.defaultState = function defaultState(){
     sim:{active:false,offsetMs:0}, achievements:{}, lastSavedAt:MF.nowReal()
   }
 };
-}
 
-export function init_63() {
-MF.MF_LANDFORMS = {
-  meadow:{rx:[8.6,10.1],ry:[5.6,7.5],style:'valleys',sites:['harbour','village','hill','meadow'],cap:10},
-  pine:{rx:[8.3,10.4],ry:[4.0,5.6],style:'headlands',sites:['harbour','village','hill','meadow'],cap:8},
-  marsh:{rx:[8.7,10.4],ry:[6.1,7.6],style:'channels',sites:['harbour','village','meadow'],cap:5},
-  cliff:{rx:[7.2,8.8],ry:[5.4,7.0],style:'scarps',sites:['harbour','village','hill'],cap:6},
-  orchard:{rx:[7.9,9.9],ry:[6.2,7.7],style:'bays',sites:['harbour','village','hill','meadow'],cap:8},
-  dune:{rx:[9.1,10.5],ry:[3.9,5.2],style:'spit',sites:['harbour','village','meadow'],cap:4}
-};
-}
 
-export function init_64() {
-MF.MF_COMMON_PROJECTS = new Set(['market_stall','market_square','market_hall','cottage_row','map_room','ferry','boatyard']);
-}
 
-export function init_65() {
-MF.MF_PROJECT_BIOMES = {windmill:['meadow','pine','orchard'],lighthouse:['cliff','dune','pine'],orchard:['meadow','orchard'],tea_house:['meadow','orchard','pine','marsh'],observatory:['cliff','pine','meadow']};
-}
 
-export function init_66() {
-MF.PLAYER_BOAT_HELP_CAPACITY = {
-  cutter:{passengers:1,parcels:2},
-  fishing:{passengers:1,parcels:2},
-  shallow:{passengers:1,parcels:1},
-  cabin:{passengers:2,parcels:2},
-  sailer:{passengers:2,parcels:1}
-};
-}
 
-export function init_67() {
-MF.PROJECT_EFFECTS = {
-  feature({island,effect}){if(effect.feature&&!island.features.includes(effect.feature))island.features.push(effect.feature)},
-  reveal_route({island}){const n=MF.generateUnchartedIslandFrom(island);n.known=true;MF.state.islands.push(n);MF.ensureRoute(island.id,n.id,MF.planSafeCourse(island,n));const line=MF.contentLine('copy.journal.routeRevealed',{destination:n.name});island.notes.unshift(line);MF.state.journal.unshift(line)}
-};
-}

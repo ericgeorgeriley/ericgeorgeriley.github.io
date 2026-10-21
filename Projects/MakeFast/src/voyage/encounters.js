@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • voyage/encounters.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.buildPreviewVoyageEvents = function buildPreviewVoyageEvents(voyageId,ctx={}){
   // Sea trials use a fixed event mix for repeatable testing.
   const rr=MF.rng(MF.hashString(String(voyageId)+'makefast-preview-events'));
@@ -99,6 +101,5 @@ MF.dockCore = function dockCore(early=false){
   if(MF.state.sim.active){MF.state.sim.active=false;MF.state.sim.offsetMs=0;MF.toast('Sea trial complete.')}MF.save();MF.playCue('arrive');MF.adaptiveMusicSync(true);MF.renderUI();
   const summary=[...cargoNotes,...delivered.map(p=>MF.contentLine('copy.journal.passengerArrived',{person:p.name,destination:dest.name}))];if(summary.length)MF.state.journal.unshift(`${dest.name}: ${summary.join(' ')}`);MF.save();setTimeout(()=>MF.openDocksideBoard(dest,true),220);
 };
-}
 
 

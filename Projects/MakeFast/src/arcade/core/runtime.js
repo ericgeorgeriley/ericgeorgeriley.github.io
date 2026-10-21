@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/core/runtime.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.setupArcadeRound = function setupArcadeRound(g,first=false){
   const r=g.round||1,d=MF.arcadeDifficulty(g);g.roundProgress=0;g.roundStartedAt=performance.now();g.roundPauseUntil=first?0:(g.roundPauseUntil||0);g.drag=null;g.hold=false;
   if(g.engine==='pilot')MF.arcadeSetupPilot(g,r,d);else if(g.engine==='lines')MF.arcadeSetupLines(g,r,d);else if(g.engine==='balance')MF.arcadeSetupBalance(g,r,d);else if(g.engine==='galley')MF.arcadeSetupGalley(g,r,d);else if(g.engine==='telegraph')MF.arcadeSetupTelegraph(g,r,d);else if(g.engine==='bargebalance')MF.arcadeSetupBargeBalance(g,r,d);else if(g.engine==='bagthrow')MF.arcadeSetupBagThrow(g,r,d);else if(g.engine==='steam')MF.arcadeSetupSteam(g,r,d);else if(g.engine==='crane')MF.arcadeSetupCrane(g,r,d);else if(g.engine==='stack')MF.arcadeSetupStack(g,r,d);else if(g.engine==='sort')MF.arcadeSetupSort(g,r,d);else if(g.engine==='sail')MF.arcadeSetupSail(g,r,d);else if(g.engine==='meter')MF.arcadeSetupMeter(g,r,d);else if(g.engine==='steer')MF.arcadeSetupSteer(g,r,d);else if(g.engine==='tug')MF.arcadeSetupTug(g,r,d);else if(g.engine==='cattle')MF.arcadeSetupCattle(g,r,d);else if(g.engine==='cipher')MF.arcadeSetupCipher(g,r,d);else if(g.engine==='aim')MF.arcadeSetupAim(g,r,d);else if(g.engine==='dredge')MF.arcadeSetupDredge(g,r,d);else if(g.engine==='rigging')MF.arcadeSetupRigging(g,r,d);else if(g.engine==='depth')MF.arcadeSetupDepth(g,r,d);else if(g.engine==='landing')MF.arcadeSetupLanding(g,r,d);else if(g.engine==='poop')MF.arcadeSetupPoop(g,r,d);else if(g.engine==='pinball')MF.arcadeSetupPinball(g,r,d)
@@ -43,14 +45,4 @@ MF.endMinigame = function endMinigame(reason='done'){
 MF.arcadeDrawStatus = function arcadeDrawStatus(g,G){if(['cattle','cipher'].includes(g.engine))return;const lives=MF.arcadeLives(g),hearts='♥'.repeat(lives)+'·'.repeat(Math.max(0,g.maxStrikes-lives));MF.pxText(`${MF.arcadeRoundText(g)}  ${hearts}`,G.left+4,G.y(.045),lives===1?'#df7c68':'#fff7de',9,'left');if(g.engine!=='depth'&&g.type!=='speedboat_slalom'&&g.roundPauseUntil>performance.now())MF.pxText(`ROUND ${g.round}`,G.cx,G.y(.50),'#fff7de',18,'center')};
 
 MF.arcadeFinishIfFailed = function arcadeFinishIfFailed(g,ts){if(g.failed&&ts>=g.failAt){MF.endMinigame('failed');return true}return false};
-}
 
-export function init_184() {
-MF.ARCADE_LIBRARY_SECTIONS = [
-  {name:'Seamanship & Shiphandling',ids:['ferry_lines','yacht_trim','speedboat_slalom','tug_dock','tanker_channel','pilot_transfer']},
-  {name:'Cargo, Deck & Rigging',ids:['container_crane','container_stack','barge_balance','cargo_tetris','tallship_rigging']},
-  {name:'Working Boats & Rescue',ids:['trawler_net','trawler_sort','rescue_throw','dredger_scoop']},
-  {name:'Navigation, Machinery & Specialist',ids:['naval_cattleships','research_cipher','sub_depth','carrier_landing','steam_route','engine_telegraph']},
-  {name:'Passenger & Deck Life',ids:['puffer_pinball','ferry_galley','ferry_bags','cruise_buffet','poop_deck']}
-];
-}

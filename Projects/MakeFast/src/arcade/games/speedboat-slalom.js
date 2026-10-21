@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/speedboat-slalom.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeSpeedGeneratedCircuit = function arcadeSpeedGeneratedCircuit(base,seed,round){
   const rr=MF.rng(MF.hashString(`regatta-layout-v2:${seed}:${round}:${base.id}`));
   const rand=(a=0,b=1)=>a+(b-a)*rr(),pick=list=>list[Math.floor(rr()*list.length)%list.length];
@@ -423,46 +425,11 @@ MF.arcadeTankerCourse = function arcadeTankerCourse(g,p){
   }
   return .5
 };
-}
 
-export function init_167() {
-MF.ARCADE_SPEED_COLS = ['#df7c68','#e5b54e','#83bf6a','#7c78a8','#d27a9a','#5aa8a2'];
-}
 
-export function init_168() {
-MF.ARCADE_SPEED_CIRCUITS = [
-  {id:'harbour',name:'Harbour Dash',biome:'meadow',intro:'QUAY CHICANES · RACE RUBBING RAILS',water:['#71b9c5','#388eab','#236f87'],land:'#b9aa7d',edge:'#d9c797',accent:'#e5b54e',theme:'harbour',
-   path:[-.04,-.12,-.15,.04,.16,.11,-.11,-.16,-.05,.07,.10,.03],widths:[.36,.32,.31,.34,.36,.34,.29,.31,.35,.36,.34,.35],
-   gates:[-.18,.20,-.19,.18,-.17,.20,-.17],hazards:['crate','buoy','barrel','ferry','crate','kelp','barrel','buoy','crate','ferry','barrel'],hazardLanes:[.04,-.18,.18,-.02,-.18,.14,.04,-.12,.19,-.05,.12],pickups:[.16,-.16,.18,-.14],decor:'quays'},
-  {id:'stacks',name:'Needle Rocks',biome:'cliff',intro:'REEF MAZE · CUT THROUGH THE STACKS',water:['#70b0bf','#38778e','#1c536f'],land:'#84918d',edge:'#b2b9a8',accent:'#df7c68',theme:'cliffs',
-   path:[.02,.19,.20,-.10,-.19,-.07,.19,.20,-.16,-.20,.02,.14],widths:[.33,.29,.28,.32,.30,.28,.31,.29,.27,.28,.31,.33],
-   gates:[.16,-.17,-.16,.17,.16,-.17,.16],hazards:['reef','whirlpool','reef','kelp','whirlpool','reef','driftwood','whirlpool','reef','kelp','reef'],hazardLanes:[-.10,.10,.01,-.16,.16,-.02,.15,-.13,.03,.13,-.12],pickups:[-.13,.14,-.11,.13],decor:'stacks'},
-  {id:'lantern',name:'Lantern Coast',biome:'orchard',intro:'FESTIVAL S-BENDS · WATCH THE JELLIES',water:['#5ca2b3','#326c88','#243e62'],land:'#a6ae83',edge:'#d4cb9a',accent:'#83bf6a',theme:'lantern',
-   path:[-.08,.10,.17,.14,-.12,-.16,.13,.18,.04,-.18,-.12,.03],widths:[.36,.34,.31,.35,.32,.31,.35,.30,.32,.33,.35,.36],
-   gates:[-.17,.18,.18,-.18,.18,-.17,-.18],hazards:['jelly','barrel','kelp','jelly','whirlpool','barrel','jelly','kelp','jelly','buoy','barrel'],hazardLanes:[.13,-.13,.06,.18,-.17,.04,-.12,.16,-.03,.09,-.16],pickups:[.14,-.18,.14,-.13],decor:'festival'}
-];
-}
 
-export function init_169() {
-MF.ARCADE_SPEED_PILOTS = ['Captain Mallow','Pip Seabright','Skipper Tern','Old Finley'];
-}
 
-export function init_170() {
-MF.ARCADE_SPEED_CUP_POINTS = [10,7,5,3,1];
-}
 
-export function init_171() {
-MF.ARCADE_SPEED_LIVERIES = [{id:'blue',name:'Harbour Blue',col:'#2f8fa5'},{id:'coral',name:'Coral Flyer',col:'#df7c68'},{id:'gold',name:'Golden Wake',col:'#e5b54e'},{id:'mint',name:'Seafoam Sprint',col:'#83bf6a'}];
-}
 
-export function init_172() {
-MF.ARCADE_SPEED_VARIANTS = ['Crosswind','Tidal Switchback','Long Reach','Hairpin Run','Chicane','Broken Wake','Reef Dance','S-Bend'];
-}
 
-export function init_173() {
-MF.arcadeSpeedSpriteCache = new Map();
-}
 
-export function init_174() {
-MF.ARCADE_SPEED_HAZARD_SPRITES = new Map();
-}

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • ui/panels.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.generateUnchartedIslandFrom = function generateUnchartedIslandFrom(origin=MF.currentIsland()){
   const rr=MF.rng(MF.state.worldSeed+MF.state.islands.length*7919+Date.now()%99991+MF.hashString(origin.id));let x=origin.x+3,y=origin.y;
   const clear=(cx,cy)=>!MF.state.islands.some(i=>Math.hypot(i.x-cx,i.y-cy)<2.05)&&MF.historicRouteClearAt(cx,cy);
@@ -144,7 +146,7 @@ MF.openProjectPicker = function openProjectPicker(isl){
 MF.openSitePicker = function openSitePicker(isl,templateId){if(!MF.mfRequireLocalIsland(isl))return;const t=MF.projectTemplate(templateId);MF.showModal(`<h2>Where should ${t.name} go?</h2><p>${MF.contentLine('copy.harbour.sitePicker',{island:isl.name})}</p><div class="site-grid">${MF.mfBuildableSites(isl,t).map(s=>`<div class="site-choice" data-site="${s}"><b>${MF.BUILD_SITES[s].name}</b><span>${MF.BUILD_SITES[s].desc}</span></div>`).join('')}</div><div class="modal-actions"><button class="big-btn ghost" id="backProjects">BACK</button></div>`);MF.$$('[data-site]').forEach(b=>b.onclick=()=>{MF.startIslandProject(isl,templateId,b.dataset.site);MF.openDocksideBoard(isl,false)});MF.$('#backProjects').onclick=()=>MF.openProjectPicker(isl)};
 
 MF.showModal = function showModal(html,closable=true){
-  MF.$('#modal').innerHTML=html; MF.$('#modal').classList.remove('mf39-person-modal'); MF.$('#modalBack').classList.add('show');
+  MF.$('#modal').innerHTML=html; delete MF.$('#modal').dataset.makefastUiContext; MF.$('#modal').classList.remove('mf39-person-modal'); MF.$('#modalBack').classList.add('show');
   MF.$$('[data-close]').forEach(b=>b.onclick=MF.closeModal); MF.$('#modalBack').onclick=e=>{if(closable&&e.target===MF.$('#modalBack'))MF.closeModal()};
 };
 
@@ -329,23 +331,5 @@ MF.resetGame = function resetGame(){MF.showModal(`<h2>Reset MakeFast?</h2><p>Thi
 MF.islandSummary = function islandSummary(i){MF.ensureIslandData(i);const pop=MF.population(i),active=i.projects.filter(p=>!p.complete),done=i.projects.filter(p=>p.complete);if(active.length)return`${active.map(p=>MF.projectTemplate(p.templateId)?.name).filter(Boolean).slice(0,2).join(' and ')} ${active.length===1?'is':'are'} taking shape here. ${pop} resident${pop===1?'':'s'} live on the island.`;if(done.length)return`${MF.projectTemplate(done[done.length-1].templateId)?.name||'A new place'} now stands here. ${pop} resident${pop===1?'':'s'} call the island home.`;const special=i.features.filter(f=>!['dock','cottage','jetty','tiny_jetty','windmill_ruin'].includes(f));if(!special.length)return`${pop?`${pop} resident${pop===1?'':'s'} share`:'Quiet paths cross'} a mostly undeveloped ${i.biome} shore.`;return`${MF.featureLabel(special[special.length-1])} now shapes the island. ${pop} resident${pop===1?'':'s'} live here.`;};
 
 MF.findHTML = function findHTML(d){return `<div class="find"><div class="find-icon">${MF.mfSpecialCargoIconSVG('find')}</div><div><b>${d.name}</b><small>${d.desc}</small></div></div>`};
-}
 
-export function init_109() {
-MF.BOTTLE_MESSAGES = [
-  'The gulls have nested in the red chimney again. Tell whoever finds this that the blue cup is still on the sill.',
-  'Tea tastes better after rain. This is a fact and I have tested it on three islands.',
-  'A little brass key washed up here last spring. I never found the lock.',
-  'If you pass a lighthouse with two pines behind it, look for the old stone steps at low tide.',
-  'We counted seven dolphins before breakfast and none afterwards. Perhaps they keep better hours than we do.',
-  'The north wind took my hat. If it reaches another island before this note, it wins.',
-  'Someone has planted foxgloves beside the old jetty. They look absurdly cheerful there.',
-  'The harbour bell rang once in perfectly still weather. Nobody admits to pulling the rope.',
-  'A chart-maker once told me every good map needs one mystery left pencilled in.',
-  'There is a green door near a quay somewhere west of here. Behind it: excellent biscuits.'
-];
-}
 
-export function init_110() {
-MF.voyageNoticeTimer = null;
-}

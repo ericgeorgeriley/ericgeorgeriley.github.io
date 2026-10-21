@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • stories/chapters-ii.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hsChooseArc = function hsChooseArc(theme,rr,person=null){
  const h=MF.hsState(),choices=MF.HS_ARC_CHOICES[theme]||['survey','correspondence'],old=h.recentArcs||[],count=a=>old.slice(-5).filter(x=>x===a).length,path=person?.social?.lifePath;
  const preferred=path==='outreach'?['correspondence','festival','conservation']:path==='craft'?['restoration','salvage','survey']:[];
@@ -112,32 +114,7 @@ MF.hsPaintExploration = function hsPaintExploration(s,step,canvasOverride=null,t
 MF.hsPastReference = function hsPastReference(person){const social=MF.mfEnsureSocialData(person),m=social.storyMemories||[],last=m[m.length-1];return m.length?`${social.storyRole?`As ${social.storyRole.toLowerCase()}, I have been keeping an eye on the changes we helped make. `:''}I still remember ${MF.hsState().items.find(s=>s.id===last.id)?.title||'the last matter we settled'}.${social.storyVocation?` My work as ${social.storyVocation.toLowerCase()} has changed what I notice along this shore.`:''} ${last.outcome==='preserved'?'I have kept the old account safe.':'The work is still helping the harbour.'} Perhaps you can help me with this one too.`:''};
 
 MF.hsCharacterChronicleHTML = function hsCharacterChronicleHTML(person){const social=MF.mfEnsureSocialData(person),records=social.storyMemories||[];return records.length?`${social.storyRole?`<div class="mf-memory"><b>${MF.wikiEsc(social.storyVocation||social.storyRole)}</b>${MF.wikiEsc(social.storyRoleText||'Their work around the harbour has taken on new meaning.')}</div>`:''}${social.lifeHistory?.length?`<details class="hs-social-fold"><summary>THEIR CHANGING LIFE · ${social.lifeHistory.length}</summary>${social.lifeHistory.slice().reverse().map(m=>`<p class="hs-history">${MF.wikiEsc(m.text)}</p>`).join('')}</details>`:''}<details class="hs-social-fold"><summary>STORIES YOU HAVE SHARED · ${records.length}</summary>${records.slice().reverse().map(m=>`<p class="hs-history">${MF.wikiEsc(m.text)}</p>`).join('')}</details>`:''};
-}
 
-export function init_222() {
-MF.HS_ARC_CHOICES = {
- beacon:['survey','restoration'],wreck:['salvage','correspondence'],birds:['conservation','survey'],
- garden:['restoration','correspondence'],channel:['survey','salvage'],craft:['restoration','correspondence'],
- bell:['salvage','correspondence'],market:['correspondence','salvage'],lantern:['survey','restoration'],festival:['festival','correspondence']
-};
-}
 
-export function init_223() {
-MF.HS_ARC_NAMES = {survey:'Coastal investigation',restoration:'A shared restoration',correspondence:'A trail between neighbours',conservation:'A naturalist’s inquiry',salvage:'A maritime mystery',festival:'A forgotten gathering'};
-}
 
-export function init_224() {
-MF.HS_SPOT_NAMES = {
- beacon:['Lantern bracket','Weathered lens','Keeper’s notebook'],wreck:['Tide-worn plank','Old mooring','Ship’s nameplate'],
- birds:['Feathers and tracks','Nesting ground','Field notebook'],garden:['Planting bed','Stone boundary','Seed labels'],
- channel:['Tide gauge','Sounding marks','Buoy chain'],craft:['Joinery','Pattern book','Worn fitting'],
- bell:['Echoing wall','Rope and pulley','Bronze mark'],market:['Ledger','Receiving desk','Weights and stamps'],
- lantern:['Lookout','Watchbook','Lantern housing'],festival:['Old ribbons','Gathering place','Invitations']
-};
-}
 
-export function init_225() {
-MF.HS_SHORE_ART = {
- wreck:['wreck','crate','rock'],beacon:['lighthouse','rock','bottle'],birds:['gull','pine','flowers'],garden:['fruit','flowers','bottle'],channel:['rock','bottle','kelp'],craft:['crate','wood','house'],bell:['bottle','rock','lighthouse'],market:['crate','house','bottle'],lantern:['lighthouse','bottle','rock'],festival:['flowers','house','bottle']
-};
-}

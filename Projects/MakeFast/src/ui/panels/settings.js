@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • ui/panels/settings.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.renderSettingsPanel = function renderSettingsPanel(){
   const body=MF.$('#panelBody');MF.$('#panelTitle').textContent='Settings';MF.$('#panelSubtitle').textContent='Your rhythm, island clock, weather, sound and saves.';const tz=MF.state.settings.timezone||MF.DEFAULT_TIMEZONE;
   body.innerHTML=`
@@ -23,6 +25,5 @@ MF.renderSettingsPanel = function renderSettingsPanel(){
   const evol=MF.$('#effectsVolume');if(evol){evol.oninput=()=>{MF.state.settings.effectsVolume=MF.clamp(+evol.value,0,1);MF.$('#effectsVolumeText').textContent=`${Math.round(MF.state.settings.effectsVolume*100)}%`;MF.AdaptiveMusic.levels();MF.save()}}
   MF.$('#sampleSound').onclick=()=>{if(!MF.state.sound){MF.state.sound=true;MF.save();MF.adaptiveMusicSync(true);MF.renderSettingsPanel();setTimeout(()=>MF.playCue('arrive'),40)}else{MF.adaptiveMusicSync(true);MF.playCue('arrive');const t=MF.$('#musicNowText');if(t)t.textContent=MF.audioNowPlaying()}};MF.$('#toggleProto').onclick=()=>{MF.state.settings.prototypeTools=!MF.state.settings.prototypeTools;MF.save();MF.renderUI()};MF.$('#saveTimezone').onclick=()=>{const v=MF.$('#timezoneInput').value.trim();if(!MF.validTimeZone(v)){MF.toast('That timezone was not recognised.');return}MF.state.settings.timezone=v;MF.save();MF.renderUI();MF.toast(MF.contentLine('copy.harbour.timezoneAdjusted'))};MF.$('#exportSave').onclick=MF.exportSave;MF.$('#importSave').onclick=()=>MF.$('#importFile').click();MF.$('#importFile').onchange=MF.importSave;MF.$('#resetGame').onclick=MF.resetGame;if(MF.$('#toggleDemoMode'))MF.$('#toggleDemoMode').onclick=MF.toggleDemoMode;if(MF.$('#advanceWorld'))MF.$('#advanceWorld').onclick=MF.simulateTwelveWeeks;if(MF.$('#clearDemoHistory'))MF.$('#clearDemoHistory').onclick=MF.clearDemoHistory;
 };
-}
 
 

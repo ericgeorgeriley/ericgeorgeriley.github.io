@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/engine-telegraph.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeTelegraphScenario = function arcadeTelegraphScenario(g,r){
   if(r<=MF.ARCADE_TELEGRAPH_ROUNDS.length){const s=MF.ARCADE_TELEGRAPH_ROUNDS[r-1];return{...s,orders:[...s.orders]}}
   const q=r-MF.ARCADE_TELEGRAPH_ROUNDS.length,orders=[],count=Math.min(12,7+Math.floor(q/2));let last=0;
@@ -141,30 +143,5 @@ MF.arcadeTelegraphPointer = function arcadeTelegraphPointer(g,type,x,y,G=MF.arca
   else if(type==='move'&&T.dragging)choose();
   else if(type==='up'){if(T.dragging)choose();T.dragging=false}
 };
-}
 
-export function init_182() {
-MF.ARCADE_TELEGRAPH_NOTCHES = [
-  {n:-3,label:'FULL',side:'ASTERN',short:'FULL ASTERN',rpm:-.95,deg:205},
-  {n:-2,label:'SLOW',side:'ASTERN',short:'SLOW ASTERN',rpm:-.58,deg:165},
-  {n:-1,label:'DEAD SLOW',side:'ASTERN',short:'D.SLOW ASTERN',rpm:-.30,deg:125},
-  {n:0,label:'STOP',side:'',short:'STOP',rpm:0,deg:90},
-  {n:1,label:'DEAD SLOW',side:'AHEAD',short:'D.SLOW AHEAD',rpm:.30,deg:55},
-  {n:2,label:'SLOW',side:'AHEAD',short:'SLOW AHEAD',rpm:.58,deg:15},
-  {n:3,label:'FULL',side:'AHEAD',short:'FULL AHEAD',rpm:.95,deg:335}
-];
-}
 
-export function init_183() {
-MF.ARCADE_TELEGRAPH_ROUNDS = [
-  {label:'FIRST BELL',note:'Match the red bridge handle. The shaft needle follows afterwards.',orders:[1,2,1,0],unlock:2,response:2.05,drag:.92,deadline:6.8,band:.13,settle:.22,maxSettle:2.7,sea:0,reverseSafe:.11},
-  {label:'LEAVING HARBOUR',note:'The outer ahead bell is now in use. Answer first; then watch the engine catch up.',orders:[1,2,3,2,1,0],unlock:3,response:1.85,drag:.86,deadline:6.2,band:.12,settle:.24,maxSettle:2.8,sea:0,reverseSafe:.11},
-  {label:'FIRST ASTERN',note:'A STOP bell separates ahead and astern. Let the shaft settle before changing direction.',orders:[1,0,-1,0,2,0],unlock:2,response:1.70,drag:.84,deadline:6.2,band:.12,settle:.25,maxSettle:2.9,sea:0,reverseSafe:.11},
-  {label:'HARBOUR BELLS',note:'Short working bells. The handle answers instantly; a clean shaft response earns the better score.',orders:[2,1,0,-1,0,1,0,-2,0],unlock:2,response:1.52,drag:.80,deadline:5.5,band:.11,settle:.25,maxSettle:2.8,sea:.02,reverseSafe:.11},
-  {label:'HEAVY SHAFT',note:'The loaded propeller carries more momentum. STOP earlier and let the machinery settle.',orders:[3,1,0,-2,0,2,1,0],unlock:3,response:1.15,drag:.63,deadline:6.0,band:.105,settle:.28,maxSettle:3.3,sea:.02,reverseSafe:.105},
-  {label:'FOLLOWING SEA',note:'The sea can keep the propeller turning at STOP. The yellow shaft needle shows it plainly.',orders:[2,0,-1,0,3,1,0],unlock:3,response:1.38,drag:.68,deadline:5.8,band:.105,settle:.30,maxSettle:3.1,sea:.10,reverseSafe:.105},
-  {label:'REVERSING WATCH',note:'Now the bridge may reverse directly. The interlock catches the handle at STOP until the shaft is safe.',orders:[2,-1,0,1,-2,0,2,0],unlock:2,response:1.35,drag:.78,deadline:7.0,band:.10,settle:.28,maxSettle:3.0,sea:.03,reverseSafe:.10,direct:true},
-  {label:'CRASH ASTERN',note:'A hard reversal is simple but unforgiving: STOP, watch the shaft, then select the opposite bell.',orders:[3,-3,0,2,-2,0,3,0],unlock:3,response:1.24,drag:.82,deadline:8.0,band:.095,settle:.30,maxSettle:3.1,sea:.04,reverseSafe:.095,direct:true},
-  {label:'COASTAL WATCH',note:'Mixed bells, a moving sea and less time. Read the red handle and the shaft, not a dashboard.',orders:[2,1,-1,0,-2,1,0,3,0],unlock:3,response:1.22,drag:.72,deadline:5.6,band:.09,settle:.30,maxSettle:3.0,sea:.12,reverseSafe:.095,direct:true}
-];
-}

@@ -1,22 +1,26 @@
 /** MakeFast v0.41.7 • content/projects.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_33() {
-MF.CONTENT.buildSites = {
+
+
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const buildSites = {
     harbour:{name:'Harbourfront',desc:'Close to the jetty and the boats.',x:392,y:216},
     village:{name:'Village Green',desc:'Among the cottages and footpaths.',x:350,y:170},
     hill:{name:'High Ground',desc:'Windy, bright and visible from the sea.',x:250,y:112},
     meadow:{name:'North Meadow',desc:'A quiet patch of open ground.',x:255,y:206}
   };
-}
+MF.CONTENT.buildSites = buildSites;
 
-export function init_34() {
-MF.CONTENT.projects = [
+// Authored content (previously embedded in the monolithic startup).
+export const projects = [
     {id:'market_stall',name:'Market Stall',desc:'A striped stall where residents can trade small finds.',pop:1,sites:['harbour','village'],req:{timber:3,cloth:2,hardware:1},feature:'market_stall',draw:'market',effects:[{type:'feature',feature:'market_stall'}]},
     {id:'market_square',name:'Market Square',desc:'Turn the little stall into a lively cluster of traders.',pop:4,sites:['harbour','village'],req:{timber:4,stone:2,cloth:3,hardware:2},feature:'market_square',prereq:'market_stall',draw:'market_square',effects:[{type:'feature',feature:'market_square'}]},
     {id:'market_hall',name:'Covered Market Hall',desc:'A proper market building for a busy island community.',pop:8,sites:['harbour','village'],req:{timber:7,stone:4,glass:3,hardware:3},feature:'market_hall',prereq:'market_square',draw:'market_hall',effects:[{type:'feature',feature:'market_hall'}]},
@@ -42,8 +46,8 @@ MF.CONTENT.projects = [
     {id:'orchard_press',name:'The Old Fruit Press',desc:'A lovingly restored press among the flowering terraces.',pop:1,biomes:['orchard'],signature:true,sites:['village','meadow'],req:{timber:4,hardware:2,seeds:2},feature:'orchard_press',draw:'windmill'},
     {id:'dune_station',name:'Sandbar Signal Hut',desc:'A signal cabin on the long spit overlooking the lagoon.',pop:1,biomes:['dune'],signature:true,sites:['harbour','village'],req:{timber:3,cloth:2,brass:1},feature:'dune_station',draw:'map_room'}
   ];
-}
+MF.CONTENT.projects = projects;
 
-export function init_37() {
-MF.CONTENT.featureLabels = {dock:'dock',cottage:'cottage',jetty:'jetty',tiny_jetty:'tiny jetty',windmill_ruin:'old windmill',windmill:'windmill',pier:'new pier',garden:'garden',guesthouse:'guesthouse',workshop:'workshop',mosaic:'sea-glass mosaic',bell_tower:'bell tower',story_post:'post box',chart_house:'chart room',boatyard:'boatyard',home_garden:'garden',new_resident:'new neighbour',market:'market',museum_glass:'museum display',harbour_bell:'harbour bell',post_office:'post office',map_room:'chart room',footbridge:'footbridge',orchard:'orchard',tea_house:'tea house',observatory:'lookout',ferry:'ferry landing',nature_path:'nature trail',market_stall:'market stall',market_square:'market square',market_hall:'market hall',cottage_row:'cottage row',memory:'little monument',souvenir:'voyage shelf'};
-}
+// Authored content (previously embedded in the monolithic startup).
+export const featureLabels = {dock:'dock',cottage:'cottage',jetty:'jetty',tiny_jetty:'tiny jetty',windmill_ruin:'old windmill',windmill:'windmill',pier:'new pier',garden:'garden',guesthouse:'guesthouse',workshop:'workshop',mosaic:'sea-glass mosaic',bell_tower:'bell tower',story_post:'post box',chart_house:'chart room',boatyard:'boatyard',home_garden:'garden',new_resident:'new neighbour',market:'market',museum_glass:'museum display',harbour_bell:'harbour bell',post_office:'post office',map_room:'chart room',footbridge:'footbridge',orchard:'orchard',tea_house:'tea house',observatory:'lookout',ferry:'ferry landing',nature_path:'nature trail',market_stall:'market stall',market_square:'market square',market_hall:'market hall',cottage_row:'cottage row',memory:'little monument',souvenir:'voyage shelf'};
+MF.CONTENT.featureLabels = featureLabels;

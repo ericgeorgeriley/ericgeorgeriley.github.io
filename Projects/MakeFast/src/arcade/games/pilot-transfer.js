@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/pilot-transfer.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadePilotShipSprite = function arcadePilotShipSprite(kind='coaster'){
   const key=String(kind||'coaster');if(MF.ARCADE_PILOT_SHIP_CACHE.has(key))return MF.ARCADE_PILOT_SHIP_CACHE.get(key);
   const[c,g]=MF.pixelCanvas(248,120),ink='#17313a',cream='#efe4bf',glass='#65bdd1',metal='#8c9b96',rust='#a86d45',red='#c95f50';
@@ -268,16 +270,6 @@ MF.arcadeRenderPilot = function arcadeRenderPilot(g,ts,G,dt,running){
     P.windowRadius>.35?'WATCH THE SWELL':'HOLD THE LEE';
   MF.arcadeSetHelperCue(g,cue,`${P.profile.label} · relative ${relKn>=0?'+':''}${relKn} kt`)
 };
-}
 
-export function init_142() {
-MF.ARCADE_PILOT_SHIP_CACHE = new Map();
-}
 
-export function init_143() {
-MF.ARCADE_PILOT_LAUNCH_CACHE = new Map();
-}
 
-export function init_144() {
-MF.ARCADE_PILOT_PERSON_CACHE = new Map();
-}

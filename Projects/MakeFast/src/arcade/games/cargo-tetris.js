@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/cargo-tetris.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeHoldBuildSolution = function arcadeHoldBuildSolution(scenario,cargoKinds,rr=Math.random,budget=32000){
   const H={cols:6,rows:5,scenario,placements:[],occ:Array.from({length:5},()=>Array(6).fill(null))},fake={hold:H},left=cargoKinds.map((kind,i)=>({kind,uid:i}));
   let nodes=0;const memo=new Set();
@@ -261,21 +263,4 @@ MF.arcadeRenderTetris = function arcadeRenderTetris(g,ts,G,dt,running){
 };
 
 MF.arcadeTetrisDrop = function arcadeTetrisDrop(g,nx){const piece=g.tetrisPiece.cells,col=Math.floor(MF.clamp(nx*7,0,6.999)),maxX=Math.max(...piece.map(p=>p[0]));let x0=Math.min(col,6-maxX),bestY=null;for(let y=0;y<8;y++){let ok=true;for(const [px,py] of piece){const gy=y+py;if(gy>=8||g.grid[gy][x0+px]){ok=false;break}}if(ok)bestY=y;else if(bestY!==null)break}if(bestY===null){MF.arcadeStrike(g,'NO ROOM THERE',55);MF.arcadeNewTetrisPiece(g);return}for(const [px,py] of piece)g.grid[bestY+py][x0+px]=g.tetrisPiece.kind+1;MF.arcadeProgress(g,1,180+piece.length*45,'PACKED');MF.arcadeNewTetrisPiece(g)};
-}
 
-export function init_157() {
-MF.ARCADE_HOLD_CARGO = {
-  crate:{id:'crate',label:'TIMBER CRATES',style:'crate',cells:[[0,0],[1,0],[0,1],[1,1]],mass:2,note:'GENERAL CARGO · STACKABLE'},
-  long:{id:'long',label:'LONG CASE',style:'case',cells:[[0,0],[1,0],[2,0]],mass:2,note:'LONG · MAY ROTATE'},
-  lshape:{id:'lshape',label:'SPARES PALLET',style:'pallet',cells:[[0,0],[1,0],[0,1]],mass:2,note:'AWKWARD FOOTPRINT'},
-  small:{id:'small',label:'TOOL CHEST',style:'chest',cells:[[0,0]],mass:1,note:'SMALL · FILLS A GAP'},
-  generator:{id:'generator',label:'GENERATOR',style:'generator',cells:[[0,0],[1,0],[0,1],[1,1]],mass:6,heavy:true,hot:true,fixed:true,note:'6t · FLOOR ONLY · IGNITION SOURCE'},
-  coil:{id:'coil',label:'STEEL COIL',style:'coil',cells:[[0,0],[1,0]],mass:5,heavy:true,fixed:true,note:'5t · FLOOR ONLY'},
-  glass:{id:'glass',label:'GLASS CASE',style:'glass',cells:[[0,0],[1,0]],mass:1,fragile:true,note:'FRAGILE · NOTHING ABOVE'},
-  tank:{id:'tank',label:'UPRIGHT TANK',style:'tank',cells:[[0,0],[0,1],[0,2]],mass:3,upright:true,fixed:true,note:'KEEP UPRIGHT'},
-  drums:{id:'drums',label:'DRUM PALLET',style:'drums',cells:[[0,0],[1,0],[0,1],[1,1]],mass:3,fixed:true,note:'BANDED PALLET'},
-  pipes:{id:'pipes',label:'PIPE RACK',style:'pipes',cells:[[0,0],[1,0],[2,0]],mass:2,lash:true,fixed:true,note:'LASH TO A GOLD EYE'},
-  reefer:{id:'reefer',label:'REEFER CASE',style:'reefer',cells:[[0,0],[1,0]],mass:2,cold:true,note:'CHILLED · BLUE BULKHEAD'},
-  chemicals:{id:'chemicals',label:'CHEMICAL DRUMS',style:'chem',cells:[[0,0],[1,0]],mass:2,hazard:true,fixed:true,note:'HAZMAT · CLEAR OF MACHINERY'}
-};
-}

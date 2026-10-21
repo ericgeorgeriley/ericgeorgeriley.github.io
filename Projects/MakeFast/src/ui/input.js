@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • ui/input.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeBest = function arcadeBest(id){return MF.arcadeScoreRecord(id).best||0};
 
 MF.randomArcadeGameId = function randomArcadeGameId(){const ids=Object.keys(MF.MINIGAME_META);return ids[Math.floor(Math.random()*ids.length)]||'ferry_lines'};
@@ -48,43 +50,9 @@ MF.shadow = function shadow(x,y,w,h,a=.14){MF.ctx.fillStyle=`rgba(18,46,55,${a})
 MF.drawSparkle = function drawSparkle(x,y,c='#fffdf1'){MF.rect(x,y,1,1,c);MF.rect(x-2,y,5,1,c);MF.rect(x,y-2,1,5,c)};
 
 MF.drawWaterField = function drawWaterField(){const W=MF.canvas.width,H=MF.canvas.height,pal=MF.timePalette();MF.rect(0,0,W,H,pal.water);const drift=(MF.frame*.018)%34;for(let y=10;y<H+20;y+=24){for(let x=-36;x<W+36;x+=48){const xx=x+((((y/24)|0)%2)?drift:-drift);MF.rect(xx,y,15,2,'rgba(255,255,255,.11)');MF.rect(xx+19,y+9,8,1,'rgba(255,255,255,.07)')}}};
-}
 
-export function init_111() {
-MF.canvas.addEventListener('pointerdown',e=>{
-  const q=MF.pointerCanvasXY(e);MF.canvasPointerIds.add(e.pointerId);MF.pointer.x=q.x;MF.pointer.y=q.y;MF.pointer.startX=q.x;MF.pointer.startY=q.y;MF.pointer.down=true;
-  if(MF.minigame){e.preventDefault();try{MF.canvas.setPointerCapture?.(e.pointerId)}catch(_){}MF.minigamePointer('down',MF.pointer.x,MF.pointer.y,e.pointerId);return}
-  if(MF.state.activeView==='chart'){
-    MF.chartView.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});try{MF.canvas.setPointerCapture?.(e.pointerId)}catch(_){}MF.chartView.moved=false;
-    if(MF.chartView.pointers.size===1){MF.chartView.dragging=true;MF.chartView.lastX=e.clientX;MF.chartView.lastY=e.clientY;MF.chartView.downX=e.clientX;MF.chartView.downY=e.clientY;MF.chartView.pinch=null}
-    else if(MF.chartView.pointers.size>=2){MF.chartView.pinch=MF.chartPinchSnapshot();MF.chartView.moved=true}
-  }
-});;
-}
 
-export function init_112() {
-MF.canvas.addEventListener('pointermove',e=>{
-  const q=MF.pointerCanvasXY(e);MF.pointer.x=q.x;MF.pointer.y=q.y;if(MF.minigame){MF.minigamePointer('move',MF.pointer.x,MF.pointer.y,e.pointerId);return}
-  if(MF.state.activeView!=='chart'||!MF.chartView.pointers.has(e.pointerId))return;MF.chartView.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(MF.chartView.pointers.size>=2){
-    const pts=[...MF.chartView.pointers.values()],a=pts[0],b=pts[1],dist=Math.max(12,Math.hypot(b.x-a.x,b.y-a.y)),midX=(a.x+b.x)/2,midY=(a.y+b.y)/2;if(!MF.chartView.pinch)MF.chartView.pinch=MF.chartPinchSnapshot();const st=MF.chartView.pinch,scale=dist/Math.max(12,st.dist);MF.chartView.zoom=MF.clamp(st.zoom*scale,.48,6.4);MF.chartView.panX=st.panX+(midX-st.midX)*(MF.canvas.width/Math.max(1,q.r.width));MF.chartView.panY=st.panY+(midY-st.midY)*(MF.canvas.height/Math.max(1,q.r.height));MF.chartView.needsFit=false;MF.chartView.moved=true;return;
-  }
-  if(MF.chartView.dragging){const dx=e.clientX-MF.chartView.lastX,dy=e.clientY-MF.chartView.lastY;if(Math.hypot(e.clientX-MF.chartView.downX,e.clientY-MF.chartView.downY)>6)MF.chartView.moved=true;MF.chartView.panX+=dx*(MF.canvas.width/Math.max(1,q.r.width));MF.chartView.panY+=dy*(MF.canvas.height/Math.max(1,q.r.height));MF.chartView.needsFit=false;MF.chartView.lastX=e.clientX;MF.chartView.lastY=e.clientY}
-});;
-}
 
-export function init_113() {
-window.addEventListener('pointerup',e=>MF.finishCanvasPointer(e,false));;
-}
 
-export function init_114() {
-window.addEventListener('pointercancel',e=>MF.finishCanvasPointer(e,true));;
-}
 
-export function init_115() {
-MF.canvas.addEventListener('wheel',e=>{if(MF.state.activeView!=='chart'||MF.minigame)return;e.preventDefault();MF.zoomChart(e.deltaY<0?.15:-.15)},{passive:false});;
-}
 
-export function init_116() {
-window.addEventListener('keydown',e=>{if(!MF.minigame)return;if(e.key==='Escape'){MF.endMinigame('leave');return}MF.MINIGAME_PLUGINS[MF.minigame.type]?.key?.(MF.minigame,e)});;
-}

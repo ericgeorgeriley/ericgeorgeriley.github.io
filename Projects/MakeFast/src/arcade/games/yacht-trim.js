@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/yacht-trim.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeSpawnSort = function arcadeSpawnSort(g,ts){
   if(g.theme==='cruise'){MF.arcadeSpawnCruiseGear(g,ts);return}
   if(g.theme!=='trawler'){
@@ -134,20 +136,5 @@ MF.arcadeRenderSail = function arcadeRenderSail(g,ts,G,dt,running){
   if(Math.abs(rel)<31)cue=S.speed<.24?'IN THE EYE OF THE WIND — KEEP HER MOVING':'SAILS LUFFING — CARRY THE BOW THROUGH';else if(trimErr>sc.sweet*.40)cue='TRIM IN — RED TELLTALE IS BREAKING';else if(trimErr<-sc.sweet*.40)cue='EASE THE SHEET — BLUE TELLTALE IS BREAKING';else if(next&&Math.abs(projected-next.x)>next.w*.96)cue='LAYLINE REACHED — TACK FOR THE NEXT GATE';else if(S.helmHeld&&S.crossed)cue='BOW THROUGH — RELEASE AND RE-TRIM';else if(S.helmHeld)cue='HELM DOWN — CARRY YOUR SPEED THROUGH THE WIND';
   MF.arcadeSetHelperCue(g,cue,`${sc.name} · ${g.roundProgress}/${g.roundGoal} marks · SPEED ${Math.round(S.speed*100)}% · ${S.side<0?'PORT':'STARBOARD'} TACK`)
 };
-}
 
-export function init_165() {
-MF.ARCADE_SAIL_SCENARIOS = [
-  {name:'HARBOUR BEAT',note:'Three generous marks in flat water. Build way, tack for the next gate, then re-trim.',marks:3,close:50,gate:.165,helm:104,gust:.02,shift:2,chop:.015,tide:0,rocks:0,coast:.28,sweet:.20},
-  {name:'HEADLAND BEAT',note:'The shoreline closes in. Tack on the layline instead of waiting for the buoy.',marks:4,close:50,gate:.145,helm:108,gust:.05,shift:5,chop:.035,tide:.12,rocks:1,coast:.48,sweet:.19},
-  {name:'CROSS TIDE',note:'The tide slides you sideways between tacks. Leave room for it at each mark.',marks:4,close:51,gate:.135,helm:110,gust:.05,shift:7,chop:.045,tide:.34,rocks:1,coast:.42,sweet:.18},
-  {name:'GUSTY SOUND',note:'Dark gust lanes add heel and change the best sheet position while you plan the tack.',marks:4,close:52,gate:.125,helm:112,gust:.18,shift:9,chop:.055,tide:.18,rocks:2,coast:.52,sweet:.18},
-  {name:'ROCKY CHANNEL',note:'The easy water is gone. Carry speed through the tack and stay off the drying rocks.',marks:5,close:52,gate:.115,helm:114,gust:.12,shift:10,chop:.085,tide:.28,rocks:3,coast:.66,sweet:.17},
-  {name:'SQUALL BEAT',note:'Headers, chop and squalls punish lazy trim. The tack only works if you arrive with way on.',marks:5,close:53,gate:.108,helm:118,gust:.25,shift:15,chop:.115,tide:.30,rocks:3,coast:.62,sweet:.165,rain:1},
-  {name:'LIGHTHOUSE APPROACH',note:'A tight final beat below the lighthouse. Narrow gates, cross-set and very little spare water.',marks:5,close:54,gate:.100,helm:120,gust:.20,shift:17,chop:.105,tide:.42,rocks:4,coast:.74,sweet:.16,lighthouse:1}
-];
-}
 
-export function init_166() {
-MF.ARCADE_SAIL_HULL_CACHE = new Map();
-}

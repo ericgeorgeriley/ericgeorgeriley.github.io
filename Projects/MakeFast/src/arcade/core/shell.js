@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/core/shell.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeShellRoot = function arcadeShellRoot(){return document.querySelector('.app')};
 
 MF.arcadePauseTimeKeys = function arcadePauseTimeKeys(){return new Set(['started','lastTick','roundStartedAt','roundPauseUntil','failedAt','cool','showAt','readyAt','spawn','hazardSpawn','bankCool','pipeCool','gullLast','nextDrop','born','respawnAt','at','until','tackDeadline','landingResetAt','berthAt','nextWake','warnAt','jobStartedAt','orderAt','orderDeadline','nextOrderAt','lastBellAt','reverseReadyAt','abuseCool','saveUntil','stormUntil','crewUntil','tiltUntil','nudgeCooldown','pendingServeAt','puffUntil','comboUntil','messageUntil','ballStart','lastSound','lastFlip','stuck','armedAt','pendingResetAt','revealUntil','scanAt','sunkAt'])};
@@ -115,8 +117,4 @@ MF.renderArcadeControls = function renderArcadeControls(){
     const release=e=>{if(e)e.preventDefault();btn.classList.remove('held');clearInterval(MF.arcadeControlRepeat);MF.arcadeControlRepeat=null;if(hold)MF.arcadeApplyControl(action,false)};btn.addEventListener('pointerup',release);btn.addEventListener('pointercancel',release);btn.addEventListener('pointerleave',e=>{if(e.buttons)release(e)})
   })
 };
-}
 
-export function init_195() {
-MF.arcadeControlRepeat = null;
-}

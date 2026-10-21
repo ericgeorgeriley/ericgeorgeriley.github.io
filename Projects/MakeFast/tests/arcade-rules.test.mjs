@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {MF} from '../src/core/runtime-state.js';
-import {install as installCipher} from '../src/arcade/games/seabed-cipher.js';
-import {install as installCattle} from '../src/arcade/games/cattleships.js';
-installCipher(); installCattle();
+import '../src/arcade/games/seabed-cipher.js';
+import '../src/arcade/games/cattleships.js';
+
 MF.ARCADE_CATTLE_NAMES = ['Shearwater','Ewe Two','Baa-line','Bellwether'];
 MF.arcadeRand = (g,a=0,b=1) => a+(g.rr?.()??Math.random())*(b-a);
 test('cipher exact and displaced feedback handles duplicates',()=>{

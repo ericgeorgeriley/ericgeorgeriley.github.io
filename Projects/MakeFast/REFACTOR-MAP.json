@@ -455,5 +455,6 @@
       "fnCount": 0,
       "initCount": 1
     }
-  ]
+  ],
+  "note_v0_41_8": "Historic source extraction map. Numbered init functions were consolidated and content data moved to feature modules in v0.41.8; these pointers describe provenance, not current runtime symbols."
 }

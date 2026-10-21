@@ -1,8 +1,11 @@
 /** MakeFast v0.41.7 • ui/panels/voyage.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
+import { captureDisclosureState, restoreDisclosureState } from '../disclosure-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.renderVoyagePanel = function renderVoyagePanel(){
   const body=MF.$('#panelBody');MF.$('#panelTitle').textContent='Voyage';MF.$('#panelSubtitle').textContent=MF.state.phase==='ashore'?'Your fasting clock and the boat that carries the journey.':MF.state.phase==='arrived'?'Land is sighted. Dock when you begin eating.':'Your fasting clock, boat and things carried aboard.';
   if(MF.state.phase==='ashore'&&MF.state.anchorage){body.innerHTML=`${MF.passageTabsHTML()}${MF.passageUI.tab==='deck'?`<div class="section"><div class="section-title">Stores kept aboard</div>${MF.boatLoadSummaryHTML()}${MF.mfErrandManifestHTML('harbour')}${MF.mfPassengerManifestHTML()}${(MF.state.anchorage.stowedFinds||[]).map(MF.findHTML).join('')}</div>`:MF.mfAnchoragePanelHTML()}`;MF.bindPassageTabs();MF.$('#anchorageContinue')?.addEventListener('click',MF.startVoyage);MF.$('#anchorageChart')?.addEventListener('click',()=>MF.setView('chart'));return}
@@ -27,6 +30,19 @@ MF.renderVoyagePanel = function renderVoyagePanel(){
     <div class="section"><div class="section-title">Happenings at sea <span>${v.seaLog?.length||0}</span></div>${(v.seaLog||[]).slice(0,6).map(e=>`<div class="sea-log"><i>${e.icon||'≈'}</i><div><b>${e.title||'At sea'}</b><span>${e.text}</span></div></div>`).join('')||`<div class="card"><p>The water is quiet for now.</p></div>`}</div>`;
   MF.bindPassageTabs();MF.hsBindPinned();MF.hsBindPassagePanel();if(MF.$('#dockBtn'))MF.$('#dockBtn').onclick=()=>MF.dock(false);if(MF.$('#dockEarly'))MF.$('#dockEarly').onclick=MF.earlyDockPrompt;if(MF.$('#helmBtn'))MF.$('#helmBtn').onclick=()=>MF.startRandomMinigame();MF.$$('[data-game]').forEach(b=>b.onclick=()=>{const id=b.dataset.game,m=MF.MINIGAME_META[id];MF.startMinigame(id,MF.state.sim?.active?Math.min(18,m.duration||24):(m.duration||24))});
 };
-}
+// Remember open disclosures and scroll position through updates to this same view.
+const renderWithoutPreservation = MF.renderVoyagePanel;
+MF.renderVoyagePanel = function renderVoyagePanelKeepingDisclosures(...args) {
+  const root = MF.$('#panelBody');
+  const key = `voyage:${MF.state.activeView}:${MF.passageUI.tab}`;
+  const snapshot = root?.dataset.makefastDisclosureView === key ? captureDisclosureState(root) : null;
+  const result = renderWithoutPreservation(...args);
+  if (root) {
+    root.dataset.makefastDisclosureView = key;
+    restoreDisclosureState(root, snapshot);
+  }
+  return result;
+};
+
 
 

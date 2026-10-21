@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • tidebook/history-wiki.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.wikiCoreEntries = function wikiCoreEntries(){return[
   {id:'fasting-voyage',category:'Fasting',icon:'≈',title:'Fasting voyage',lore:'When the captain casts off, a fasting window becomes a passage across the archipelago. Time at sea follows the fast; landfall marks the chosen end.',use:'The voyage clock shows the actual elapsed time and your chosen target. A longer crossing is never required to finish a fast.',tags:['fasting','voyage','clock']},
   {id:'harbour-window',category:'Fasting',icon:'⚓',title:'Harbour window',lore:'Ashore, the mooring lines are made fast and island life resumes until the captain chooses to sail again.',use:'Harbour time represents the non-fasting part of your chosen rhythm, not an instruction about what or when to eat.',tags:['eating window','rhythm']},
@@ -439,16 +441,6 @@ MF.positionFloatingOverlays = function positionFloatingOverlays(){
   const note=MF.$('#voyageNote');if(note?.classList.contains('show'))note.style.bottom=`${Math.max(b,mobile&&MF.mobilePanelCollapsed?120:16)}px`;
   const enc=MF.$('#voyageEncounter');if(enc?.classList.contains('show'))enc.style.bottom=`${b}px`
 };
-}
 
-export function init_104() {
-MF.fastingLogUI = {tab:'overview',range:30,year:null,month:null,wikiQuery:'',wikiCategory:'All'};
-}
 
-export function init_105() {
-MF.WIKI_BUILD_STAGES = [{progress:0,label:'Groundworks'},{progress:.35,label:'Timber frame'},{progress:.70,label:'Taking shape'},{progress:1,label:'Finished'}];
-}
 
-export function init_106() {
-MF.wikiLastFolioPaint = 0;
-}

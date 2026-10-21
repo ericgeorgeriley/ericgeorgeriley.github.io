@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • world/simulation.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.worldState = function worldState(){if(!MF.state.world)MF.state.world={lastSimAt:MF.nowReal(),vessels:[],log:[],pendingSummary:[],productionCarry:{},serial:0,lastSettlementDay:null};return MF.state.world};
 
 MF.connectedIslands = function connectedIslands(id){const ids=[];MF.state.routes.forEach(r=>{if(r[0]===id)ids.push(r[1]);else if(r[1]===id)ids.push(r[0])});return [...new Set(ids)].map(MF.getIsland).filter(i=>i?.known)};
@@ -181,8 +183,4 @@ MF.simulateWorldTo = function simulateWorldTo(target=MF.nowReal(),summarize=fals
   }
   w.lastSimAt=target;w.collectingSummary=false;MF.worldSimulating=false;return gap;
 };
-}
 
-export function init_103() {
-MF.worldSimulating = false;
-}

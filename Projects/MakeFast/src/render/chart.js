@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/chart.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.chartStaticDataSignature = function chartStaticDataSignature(visible,recentBundle){
   const islandSig=visible.map(i=>{
     const projects=(i.projects||[]).map(p=>`${p.id||p.templateId}:${p.complete?1:0}:${p.site||''}`).join(',');
@@ -116,6 +118,5 @@ MF.drawChart = function drawChart(){
   MF.ctx.restore();
   MF.updateChartLabelOverlay(labelNodes,you,vr);MF.chartView.needsFit=false;
 };
-}
 
 

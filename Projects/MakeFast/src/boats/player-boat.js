@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • boats/player-boat.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.mf40Exchange = function mf40Exchange(vesselId,offerId){
  const v=MF.mf40Vessel(vesselId),isl=MF.currentIsland();if(!MF.mfCanMeetVessel(v)){MF.toast('The vessel must be alongside at your harbour.');return false}
  const o=MF.mf40TradeOffers(v).find(o=>o.id===offerId),check=MF.mf40TradeCheck(v,o,isl);if(!check.ok){MF.toast(check.reason||'That exchange is unavailable.');MF.mf40OpenVesselDetails(vesselId);return false}
@@ -64,6 +66,5 @@ MF.mf40OpenVesselDetails = function mf40OpenVesselDetails(id){
  }
  MF.$('[data-vessel-chart]')?.addEventListener('click',()=>{MF.closeModal();MF.setView('chart');MF.chartView.selection={kind:'vessel',id};requestAnimationFrame(MF.updateMapInfoOverlay)});
 };
-}
 
 

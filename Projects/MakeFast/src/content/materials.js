@@ -1,13 +1,15 @@
 /** MakeFast v0.41.7 • content/materials.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_32() {
-MF.CONTENT.materials = {
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const materials = {
     timber:{name:'Timber',icon:'▰'},hardware:{name:'Fittings',icon:'⚙'},stone:{name:'Stone',icon:'⬟'},glass:{name:'Glass',icon:'◆'},brass:{name:'Brass',icon:'◈'},seeds:{name:'Seeds',icon:'✿'},cloth:{name:'Canvas',icon:'▤'},charts:{name:'Charts',icon:'⌁'},stories:{name:'Letters',icon:'✉'}
   };
-}
+MF.CONTENT.materials = materials;

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/animals.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.animalSprite = function animalSprite(species='cat',phase=0,mirror=false){
   const key=`animal:${species}:${phase%4}:${mirror?1:0}`;if(MF.worldSpriteCache.has(key))return MF.worldSpriteCache.get(key);const[c,g]=MF.pixelCanvas(24,20),p=MF.mfAnimalPalette(species);g.save();if(mirror){g.translate(24,0);g.scale(-1,1)}MF.spriteShadow(g,5,17,14,2,.17);const bob=(phase%4===1)?-1:0;
   if(species==='cat'){MF.psRect(g,7,9+bob,10,6,p.body);MF.psRect(g,14,6+bob,6,6,p.body);MF.psPoly(g,[[15,6+bob],[16,3+bob],[18,6+bob]],p.body);MF.psPoly(g,[[18,6+bob],[20,3+bob],[20,7+bob]],p.body);MF.psRect(g,17,8+bob,1,1,p.ink);MF.psRect(g,7,14+bob,2,4,p.ink);MF.psRect(g,15,14+bob,2,4,p.ink);const ty=phase%2?7:5;MF.psLine(g,7,10+bob,3,ty,p.ink,1);MF.psLine(g,3,ty,2,ty-2,p.ink,1)}
@@ -16,6 +18,5 @@ MF.animalSprite = function animalSprite(species='cat',phase=0,mirror=false){
   else {const claw=phase%2?1:0;MF.psRect(g,7,10,10,6,p.body);MF.psRect(g,9,7,6,4,p.body);MF.psRect(g,10,7,1,1,p.ink);MF.psRect(g,14,7,1,1,p.ink);MF.psLine(g,7,13,3,9-claw,p.ink,1);MF.psLine(g,17,13,21,9+claw,p.ink,1);MF.psRect(g,2,7-claw,4,3,p.body);MF.psRect(g,19,8+claw,4,3,p.body);for(const x of[7,10,14,17])MF.psLine(g,x,15,x+(x<12?-2:2),18,p.ink,1)}
   g.restore();MF.worldSpriteCache.set(key,c);return c
 };
-}
 
 

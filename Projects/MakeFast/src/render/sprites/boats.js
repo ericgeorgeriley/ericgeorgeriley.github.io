@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/boats.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.hexRGB = function hexRGB(hex){hex=String(hex||'#777').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return[(n>>16)&255,(n>>8)&255,n&255]};
 
 MF.rgbHex = function rgbHex(r,g,b){return'#'+[r,g,b].map(v=>MF.clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('')};
@@ -87,12 +89,5 @@ MF.renderBoatFitoutPreview = function renderBoatFitoutPreview(ts=performance.now
 MF.renderBoatStowawayPortrait = function renderBoatStowawayPortrait(ts=performance.now()){const c=MF.$('#boatStowawayPortrait'),a=(MF.state.boatAnimals||[])[0];if(!c||!a)return;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,c.width,c.height);const spr=MF.animalSprite(a.species||'cat',Math.floor(ts/360)%4,false),sc=Math.min(2.6,(c.width-6)/spr.width,(c.height-6)/spr.height),w=spr.width*sc,h=spr.height*sc;g.drawImage(spr,Math.round((c.width-w)/2),Math.round((c.height-h)/2),Math.round(w),Math.round(h))};
 
 MF.updateBoatFitoutLivePreview = function updateBoatFitoutLivePreview(ts){if(ts-MF.lastBoatFitoutPreviewAt<110)return;MF.lastBoatFitoutPreviewAt=ts;if(MF.$('#boatFitoutCanvas'))MF.renderBoatFitoutPreview(ts);if(MF.$('#boatStowawayPortrait'))MF.renderBoatStowawayPortrait(ts)};
-}
 
-export function init_117() {
-MF.boatSpriteCache = new Map();
-}
 
-export function init_118() {
-MF.lastBoatFitoutPreviewAt = 0;
-}

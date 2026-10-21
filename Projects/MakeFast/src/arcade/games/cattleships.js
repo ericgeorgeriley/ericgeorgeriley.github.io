@@ -1,8 +1,11 @@
 /** MakeFast v0.41.7 • arcade/games/cattleships.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
+import { drawFlockBoat, drawFlockSheep } from '../../render/sprites/cattleships.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeCattleKey = function arcadeCattleKey(r,c){return`${r},${c}`};
 
 MF.arcadeCattleShipAtFleet = function arcadeCattleShipAtFleet(fleet,r,c){for(const ship of fleet)for(const cell of ship.cells)if(cell.r===r&&cell.c===c)return{ship,cell};return null};
@@ -117,9 +120,7 @@ MF.arcadeCattleGeometry = function arcadeCattleGeometry(G,g){
 };
 
 MF.drawArcadeSheep = function drawArcadeSheep(x,y,size,wet=false,phase=0,alpha=1){
-  MF.ctx.save();MF.ctx.globalAlpha*=alpha;const bob=wet?Math.sin(performance.now()*.004+phase)*size*.08:0,spr=MF.animalSprite('sheep',Math.floor(performance.now()/220+phase)%4,false),scale=Math.max(.70,size/18),w=spr.width*scale,h=spr.height*scale;
-  if(wet){MF.circle(x,y+5+bob,size*.34,'#fff7de','#17313a',2);MF.circle(x,y+5+bob,size*.22,'#df7c68','#17313a',1);MF.line(x+size*.26,y+4+bob,x+size*.52,y-2+bob,'#fff7de',1);for(let i=0;i<4;i++)MF.circle(x+(-9+i*6)*(size/24),y+9+bob+Math.sin(phase+i)*1.1,1.7*(size/24),'rgba(220,247,248,.72)')}
-  MF.ctx.imageSmoothingEnabled=false;MF.ctx.drawImage(spr,Math.round(x-w*.5),Math.round(y-h*.74+bob-(wet?size*.08:0)),Math.round(w),Math.round(h));MF.ctx.restore()
+  drawFlockSheep(MF.ctx,x,y,size,{wet,phase,alpha,time:performance.now()});
 };
 
 MF.arcadeCattlePointer = function arcadeCattlePointer(g,type,x,y,G){
@@ -223,11 +224,9 @@ MF.arcadeDeckY = function arcadeDeckY(g,ts){return .655+Math.sin(ts*.00118+g.dec
 
 MF.drawArcadeCattleMarker = function drawArcadeCattleMarker(x,y,hit=false){if(hit){MF.circle(x,y,3,'#fff7de','#df7c68',2)}else{MF.circle(x,y,1.8,'#d9eef2','#17313a',1);MF.circle(x,y,6,'rgba(0,0,0,0)','rgba(217,238,242,.55)',1)}};
 
-MF.drawArcadeCattleBoat = function drawArcadeCattleBoat(board,ship,playerSide=true,alpha=1,ts=0){const first=ship.cells[0],last=ship.cells[ship.cells.length-1],cx=board.x+(first.c+last.c+1)*board.cell/2,cy=board.y+(first.r+last.r+1)*board.cell/2,len=ship.length*board.cell*.90,beam=board.cell*.66;MF.ctx.save();MF.ctx.globalAlpha*=alpha;MF.ctx.translate(cx,cy);if(!ship.horizontal)MF.ctx.rotate(Math.PI/2);const hull=playerSide?'#8d613f':'#a86d45',trim=playerSide?'#d7b06d':'#c49362';MF.poly([[-len*.50,beam*.38],[-len*.33,-beam*.42],[len*.36,-beam*.38],[len*.50,0],[len*.36,beam*.38]],hull,'#17313a',2);MF.poly([[-len*.44,beam*.18],[-len*.28,-beam*.24],[len*.28,-beam*.20],[len*.40,0],[len*.28,beam*.20]],trim,'#17313a',1);MF.roundedRect(-len*.20,-beam*.16,len*.22,beam*.30,Math.max(3,beam*.10),'#fff7de','#17313a',1);MF.line(-len*.05,-beam*.32,-len*.05,beam*.30,'#17313a',1);MF.line(-len*.36,0,len*.30,0,'rgba(255,247,222,.22)',1);MF.ctx.restore()};
+MF.drawArcadeCattleBoat = function drawArcadeCattleBoat(board,ship,playerSide=true,alpha=1,ts=0){
+  drawFlockBoat(MF.ctx,board,ship,{player:playerSide,alpha,time:ts});
+};
 
 MF.drawArcadeCattleShipCard = function drawArcadeCattleShipCard(ship,x,y,w,player,ts){MF.roundedRect(x,y,w,22,6,'rgba(255,247,222,.88)','#17313a',1);const segW=Math.min(18,(w-22)/Math.max(1,ship.length));for(let i=0;i<ship.length;i++){const p=ship.cells[i],cx=x+12+i*segW,cy=y+11;MF.roundedRect(cx-6,cy-3,12,5,2,player?'#8d613f':'#a86d45','#17313a',1);MF.drawArcadeSheep(cx,cy-3,p.hit?10:9,p.hit,i,p.hit?1:(player?1:.72));}};
-}
 
-export function init_176() {
-MF.ARCADE_CATTLE_NAMES = ['EWE TWO','WOOL PACKET','BELLWETHER','RAMBLER','FLEECE LIGHT','BAA-LINE','LAMB CHOPPER','SHEARWATER'];
-}

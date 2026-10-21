@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • arcade/games/sub-depth.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.arcadeDepthSprite = function arcadeDepthSprite(kind,variant=0){
   const key=`arcade-depth:${kind}:${variant}`;if(MF.arcadeDepthSpriteCache.has(key))return MF.arcadeDepthSpriteCache.get(key);let c,g,ink='#17313a';
   if(kind==='submarine'){
@@ -206,8 +208,4 @@ MF.arcadeRenderDepth = function arcadeRenderDepth(g,ts,G,dt,running){
   MF.roundedRect(G.left+8,G.y(.07),108,32,7,'rgba(255,247,222,.88)','#17313a',2);MF.pxText(`PRESSURE ×${pressure.toFixed(2)}`,G.left+62,G.y(.07)+13,'#17313a',8,'center');MF.pxText(`DEEP BAND ${g.depthBand}`,G.left+62,G.y(.07)+24,'#17313a',7,'center');
   const caveSpan=Math.round((bottomLimit-topLimit)*100);MF.arcadeSetHelperCue(g,`KEEP CENTRED · ${caveSpan}% WATER CLEARANCE`,`Depth ${Math.round(current)}m · pressure ×${pressure.toFixed(2)}`)
 };
-}
 
-export function init_138() {
-MF.arcadeDepthSpriteCache = new Map();
-}

@@ -1,8 +1,10 @@
 /** MakeFast v0.41.7 • render/sprites/props.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../../core/runtime-state.js';
 
-export function install() {
+
+// Feature definitions are registered as each ES module is imported.
+
 MF.propSprite = function propSprite(kind='broadleaf',variant=0){const key=`prop:${kind}:${variant}`;if(MF.worldSpriteCache.has(key))return MF.worldSpriteCache.get(key);const [c,g]=MF.pixelCanvas(28,30),ink='#17313a',leaf1='#416f56',leaf2='#5f9c5c',leaf3='#83be68',wood='#74472f',wood2='#a46a3f';
   if(kind==='rock'){MF.spriteShadow(g,5,22,18,3,.2);MF.psOutlinePoly(g,[[5,20],[7,13],[13,9],[21,11],[24,17],[20,23],[9,24]],'#647b7c',ink,1);MF.psPoly(g,[[8,14],[13,11],[20,13],[18,16],[10,17]],'#91a29b');MF.psRect(g,9,18,3,1,'#aeb8aa')}
   else if(kind==='flowers'){for(let i=0;i<7;i++){const x=5+(i%4)*5,y=17+Math.floor(i/4)*5;MF.psRect(g,x,y+2,1,5,'#397255');MF.psRect(g,x-1,y,3,3,i%3===0?'#e7b653':i%3===1?'#d66e69':'#efe4b9');MF.psRect(g,x,y+1,1,1,'#fff2c9')}}
@@ -74,6 +76,5 @@ MF.mfAnchorageRockSprite = function mfAnchorageRockSprite(style=0){
   for(let j=0;j<4;j++){const x=13+j*17;MF.psRect(g,x,54,6,2,'#427e66');MF.psRect(g,x+1,52,2,3,'#5d936d')}
   MF.mfAnchorSpriteCache.set(variant,c);return c;
 };
-}
 
 

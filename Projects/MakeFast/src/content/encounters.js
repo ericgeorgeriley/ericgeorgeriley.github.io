@@ -1,13 +1,15 @@
 /** MakeFast v0.41.7 • content/encounters.js • extracted preserving source initialization order.
- * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+ * Native ES module; the shared runtime state remains available to feature functions. */
 import { MF } from '../core/runtime-state.js';
 
-export function install() {
 
-}
+// Feature definitions are registered as each ES module is imported.
 
-export function init_36() {
-MF.CONTENT.voyageEvents = [
+
+
+
+// Authored content (previously embedded in the monolithic startup).
+export const voyageEvents = [
     {id:'dolphins',scene:'dolphins',icon:'⌁',title:['Dolphins off the bow','Company in the blue'],log:['A pod of dolphins kept pace with the boat for a while.','Silver backs rose beside the bow, then slipped under again.'],ambient:true,weight:1.2},
     {id:'seabirds',scene:'seabirds',icon:'⌃',title:['A wheel of terns','Birds over the water'],log:['Terns circled a bright patch of water, then vanished toward the east.','A little flock wheeled overhead before pointing toward the horizon.'],ambient:true,weight:1},
     {id:'trader',scene:'trader',icon:'◁',title:['Red sail on the horizon','A neighbour at sea'],log:['A little red-sailed trader crossed the route and dipped its flag.','Another boat passed at a comfortable distance and exchanged a wave.'],ambient:true,weight:.8},
@@ -44,4 +46,4 @@ MF.CONTENT.voyageEvents = [
     {id:'arcade_gulls',scene:'seabirds',icon:'⌃',title:['Gulls over the mast','An occupied patch of sky'],log:['A flock of gulls settles into formation above the route.','White wings gather over the boat and the deck suddenly feels exposed.'],interaction:{minigame:'poop_deck'},rewards:[{kind:'bottle',weight:.55},{kind:'cloth',weight:.45}],weight:.58},
     {id:'arcade_engine_watch',scene:'arcadevessel',icon:'⚙',title:['A bell below decks','The mailboat is short-handed'],log:['A weathered island motor ship comes alongside long enough to hand over one engine-room watch.','A little coastal mailboat is working close quarters and could use another engineer on the telegraph.'],interaction:{minigame:'engine_telegraph'},rewards:[{kind:'hardware',weight:.62},{kind:'brass',weight:.38}],weight:.56},
   ];
-}
+MF.CONTENT.voyageEvents = voyageEvents;
