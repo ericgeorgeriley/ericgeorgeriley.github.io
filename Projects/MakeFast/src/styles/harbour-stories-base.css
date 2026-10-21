@@ -1,0 +1,12 @@
+/* Harbour Stories: inspectable story dioramas and evidence folio. */
+.hs-exploration{border:2px solid #45646a;border-radius:8px;padding:11px;margin:9px 0;background:#f2ecd7}
+.hs-exploration h3{margin:0 0 5px}.hs-exploration p{line-height:1.5}
+#hsSceneCanvas{display:block;width:100%;height:auto;image-rendering:pixelated;border:3px solid #23454f;border-radius:7px;cursor:crosshair;background:#81adae;max-height:195px;object-fit:contain}
+#hsSeaCanvas{display:block;width:100%;height:auto;max-width:100%;image-rendering:pixelated;border:3px solid #23454f;border-radius:7px;cursor:crosshair;background:#81adae}
+@media(max-width:520px){.hs-sea-encounter .hs-evidence-grid{grid-template-columns:1fr}}
+.hs-scene-legend{font-size:10px;font-weight:900;padding:8px;color:#345960}
+.hs-evidence-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px}
+.hs-evidence-spot{white-space:normal!important;min-height:50px;text-align:left!important;display:flex!important;flex-direction:column;gap:4px;background:#fff9e9;color:#254349;border:2px solid #80968a;border-radius:6px;padding:8px;cursor:pointer}
+.hs-evidence-spot span{font-size:10px;line-height:1.45;font-weight:normal}.hs-evidence-spot.found{background:#e1f0d9;border-color:#608b64}.hs-evidence-spot:disabled{cursor:default;opacity:1}.hs-hint{border-left:4px solid #a77748;padding:9px;background:#fff2d8}
+@media(max-width:520px){.hs-evidence-grid{grid-template-columns:1fr 1fr}.hs-evidence-spot{padding:7px;font-size:10px}.hs-evidence-spot span{font-size:9px}}
+

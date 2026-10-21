@@ -1,0 +1,321 @@
+/** MakeFast v0.41.7 • stories/harbour-stories.js • extracted preserving source initialization order.
+ * Shared MF runtime is a compatibility boundary; new modules can progressively adopt imports. */
+import { MF } from '../core/runtime-state.js';
+
+export function install() {
+MF.hsFieldScene = function hsFieldScene(theme,rr,place,other=false){
+ const beats=MF.HS_FIELD_BEATS[theme]||MF.HS_FIELD_BEATS.wreck,index=Math.floor(rr()*beats.length)+(other?1:0),pair=beats[index%beats.length];
+ return{desc:pair[0].replaceAll('{place}',place),text:pair[1]};
+};
+
+MF.hsState = function hsState(){
+  if(!MF.state.stories||typeof MF.state.stories!=='object')MF.state.stories={version:5,items:[],offers:[],arrivals:0,dryArrivals:0,lastArrival:'',recentThemes:[],recentPatterns:[],recentArcs:[],recentCombos:[],pinnedId:null};
+  const h=MF.state.stories;if(!Array.isArray(h.items))h.items=[];if(!Array.isArray(h.offers))h.offers=[];if(!Array.isArray(h.recentThemes))h.recentThemes=[];if(!Array.isArray(h.recentPatterns))h.recentPatterns=[];
+  if(!Array.isArray(h.recentArcs))h.recentArcs=[];if(!Array.isArray(h.recentCombos))h.recentCombos=[];if((+h.version||0)<2)h.items.forEach(s=>{if(!Array.isArray(s.optionalEvidence))s.optionalEvidence=[];if(!Array.isArray(s.history))s.history=[];if(!Array.isArray(s.choices))s.choices=[];if(!Array.isArray(s.clues))s.clues=[];if(!Array.isArray(s.processed))s.processed=[];if(!s.sceneProgress||typeof s.sceneProgress!=='object')s.sceneProgress={}});h.arrivals=Math.max(0,Math.floor(+h.arrivals||0));h.dryArrivals=Math.max(0,Math.floor(+h.dryArrivals||0));h.version=6;return h;
+};
+
+MF.hsOpenStories = function hsOpenStories(){return MF.hsState().items.filter(s=>s.status==='active')};
+
+MF.hsCurrentStory = function hsCurrentStory(s){return s?.steps?.[s.stepIndex]||null};
+
+MF.hsOfferFor = function hsOfferFor(personId){return MF.hsState().offers.find(o=>o.personId===personId&&(o.kind==='resident'||o.kind==='news'))||null};
+
+MF.hsSmallCount = function hsSmallCount(){return MF.hsOpenStories().filter(s=>s.scale==='small').length};
+
+MF.hsMajorCount = function hsMajorCount(){return MF.hsOpenStories().filter(s=>s.scale==='major').length};
+
+MF.hsRoom = function hsRoom(scale,resuming=false){if(!resuming&&MF.hsState().items.filter(s=>s.status!=='completed').length>=5)return false;return scale==='small'?MF.hsSmallCount()<1:MF.hsMajorCount()<2};
+
+MF.hsLocalPerson = function hsLocalPerson(p){return !!(p&&MF.mfCanSocialiseHere(p,MF.residentHomeIsland(p.id)))};
+
+MF.hsPick = function hsPick(rr,arr){return arr.length?arr[Math.floor(rr()*arr.length)]:null};
+
+MF.hsStorySpot = function hsStorySpot(isl,s){
+  const pts=[[212,170],[443,169],[231,227],[405,222],[312,109],[287,236],[367,126]];
+  const occupied=(isl.projects||[]).map((p,i)=>MF.projectSitePos(p,i,isl));
+  const taken=(isl.storyMonuments||[]).filter(m=>m.id!==s.id).map(m=>m.spot).filter(Boolean);
+  let best=null;pts.forEach(([x,y],i)=>{const q=MF.islandSafeLayoutPoint(isl,x,y,.69),near=[...occupied,...taken].reduce((n,p)=>n+Math.max(0,62-Math.hypot(q.x-p.x,q.y-p.y))*3,0),score=near+i*3+(Math.abs(MF.hashString(`${s.id}:${i}`))%19);if(!best||score<best.score)best={score,spot:q}});return best?.spot||MF.islandSafeLayoutPoint(isl,220,210,.70);
+};
+
+MF.hsMonumentSprite = function hsMonumentSprite(feature='meadow_green',variant=0,phase=0){
+ const cycle=MF.state.reducedMotion?0:Math.abs(Math.floor(phase))%4,key=`${feature}:${variant}:${cycle}`;
+ if(MF.hsMonumentCache.has(key))return MF.hsMonumentCache.get(key);
+ const[c,g]=MF.pixelCanvas(100,84),a=MF.mfLandmarkSprite(feature),ink='#18313a',stone=['#8e9c94','#baa77e','#8499a3'][variant%3];
+ g.imageSmoothingEnabled=false;MF.spriteShadow(g,10,74,80,6,.24);g.drawImage(a,12,3,76,68);
+ MF.psRect(g,16,68,68,10,ink);MF.psRect(g,19,69,62,7,stone);MF.psRect(g,22,70,56,2,MF.shadeHex(stone,22));
+ if(variant===0){ // A useful new landmark: tended flowers, bright lamp and working pennant.
+   MF.psRect(g,42,70,16,5,'#c99862');MF.psRect(g,43,71,14,3,'#f1dfb0');
+   for(const x of [11,84]){MF.psRect(g,x,65,5,9,ink);MF.psRect(g,x+1,66,3,7,'#986741');MF.psRect(g,x-3,62,11,4,'#577f53');MF.psRect(g,x-1,59,3,4,'#d7ae54');MF.psRect(g,x+4,59,3,3,'#e58c73')}
+   MF.psLine(g,78,18,78,48,ink,2);MF.psPoly(g,[[80,20+cycle%2],[96,25+cycle%2],[80,29+cycle%2]],'#d17e60');MF.psRect(g,78,18,3,3,'#e5b54e');
+   const glow=cycle===1||cycle===2?'#fff5b7':'#e5b54e';MF.psCircle(g,50,61,4,ink);MF.psCircle(g,50,60,2,glow);
+ }else{ // Heritage: carved plaque, rope posts and flowers, not a second working sign.
+   MF.psRect(g,37,66,26,11,ink);MF.psRect(g,39,68,22,7,'#d8cda8');MF.psRect(g,42,70,16,1,'#7f735d');MF.psRect(g,45,73,10,1,'#7f735d');
+   for(const x of [12,82]){MF.psRect(g,x,62,4,14,ink);MF.psRect(g,x+1,62,2,12,'#a87851');MF.psRect(g,x-1,60,6,3,'#d4b16b')}
+   MF.psLine(g,16,67,37,72,'#caa873',2);MF.psLine(g,63,72,82,67,'#caa873',2);
+   MF.psRect(g,24,72,3,3,cycle%2?'#e1af63':'#d77e6a');MF.psRect(g,72,71,3,4,'#8caf6d');
+ }
+ MF.hsMonumentCache.set(key,c);return c;
+};
+
+MF.hsDrawIslandMonuments = function hsDrawIslandMonuments(isl,queue){(isl.storyMonuments||[]).forEach(m=>{const q=m.spot||MF.hsStorySpot(isl,{id:m.id}),feature=m.feature||'meadow_green',sc=MF.islandBuildingScale('house',.97);queue(q.y,()=>MF.drawPixelSprite(MF.hsMonumentSprite(feature,m.variant||0,Math.floor(MF.frame/420)+Math.abs(MF.hashString(m.id))%4),q.x,q.y,sc,.5,.90))})};
+
+MF.hsThemeFor = function hsThemeFor(isl,person,seed){const h=MF.hsState(),rr=MF.rng(seed),pool=Object.keys(MF.HS_TOPICS).filter(k=>MF.HS_TOPICS[k].biomes.includes(isl.biome));let best=null;pool.forEach(k=>{const t=MF.HS_TOPICS[k],seen=h.recentThemes.lastIndexOf(k),recency=seen<0?0:(h.recentThemes.length-seen),profession=(person.archetype==='navigator'&&['beacon','channel','lantern'].includes(k)||person.archetype==='naturalist'&&['birds','garden','channel'].includes(k)||person.archetype==='carpenter'&&['craft','beacon'].includes(k)||person.archetype==='trader'&&['market','festival'].includes(k)||person.archetype==='fisher'&&['wreck','channel','bell'].includes(k)||person.archetype==='gardener'&&['garden','birds','festival'].includes(k))?1.5:0;const score=rr()*2+profession-(recency?3.5/recency:0);if(!best||score>best.score)best={score,key:k}});return best?.key||'wreck'};
+
+MF.hsRewardPlan = function hsRewardPlan(isl,theme,seed,scale,arc='survey'){
+  const rr=MF.rng(seed^0x5cc241),t=MF.HS_TOPICS[theme],available=MF.PROJECT_TEMPLATES.filter(p=>(p.storyOnly||p.signature)&&p.biomes?.includes(isl.biome)&&!isl.projects.some(x=>x.templateId===p.id)&&p.id!==MF.mfSignatureProject(isl)&&!(isl.storyBlueprints||[]).includes(p.id)&&!MF.hsState().items.some(s=>s.status!=='completed'&&s.reward?.type==='blueprint'&&s.reward.templateId===p.id&&s.originId===isl.id)&&MF.mfBuildableSites(isl,p).length>0),options=['keepsake'];const pending=MF.hsState().items.filter(s=>s.status!=='completed'&&s.originId===isl.id&&(s.reward?.type==='monument'||s.alternativeReward?.type==='monument')).length;if((isl.storyMonuments||[]).length+pending<4)options.push('monument','monument');
+  if(scale!=='small'&&MF.state.islands.length<28)options.push('chart','chart');if(available.length&&scale!=='small')options.push('blueprint','blueprint');
+  const recent=MF.hsState().recentCombos||[],unique=[...new Set(options)],last=recent.slice(-6);
+  const scored=unique.map(k=>({kind:k,score:rr()*2+options.filter(x=>x===k).length*.25-last.filter(x=>x===`${theme}:${arc}:${k}`).length*3-last.filter(x=>x.endsWith(`:${k}`)).length*.30}));
+  scored.sort((a,b)=>b.score-a.score);const type=scored[0]?.kind||'keepsake';
+  return {type,feature:MF.hsPick(rr,t.features)||MF.mfSignatureProject(isl)||'meadow_green',templateId:type==='blueprint'?MF.hsPick(rr,available)?.id:null,siteId:isl.id,islandId:null,claimed:false};
+};
+
+MF.hsMakeSteps = function hsMakeSteps(s,rr){
+ const giver=MF.residentById(s.personId),partner=MF.residentById(s.partnerId),origin=MF.getIsland(s.originId),target=MF.getIsland(s.targetId),o=origin?.name||'the harbour',t=target?.name||o,gn=giver?.name||'your neighbour',pn=partner?.name||gn,topic=MF.HS_TOPICS[s.theme];
+ s.clue=MF.hsPick(rr,topic.clue);s.insight=MF.hsPick(rr,topic.insight);s.arc=s.arc||MF.hsChooseArc(s.theme,rr);
+ const scene0=MF.hsSceneStep(s,rr,s.originId,0),scene1=MF.hsSceneStep(s,rr,s.targetId,1);
+ if(s.legacyContext){const first=scene0.scene.spots[0];first.text+=` ${s.legacyContext}`;first.hint+=` Remember the account ${MF.residentById(s.personId)?.name||'your neighbour'} shared on an earlier visit.`;}
+ const passage=(islandId)=>s.storyVersion>=4?MF.hsMakeSeaStep(s,islandId):({kind:'passage',islandId,desc:`Make a passage from ${MF.getIsland(islandId)?.name||'the shore'} and note what the water reveals.`,text:'Your shipboard observations connect the shore evidence with the wider sea. The watch can be recorded as soon as you set sail.'});
+ const talk=(personId,desc,text)=>({kind:'talk',personId,desc,text});
+ const arrive=(islandId)=>({kind:'arrive',islandId,desc:`Make landfall at ${MF.getIsland(islandId)?.name||'the neighbouring shore'}.`,text:'There is no hurry: the investigation will still be waiting.'});
+ const reason=(islandId)=>({kind:'deduce',islandId,desc:'Compare your evidence and choose what it means.',text:'A convincing explanation must account for the clues you actually found.',correct:s.insight,options:topic.insight.slice()});
+ const approach=(islandId)=>({kind:'approach',islandId,desc:`Choose how to take the discovery forward at ${MF.getIsland(islandId)?.name||'the harbour'}.`,text:'Ask a neighbour to help, or follow the evidence with your own eyes. Each path changes the remaining work.'});
+ const finish=()=>({kind:'resolve',islandId:s.originId,desc:`Return to ${o} and settle the matter with ${gn}.`,text:`${gn} asks what should be done with what you have learned.`});
+ const friend=talk(s.partnerId,`Compare your findings with ${pn}.`,`${pn} examines ${s.clue} and explains how the evidence has changed their understanding of ${s.noun}.`);
+ const giverTalk=talk(s.personId,`Discuss the story with ${gn}.`,`${gn} remembers why ${s.noun} mattered to the harbour, and trusts you with the next decision.`);
+ let steps;
+ switch(s.arc){
+ case 'restoration':steps=[giverTalk,scene0,reason(s.originId),approach(s.originId),passage(s.originId),arrive(s.targetId),scene1,arrive(s.originId),finish()];break;
+ case 'correspondence':steps=[scene0,friend,reason(s.targetId),approach(s.targetId),passage(s.targetId),arrive(s.originId),giverTalk,finish()];break;
+ case 'conservation':steps=[arrive(s.targetId),scene1,reason(s.targetId),friend,approach(s.targetId),passage(s.targetId),arrive(s.originId),finish()];break;
+ case 'salvage':steps=[scene0,passage(s.originId),arrive(s.targetId),scene1,reason(s.targetId),approach(s.targetId),arrive(s.originId),finish()];break;
+ case 'festival':steps=[friend,scene1,arrive(s.originId),scene0,reason(s.originId),approach(s.originId),finish()];break;
+ default:steps=[scene0,reason(s.originId),passage(s.originId),arrive(s.targetId),scene1,approach(s.targetId),arrive(s.originId),finish()];break;
+ }
+ if(s.scale==='small')steps=[scene0,passage(s.originId),arrive(s.targetId),scene1,reason(s.targetId),arrive(s.originId),giverTalk,finish()];
+ return steps;
+};
+
+MF.hsBuildStory = function hsBuildStory(offer){
+  const h=MF.hsState(),origin=MF.getIsland(offer.islandId),person=MF.residentById(offer.personId);if(!origin||!person||!MF.hsRoom(offer.scale))return null;
+  const rr=MF.rng(offer.seed),theme=offer.prelude?.theme||MF.hsThemeFor(origin,person,offer.seed),topic=MF.HS_TOPICS[theme],targets=MF.knownJourneyTargets(origin).filter(i=>i.id!==origin.id);let target=MF.hsPick(rr,targets.filter(i=>i.visits<2))||MF.hsPick(rr,targets);if(!target){target=MF.state.islands.find(i=>i.id!==origin.id&&!!MF.planSafeCourse(origin,i)&&!i.reservedStoryId)||MF.generateUnchartedIslandFrom(origin);if(!MF.state.islands.some(i=>i.id===target.id))MF.state.islands.push(target);target.rumoured=true;target.rumourFromId=origin.id;target.rumourSource=`A lead offered by ${person.name}`;}
+  const peers=[...origin.residents,...(target?.residents||[])].filter(p=>p.id!==person.id&&!MF.residentAwayAssignment(p.id));const partner=MF.hsPick(rr,peers)||person;
+  const used=h.recentPatterns||[],patterns=[0,1,2,3,4,5],preferred=patterns.filter(n=>!used.slice(-3).includes(n)),pattern=MF.hsPick(rr,preferred.length?preferred:patterns),noun=offer.prelude?.noun||MF.hsPick(rr,topic.nouns),arc=MF.hsChooseArc(theme,rr,person),reward=MF.hsRewardPlan(origin,theme,offer.seed,offer.scale,arc);
+  const story={id:MF.uid('story'),storyVersion:offer.scale==='major'?6:5,seed:offer.seed,theme,arc,scale:offer.scale,pattern,noun,title:`${topic.name}: ${noun[0].toUpperCase()+noun.slice(1)}`,icon:topic.icon,originId:origin.id,targetId:target.id,personId:person.id,partnerId:partner.id,opening:offer.prelude?.opening||MF.hsPick(rr,topic.opening),status:'active',stepIndex:0,steps:[],clues:[],choices:[],reward,createdAt:MF.nowReal(),history:[],processed:[],optionalEvidence:[],sceneProgress:{},evidenceKeys:[],lastNarrative:'',variant:0};
+  const prior=(MF.mfEnsureSocialData(person).storyMemories||[]).slice().reverse().find(m=>h.items.some(old=>old.id===m.id&&old.status==='completed'));
+  if(prior){const older=h.items.find(old=>old.id===prior.id);story.legacyOf=older.id;story.legacyContext=older.resolution==='restored'?`After you helped restore ${older.noun}, ${person.name} began paying closer attention to the shore.`:`Since you helped preserve the history of ${older.noun}, ${person.name} has been collecting further accounts.`;if(person.social?.storyVocation)story.legacyContext+=` Since then, ${person.name} has served as ${person.social.storyVocation.toLowerCase()}, and that work has brought this new clue to light.`;story.opening=`${story.legacyContext} ${story.opening}`;}
+  story.steps=MF.hsMakeSteps(story,rr);MF.hsInstallCommission(story);MF.hsInstallPersonalChapter(story,rr);MF.hsPlanAlternateReward(story,origin);
+  if(reward.type==='chart'){
+    if(MF.state.islands.length<28){const candidate=MF.generateUnchartedIslandFrom(origin);candidate.known=false;candidate.rumoured=false;candidate.reservedStoryId=story.id;candidate.rumourSource=`A clue followed from ${origin.name}`;candidate.notes=[`The shore was first located by following ${person.name}'s story.`];MF.state.islands.push(candidate);reward.islandId=candidate.id}else reward.type='monument';
+  }
+  h.items.push(story);h.pinnedId=h.pinnedId||story.id;const firstStep=MF.hsCurrentStory(story);if(firstStep?.kind==='arrive'&&firstStep.islandId===MF.state.currentIslandId)MF.hsOnEvent('arrive',firstStep.islandId,`accept:${story.id}`);h.recentThemes.push(theme);h.recentThemes=h.recentThemes.slice(-8);h.recentPatterns.push(pattern);h.recentPatterns=h.recentPatterns.slice(-6);h.recentArcs.push(arc);h.recentArcs=h.recentArcs.slice(-12);h.recentCombos.push(`${theme}:${arc}:${reward.type}`);h.recentCombos=h.recentCombos.slice(-18);return story;
+};
+
+MF.hsOnArrival = function hsOnArrival(isl){
+  if(!isl||MF.state.phase!=='ashore'||MF.state.anchorage||MF.worldSimulating)return;
+  const h=MF.hsState(),key=`${isl.id}:${isl.visits}`;if(h.lastArrival===key)return;h.lastArrival=key;h.arrivals++;h.items.filter(s=>s.status==='active').forEach(MF.hsRepairStep);
+  MF.hsOnEvent('arrive',isl.id,`landfall:${MF.state.sessions[MF.state.sessions.length-1]?.id||key}`);MF.hsDeliverParcelsAt(isl);
+  h.offers=h.offers.filter(o=>h.arrivals-o.arrival<=4&&(!o.personId||MF.residentById(o.personId)));
+  if(h.offers.some(o=>o.kind==='resident'&&o.islandId===isl.id)||h.offers.length>=2){MF.save();return}
+  const locals=(isl.residents||[]).filter(p=>!MF.residentAwayAssignment(p.id));if(!locals.length){MF.save();return}
+  const rr=MF.rng(MF.hashString(`${MF.state.worldSeed}:${key}:stories-v1`));let scale=rr()<.24?'small':'major';if(!MF.hsRoom(scale))scale=scale==='small'?'major':'small';if(!MF.hsRoom(scale)){MF.save();return}
+  const must=h.dryArrivals>=3,appear=must||rr()<.37;if(!appear){h.dryArrivals++;MF.save();return}
+  const p=MF.hsPick(rr,locals.slice().sort((a,b)=>{const aa=h.items.filter(s=>s.personId===a.id).length,bb=h.items.filter(s=>s.personId===b.id).length;return aa-bb}));
+  const kind=!must&&rr()<.22?'news':'resident',seed=MF.hashString(`${MF.state.worldSeed}:${key}:${p.id}:harbour-lead`),topicKey=MF.hsThemeFor(isl,p,seed),topic=MF.HS_TOPICS[topicKey],preludeRng=MF.rng(seed),prelude={theme:topicKey,noun:MF.hsPick(preludeRng,topic.nouns),opening:MF.hsPick(preludeRng,topic.opening)};h.offers.push({id:MF.uid('lead'),kind,personId:p.id,islandId:isl.id,seed,prelude,scale,arrival:h.arrivals});
+  h.dryArrivals=kind==='resident'?0:h.dryArrivals+1;MF.state.journal.unshift(kind==='resident'?`${p.name} has something on their mind at ${isl.name}.`:`${p.name} has a little harbour news to share.`);MF.save();
+};
+
+MF.hsAskResident = function hsAskResident(id){const p=MF.residentById(id),isl=MF.residentHomeIsland(id),h=MF.hsState(),o=h.offers.find(x=>x.personId===id&&x.islandId===isl?.id);if(!MF.hsLocalPerson(p)||!o)return;
+  const greeting=p.name.split(' ')[0];if(o.kind==='news'){
+    const line=MF.HS_NEWS[Math.abs(o.seed)%MF.HS_NEWS.length];h.offers=h.offers.filter(x=>x.id!==o.id);MF.mfAddRelationship(p,1);MF.state.journal.unshift(`${p.name}: ${line}`);MF.save();MF.showModal(`<h2>News from the water</h2><p>${MF.wikiEsc(greeting)} says:</p><div class="notice">“${MF.wikiEsc(line)}”</div><div class="modal-actions"><button class="big-btn ghost" id="hsBackPerson">BACK TO ${MF.wikiEsc(greeting.toUpperCase())}</button></div>`);MF.$('#hsBackPerson').onclick=()=>MF.openResidentDetails(id,{skipTalk:true});return;
+  }
+  const theme=o.prelude?.theme||MF.hsThemeFor(isl,p,o.seed),topic=MF.HS_TOPICS[theme],rr=MF.rng(o.seed),noun=o.prelude?.noun||MF.hsPick(rr,topic.nouns),opening=o.prelude?.opening||MF.hsPick(rr,topic.opening);
+  MF.showModal(`<h2>${MF.wikiEsc(topic.name)}</h2><p>${MF.wikiEsc(p.name)} lowers their voice.</p><div class="notice">“${MF.wikiEsc(opening)} It's about ${MF.wikiEsc(noun)}. I wondered whether you might help me learn what happened.”</div>${MF.hsPastReference(p)?`<p class="mf-memory">“${MF.wikiEsc(MF.hsPastReference(p))}”</p>`:''}<p>The matter can wait until another visit. Your voyages and their fasting times are entirely your own.</p><div class="modal-actions"><button class="big-btn secondary" id="hsTakeLead">FOLLOW THIS LEAD</button><button class="big-btn ghost" id="hsLaterLead">ANOTHER DAY</button></div>`);
+  MF.$('#hsLaterLead').onclick=()=>MF.openResidentDetails(id,{skipTalk:true});MF.$('#hsTakeLead').onclick=()=>{if(!MF.hsLocalPerson(p)){MF.toast('Meet them ashore to begin.');return}const s=MF.hsBuildStory(o);if(!s){MF.toast('There is no room in the journal for another adventure just now.');return}h.offers=h.offers.filter(x=>x.id!==o.id);MF.mfAddRelationship(p,2);MF.state.journal.unshift(`${p.name} entrusted you with ${s.title}.`);MF.save();MF.renderUI();MF.hsShowStory(s.id)};
+};
+
+MF.hsVesselNewsReady = function hsVesselNewsReady(v){return !!(MF.mfCanMeetVessel(v)&&v.mfLastWaterToken!==MF.mfShoreToken(MF.currentIsland())&&Math.abs(MF.hashString(`${v.id}:${MF.mfShoreToken(MF.currentIsland())}:crews`))%100<27)};
+
+MF.hsAskVessel = function hsAskVessel(id){const v=MF.worldState().vessels.find(x=>x.id===id);if(!MF.hsVesselNewsReady(v))return;v.mfLastWaterToken=MF.mfShoreToken(MF.currentIsland());const n=MF.HS_NEWS[Math.abs(MF.hashString(`${id}:${MF.state.sessions.length}:crew`))%MF.HS_NEWS.length];MF.state.journal.unshift(`Captain ${v.captainName}: ${n}`);MF.save();MF.showModal(`<h2>Alongside ${MF.wikiEsc(v.name)}</h2><p>Captain ${MF.wikiEsc(v.captainName)} shares a little news from the passage.</p><div class="notice">“${MF.wikiEsc(n)}”</div><div class="modal-actions"><button class="big-btn ghost" id="hsCrewBack">BACK TO THE CREW</button></div>`);MF.$('#hsCrewBack').onclick=()=>MF.openVesselDetails(id)};
+
+MF.hsStepLocation = function hsStepLocation(s,step=MF.hsCurrentStory(s)){if(!step)return null;if(step.kind==='talk'){const p=MF.residentById(step.personId),home=MF.residentHomeIsland(step.personId);return home?.id||s.originId}return step.islandId||s.originId};
+
+MF.hsRepairStep = function hsRepairStep(s){const step=MF.hsCurrentStory(s);if(!step)return;if(step.kind==='talk'&&(!MF.residentById(step.personId)||MF.residentAwayAssignment(step.personId)?.kind==='captain')){step.kind='inspect';step.islandId=s.originId;step.desc=`Search the harbour records at ${MF.getIsland(s.originId)?.name||'the island'}.`;step.text=`The neighbour has moved beyond the present chart. Their notes were left with the harbour keeper.`}};
+
+MF.hsCanAct = function hsCanAct(s){if(!s||s.status!=='active'||MF.state.phase!=='ashore'||MF.state.anchorage||MF.state.activeView==='chart')return false;const st=MF.hsCurrentStory(s);if(!st||MF.hsStepLocation(s,st)!==MF.state.currentIslandId)return false;if(st.kind==='talk'){const p=MF.residentById(st.personId);return MF.hsLocalPerson(p)}return ['inspect','fork','resolve','scene','deduce','approach','commission','story_delivery','community_work','personal_choice'].includes(st.kind)};
+
+MF.hsAdvance = function hsAdvance(s,stageText){const st=MF.hsCurrentStory(s);if(!st||s.status!=='active')return false;const fingerprint=`${s.id}:${s.stepIndex}`;if(s.processed.includes(fingerprint))return false;s.processed.push(fingerprint);s.history.push({at:MF.nowReal(),text:stageText||st.text||st.desc,islandId:MF.state.currentIslandId});s.clues.push({text:stageText||st.text||st.desc,islandId:MF.state.currentIslandId});s.lastNarrative=stageText||st.text||st.desc;s.stepIndex++;while(s.stepIndex<s.steps.length&&s.steps[s.stepIndex].kind==='arrive'&&MF.state.phase==='ashore'&&!MF.state.anchorage&&MF.hsStepLocation(s,s.steps[s.stepIndex])===MF.state.currentIslandId){const next=s.steps[s.stepIndex];s.history.push({at:MF.nowReal(),text:`The needed shore is already beneath your feet: ${MF.getIsland(next.islandId)?.name||'the island'}.`,islandId:MF.state.currentIslandId});s.processed.push(`${s.id}:${s.stepIndex}`);s.stepIndex++}if(s.stepIndex>=s.steps.length){MF.hsFinish(s,0);return true}MF.save();return true};
+
+MF.hsOnEvent = function hsOnEvent(kind,targetId,eventId){if(MF.worldSimulating||(kind==='arrive'&&(MF.state.phase!=='ashore'||MF.state.anchorage||MF.state.currentIslandId!==targetId)))return;const h=MF.hsState();for(const s of h.items){if(s.status!=='active')continue;MF.hsRepairStep(s);const st=MF.hsCurrentStory(s);if(st?.kind!==kind||MF.hsStepLocation(s,st)!==targetId)continue;const key=`${s.id}:event:${eventId||kind+':'+targetId}`;if(s.processed.includes(key))continue;s.processed.push(key);const text=kind==='arrive'?`You made landfall at ${MF.getIsland(targetId)?.name||'the neighbouring shore'}. The next part of ${s.title} can be pursued when you wish.`:st.text;MF.hsAdvance(s,text);MF.state.journal.unshift(text);if(h.pinnedId===s.id)MF.toast('A Tidebook story has a new chapter.')}MF.save()};
+
+MF.hsAct = function hsAct(id){const s=MF.hsState().items.find(x=>x.id===id);if(!MF.hsCanAct(s)){MF.toast('Visit the right island and speak to the people there.');return}const st=MF.hsCurrentStory(s);if(['fork','resolve','scene','deduce','approach','commission','story_delivery','community_work','personal_choice'].includes(st.kind)){MF.hsShowStory(id);return}const line=st.text||st.desc;MF.hsAdvance(s,line);MF.state.journal.unshift(line);if(st.kind==='talk'){const p=MF.residentById(st.personId);if(p)MF.mfAddRelationship(p,1)}MF.save();MF.renderUI();MF.hsShowStory(id)};
+
+MF.hsChooseFork = function hsChooseFork(id,mode){const s=MF.hsState().items.find(x=>x.id===id);if(!s||!MF.hsCanAct(s)||MF.hsCurrentStory(s)?.kind!=='fork'||!['witness','shore'].includes(mode))return;const partner=MF.residentById(s.partnerId),island=mode==='witness'?MF.residentHomeIsland(s.partnerId):MF.getIsland(s.targetId),name=island?.name||'the neighbouring shore';const step=mode==='witness'&&partner?{kind:'talk',personId:partner.id,desc:`Speak with ${partner.name} at ${name}.`,text:`${partner.name} supplies a different account of the evidence. ${s.insight}`}:{kind:'inspect',islandId:s.targetId,desc:`Follow the marks around ${name}.`,text:`The shore yields a physical clue. ${s.insight}`};s.steps.splice(s.stepIndex,1,step);s.choices.push({kind:'investigation',value:mode,at:MF.nowReal()});s.history.push({at:MF.nowReal(),text:mode==='witness'?'You decided to seek another account.':'You decided to trust the physical evidence.'});MF.save();MF.hsShowStory(id)};
+
+MF.hsFinish = function hsFinish(s,decision){if(!s||s.status==='completed'||s.reward.claimed)return false;const h=MF.hsState(),isl=MF.getIsland(s.originId),giver=MF.residentById(s.personId),topic=MF.HS_TOPICS[s.theme];if(!isl)return false;
+  if(s.storyVersion>=5)MF.hsSelectFinalReward(s,decision,isl);const r=s.reward;let rewardText='';
+  if(r.type==='chart'&&r.islandId){const target=MF.getIsland(r.islandId);if(target&&target.reservedStoryId===s.id){target.rumoured=true;target.known=false;target.rumourSource=`The final evidence from ${s.title}`;target.rumourFromId=isl.id;target.rumourAt=MF.gameNow();delete target.reservedStoryId;rewardText='A previously uncharted shoreline is now marked on your chart.'}else rewardText='The old chart has been restored to the Tidebook.'}
+  else if(r.type==='blueprint'&&r.templateId){if(!Array.isArray(isl.storyBlueprints))isl.storyBlueprints=[];if(!isl.storyBlueprints.includes(r.templateId))isl.storyBlueprints.push(r.templateId);rewardText=`The islanders can now build ${MF.projectTemplate(r.templateId)?.name||'a distinctive landmark'} at ${isl.name}.`}
+  else if(r.type==='monument'){if(!Array.isArray(isl.storyMonuments))isl.storyMonuments=[];if(!isl.storyMonuments.some(m=>m.id===s.id))isl.storyMonuments.push({id:s.id,name:decision===0?`${topic.name} · working landmark`:`${topic.name} · heritage memorial`,feature:r.feature,variant:decision,spot:MF.hsStorySpot(isl,s),at:MF.nowReal()});rewardText=`A one-off memorial now stands at ${isl.name}.`}
+  else rewardText=`A personal keepsake has been added to the Tidebook.`;
+  // Every outcome has an immediately visible shore trace, in addition to its reserved reward.
+  if(!Array.isArray(isl.storyMonuments))isl.storyMonuments=[];
+  const pendingMonuments=h.items.filter(other=>other.id!==s.id&&other.status!=='completed'&&other.originId===isl.id&&(other.reward?.type==='monument'||other.alternativeReward?.type==='monument')).length;
+  if(s.storyVersion<5&&!isl.storyMonuments.some(m=>m.id===s.id)&&isl.storyMonuments.length+pendingMonuments<4)isl.storyMonuments.push({id:s.id,name:decision===0?`${topic.name} · working landmark`:`${topic.name} · heritage memorial`,feature:r.feature||topic.features[0]||'meadow_green',variant:decision,spot:MF.hsStorySpot(isl,s),at:MF.nowReal(),storyArc:s.arc||'legacy'});
+  r.claimed=true;s.status='completed';s.completedAt=MF.nowReal();s.variant=decision;s.choices.push({kind:'ending',value:decision,at:MF.nowReal()});s.lastNarrative=topic.ending[(Math.abs(s.seed)%topic.ending.length+decision)%topic.ending.length];s.resolution=decision===0?'restored':'preserved';s.history.push({at:MF.nowReal(),text:`${s.lastNarrative} ${rewardText}`,islandId:isl.id});const method=s.approach==='people'?'The people who helped will share the account.':s.approach==='evidence'?'The surviving evidence has been carefully recorded.':'The tale has been entered in the harbour book.';
+  const support=s.optionalEvidence?.length?` ${s.optionalEvidence.length} further observation${s.optionalEvidence.length===1?'':'s'} added detail to the chronicle.`:'';
+  const trace=isl.storyMonuments.some(m=>m.id===s.id);s.outcome=`${rewardText} ${trace?(s.resolution==='restored'?'A working landmark now marks the tale.':'A heritage memorial now protects the old story.'):'The island records preserve the account without crowding the harbour.'} ${method}${support}`;s.stepIndex=s.steps.length;
+  if(!Array.isArray(isl.storyKeepsakes))isl.storyKeepsakes=[];if(!isl.storyKeepsakes.some(k=>k.id===s.id))isl.storyKeepsakes.push({id:s.id,name:`${s.title} · ${giver?.name||'an island friend'}`,text:s.lastNarrative,resolution:s.resolution,at:MF.nowReal()});
+  if(!Array.isArray(isl.notes))isl.notes=[];isl.notes.unshift(`${topic.name}: ${s.lastNarrative} The captain chose to ${s.resolution==='restored'?'restore a useful place for the harbour':'preserve the evidence of the island’s history'}.`);if(isl.notes.length>32)isl.notes.length=32;
+  if(giver){MF.mfAddRelationship(giver,3+(s.optionalEvidence?.length?1:0));const social=MF.mfEnsureSocialData(giver);if(!Array.isArray(social.storyMemories))social.storyMemories=social.storyMemory?[{id:'earlier',text:social.storyMemory}]:[];
+    if(!social.storyMemories.some(m=>m.id===s.id))social.storyMemories.push({id:s.id,at:MF.nowReal(),text:`You followed ${s.title} together. ${s.lastNarrative} You chose to ${decision===0?'restore the working place':'protect its history'}.`,outcome:s.resolution,arc:s.arc||'harbour'});
+    /* Keep the full personal chronicle. */social.storyMemory=social.storyMemories[social.storyMemories.length-1].text;}
+  const partner=MF.residentById(s.partnerId);if(partner&&partner.id!==giver?.id){MF.mfAddRelationship(partner,s.approach==='people'?3:1);const social=MF.mfEnsureSocialData(partner);if(!Array.isArray(social.storyMemories))social.storyMemories=social.storyMemory?[{id:'earlier',text:social.storyMemory}]:[];
+   if(!social.storyMemories.some(m=>m.id===s.id))social.storyMemories.push({id:s.id,at:MF.nowReal(),text:`You helped uncover ${s.title}. The captain chose to ${decision===0?'bring the discovery back into use':'preserve its history'}.`,outcome:s.resolution,arc:s.arc||'harbour'});/* Keep the full personal chronicle. */social.storyMemory=social.storyMemories[social.storyMemories.length-1].text;}
+  if(s.storyVersion>=3)MF.hsApplyLastingChoices(s,decision,isl,giver,partner);if(s.storyVersion>=4)MF.hsApplyMaritimeLegacy(s,decision,isl,giver);if(s.storyVersion>=5)MF.hsApplyFifthLegacy(s,decision,isl,giver,partner);if(s.storyVersion>=6)MF.hsApplyPersonalLegacy(s,decision,isl,giver);
+  if(h.pinnedId===s.id)h.pinnedId=MF.hsOpenStories()[0]?.id||null;MF.state.journal.unshift(`${s.title} completed. ${rewardText}`);MF.save();return true;
+};
+
+MF.hsResolve = function hsResolve(id,decision){const s=MF.hsState().items.find(x=>x.id===id);if(!s||!MF.hsCanAct(s)||MF.hsCurrentStory(s)?.kind!=='resolve'||![0,1].includes(decision))return;MF.hsFinish(s,decision);MF.renderUI();MF.hsShowStory(id)};
+
+MF.hsSetStatus = function hsSetStatus(id,status){const h=MF.hsState(),s=h.items.find(x=>x.id===id);if(!s||s.status==='completed')return;if(status==='active'&&!MF.hsRoom(s.scale,true)){MF.toast('There is room for only two long tales and one shorter tale at a time.');return}s.status=status;if(status==='active'&&MF.state.phase==='ashore'&&!MF.state.anchorage&&MF.state.activeView!=='chart')MF.hsDeliverParcelsAt(MF.currentIsland());if(status==='paused'&&h.pinnedId===id)h.pinnedId=MF.hsOpenStories()[0]?.id||null;MF.save();MF.renderLogPanel();MF.hsShowStory(id)};
+
+MF.hsPin = function hsPin(id){const h=MF.hsState(),s=h.items.find(x=>x.id===id);if(!s||s.status==='completed')return;h.pinnedId=h.pinnedId===id?null:id;MF.save();MF.renderLogPanel();MF.hsShowStory(id)};
+
+MF.hsObjective = function hsObjective(s){if(s.status==='completed')return s.outcome||'This story has reached its conclusion.';const st=MF.hsCurrentStory(s);if(!st)return s.outcome||'This story has reached its conclusion.';const where=MF.getIsland(MF.hsStepLocation(s,st));return `${st.desc}${where?` · ${where.name}`:''}`};
+
+MF.hsRecordOptional = function hsRecordOptional(kind,target,eventId){if(MF.worldSimulating)return;const h=MF.hsState();for(const s of h.items){if(s.status!=='active')continue;if(s.storyVersion>=5)MF.hsRelevantWorldAction(s,kind,target,eventId);if(s.optionalEvidence.length>=3)continue;const key=`optional:${kind}:${eventId}`;if(s.processed.includes(key))continue;const relevant=kind==='find'?['wreck','channel','market','bell'].includes(s.theme):kind==='arcade'?['wreck','channel','birds','beacon'].includes(s.theme):kind==='project'?['craft','garden','beacon','festival'].includes(s.theme):kind==='delivery'?['market','craft','garden'].includes(s.theme):false;if(!relevant)continue;if(kind==='arcade'&&target==='research_cipher'&&MF.hsPassageEligible(s))MF.hsObservePassage(s.id,'survey',false);if(![s.originId,s.targetId].includes(MF.state.currentIslandId)&&kind!=='arcade')continue;s.processed.push(key);const note=kind==='find'?`A recovered ${target||'sea find'} offers an extra trace connected to ${s.noun}.`:kind==='arcade'?`The ${MF.MINIGAME_META[target]?.title||'shipboard activity'} suggested another way to read the signs around ${s.noun}.`:kind==='project'?`Helping complete ${MF.projectTemplate(target)?.name||'a local project'} revealed an unexpected part of the island’s history.`:`Carrying ${target||'a neighbour’s parcel'} provided another name for the harbour records.`;s.optionalEvidence.push(note);s.history.push({at:MF.nowReal(),text:note,islandId:MF.state.currentIslandId});if(s.storyVersion>=2&&MF.hsCurrentStory(s)?.kind==='deduce')s.theoryHint=`A further observation supports this possibility: ${s.insight}`;
+ if(s.storyVersion>=3&&MF.hsCurrentStory(s)?.kind==='scene'){
+   const step=MF.hsCurrentStory(s);step.scene.required=Math.max(1,step.scene.required-1);
+   if(MF.hsSceneReady(s,step))MF.hsAdvance(s,`An observation made during ${kind==='arcade'?'shipboard research':kind==='project'?'the work ashore':'the voyage'} completes the evidence. ${s.insight}`);
+ }
+ }MF.save()};
+
+MF.hsStorySummaryHTML = function hsStorySummaryHTML(s){const stage=MF.hsCurrentStory(s),where=MF.getIsland(stage&&MF.hsStepLocation(s,stage)),person=MF.residentById(s.personId),pin=MF.hsState().pinnedId===s.id;return `<div class="card hs-story-card"><h3>${MF.wikiEsc(s.icon)} ${MF.wikiEsc(s.title)} ${pin?'✦':''}</h3><p>${MF.wikiEsc(person?.name||'An island friend')} · ${MF.wikiEsc(MF.getIsland(s.originId)?.name||'the archipelago')} · ${s.status==='completed'?'Complete':s.status==='paused'?'On hold':`Chapter ${s.stepIndex+1}`}</p><p>${MF.wikiEsc(MF.hsObjective(s))}</p><button class="big-btn ${pin?'secondary':'ghost'}" data-hs-open="${MF.wikiEsc(s.id)}">OPEN STORY</button></div>`};
+
+MF.hsStoriesHTML = function hsStoriesHTML(){const h=MF.hsState(),active=h.items.filter(s=>s.status==='active'),paused=h.items.filter(s=>s.status==='paused'),done=h.items.filter(s=>s.status==='completed').slice().reverse(),offers=h.offers.filter(o=>o.kind==='resident').length;return `<div class="section"><div class="section-title">Stories of the archipelago <span>${active.length} underway</span></div><div class="card"><h3>Your own book of shore tales</h3><p>People occasionally share mysteries and old promises after you make landfall. Stories keep their place while you sail, rest or return another day. No fasting goal or daily deadline is attached.</p><p>${offers?`${offers} unaccepted lead${offers===1?'':'s'} may be waiting in a harbour.`:'The harbours are quiet for now. More conversations may turn up on future visits.'}</p></div></div><div class="section"><div class="section-title">Underway <span>${MF.hsMajorCount()}/2 long · ${MF.hsSmallCount()}/1 short</span></div>${active.map(MF.hsStorySummaryHTML).join('')||'<div class="card"><p>No stories underway. Listen for a neighbour who has something on their mind.</p></div>'}</div><div class="section"><div class="section-title">Laid aside <span>${paused.length}</span></div>${paused.map(MF.hsStorySummaryHTML).join('')||'<p class="muted">Nothing laid aside.</p>'}</div><div class="section"><div class="section-title">Chronicle <span>${done.length}</span></div>${done.map(MF.hsStorySummaryHTML).join('')||'<p class="muted">Completed tales, keepsakes and shore changes will be remembered here.</p>'}</div>`};
+
+MF.hsBindStories = function hsBindStories(){MF.$$('[data-hs-open]').forEach(b=>b.onclick=()=>MF.hsShowStory(b.dataset.hsOpen))};
+
+MF.hsShowStory = function hsShowStory(id){const s=MF.hsState().items.find(x=>x.id===id);if(!s)return;const step=MF.hsCurrentStory(s),where=step?MF.getIsland(MF.hsStepLocation(s,step)):null,giver=MF.residentById(s.personId),local=MF.hsCanAct(s),returnTo=()=>{MF.closeModal();MF.setView('log');MF.fastingLogUI.tab='stories';MF.renderLogPanel()};const clueRows=s.history.map(h=>`<div class="hs-history"><b>${MF.wikiEsc(MF.getIsland(h.islandId)?.name||'At sea')}</b><p>${MF.wikiEsc(h.text)}</p></div>`).join('');
+  const choices=step?.kind==='personal_choice'&&local?MF.hsPersonalHTML(s,step):step?.kind==='commission'&&local?MF.hsCommissionHTML(s,step):step?.kind==='community_work'&&local?MF.hsCommunityWorkHTML(s,step):step?.kind==='story_delivery'&&local?`<div class="hs-exploration"><p>${MF.wikiEsc(s.storyParcel?.label||'The sealed parcel')} is ready for the recipient at this harbour.</p><button class="big-btn secondary" id="hsDeliverParcel">HAND OVER THE PARCEL</button></div>`:step?.kind==='sea_encounter'&&MF.hsPassageEligible(s)?MF.hsSeaEncounterHTML(s,step):step?.kind==='passage'&&MF.hsPassageEligible(s)?`<div class="hs-exploration"><p>The sea watch can be entered in your Tidebook now. You need not remain under way for any extra time.</p><button class="big-btn secondary" id="hsObservePassage">RECORD WATER OBSERVATIONS</button></div>`:step?.kind==='scene'&&local?MF.hsExploreHTML(s,step):step?.kind==='deduce'&&local?`<div class="hs-exploration"><h3>Choose an explanation</h3><p>Compare what you have uncovered. A mistaken guess will not lose the story.</p>${(step.options||[]).map(o=>`<button class="hs-evidence-spot" data-hs-theory="${MF.wikiEsc(o)}">${MF.wikiEsc(o)}</button>`).join('')}${s.theoryHint?`<p class="hs-hint">${MF.wikiEsc(s.theoryHint)}</p>`:''}</div>`:step?.kind==='approach'&&local?`<div class="hs-choice"><button class="big-btn secondary" data-hs-approach="people">ASK THE NEIGHBOURS TO HELP</button><button class="big-btn ghost" data-hs-approach="evidence">FOLLOW THE REMAINING CLUES</button></div><p>The way you proceed will change whom you visit and what you learn next.</p>`:step?.kind==='fork'&&local?`<div class="hs-choice"><button class="big-btn secondary" data-hs-fork="witness">ASK ANOTHER WITNESS</button><button class="big-btn ghost" data-hs-fork="shore">FOLLOW THE PHYSICAL CLUE</button></div>`:step?.kind==='resolve'&&local?`<div class="hs-choice"><button class="big-btn secondary" data-hs-ending="0">${MF.wikiEsc(MF.HS_ENDINGS[s.theme]?.[0]||'RESTORE IT FOR THE HARBOUR')}</button><button class="big-btn ghost" data-hs-ending="1">${MF.wikiEsc(MF.HS_ENDINGS[s.theme]?.[1]||'PRESERVE ITS HISTORY')}</button></div>`:step&&local&&['talk','inspect'].includes(step.kind)?`<button class="big-btn secondary" id="hsDoStep">${step.kind==='talk'?'SPEAK WITH '+MF.wikiEsc(MF.residentById(step.personId)?.name||'THE NEIGHBOUR'):'INVESTIGATE THIS PLACE'}</button>`:step?`<p class="muted">${['passage','sea_encounter'].includes(step.kind)?'Set sail from the marked harbour. The watch can be recorded at any point in the crossing, or automatically when you dock.':step.kind==='arrive'?'Sail to the marked shore and make landfall to continue.':`Next visit: ${MF.wikiEsc(where?.name||'the next harbour')}.`} ${step.kind==='talk'?'Speak with the person when they are ashore.':''}</p>`:'';
+  MF.showModal(`<h2>${MF.wikiEsc(s.icon)} ${MF.wikiEsc(s.title)}</h2><p>${MF.wikiEsc(giver?.name||'An island friend')} · ${MF.wikiEsc(MF.getIsland(s.originId)?.name||'the archipelago')} · ${s.status==='completed'?'Finished':s.status==='paused'?'On hold':`Chapter ${s.stepIndex+1} of ${s.steps.length}`}</p><div class="notice">${MF.wikiEsc(s.opening)} The matter concerns ${MF.wikiEsc(s.noun)}.</div>${s.status==='completed'?`<div class="card"><h3>✓ ${MF.wikiEsc(s.lastNarrative)}</h3><p>${MF.wikiEsc(s.outcome||'A memory has been placed in the Tidebook.')}</p></div>`:`<div class="card"><h3>${s.status==='paused'?'Story laid aside':MF.wikiEsc(step?.desc||'Ready to continue')}</h3><p>${step?.kind==='personal_choice'?'Your friend has a decision to make. Hear them out, then choose together.':['fork','resolve','deduce','approach','commission','community_work','story_delivery'].includes(step?.kind)?MF.wikiEsc(step.text||''):s.status==='paused'?'Your notes are safely kept. You can resume whenever you return.':step?.kind==='scene'?'The scene below holds the clues. Examine the places marked on the illustration.':step?.kind==='sea_encounter'?'Watch the water, inspect two signs, then decide which evidence to bring home.':'The next clue has not been uncovered yet. The details will be entered in your chronicle after you investigate.'}</p>${s.status==='active'?choices:''}</div>`}${s.optionalEvidence?.length?`<div class="card"><h3>Additional observations</h3><p>${s.optionalEvidence.map(MF.wikiEsc).join(' · ')}</p></div>`:''}${s.approach?`<p class="muted">Approach: ${s.approach==='people'?'With the neighbours':'Following the evidence'}.</p>`:''}${s.legacyContext?`<p class="hs-hint">A thread from an earlier friendship: ${MF.wikiEsc(s.legacyContext)}</p>`:''}${s.status==='completed'&&s.storyConsequences?.length?`<div class="card"><h3>What changed here</h3>${s.storyConsequences.map(item=>`<p>${MF.wikiEsc(item)}</p>`).join('')}</div>`:''}${clueRows?`<details class="hs-clues"><summary>WHAT YOU HAVE LEARNED · ${s.history.length} NOTES</summary>${clueRows}</details>`:''}<div class="modal-actions">${s.status!=='completed'?`<button class="big-btn ghost" id="hsPin">${MF.hsState().pinnedId===s.id?'UNPIN':'PIN OBJECTIVE'}</button><button class="big-btn ghost" id="hsHold">${s.status==='paused'?'CONTINUE':'LAY ASIDE'}</button>`:''}<button class="big-btn ghost" id="hsBackStories">BACK TO STORIES</button></div>`);
+  MF.$('#hsDoStep')?.addEventListener('click',()=>MF.hsAct(id));MF.$('#hsObservePassage')?.addEventListener('click',()=>MF.hsObservePassage(id));
+  MF.$$('[data-hs-personal]').forEach(b=>b.onclick=()=>MF.hsChoosePersonal(id,+b.dataset.hsPersonal));MF.$$('[data-hs-commission]').forEach(b=>b.onclick=()=>MF.hsChooseCommission(id,b.dataset.hsCommission));MF.$$('[data-hs-community]').forEach(b=>b.onclick=()=>MF.hsCommunityWork(id,b.dataset.hsCommunity));MF.$('#hsDeliverParcel')?.addEventListener('click',()=>MF.hsDeliverParcel(id));MF.hsBindSeaEncounter(s);
+  MF.$$('[data-hs-theory]').forEach(b=>b.onclick=()=>MF.hsDeduce(id,b.dataset.hsTheory));
+  MF.$$('[data-hs-approach]').forEach(b=>b.onclick=()=>MF.hsChooseApproach(id,b.dataset.hsApproach));
+  if(step?.kind==='personal_choice'&&local)MF.hsAnimateDiorama(s,step,'personal');if(step?.kind==='scene'&&local){MF.hsAnimateDiorama(s,step,'shore');MF.$('#mf39ExploreIsland')?.addEventListener('click',()=>{MF.closeModal();MF.setView('harbour');if(window.matchMedia('(max-width:900px)').matches)MF.toggleMobilePanel(true);MF.toast('Tap the numbered clue markers on the actual island scene.');})}MF.$$('[data-hs-fork]').forEach(b=>b.onclick=()=>MF.hsChooseFork(id,b.dataset.hsFork));MF.$$('[data-hs-ending]').forEach(b=>b.onclick=()=>MF.hsResolve(id,+b.dataset.hsEnding));MF.$('#hsPin')?.addEventListener('click',()=>MF.hsPin(id));MF.$('#hsHold')?.addEventListener('click',()=>MF.hsSetStatus(id,s.status==='active'?'paused':'active'));MF.$('#hsBackStories').onclick=returnTo;
+};
+
+MF.hsResidentStoryHTML = function hsResidentStoryHTML(p){const related=MF.hsOpenStories().filter(s=>{const st=MF.hsCurrentStory(s);return(st?.kind==='talk'&&st.personId===p.id)||(s.storyVersion>=5&&['commission','personal_choice'].includes(st?.kind)&&s.personId===p.id)});return related.length?`<div class="section mf-social-section"><div class="section-title">A story between you</div>${related.map(s=>`<div class="card"><h3>${MF.wikiEsc(s.title)}</h3><p>${MF.wikiEsc(MF.hsObjective(s))}</p><button class="big-btn secondary" data-hs-resident="${MF.wikiEsc(s.id)}">CONTINUE THIS STORY</button></div>`).join('')}</div>`:''};
+
+MF.hsBindResidentStories = function hsBindResidentStories(){MF.$$('[data-hs-resident]').forEach(b=>b.onclick=()=>MF.hsShowStory(b.dataset.hsResident))};
+
+MF.hsPinnedHTML = function hsPinnedHTML(){const h=MF.hsState(),s=h.items.find(x=>x.id===h.pinnedId&&x.status==='active');if(!s)return'';return `<div class="section hs-pinned"><div class="section-title">Pinned story <span>Tidebook</span></div><div class="card"><h3>${MF.wikiEsc(s.title)}</h3><p>${MF.wikiEsc(MF.hsObjective(s))}</p><button class="big-btn ghost" id="hsOpenPinned">OPEN STORY</button></div></div>`};
+
+MF.hsBindPinned = function hsBindPinned(){MF.$('#hsOpenPinned')?.addEventListener('click',()=>{const s=MF.hsState().items.find(x=>x.id===MF.hsState().pinnedId);if(s)MF.hsShowStory(s.id)})};
+
+MF.hsIslandChartHTML = function hsIslandChartHTML(i){const stories=MF.hsState().items.filter(s=>s.status==='active'&&MF.hsStepLocation(s)===i.id);return stories.length?`<div class="card"><h3>Stories to attend to here</h3>${stories.map(s=>`<p>✧ ${MF.wikiEsc(s.title)} — ${MF.wikiEsc(MF.hsCurrentStory(s)?.desc||'')}</p>`).join('')}<p>Make landfall to investigate or speak with islanders.</p></div>`:''};
+
+MF.hsWikiEntries = function hsWikiEntries(){const done=MF.hsState().items.filter(s=>s.status==='completed');return [{id:'harbour-stories',category:'World',icon:'✧',title:'Harbour stories',lore:'A conversation by the quay can reveal old promises, puzzles and a chance to help a neighbour. A tale may unfold across several voyages and lead to a lasting shore change.',use:'New leads appear occasionally when you make landfall. Find the numbered clues on the actual island scene; field notes offer hints but cannot complete the investigation; a major tale may lead to an encounter at sea: inspect floating signs and choose which evidence to follow. The ship’s log records a safe sighting at docking if you prefer not to investigate. Some neighbours may ask you to carry a sealed story parcel, help with a small harbour task or search for another clue; their request always offers another way forward. Their working lives change with the choices you make. Some friends ask which calling they should follow, and a specialist shipboard game may help find clues, though direct observation works just as well. Pause tales at any time. The fasting clock and history remain unchanged.',tags:['neighbours','stories','voyages']},...MF.state.islands.flatMap(isl=>[...(isl.storyCharts||[]),...(isl.storyRelics||[])].map(item=>({id:`sea-record-${item.id}`,category:'Chronicle',icon:'⌁',title:item.name,lore:item.text,use:`Kept at ${isl.name} after a voyage, where the original evidence can still be consulted.`,tags:['stories','sea','evidence']}))),...done.map(s=>({id:`chronicle-${s.id}`,category:'Chronicle',icon:s.icon,title:s.title,lore:s.lastNarrative,use:`${s.outcome} Shared with ${MF.residentById(s.personId)?.name||'an island friend'} at ${MF.getIsland(s.originId)?.name||'the harbour'}.`,tags:['stories','keepsake',s.theme]}))]};
+}
+
+export function init_216() {
+MF.HS_TOPICS = {
+ beacon:{name:'The Forgotten Light',nouns:['the old channel lamp','an abandoned signal fire','the lamp above the reef','the broken harbour beacon'],opening:['A light has been seen where there should be none.','Someone has been repairing a forgotten signal out beyond the shore.','An old beacon has started showing signs of life.'],clue:['a lantern fitting stamped with an old harbour mark','a half-burned page from the signal book','a brass lens ring with a scratched bearing'],insight:['The light was once used to guide boats through a dangerous approach.','The signal belongs to a passage that vanished from newer charts.','The lamp has been kept by someone who remembers a long-ago rescue.'],ending:['The old signal has a purpose again.','The coast has recovered one of its forgotten lights.','The islanders now know whose hands kept the lamp burning.'],biomes:['cliff','dune','pine','marsh'],features:['cliff_beacon','dune_station','pine_watch','dune_shelter'],icon:'✧'},
+ wreck:{name:'A Name in the Wake',nouns:['a weathered nameplate','an unclaimed ship’s log','a splintered figurehead','a battered wreck marker'],opening:['A little piece of a lost vessel has come ashore.','A name on an old boat has stirred up questions in the harbour.','A fragment of an old ship has arrived without its story.'],clue:['a salt-stained logbook leaf','a maker’s mark beneath the varnish','a date hidden behind a brass plate'],insight:['The vessel carried people between two shores long before the present ferry.','The owner was returning something that never reached home.','The missing pages point to a sheltered coast overlooked by recent charts.'],ending:['The boat’s name can be spoken properly again.','A forgotten crossing has found its place in the island’s history.','The crew’s last journey has become a story worth keeping.'],biomes:['meadow','pine','marsh','cliff','orchard','dune'],features:['sea_cave','stream_bridge','dune_station'],icon:'▣'},
+ birds:{name:'The Birds’ Hidden Route',nouns:['an unfamiliar feather','a flock appearing at strange hours','a nest on an empty headland','a seabird carrying coloured thread'],opening:['The shore birds have begun following a route no one understands.','An unusual seabird has returned to the same place for days.','A feather has given the naturalists something to puzzle over.'],clue:['a marked feather caught in the reeds','a tiny ring from a long-ago wildlife survey','a page of observations with one entry missing'],insight:['The birds are travelling between two sheltered feeding grounds.','The missing record identifies a nesting refuge worth protecting.','The flock has been pointing the way to a little-used safe passage.'],ending:['The islanders have a better way to care for the birds.','The flock’s journey is recorded in the Tidebook.','The nesting shore will be watched with new care.'],biomes:['marsh','meadow','orchard','pine','dune','cliff'],features:['marsh_hide','meadow_green','terrace'],icon:'✿'},
+ garden:{name:'The Seeds that Crossed the Sea',nouns:['a little packet of ancient seeds','a flower growing where it should not','a lost orchard cutting','a garden drawn on an old chart'],opening:['Someone has found seeds whose home nobody remembers.','An old gardener’s notes describe a flower missing from the island.','A stubborn little plant has revived a forgotten promise.'],clue:['a faded drawing of the first garden','a labelled seed packet with a torn corner','a note about the soil on a distant shore'],insight:['The plant belonged to a garden shared by two island families.','A long-neglected terrace could shelter the seeds again.','The flower came from a neighbour who hoped the two harbours would stay friends.'],ending:['A living reminder now grows where the islanders can see it.','The old garden has begun another season.','Two shores have exchanged a little piece of home.'],biomes:['meadow','orchard','pine','marsh','dune'],features:['terrace','meadow_green','orchard_press'],icon:'✿'},
+ channel:{name:'The Crooked Sounding',nouns:['a tide mark on a stone','a contradictory pair of charts','an unusually deep channel','a missing navigation buoy'],opening:['Two familiar charts disagree about the water outside the bay.','The harbour soundings have begun telling an odd story.','A marker has drifted from the passage everyone thought was safe.'],clue:['a sounding line with an unfamiliar mark','a tide-table correction in a margin','an old surveyor’s sketch'],insight:['The approach changes with the tide and has been misunderstood for years.','A forgotten survey marked the safest water further along the coast.','Two surveyors recorded different seasons and were both partly right.'],ending:['The channel has a reliable place on the chart.','The harbour can pass on a more careful account of its water.','An uncertain sounding has become a useful discovery.'],biomes:['marsh','dune','cliff','pine','meadow'],features:['reed_boardwalk','cliff_beacon','stream_bridge'],icon:'⌁'},
+ craft:{name:'The Unfinished Promise',nouns:['an unfinished figurehead','a broken winch with a name scratched beneath it','a peculiar timber joint','an old shipwright’s pattern'],opening:['A small piece of work has outlived the person who began it.','A shipwright’s unfinished design has turned up in the stores.','A strange fitting has brought back a promise nobody quite recalls.'],clue:['a folded measurement tucked under a workbench','a maker’s mark copied into a ledger','a pencilled plan with one dimension missing'],insight:['The design was intended as a gift to another harbour.','The old pattern was for something the island still needs.','The maker left instructions for whoever chose to finish the work.'],ending:['The promise has finally been honoured.','An old design has become useful again.','A piece of local craftsmanship has found its proper home.'],biomes:['pine','meadow','orchard','cliff','dune','marsh'],features:['timber_shed','pine_watch','orchard_press'],icon:'⚒'},
+ bell:{name:'The Bell Beneath the Tide',nouns:['a missing harbour bell','a curious ringing after dusk','a cracked bronze inscription','a bell rope found in a sea cave'],opening:['The harbour has heard a bell that no one has rung.','An old bell has left a mystery among the quay stones.','A familiar sound is coming from the wrong end of the bay.'],clue:['a bell-maker’s rubbing','a rope end tied in an unfamiliar knot','a bronze fragment bearing a date'],insight:['The bell commemorated an act of kindness between two crews.','A bell was hidden to keep it safe during a great storm.','The sound belongs to a signal that warned boats away from the reef.'],ending:['The bell’s true story can be heard around the harbour.','The old signal has become a memorial to its keepers.','The island has reclaimed a piece of its voice.'],biomes:['cliff','marsh','dune','meadow','pine','orchard'],features:['cliff_beacon','sea_cave','meadow_green'],icon:'♬'},
+ market:{name:'The Harbour Ledger',nouns:['a parcel without a recipient','a missing page of a trading ledger','a sealed package marked for an old quay','a strange mark on a trader’s map'],opening:['A trader has a parcel nobody knows how to deliver.','A missing ledger page has left two neighbours with different stories.','An old harbour mark has turned up on a very ordinary package.'],clue:['an old manifest with one line crossed out','a receipt tucked inside a chart case','a stamp belonging to a long-closed market'],insight:['The parcel was meant to unite two families after a disagreement.','The records identify a neighbour who quietly kept the old trade route alive.','The last entry describes a shore removed from the official chart.'],ending:['The parcel has reached the end of its long journey.','The traders have put an old misunderstanding right.','The harbour has a new reason to remember its neighbours.'],biomes:['meadow','orchard','pine','marsh','cliff','dune'],features:['orchard_press','timber_shed','dune_station'],icon:'▤'},
+ lantern:{name:'The Evening Watch',nouns:['a watchkeeper’s empty chair','a lantern left burning by the pier','a missing record from the night watch','an old lookout’s flag'],opening:['The night watch has noticed someone tending an empty lookout.','The harbour lantern has been lit at odd hours.','An old watchkeeper’s record has turned up with its final page missing.'],clue:['a watch rota with one name repeated','a tiny flag folded into a logbook','a note about a particularly dark crossing'],insight:['A neighbour kept watch after everyone else had given up.','The lookout was once shared by crews from different islands.','The strange light marks an old rescue route.'],ending:['The evening watch has a place in the harbour’s memory.','A forgotten keeper has been thanked at last.','The lantern now shines for a reason everyone understands.'],biomes:['cliff','pine','dune','meadow','marsh','orchard'],features:['pine_watch','dune_station','cliff_beacon'],icon:'✧'},
+ festival:{name:'The Lost Harbour Day',nouns:['a forgotten festival pennant','a photograph of a crowded jetty','a box of old celebration ribbons','a tune nobody remembers finishing'],opening:['A little festival keeps turning up in the oldest harbour tales.','Someone has found decorations from a day nobody now celebrates.','An old song has brought back talk of an island gathering.'],clue:['a list of names beneath a faded banner','a sketch of the gathering place','an invitation addressed to a long-absent neighbour'],insight:['The celebration began after an ordinary but remarkable act of help.','The festival was shared across two islands rather than held in one harbour.','The day honoured a person whose name has nearly disappeared.'],ending:['The island has found a reason to gather again.','The forgotten day now has a small place in the harbour.','An old celebration has been passed to a new generation.'],biomes:['meadow','orchard','pine','marsh','cliff','dune'],features:['meadow_green','dune_shelter','reed_boardwalk'],icon:'⚑'}
+};
+}
+
+export function init_217() {
+MF.HS_STORY_BLUEPRINTS = [
+ {id:'story_meadow_archive',name:'Willow Story House',desc:'A small house for letters, charts and old meadow memories.',biomes:['meadow'],feature:'story_meadow_archive',draw:'map_room',req:{timber:3,glass:2,cloth:1}},
+ {id:'story_pine_gantry',name:'Cedar Signal House',desc:'A sheltered lookout rebuilt from an old woodland signal plan.',biomes:['pine'],feature:'story_pine_gantry',draw:'observatory',req:{timber:4,glass:1,hardware:1}},
+ {id:'story_marsh_hide',name:'Tidal Field Station',desc:'A dry refuge where the heron-watchers keep their notebooks.',biomes:['marsh'],feature:'story_marsh_hide',draw:'tea',req:{timber:3,cloth:2,glass:1}},
+ {id:'story_cliff_archive',name:'Clifftop Records Room',desc:'A stone room for the charts and logbooks recovered along the cliffs.',biomes:['cliff'],feature:'story_cliff_archive',draw:'observatory',req:{stone:4,glass:2}},
+ {id:'story_orchard_room',name:'Orchard Memory Room',desc:'A friendly gathering house for the stories kept beneath the fruit trees.',biomes:['orchard'],feature:'story_orchard_room',draw:'tea',req:{timber:3,seeds:2,cloth:1}},
+ {id:'story_dune_marker',name:'Sandbar Watch Hut',desc:'A weather-tight signal cabin looking over the shallow lagoon.',biomes:['dune'],feature:'story_dune_marker',draw:'map_room',req:{timber:3,cloth:2,brass:1}}
+].map(t=>({...t,pop:1,sites:['harbour','village','hill','meadow'],storyOnly:true,effects:[{type:'feature',feature:t.feature}]}));
+}
+
+export function init_218() {
+MF.HS_STORY_BLUEPRINTS.forEach(t=>{if(!MF.PROJECT_TEMPLATES.some(p=>p.id===t.id))MF.PROJECT_TEMPLATES.push(t)});;
+}
+
+export function init_219() {
+MF.HS_FIELD_BEATS = {
+ beacon:[
+  ['Follow the old lamp brackets along the quay at {place}.','Behind a rusted bracket, the salt has spared an older maker’s mark.'],
+  ['Examine the soot on the stonework near {place}.','Two different layers of soot show that the light was tended years apart.'],
+  ['Look for the original line of sight above {place}.','A clear gap between the headlands points towards the lamp’s intended approach.']
+ ],
+ wreck:[
+  ['Search the tide line at {place} for a matching piece of the vessel.','A splinter fits the broken edge and confirms which side of the ship faced the sea.'],
+  ['Check the old mooring rings around {place}.','A ring bears the same worn initials as the recovered timber.'],
+  ['Compare the nameplate with the older harbour records at {place}.','A name scratched beneath the paint links the fragment to another crossing.']
+ ],
+ birds:[
+  ['Watch the flight line over {place} without disturbing the nesting birds.','The flock turns at the same shallow water on every pass.'],
+  ['Look for discarded nesting material around {place}.','Several strands have been carried from a shore farther along the route.'],
+  ['Match the feather markings to the old field notes at {place}.','The feather belongs to a bird previously recorded on a very different coast.']
+ ],
+ garden:[
+  ['Compare the soil and planting beds at {place}.','A sheltered patch matches the gardener’s faded instructions.'],
+  ['Examine the old stone edging at {place}.','The stones conceal a planting mark left by the first gardeners.'],
+  ['Search for a matching seed label in the stores at {place}.','A small label carries the name of someone from another harbour.']
+ ],
+ channel:[
+  ['Compare the tide marks on both sides of the quay at {place}.','The marks belong to two different tides; neither original sounding was entirely wrong.'],
+  ['Check the oldest depth marks near {place}.','The worn marks trace a safe route that later charts simplified.'],
+  ['Look for the missing buoy chain along the stones at {place}.','Its anchor was set farther from the reef than the current charts suggest.']
+ ],
+ craft:[
+  ['Compare timber joints in the working sheds at {place}.','One unusual joint matches the unfinished drawing exactly.'],
+  ['Search the boatbuilder’s old pattern books at {place}.','A pencilled note explains who was intended to receive the finished work.'],
+  ['Examine the worn fittings in the stores at {place}.','The fitting’s marks line up with the dimensions of the missing piece.']
+ ],
+ bell:[
+  ['Follow the sound along the sheltered walls at {place}.','The echoes meet beside a stone with an old bronze fixing.'],
+  ['Inspect the rope marks along the harbour steps at {place}.','A faded knot mark matches an illustration in the old bell-maker’s book.'],
+  ['Compare the worn bronze marks at {place}.','The marks were made by a bell moved for safekeeping, not by ordinary harbour work.']
+ ],
+ market:[
+  ['Compare the old quay stamps on the surviving records at {place}.','The same tiny mark joins two apparently unrelated shipments.'],
+  ['Look for the old receiving desk around {place}.','An overlooked drawer contains a receipt with a second destination.'],
+  ['Check the oldest market weights in the stores at {place}.','One weight carries a trading mark that belongs to a neighbouring harbour.']
+ ],
+ lantern:[
+  ['Check the watchkeeper’s sightline from {place}.','The empty lookout still faces the route used by returning crews.'],
+  ['Compare the old watch times recorded at {place}.','Several entries were made on nights when a vessel was late home.'],
+  ['Look beneath the lantern housing at {place}.','A quiet repair was made by someone who never signed the official watch book.']
+ ],
+ festival:[
+  ['Compare the old decorations in the hall at {place}.','The colours belong to two communities, not one.'],
+  ['Search the gathering ground at {place} for a memorial mark.','A worn stone bears the date of an unexpected harbour rescue.'],
+  ['Look through the oldest invitations kept at {place}.','One invitation was addressed to a neighbour from across the channel.']
+ ]
+};
+}
+
+export function init_220() {
+MF.HS_NEWS = [
+ 'The tide has been running strangely along the far side of the bay. Nothing dangerous, just something to keep an eye on.',
+ 'An old fishing boat passed at dawn with a deck full of sleepy gulls. No one knows why they all chose the same boat.',
+ 'The last squall left fresh shells along the shore. The children have been comparing the colours.',
+ 'Two working boats exchanged a wave at the outer buoy; neither crew seemed in a hurry to get home.',
+ 'Someone has been polishing the little harbour lantern. It has looked cheerful every evening since.',
+ 'A school of fish gathered beneath the jetty just before sunrise. The fishers are still debating what brought them in.'
+];
+}
+
+export function init_221() {
+MF.hsMonumentCache = new Map();
+}

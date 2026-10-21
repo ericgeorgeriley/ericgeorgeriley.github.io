@@ -1,0 +1,21 @@
+  :root{
+    --ink:#18313a;
+    --ink-soft:#42616a;
+    --paper:#fff7de;
+    --paper-2:#f2e7c5;
+    --cream:#fffdf1;
+    --sea:#65bdd1;
+    --sea-dark:#2d7e9a;
+    --sea-deep:#1d5d7a;
+    --sky:#9bd8e2;
+    --grass:#83bf6a;
+    --grass-dark:#4f8b56;
+    --sand:#e7ce82;
+    --wood:#a86d45;
+    --wood-dark:#704630;
+    --coral:#df7c68;
+    --gold:#e5b54e;
+    --red:#c55c57;
+    --shadow:rgba(20,47,56,.18);
+    --pixel: 2px;
+  }

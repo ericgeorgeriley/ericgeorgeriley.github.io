@@ -1,0 +1,34 @@
+/* Resident relationships, trades and favours */
+.resident .item-hint{white-space:normal;line-height:1.3}
+.mf-social-section{margin-top:12px}
+.mf-social-card{background:#e8f5ed;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow);margin:9px 0 12px}
+.mf-social-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mf-social-head b{font-size:10px}.mf-social-head span{font-size:8px;color:var(--ink-soft);font-weight:900;text-align:right}
+.mf-social-card p{font-size:8px;line-height:1.4;color:var(--ink-soft);margin:6px 0 0}
+.mf-bond-meter{height:10px;border:2px solid var(--ink);background:#fff;border-radius:5px;overflow:hidden;margin-top:6px}
+.mf-bond-meter i{display:block;height:100%;background:var(--grass);width:0;transition:width .3s}
+.mf-trade-list{display:grid;gap:6px}
+.mf-trade-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:7px;padding:7px}
+.mf-trade-row b{font-size:9px;display:block}.mf-trade-row span{font-size:8px;color:var(--ink-soft);line-height:1.35;display:block;margin-top:2px}
+.mf-trade-row span strong{color:var(--sea-dark)}.mf-trade-row small{display:block;margin-top:3px;color:var(--sea-dark);font-size:7px;font-weight:900}
+.mf-trade-row button{border:2px solid var(--ink);background:var(--sea);border-radius:6px;padding:7px 8px;font-size:8px;font-weight:1000;cursor:pointer;min-width:72px}
+.mf-trade-row button:disabled{display:none!important}
+.mf-trade-row.locked{background:#f3ecd5;border-style:dashed}.mf-trade-row.locked b,.mf-trade-row.locked span{opacity:.66}.mf-lock{font-size:7px!important;font-weight:1000!important;color:var(--ink-soft)!important;margin:0!important}
+.mf-favour-card{background:#fff0ce;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow)}
+.mf-favour-card h3{font-size:10px;margin:0 0 4px}.mf-favour-card p{font-size:8px;line-height:1.4;color:var(--ink-soft);margin:0 0 7px}
+.mf-favour-bundles{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 8px}
+.mf-favour-bundles span{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:6px;font-size:7px;line-height:1.4;color:var(--ink-soft)}
+.mf-favour-bundles b{display:block;font-size:7px;color:var(--ink);text-transform:uppercase;margin-bottom:2px}
+.mf-journey-favour{margin:9px 0 12px}
+.card.danger{background:#f8e2da}
+@media (max-width:520px){.mf-favour-bundles{grid-template-columns:1fr}.mf-trade-row{grid-template-columns:1fr}.mf-trade-row button{width:100%}}
+
+
+/* Resident memories, errands and arrival recap */
+.mf-heart-row{display:flex;gap:5px;margin-top:7px}.mf-heart-row i{font-style:normal;font-size:13px;line-height:1;color:#c6bfa6;text-shadow:1px 1px 0 rgba(24,49,58,.12)}.mf-heart-row i.on{color:var(--coral)}
+.mf-keepsake{margin-top:8px;background:#fff;border:2px dashed var(--ink);border-radius:6px;padding:7px;font-size:7px;line-height:1.45;color:var(--ink-soft)}.mf-keepsake b{display:block;color:var(--ink);font-size:7px;text-transform:uppercase;margin-bottom:2px}
+.mf-memory{background:#fff;border-left:4px solid var(--sea-dark);border-radius:5px;padding:7px 8px;margin:8px 0;font-size:8px;line-height:1.45;color:var(--ink-soft)}.mf-memory b{display:block;color:var(--ink);font-size:7px;text-transform:uppercase;margin-bottom:2px}
+.mf-errand-card{background:#eef7f4;border:3px solid var(--ink);border-radius:8px;padding:9px;box-shadow:3px 3px 0 var(--shadow)}.mf-errand-card h3{font-size:10px;margin:0 0 4px}.mf-errand-card p{font-size:8px;line-height:1.45;color:var(--ink-soft);margin:0 0 8px}
+.mf-manifest-list{display:grid;gap:6px}.mf-manifest-card{background:#fff;border:2px solid var(--ink);border-radius:7px;padding:8px;box-shadow:2px 2px 0 var(--shadow)}.mf-manifest-card h3{font-size:9px;margin:0 0 4px}.mf-manifest-card p{font-size:7px;line-height:1.45;color:var(--ink-soft);margin:0}.mf-manifest-route{display:inline-block;margin-top:5px;border:1px solid rgba(24,49,58,.45);border-radius:999px;padding:2px 5px;font-size:6px;font-weight:1000;color:var(--sea-dark);background:#eef7f4}
+.mf-homecoming-list{display:grid;gap:6px;margin:10px 0}.mf-homecoming-item{display:grid;grid-template-columns:28px 1fr;gap:7px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:7px;padding:7px}.mf-homecoming-item i{font-style:normal;width:28px;height:28px;display:grid;place-items:center;background:#e8f5ed;border:2px solid var(--ink);border-radius:5px;font-size:13px}.mf-homecoming-item span{font-size:8px;line-height:1.4;color:var(--ink-soft)}
+

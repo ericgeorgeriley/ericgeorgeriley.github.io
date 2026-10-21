@@ -1,0 +1,16 @@
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#173a4a;color:var(--ink);font-family:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;overflow:hidden}
+  button,input,select,textarea{font:inherit}
+  button{touch-action:manipulation}
+  .app{height:100%;display:grid;grid-template-rows:auto 1fr auto;background:linear-gradient(#d8f3ea 0,#d8f3ea 48%,#9bd8e2 48%,#9bd8e2 100%)}
+  .topbar{display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--paper);border-bottom:4px solid var(--ink);box-shadow:0 4px 0 var(--shadow);z-index:10;min-height:70px}
+  .brand{display:flex;align-items:center;gap:10px;min-width:190px}
+  .brandmark{width:43px;height:43px;display:block;flex:0 0 43px;filter:drop-shadow(3px 3px 0 var(--wood-dark));overflow:visible}
+  .brand h1{font-size:18px;line-height:1;margin:0;letter-spacing:-1px;display:flex;align-items:baseline;gap:6px}.version-tag{font-size:7px;letter-spacing:0;color:var(--ink-soft);font-weight:900;border:1px solid rgba(24,49,58,.35);border-radius:4px;padding:2px 4px;background:rgba(255,255,255,.48);vertical-align:middle}.brand small{display:block;color:var(--ink-soft);font-size:9px;margin-top:4px}
+  .phase-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:3px solid var(--ink);border-radius:8px;box-shadow:3px 3px 0 var(--shadow);min-width:145px}
+  .phase-dot{width:11px;height:11px;border:2px solid var(--ink);background:var(--grass);box-shadow:2px 2px 0 var(--shadow)}
+  .phase-chip.sea .phase-dot{background:var(--sea)}
+  .phase-chip.arrived .phase-dot{background:var(--gold)}
+  .phase-chip b{display:block;font-size:11px}.phase-chip span{display:block;font-size:9px;color:var(--ink-soft);margin-top:2px}
+  .timerbox{margin-left:auto;text-align:right;min-width:185px}.timerbox .timer{font-weight:900;font-size:23px;letter-spacing:-1px}.timerbox .sub{font-size:9px;color:var(--ink-soft);margin-top:2px}
+  .tiny-btn{border:3px solid var(--ink);background:var(--cream);color:var(--ink);padding:8px 10px;border-radius:7px;box-shadow:3px 3px 0 var(--shadow);font-weight:800;font-size:10px;cursor:pointer}.tiny-btn:hover{transform:translateY(-1px)}.tiny-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}.quick-action{min-width:92px;background:var(--grass);white-space:nowrap}.quick-action.eat{background:var(--gold)}.quick-action.at-sea{background:#d9eef2}.quick-action:focus-visible{outline:3px solid #fff;outline-offset:2px}

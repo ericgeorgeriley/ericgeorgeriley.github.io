@@ -1,0 +1,11 @@
+
+/* Harbour Stories VII — deliberate pacing, stable chapter sheets and explicit confirmation. */
+.hs-current,.hs-beat,.hs-confirm{border:3px solid #31545d;border-radius:8px;padding:11px;margin:10px 0;background:#fff7df;box-shadow:3px 3px 0 rgba(24,49,58,.14)}
+.hs-beat{background:#edf5df;border-color:#557963}.hs-confirm{background:#fff0ce;border-color:#8b633f}
+.hs-beat-kicker{font-size:8px;font-weight:1000;letter-spacing:.08em;color:#55736e;margin-bottom:5px}.hs-current h3,.hs-beat h3,.hs-confirm h3{font-size:12px;margin:0 0 5px}.hs-current>p,.hs-beat>p,.hs-confirm>p{margin:4px 0 9px}
+.hs-next{display:grid;grid-template-columns:54px 1fr;gap:7px;background:#fff;border:2px solid #80968a;border-radius:6px;padding:8px;margin:9px 0}.hs-next b{font-size:8px;text-transform:uppercase}.hs-next span{font-size:9px;line-height:1.4}
+.hs-premise{border:2px solid #83958c;border-radius:7px;padding:8px;margin:8px 0;background:#f2ecd7}.hs-premise summary{cursor:pointer;font-weight:900;font-size:9px}.hs-premise p{margin:7px 0 0}
+.hs-ending-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hs-ending-card{display:flex;flex-direction:column;gap:5px;text-align:left;background:#fff9e9;color:#254349;border:3px solid #627f76;border-radius:8px;padding:10px;cursor:pointer;white-space:normal}.hs-ending-card b{font-size:10px}.hs-ending-card span{font-size:9px;line-height:1.45;font-weight:normal}
+.hs-waiting{display:flex;flex-direction:column;gap:4px;background:#eef4ee;border:2px dashed #6b8980;border-radius:7px;padding:9px}.hs-waiting b{font-size:9px}.hs-waiting span{font-size:9px;line-height:1.4}
+#hsSceneConclude{width:100%;margin-top:9px}.hs-evidence-spot.found{transform:none!important}.hs-evidence-spot{transition:background .12s,border-color .12s}
+@media(max-width:520px){.hs-ending-grid{grid-template-columns:1fr}.hs-current,.hs-beat,.hs-confirm{padding:9px}.hs-next{grid-template-columns:1fr}}

@@ -1,0 +1,10 @@
+
+/* Illustrated Harbour Stories: pixel previews share the live sprite cache and respect reduced motion. */
+#hsPersonalPortrait,#hsWorkPortrait{display:block;width:100%;height:auto;max-height:160px;object-fit:contain;image-rendering:pixelated;background:#b2cebd;border:3px solid #23454f;border-radius:7px;margin:7px 0 10px}
+#hsSceneCanvas,#hsSeaCanvas{max-height:none;object-fit:contain;aspect-ratio:560/188}
+#hsSeaCanvas{aspect-ratio:560/174}
+.hs-exploration{overflow:hidden}.hs-evidence-spot:focus-visible{outline:3px solid #c87952;outline-offset:2px}
+@media(max-width:520px){#hsPersonalPortrait{max-height:118px}.hs-sea-encounter .hs-evidence-grid{grid-template-columns:1fr}.hs-exploration{padding:8px}.hs-scene-legend{font-size:9px;padding:6px 2px}}
+/* Harbour Stories: compact, accessible field-guide layouts. */
+.hs-story-card{margin:8px 0;border-left:5px solid #588a78}.hs-story-card h3{margin:0 0 5px}.hs-pinned .card{border-left:5px solid #e1b45b}.hs-clues{margin:10px 0;padding:10px;border:2px solid #45646a;border-radius:7px;background:#f5f0dc}.hs-clues summary{cursor:pointer;font-weight:900;font-size:10px}.hs-social-fold{margin:9px 0;border:2px solid #42676b;background:#f4ecd6;border-radius:8px;padding:8px}.hs-social-fold summary{cursor:pointer;font-weight:900;font-size:10px;letter-spacing:.025em}.hs-social-fold[open] summary{margin-bottom:9px}.hs-history{padding:8px 2px;border-bottom:1px solid #c5cbb9}.hs-history p{margin:4px 0 0}.hs-choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:7px;margin:9px 0}.hs-choice .big-btn{white-space:normal;min-height:44px}.hs-story-card .big-btn{margin-top:5px}
+@media(max-width:520px){.hs-choice{grid-template-columns:1fr}.hs-story-card{padding:12px}.log-tabs{flex-wrap:wrap}.hs-commission .hs-evidence-grid{grid-template-columns:1fr}.hs-commission .hs-evidence-spot{padding:9px;font-size:11px}.hs-commission .hs-evidence-spot span{font-size:10px}}
