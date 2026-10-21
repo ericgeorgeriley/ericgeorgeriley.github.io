@@ -1,0 +1,459 @@
+{
+  "source": "MakeFast_Browser_Game_v0.41.7_full_code(2).txt",
+  "globalBindings": 1562,
+  "moduleCount": 89,
+  "initializers": 439,
+  "metrics": {
+    "totalReferences": 14395,
+    "replaced": 14270,
+    "shadowed": 125,
+    "unresolved": 0
+  },
+  "modules": [
+    {
+      "file": "core/foundations.js",
+      "fnCount": 5,
+      "initCount": 19
+    },
+    {
+      "file": "weather/forecast.js",
+      "fnCount": 16,
+      "initCount": 2
+    },
+    {
+      "file": "content/database.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/catalogues.js",
+      "fnCount": 14,
+      "initCount": 24
+    },
+    {
+      "file": "world/island-geography.js",
+      "fnCount": 69,
+      "initCount": 5
+    },
+    {
+      "file": "world/working-vessels.js",
+      "fnCount": 13,
+      "initCount": 5
+    },
+    {
+      "file": "boats/player-boat.js",
+      "fnCount": 6,
+      "initCount": 0
+    },
+    {
+      "file": "state/persistence.js",
+      "fnCount": 4,
+      "initCount": 2
+    },
+    {
+      "file": "audio/adaptive-music.js",
+      "fnCount": 44,
+      "initCount": 28
+    },
+    {
+      "file": "world/simulation.js",
+      "fnCount": 30,
+      "initCount": 1
+    },
+    {
+      "file": "fasting/sessions.js",
+      "fnCount": 24,
+      "initCount": 0
+    },
+    {
+      "file": "tidebook/history-wiki.js",
+      "fnCount": 59,
+      "initCount": 3
+    },
+    {
+      "file": "voyage/navigation.js",
+      "fnCount": 45,
+      "initCount": 2
+    },
+    {
+      "file": "voyage/encounters.js",
+      "fnCount": 10,
+      "initCount": 0
+    },
+    {
+      "file": "ui/panels.js",
+      "fnCount": 75,
+      "initCount": 2
+    },
+    {
+      "file": "ui/panels/harbour.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "ui/panels/voyage.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "ui/panels/chart.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "ui/panels/tidebook.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "ui/panels/settings.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "ui/input.js",
+      "fnCount": 19,
+      "initCount": 6
+    },
+    {
+      "file": "render/sprites/boats.js",
+      "fnCount": 31,
+      "initCount": 2
+    },
+    {
+      "file": "render/world-scene.js",
+      "fnCount": 57,
+      "initCount": 9
+    },
+    {
+      "file": "render/sprites/sprite-utils.js",
+      "fnCount": 3,
+      "initCount": 0
+    },
+    {
+      "file": "render/sprites/props.js",
+      "fnCount": 3,
+      "initCount": 0
+    },
+    {
+      "file": "render/sprites/buildings.js",
+      "fnCount": 2,
+      "initCount": 0
+    },
+    {
+      "file": "render/sprites/residents.js",
+      "fnCount": 4,
+      "initCount": 0
+    },
+    {
+      "file": "render/sprites/sea-life.js",
+      "fnCount": 2,
+      "initCount": 0
+    },
+    {
+      "file": "render/sprites/terrain.js",
+      "fnCount": 4,
+      "initCount": 0
+    },
+    {
+      "file": "render/voyage-scene.js",
+      "fnCount": 22,
+      "initCount": 6
+    },
+    {
+      "file": "render/chart.js",
+      "fnCount": 5,
+      "initCount": 0
+    },
+    {
+      "file": "render/canvas.js",
+      "fnCount": 22,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/tug-dock.js",
+      "fnCount": 13,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/games/sub-depth.js",
+      "fnCount": 9,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/core/rounds.js",
+      "fnCount": 18,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/games/pilot-transfer.js",
+      "fnCount": 7,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/games/ferry-lines.js",
+      "fnCount": 27,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/barge-balance.js",
+      "fnCount": 19,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/ferry-bags.js",
+      "fnCount": 11,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/steam-route.js",
+      "fnCount": 22,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/games/container-crane.js",
+      "fnCount": 14,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/container-stack.js",
+      "fnCount": 16,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/cargo-tetris.js",
+      "fnCount": 33,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/trawler-sort.js",
+      "fnCount": 13,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/ferry-galley.js",
+      "fnCount": 24,
+      "initCount": 4
+    },
+    {
+      "file": "arcade/games/yacht-trim.js",
+      "fnCount": 16,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/games/trawler-net.js",
+      "fnCount": 7,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/games/speedboat-slalom.js",
+      "fnCount": 37,
+      "initCount": 8
+    },
+    {
+      "file": "arcade/games/seabed-cipher.js",
+      "fnCount": 24,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/tanker-channel.js",
+      "fnCount": 2,
+      "initCount": 0
+    },
+    {
+      "file": "arcade/games/cattleships.js",
+      "fnCount": 32,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/tallship-rigging.js",
+      "fnCount": 12,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/carrier-landing.js",
+      "fnCount": 9,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/poop-deck.js",
+      "fnCount": 7,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/engine-telegraph.js",
+      "fnCount": 14,
+      "initCount": 2
+    },
+    {
+      "file": "arcade/core/runtime.js",
+      "fnCount": 11,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/rescue-throw.js",
+      "fnCount": 15,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/dredger-scoop.js",
+      "fnCount": 5,
+      "initCount": 1
+    },
+    {
+      "file": "arcade/games/puffer-pinball.js",
+      "fnCount": 36,
+      "initCount": 3
+    },
+    {
+      "file": "arcade/core/dispatcher.js",
+      "fnCount": 5,
+      "initCount": 5
+    },
+    {
+      "file": "arcade/core/shell.js",
+      "fnCount": 8,
+      "initCount": 1
+    },
+    {
+      "file": "render/animation.js",
+      "fnCount": 8,
+      "initCount": 9
+    },
+    {
+      "file": "world/social.js",
+      "fnCount": 47,
+      "initCount": 11
+    },
+    {
+      "file": "stories/harbour-stories.js",
+      "fnCount": 44,
+      "initCount": 6
+    },
+    {
+      "file": "stories/chapters-ii.js",
+      "fnCount": 13,
+      "initCount": 4
+    },
+    {
+      "file": "stories/chapters-iii.js",
+      "fnCount": 12,
+      "initCount": 7
+    },
+    {
+      "file": "stories/chapters-iv.js",
+      "fnCount": 19,
+      "initCount": 4
+    },
+    {
+      "file": "stories/chapters-v.js",
+      "fnCount": 14,
+      "initCount": 1
+    },
+    {
+      "file": "stories/chapters-vi.js",
+      "fnCount": 9,
+      "initCount": 3
+    },
+    {
+      "file": "stories/chapters-vii.js",
+      "fnCount": 12,
+      "initCount": 33
+    },
+    {
+      "file": "world/island-life.js",
+      "fnCount": 35,
+      "initCount": 9
+    },
+    {
+      "file": "render/sprites/animals.js",
+      "fnCount": 1,
+      "initCount": 0
+    },
+    {
+      "file": "voyage/stowaways.js",
+      "fnCount": 3,
+      "initCount": 42
+    },
+    {
+      "file": "world/materials-economy.js",
+      "fnCount": 5,
+      "initCount": 18
+    },
+    {
+      "file": "world/people-trades.js",
+      "fnCount": 30,
+      "initCount": 54
+    },
+    {
+      "file": "world/character-depth.js",
+      "fnCount": 7,
+      "initCount": 12
+    },
+    {
+      "file": "voyage/stowaway-provenance.js",
+      "fnCount": 1,
+      "initCount": 9
+    },
+    {
+      "file": "stories/story-fixes.js",
+      "fnCount": 1,
+      "initCount": 5
+    },
+    {
+      "file": "core/bootstrap-final.js",
+      "fnCount": 0,
+      "initCount": 16
+    },
+    {
+      "file": "content/ratios.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/boats.js",
+      "fnCount": 0,
+      "initCount": 4
+    },
+    {
+      "file": "content/residents.js",
+      "fnCount": 0,
+      "initCount": 3
+    },
+    {
+      "file": "content/biomes.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/discoveries.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/materials.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/projects.js",
+      "fnCount": 0,
+      "initCount": 3
+    },
+    {
+      "file": "content/minigames.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/encounters.js",
+      "fnCount": 0,
+      "initCount": 1
+    },
+    {
+      "file": "content/dialogue.js",
+      "fnCount": 0,
+      "initCount": 1
+    }
+  ]
+}

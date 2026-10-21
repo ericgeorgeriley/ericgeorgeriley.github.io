@@ -1,1 +1,92 @@
-hi
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>MakeFast</title>
+
+
+
+
+<link rel="stylesheet" href="./src/styles/tokens.css" />
+<link rel="stylesheet" href="./src/styles/base.css" />
+<link rel="stylesheet" href="./src/styles/layout.css" />
+<link rel="stylesheet" href="./src/styles/panels.css" />
+<link rel="stylesheet" href="./src/styles/arcade.css" />
+<link rel="stylesheet" href="./src/styles/navigation.css" />
+<link rel="stylesheet" href="./src/styles/tidebook.css" />
+<link rel="stylesheet" href="./src/styles/social.css" />
+<link rel="stylesheet" href="./src/styles/harbour-stories-base.css" />
+<link rel="stylesheet" href="./src/styles/inventory.css" />
+<link rel="stylesheet" href="./src/styles/residents.css" />
+<link rel="stylesheet" href="./src/styles/harbour-stories-illustrated.css" />
+<link rel="stylesheet" href="./src/styles/harbour-stories-vii.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><svg class="brandmark" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="2" width="39" height="39" rx="7" fill="var(--sea)"/><path d="M21.5 41V8.2" stroke="var(--ink)" stroke-width="3" stroke-linecap="butt"/><path d="M21.5 10.1L34.6 31.5H21.5z" fill="var(--cream)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/><path d="M21.5 15.0L8.4 30.2H21.5z" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.1" stroke-linejoin="round"/><path d="M20.8 8.2h8.8l-2.9 3.3h-5.9z" fill="var(--red)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/><rect x="2" y="2" width="39" height="39" rx="7" fill="none" stroke="var(--ink)" stroke-width="3"/></svg><div><h1>MAKEFAST <span class="version-tag" id="versionTag"></span></h1><small>EVERY FAST GOES SOMEWHERE</small></div></div>
+    <div class="phase-chip" id="phaseChip"><div class="phase-dot"></div><div><b id="phaseName">IN HARBOUR</b><span id="phaseHint">Choose your next voyage</span></div></div>
+    <div class="timerbox"><div class="timer" id="headerTimer">00:00:00</div><div class="sub" id="headerSub">time ashore</div></div>
+    <button class="tiny-btn quick-action" id="quickPhaseBtn" title="Quick fasting action">SET SAIL</button>
+  </header>
+
+  <main class="main">
+    <section class="stage-wrap" id="stageWrap">
+      <canvas id="game" width="640" height="360" aria-label="MakeFast game world"></canvas>
+      <div class="stage-label" id="stageLabel"><b>HOME HARBOUR</b><br><span>the world is happy when you return</span></div>
+      <div class="atmosphere-box" id="atmosphereBox" role="button" aria-label="Weather and island clock; open weather settings"><div class="analog-clock" aria-hidden="true"><i class="clock-hand clock-hour" id="clockHour"></i><i class="clock-hand clock-minute" id="clockMinute"></i><i class="clock-hand clock-second" id="clockSecond"></i><i class="clock-pin"></i></div><canvas class="weather-art" id="weatherArt" width="32" height="32" role="img" aria-label="Current weather"></canvas><div class="weather-copy"><b id="weatherNow">ISLAND WEATHER · 18°C</b><span id="weatherMeta">Clear · light breeze</span><small id="weatherNext">Later: calm water</small><div class="weather-mini-forecast" id="weatherMiniForecast" aria-label="Upcoming weather"></div></div></div>
+      <div class="voyage-status" id="voyageStatus"><b>UNDER WAY</b><span></span></div>
+      <div class="voyage-encounter" id="voyageEncounter"><div class="enc-copy"><b id="voyageEncounterTitle">SOMETHING AHEAD</b><span id="voyageEncounterText"></span></div><div class="enc-actions"><button id="voyageEncounterLook">LOOK CLOSER</button><button class="ghost" id="voyageEncounterPass">SAIL ON</button></div></div>
+      <div class="voyage-note" id="voyageNote" aria-live="polite"><b id="voyageNoteTitle">Something ahead</b><span id="voyageNoteText">Tap to open Voyage.</span><div class="voyage-note-actions" id="voyageNoteActions"><button id="voyageNoteLook">LOOK CLOSER</button><button class="ghost" id="voyageNotePass">SAIL ON</button></div></div>
+      <div class="voyage-peek" id="voyagePeek" role="button" aria-label="Open voyage progress"><div class="peek-row"><span id="voyagePeekTitle">UNDER WAY</span><span id="voyagePeekTime"></span></div><div class="peek-meter"><i id="voyagePeekFill"></i></div></div>
+      <div class="map-controls" id="mapControls" aria-label="Chart controls"><button id="mapZoomOut" title="Zoom out">−</button><button id="mapReset" title="Reset chart">⌂</button><button id="mapZoomIn" title="Zoom in">+</button></div>
+      <div class="chart-label-layer" id="chartLabels" aria-hidden="true"></div>
+      <div class="map-info" id="mapInfo" aria-live="polite"></div>
+      <div class="world-info" id="worldInfo" aria-live="polite"></div>
+      <div class="game-hud" id="gameHud">
+        <div class="arcade-hud-row">
+          <div class="arcade-hud-title"><b id="gameHudTitle">ARCADE ENCOUNTER</b><span id="gameHudObjective">Quick hands, calm head.</span></div>
+          <div class="arcade-hud-score" id="gameHudText">0 pts</div>
+          <button class="arcade-pause" id="gameHudPause" aria-label="Pause arcade encounter" title="Pause">Ⅱ</button>
+          <button class="arcade-exit" id="gameHudLeave" aria-label="End arcade encounter" title="End game">×</button>
+        </div>
+        <div class="gamebar"><i id="gameHudBar"></i></div>
+      </div>
+      <div class="arcade-intro" id="arcadeIntro" aria-live="polite">
+        <div class="arcade-intro-card">
+          <div class="arcade-intro-kicker" id="arcadeIntroKicker">CAR FERRY</div>
+          <h2 id="arcadeIntroTitle">FERRY LANE MASTER</h2>
+          <p id="arcadeIntroDesc">A quick deck job.</p>
+          <div class="arcade-how"><b>HOW TO PLAY</b><span id="arcadeIntroHow">Drag each vehicle into its matching lane.</span></div>
+          <div class="arcade-intro-best" id="arcadeIntroBest">BEST —</div>
+          <button class="arcade-start" id="arcadeStart">START ROUND</button>
+          <button class="arcade-back" id="arcadeBack">BACK TO VOYAGE</button>
+        </div>
+      </div>
+      <div class="animal-dialogue" id="animalDialogue" aria-live="polite"><canvas class="animal-dialogue-avatar" id="animalDialogueAvatar" width="64" height="56" aria-hidden="true"></canvas><div class="animal-dialogue-copy"><b id="animalDialogueName">Island animal</b><small id="animalDialogueKind">A little island neighbour</small><span id="animalDialogueText"></span></div></div>
+      <div class="arcade-helper neutral" id="arcadeHelper" aria-live="polite" aria-atomic="true"><b id="arcadeHelperText"></b><span id="arcadeHelperSub"></span></div>
+      <div class="toast" id="toast"></div>
+    </section>
+
+    <aside class="panel" id="infoPanel">
+      <div class="panel-head" id="panelHead"><button class="sheet-toggle" id="sheetToggle" aria-label="Show or hide panel"><span>toggle</span></button><h2 id="panelTitle">Home Harbour</h2><p id="panelSubtitle">Plan your next crossing, or spend a little time ashore.</p></div>
+      <div class="panel-body" id="panelBody"></div>
+    </aside>
+  </main>
+
+  <nav class="bottomnav" aria-label="Game sections">
+    <button class="navbtn active" data-view="harbour"><span>⌂</span>SHORE</button>
+    <button class="navbtn" data-view="chart"><span>⌁</span>CHART</button>
+    <button class="navbtn" data-view="voyage"><span>◢</span>VOYAGE</button>
+    <button class="navbtn" data-view="log"><span>▤</span>TIDEBOOK</button>
+    <button class="navbtn" data-view="settings"><span>⚙</span>SETTINGS</button>
+  </nav>
+  <div class="arcade-controls" id="arcadeControls" aria-label="Optional arcade controls"></div>
+</div>
+
+<div class="modal-back" id="modalBack"><div class="modal" id="modal"></div></div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
