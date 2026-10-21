@@ -22,7 +22,7 @@ MF.hsSceneSeen = function hsSceneSeen(s){return s.sceneProgress?.[String(s.stepI
 MF.hsSceneReady = function hsSceneReady(s,step=MF.hsCurrentStory(s)){if(step?.kind!=='scene')return false;const seen=MF.hsSceneSeen(s);return seen.length>=step.scene.required&&seen.includes(step.scene.key)};
 
 MF.hsExamineSpot = function hsExamineSpot(id,spotId){
- const s=MF.hsState().items.find(x=>x.id===id),step=MF.hsCurrentStory(s);if(!MF.hsCanAct(s)||step?.kind!=='scene'||!MF.mf39WorldClueInteraction)return;
+ const s=MF.hsState().items.find(x=>x.id===id),step=MF.hsCurrentStory(s);if(!MF.hsCanAct(s)||step?.kind!=='scene'||!MF.islandClueInteractionActive)return;
  const spot=step.scene.spots.find(p=>p.id===spotId),key=String(s.stepIndex);if(!spot)return;
  if(!s.sceneProgress)s.sceneProgress={};if(!Array.isArray(s.sceneProgress[key]))s.sceneProgress[key]=[];
  if(!s.sceneProgress[key].includes(spot.id)){

@@ -59,3 +59,9 @@ Most MakeFast artwork is drawn by JavaScript sprite/shape functions and Canvas r
 ## Update v0.41.8 — menu and Cattleships
 
 Resident menu disclosures are preserved by `src/ui/disclosure-state.js`; use stable `data-disclosure-id` names for all new `<details>` and restore state only when the same entity/panel redraws. The visual assets in `src/render/sprites/cattleships.js` use the same `getBoatSprite` and `getAnimalSprite` facade as the main game. Future new sprites should share `src/render/sprites/`, not be copied into minigame renderers.
+
+## v0.41.9 — Semantic helper names
+
+The original v38/v39/v40 feature-prefixed **runtime functions and configuration tables** have been renamed to domain-specific concepts. Key trading callers now use native named exports from `world/material-exchange.js` instead of looking up those functions through `MF`. A naming regression test prohibits feature-version prefixes from returning in public runtime APIs. `src/world/inventory.js` owns storage/layout calculations and `src/world/material-exchange.js` owns exchange plans, separate from resident dialogue in `people-trades.js`. Neither requires a numbered initializer.
+
+The `MF` runtime object, some source-order feature overrides in `core/startup.js`, and historic **persisted keys / HTML and CSS selectors** still exist and are intentionally not renamed in this patch. Renaming persisted fields silently would corrupt or invalidate existing saves. Further structural refactoring should be performed through explicit imports and pure functions, and with schema migrations when needed.

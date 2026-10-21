@@ -147,7 +147,7 @@ MF.residentHTML = function residentHTML(p){
 
 MF.vesselCardHTML = function vesselCardHTML(v){
   const t=MF.vesselType(v.typeId),dest=MF.getIsland(v.destinationId),home=MF.getIsland(v.homeId),status=v.status==='sailing'?`Under way → ${dest?.name||'open water'}`:`Alongside · ${MF.getIsland(v.locationId)?.name||home?.name||'the quay'}`,hint=MF.hsVesselNewsReady(v)?'? CREW NEWS':'';
-  const d=MF.mf40EnsureVessel(v),tradeHint=v.status==='docked'&&MF.mf40GoodsQuantity(d.tradeStock)?' · ⇄ MEET CAPTAIN / BARTER':'';return`<div class="traffic" data-vessel-id="${v.id}"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${MF.wikiEsc(v.name)}</b><span class="item-sub">${MF.wikiEsc(t.name)} · ${MF.wikiEsc(status)} · Captain ${MF.wikiEsc(v.captainName)}</span>${hint||tradeHint?`<span class="item-hint">${hint}${tradeHint}</span>`:''}</div></div>`
+  const d=MF.ensureVesselTradeState(v),tradeHint=v.status==='docked'&&MF.countVesselTradeGoods(d.tradeStock)?' · ⇄ MEET CAPTAIN / BARTER':'';return`<div class="traffic" data-vessel-id="${v.id}"><span class="vessel-icon">${t.icon||'⛵'}</span><div><b>${MF.wikiEsc(v.name)}</b><span class="item-sub">${MF.wikiEsc(t.name)} · ${MF.wikiEsc(status)} · Captain ${MF.wikiEsc(v.captainName)}</span>${hint||tradeHint?`<span class="item-hint">${hint}${tradeHint}</span>`:''}</div></div>`
 };
 
 MF.worldLogHTML = function worldLogHTML(items,limit=8){return(items||[]).slice(0,limit).map(e=>`<div class="world-log"><b>${e.icon||'⛵'} ${MF.fmtDate(e.at)} · ${MF.formatClockInZone(e.at,MF.state.settings.timezone)}</b><span>${e.text}</span></div>`).join('')};

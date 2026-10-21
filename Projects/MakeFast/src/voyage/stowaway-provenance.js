@@ -5,7 +5,7 @@ import { MF } from '../core/runtime-state.js';
 
 // Feature definitions are registered as each ES module is imported.
 
-MF.mf40AttachActualStowaway = function mf40AttachActualStowaway(v,origin){
+MF.attachStowawayIdentity = function attachStowawayIdentity(v,origin){
   const plan=v?.stowawayPlan;
   if(!plan||plan.revealed||plan.sourceAnimalId||!origin||origin.temporary)return;
   // Select only animals that actually appeared on this island; never draw

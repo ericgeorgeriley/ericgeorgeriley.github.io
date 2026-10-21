@@ -160,7 +160,7 @@ MF.chartSelectionHTML = function chartSelectionHTML(sel){
 
 MF.updateMapInfoOverlay = function updateMapInfoOverlay(){
   const el=MF.$('#mapInfo');if(!el)return;const show=MF.state.activeView==='chart'&&!!MF.chartView.selection&&!MF.minigame;el.classList.toggle('show',show);if(!show){el.innerHTML='';return}el.innerHTML=MF.chartSelectionHTML(MF.chartView.selection);MF.positionFloatingOverlays();
-  el.querySelector('[data-map-close]')?.addEventListener('click',()=>{MF.chartView.selection=null;MF.updateMapInfoOverlay()});el.querySelector('[data-map-focus]')?.addEventListener('click',e=>MF.focusChartIsland(e.currentTarget.dataset.mapFocus));el.querySelector('[data-map-inspect]')?.addEventListener('click',e=>MF.inspectIsland(e.currentTarget.dataset.mapInspect));el.querySelector('[data-map-course]')?.addEventListener('click',e=>{MF.setCourseTo(e.currentTarget.dataset.mapCourse);MF.updateMapInfoOverlay()});el.querySelector('[data-map-board]')?.addEventListener('click',e=>MF.mf40OpenVesselDetails(e.currentTarget.dataset.mapBoard));
+  el.querySelector('[data-map-close]')?.addEventListener('click',()=>{MF.chartView.selection=null;MF.updateMapInfoOverlay()});el.querySelector('[data-map-focus]')?.addEventListener('click',e=>MF.focusChartIsland(e.currentTarget.dataset.mapFocus));el.querySelector('[data-map-inspect]')?.addEventListener('click',e=>MF.inspectIsland(e.currentTarget.dataset.mapInspect));el.querySelector('[data-map-course]')?.addEventListener('click',e=>{MF.setCourseTo(e.currentTarget.dataset.mapCourse);MF.updateMapInfoOverlay()});el.querySelector('[data-map-board]')?.addEventListener('click',e=>MF.openTradingVesselDetails(e.currentTarget.dataset.mapBoard));
 };
 
 MF.hitTestChart = function hitTestChart(x,y){

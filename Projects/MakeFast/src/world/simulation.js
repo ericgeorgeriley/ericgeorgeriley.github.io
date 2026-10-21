@@ -31,11 +31,11 @@ MF.makeNpcVessel = function makeNpcVessel(typeId,homeId){
   const captain=MF.chooseResidentCaptain(home,type,seed),usedPersonNames=MF.worldPersonNameSet();let captainPersonId,captainName,captainSource;
   if(captain){captainPersonId=captain.id;captainName=captain.name;captainSource='resident'}else{captainPersonId=`crew:${id}`;captainName=MF.uniquePersonName(`crew-${id}`,usedPersonNames);captainSource='crew'}
   const createdAt=MF.worldState().lastSimAt||MF.nowReal(),v={id,typeId,role:type.role,name:MF.uniqueVesselName(seed,MF.worldVesselNameSet()),homeId,locationId:homeId,status:'docked',originId:homeId,destinationId:homeId,departAt:0,arrivalAt:0,nextActionAt:0,cargo:{},passengers:[],captainPersonId,captainName,captainSource,mission:'Waiting by the quay',trips:0,createdAt};
-  MF.mf40EnsureVessel(v);v.nextActionAt=MF.nextNpcActionAt(v,home,createdAt,rr);return v;
+  MF.ensureVesselTradeState(v);v.nextActionAt=MF.nextNpcActionAt(v,home,createdAt,rr);return v;
 };
 
 MF.ensureWorldFleet = function ensureWorldFleet(){
-  const w=MF.worldState(),known=MF.state.islands.filter(i=>i.known&&MF.population(i)>0);w.vessels.forEach(MF.mf40EnsureVessel);let total=w.vessels.length;
+  const w=MF.worldState(),known=MF.state.islands.filter(i=>i.known&&MF.population(i)>0);w.vessels.forEach(MF.ensureVesselTradeState);let total=w.vessels.length;
   for(const isl of known){
     for(const type of MF.NPC_VESSEL_TYPES){
       if(total>=42)break;if(!MF.npcRuleMet(type.unlock,isl))continue;if(type.commission&&!isl.commissionedVessels.includes(type.id))continue;
@@ -114,7 +114,7 @@ MF.mfRecordArrivalStock = function mfRecordArrivalStock(kind,isl,at,stock={},met
 
 MF.beginNpcTrip = function beginNpcTrip(v,dest,at,{cargo={},passengers=[],mission='Crossing between islands'}={}){
   const origin=MF.getIsland(v.locationId)||MF.getIsland(v.homeId),type=MF.vesselType(v.typeId);if(!origin||!dest)return false;
-  MF.mf40Depart(v,origin,dest,at);v.status='sailing';v.originId=origin.id;v.destinationId=dest.id;v.departAt=at;v.arrivalAt=at+MF.npcTravelMs(origin,dest,type);v.cargo=cargo;v.passengers=passengers;v.mission=mission;v.trips=(v.trips||0)+1;
+  MF.processVesselTradingDeparture(v,origin,dest,at);v.status='sailing';v.originId=origin.id;v.destinationId=dest.id;v.departAt=at;v.arrivalAt=at+MF.npcTravelMs(origin,dest,type);v.cargo=cargo;v.passengers=passengers;v.mission=mission;v.trips=(v.trips||0)+1;
   MF.logWorld(MF.contentLine('copy.world.departed',{vessel:v.name,origin:origin.name,destination:dest.name}),at,false,type.icon);return true;
 };
 
@@ -145,7 +145,7 @@ MF.revealSurveyRoute = function revealSurveyRoute(from,at,vessel){
 };
 
 MF.resolveNpcArrival = function resolveNpcArrival(v,at){
-  const dest=MF.getIsland(v.destinationId),type=MF.vesselType(v.typeId);if(!dest)return;MF.ensureIslandData(dest);const landed=MF.mf40Arrival(v,dest,at);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=MF.nextNpcActionAt(v,dest,at,Math.random);
+  const dest=MF.getIsland(v.destinationId),type=MF.vesselType(v.typeId);if(!dest)return;MF.ensureIslandData(dest);const landed=MF.processVesselTradingArrival(v,dest,at);v.status='docked';v.locationId=dest.id;v.originId=dest.id;v.destinationId=dest.id;v.nextActionAt=MF.nextNpcActionAt(v,dest,at,Math.random);
   if(Object.keys(landed).length){Object.entries(landed).forEach(([m,n])=>MF.addStock(dest,m,n));MF.mfRecordArrivalStock('delivery',dest,at,landed,{vesselId:v.id,vesselName:v.name,icon:type.icon});MF.logWorld(MF.contentLine('copy.world.cargo',{vessel:v.name,cargo:MF.cargoLabel(landed),destination:dest.name}),at,true,type.icon,{type:'cargo',islandId:dest.id,vesselId:v.id,vesselName:v.name,stock:landed})}
   (v.passengers||[]).forEach(ps=>{const person=MF.ensureResidentData(ps.person,ps.person.id,dest.biome);if(!dest.residents.some(p=>p.id===person.id))dest.residents.push(person);person.note=MF.contentLine('copy.residents.movedNote',{origin:MF.getIsland(ps.originId)?.name||'another island'});const req=MF.state.liftRequests.find(r=>r.id===ps.requestId);if(req)req.status='delivered';MF.logWorld(MF.contentLine('copy.world.passenger',{person:person.name,vessel:v.name,destination:dest.name}),at,true,'☻')});
   if(type.role==='work')MF.worldSupplyProject(dest,v,at,2);else if(type.role==='tender')MF.worldSupplyProject(dest,v,at,1);

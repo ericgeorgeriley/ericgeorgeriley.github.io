@@ -74,6 +74,8 @@ import './world/island-life.js';
 import './render/sprites/animals.js';
 import './voyage/stowaways.js';
 import './world/materials-economy.js';
+import './world/inventory.js';
+import './world/material-exchange.js';
 import './world/people-trades.js';
 import './world/character-depth.js';
 import './voyage/stowaway-provenance.js';

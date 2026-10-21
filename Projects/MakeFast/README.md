@@ -96,3 +96,6 @@ These are meaningful regression checks, not proof that every long-form story bra
 4. If using a new URL, import the exported JSON into the new site.
 
 No game-content changes or save-schema changes are intended in this extraction.
+
+### v0.41.9 normalization
+Runtime helpers previously named after feature-version numbers now have descriptive names. Inventory and material exchange are separate modules. Game behavior and save format are retained; see `ARCHITECTURE.md` for remaining compatibility boundaries.
