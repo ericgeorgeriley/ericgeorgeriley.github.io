@@ -47,25 +47,11 @@ MF.mfTakeBundle = function mfTakeBundle(isl,bundle){Object.entries(bundle||{}).f
 
 MF.mfGiveBundle = function mfGiveBundle(isl,bundle){Object.entries(bundle||{}).forEach(([m,n])=>MF.addStock(isl,m,n))};
 
-MF.mfResidentTradeOffers = function mfResidentTradeOffers(p){
-  const s=MF.mfEnsureSocialData(p),profile=MF.MF_NPC_TRADE_PROFILES[p.archetype]||MF.MF_NPC_TRADE_PROFILES.maker,personal=MF.MF_PERSONAL_TRADE_POOL.find(t=>t.id===s.personalTradeId)||MF.MF_PERSONAL_TRADE_POOL[0];
-  return [{...profile[0],minTier:0,kind:'profession'},{...personal,minTier:1,kind:'personal'},{...profile[1],minTier:2,kind:'profession'},{...profile[2],minTier:3,kind:'profession'}];
-};
-
-MF.mfCurrentFavour = function mfCurrentFavour(p){const s=MF.mfEnsureSocialData(p),tier=MF.mfRelationshipTierIndex(p),list=MF.MF_NPC_FAVOURS[p.archetype]||MF.MF_NPC_FAVOURS.maker;return list.find(f=>f.minTier<=tier&&!s.completedFavours.includes(f.id))||null};
-
-MF.mfLockedFavour = function mfLockedFavour(p){const s=MF.mfEnsureSocialData(p),tier=MF.mfRelationshipTierIndex(p),list=MF.MF_NPC_FAVOURS[p.archetype]||MF.MF_NPC_FAVOURS.maker;return list.find(f=>f.minTier>tier&&!s.completedFavours.includes(f.id))||null};
-
 MF.mfQualitativeCloseness = function mfQualitativeCloseness(p){const i=MF.mfRelationshipTierIndex(p),s=MF.mfEnsureSocialData(p);if(i===0)return s.points?'getting acquainted':'just met';if(i===1)return s.points>=4?'comfortable company':'getting familiar';if(i===2)return s.points>=9?'close company':'easy company';return'trusted company'};
 
 MF.mfRelationshipHTML = function mfRelationshipHTML(p){
   const i=MF.mfRelationshipTierIndex(p),tier=MF.MF_RELATIONSHIP_TIERS[i],hearts=MF.MF_RELATIONSHIP_TIERS.map((_,n)=>`<i class="${n<=i?'on':''}">♥</i>`).join(''),keepsake=i>=3?`<div class="mf-keepsake"><b>Kept between you</b>${MF.MF_TRUSTED_KEEPSAKES[p.archetype]||MF.MF_TRUSTED_KEEPSAKES.maker}</div>`:'';
   return `<div class="mf-social-card"><div class="mf-social-head"><b>♡ ${tier.name}</b><span>${MF.mfQualitativeCloseness(p)}</span></div><div class="mf-heart-row" aria-label="Relationship: ${tier.name}">${hearts}</div><p>${tier.copy}</p>${keepsake}</div>`;
-};
-
-MF.mfTradeSectionHTML = function mfTradeSectionHTML(p,isl,canTrade){
-  const tierIndex=MF.mfRelationshipTierIndex(p),offers=MF.mfResidentTradeOffers(p),rows=offers.map(o=>{const required=MF.MF_RELATIONSHIP_TIERS[o.minTier];if(o.minTier>tierIndex)return `<div class="mf-trade-row locked"><div class="grow"><b>${o.kind==='personal'?'Personal offer':o.label}</b><span>Unlocks when you are ${required.name.toLowerCase()} · ? → ?</span></div><span class="mf-lock">LOCKED</span></div>`;const cost=MF.mfDiscountBundle(o.cost,tierIndex),affordable=MF.mfHasBundle(isl,cost),discounted=JSON.stringify(cost)!==JSON.stringify(o.cost),buttonText=!canTrade?'MEET ASHORE':affordable?'TRADE':'NEED GOODS';return `<div class="mf-trade-row"><div class="grow"><b>${o.label}${o.kind==='personal'?' · personal':''}</b><span>${MF.mfBundleLabel(cost)} <strong>→</strong> ${MF.mfBundleLabel(o.reward)}</span>${discounted?`<small>${MF.MF_RELATIONSHIP_TIERS[tierIndex].name} price · usual cost ${MF.mfBundleLabel(o.cost)}</small>`:''}</div><button data-mf-trade="${o.id}" ${!canTrade||!affordable?'disabled':''}>${buttonText}</button></div>`}).join('');
-  return `<div class="section mf-social-section"><div class="section-title">Trades <span>${offers.filter(o=>o.minTier<=tierIndex).length}/${offers.length} unlocked</span></div><div class="mf-trade-list">${rows}</div></div>`;
 };
 
 MF.mfFavourSectionHTML = function mfFavourSectionHTML(p,isl,canHelp){
@@ -76,12 +62,6 @@ MF.mfEnsureErrands = function mfEnsureErrands(){if(!Array.isArray(MF.state.socia
 
 MF.mfCarriedErrands = function mfCarriedErrands(){return MF.mfEnsureErrands().filter(e=>e.status==='carried')};
 
-MF.mfErrandManifestHTML = function mfErrandManifestHTML(context='harbour'){
-  const errands=MF.mfCarriedErrands();if(!errands.length)return MF.hsStoryManifestHTML();
-  const cards=errands.map(e=>{const giver=MF.residentById(e.personId),origin=MF.getIsland(e.originId),target=MF.getIsland(e.targetId),onVoyage=MF.state.voyage?.destinationId===e.targetId,onCourse=MF.state.phase==='ashore'&&MF.state.selectedDestinationId===e.targetId,status=onVoyage?'ON THIS CROSSING':onCourse?'ON MARKED COURSE':'ABOARD';return `<div class="mf-manifest-card"><h3>${MF.mfSpecialCargoIconSVG('parcel')} ${e.title}</h3><p><b>From:</b> ${giver?.name||'A neighbour'}${origin?` · ${origin.name}`:''}<br><b>For:</b> ${e.recipient}<br><b>Destination:</b> ${target?.name||'another island'}</p><span class="mf-manifest-route">${status}</span></div>`}).join('');
-  return `<div class="section"><div class="section-title">Favour parcels aboard <span>${errands.length}/${MF.playerParcelCapacity()}</span></div><div class="mf-manifest-list">${cards}</div><div class="muted" style="margin-top:6px">Personal parcels use your boat’s parcel spaces, separate from the ordinary island-stores hold.</div></div>${MF.hsStoryManifestHTML()}`
-};
-
 MF.mfPassengerManifestHTML = function mfPassengerManifestHTML(){
   if(!MF.state.boatPassengers?.length)return'';return `<div class="section"><div class="section-title">Journey favours aboard <span>${MF.state.boatPassengers.length}/${MF.playerPassengerCapacity()}</span></div>${MF.state.boatPassengers.map(ps=>`<div class="mf-manifest-card"><h3>☻ ${ps.person.name}</h3><p><b>Passenger:</b> travelling with you<br><b>Destination:</b> ${MF.getIsland(ps.targetId)?.name||'another island'}</p><span class="mf-manifest-route">ABOARD</span></div>`).join('')}</div>`
 };
@@ -90,21 +70,9 @@ MF.mfResidentErrand = function mfResidentErrand(p,isl,create=true){
   const all=MF.mfEnsureErrands();let e=all.find(x=>x.personId===p.id);if(e||!create||MF.mfRelationshipTierIndex(p)<1||!isl)return e||null;const targets=MF.knownJourneyTargets(isl);if(!targets.length)return null;const rr=MF.rng(MF.hashString(`${p.id}:errand`)),target=targets[Math.floor(rr()*targets.length)],copy=MF.MF_ERRAND_COPY[p.archetype]||MF.MF_ERRAND_COPY.maker;e={id:`errand_${Math.abs(MF.hashString(p.id+'-parcel'))}`,personId:p.id,originId:isl.id,targetId:target.id,status:'offered',title:copy[0],recipient:copy[1],createdAt:MF.nowReal()};all.push(e);return e;
 };
 
-MF.mfErrandSectionHTML = function mfErrandSectionHTML(p,isl,canHelp){
-  const e=MF.mfResidentErrand(p,isl,true);if(!e)return'';const target=MF.getIsland(e.targetId),where=target?.name||'another island',parcelSpace=MF.playerHasParcelSpace();if(e.status==='delivered')return `<div class="section mf-social-section"><div class="section-title">Delivery favour</div><div class="card"><p>✓ You carried ${e.title.toLowerCase()} to ${where}. ${p.name.split(' ')[0]} still remembers it.</p></div></div>`;if(e.status==='carried')return `<div class="section mf-social-section"><div class="section-title">Delivery favour <span>${MF.playerParcelCount()}/${MF.playerParcelCapacity()} parcel spaces</span></div><div class="mf-errand-card"><h3>${MF.mfSpecialCargoIconSVG('parcel')} ${e.title}</h3><p>Tucked safely aboard for ${e.recipient} at ${where}.</p><button class="big-btn ghost" data-mf-errand-course="${e.targetId}">MARK ${where.toUpperCase()}</button></div></div>`;const buttonText=!canHelp?'MEET ASHORE':parcelSpace?'TAKE ABOARD':'PARCEL SPACE FULL';return `<div class="section mf-social-section"><div class="section-title">Delivery favour <span>${MF.playerParcelCount()}/${MF.playerParcelCapacity()} parcel spaces</span></div><div class="mf-errand-card"><h3>${MF.mfSpecialCargoIconSVG('parcel')} ${e.title}</h3><p>${p.name} has ${e.title.toLowerCase()} for ${e.recipient} at ${where}. Your boat needs a free parcel space before you can take it aboard.</p><button class="big-btn ghost" data-mf-errand="${e.id}" ${!canHelp||!parcelSpace?'disabled':''}>${buttonText}</button></div></div>`;
-};
-
-MF.mfAcceptErrand = function mfAcceptErrand(personId,errandId){const p=MF.residentById(personId),isl=MF.residentHomeIsland(personId),e=MF.mfEnsureErrands().find(x=>x.id===errandId&&x.personId===personId);if(!p||!e||e.status!=='offered'||!MF.mfCanSocialiseHere(p,isl))return;if(!MF.playerHasParcelSpace()){MF.toast('No parcel space free on this boat.');MF.openResidentDetails(personId,{skipTalk:true});return}e.status='carried';e.acceptedAt=MF.nowReal();MF.state.journal.unshift(`${p.name} asked you to carry ${e.title.toLowerCase()} to ${MF.getIsland(e.targetId)?.name||'another island'}.`);MF.save();MF.openResidentDetails(personId,{skipTalk:true});MF.toast('Delivery favour accepted — parcel stowed aboard.')};
-
 MF.mfResolveErrandsAt = function mfResolveErrandsAt(dest){const notes=[];for(const e of MF.mfEnsureErrands().filter(x=>x.status==='carried'&&x.targetId===dest.id)){e.status='delivered';e.deliveredAt=MF.nowReal();const p=MF.residentById(e.personId);if(p){const s=MF.mfEnsureSocialData(p);s.errandCount++;s.lastErrandTarget=dest.name;MF.mfAddRelationship(p,2)}const text=`${e.title} from ${p?.name||'a neighbour'} reached ${e.recipient} at ${dest.name}.`;MF.state.journal.unshift(text);MF.logWorld(text,MF.nowReal(),false,'▣');notes.push(text);MF.hsRecordOptional('delivery',e.title,e.id)}return notes};
 
 MF.mfMemoryLine = function mfMemoryLine(p){const s=MF.mfEnsureSocialData(p),favours=MF.MF_NPC_FAVOURS[p.archetype]||MF.MF_NPC_FAVOURS.maker;if(Array.isArray(s.storyMemories)&&s.storyMemories.length){const last=s.storyMemories.slice(-2).map(m=>m.text).join(' ');return `${last}${s.storyMemories.length>2?` They remember ${s.storyMemories.length-2} other stories you shared.`:''}`;}if(s.storyMemory)return s.storyMemory;if(s.errandCount&&s.lastErrandTarget)return `They remember the little errand you carried to ${s.lastErrandTarget}.`;if(s.liftCount)return `They remember travelling aboard ${MF.state.boat.name||'your boat'} with you.`;if(s.sharedVoyages&&s.lastSharedVoyage)return `They still mention ${s.lastSharedVoyage.toLowerCase()} from a crossing you shared.`;if(s.completedFavours.length){const f=favours.find(x=>x.id===s.completedFavours[s.completedFavours.length-1]);if(f)return `They remember your help with “${f.title}”.`}if(s.tradeCount>=2)return `You have traded together ${s.tradeCount} times; they know the sort of things you tend to look for.`;return''};
-
-MF.mfCompleteTrade = function mfCompleteTrade(personId,tradeId){
-  const p=MF.residentById(personId),isl=MF.residentHomeIsland(personId);if(!p||!MF.mfCanSocialiseHere(p,isl))return;const tierIndex=MF.mfRelationshipTierIndex(p),offer=MF.mfResidentTradeOffers(p).find(o=>o.id===tradeId);if(!offer||offer.minTier>tierIndex)return;const cost=MF.mfDiscountBundle(offer.cost,tierIndex);if(!MF.mfHasBundle(isl,cost)){MF.toast('Those goods are not in the island stores yet.');return}MF.mfTakeBundle(isl,cost);MF.mfGiveBundle(isl,offer.reward);const s=MF.mfEnsureSocialData(p);s.tradeCount++;const token=MF.mfShoreToken(isl);if(s.lastTradeBondToken!==token){s.lastTradeBondToken=token;MF.mfAddRelationship(p,1)}MF.save();MF.renderUI();MF.openResidentDetails(personId,{skipTalk:true});MF.toast(`Traded with ${p.name}.`);
-};
-
-MF.mfCompleteFavour = function mfCompleteFavour(personId,favourId){const p=MF.residentById(personId),isl=MF.residentHomeIsland(personId);if(!p||!MF.mfCanSocialiseHere(p,isl))return;const f=MF.mfCurrentFavour(p);if(!f||f.id!==favourId||!MF.mfHasBundle(isl,f.need)){MF.toast('The island stores do not have what this favour needs yet.');return}MF.mfTakeBundle(isl,f.need);MF.mfGiveBundle(isl,f.reward);const s=MF.mfEnsureSocialData(p);s.completedFavours.push(f.id);MF.mfAddRelationship(p,f.bond);MF.state.journal.unshift(`You helped ${p.name} with ${f.title.toLowerCase()}.`);MF.save();MF.renderUI();MF.openResidentDetails(personId,{skipTalk:true});MF.toast(`${p.name} appreciated the help.`)};
 
 MF.mfMakeArrivalSnapshot = function mfMakeArrivalSnapshot(isl){if(!isl)return null;MF.ensureIslandData(isl);return{islandId:isl.id,residents:(isl.residents||[]).map(p=>p.id),stock:{...isl.stock},projects:(isl.projects||[]).map(p=>({id:p.id,templateId:p.templateId,complete:!!p.complete,progress:MF.projectProgress(p)})),features:[...(isl.features||[])]}};
 
